@@ -1,0 +1,8 @@
+{
+    "extends": "./tsconfig.common.build.json",
+    "references": [
+        { "path": "./packages/core/tsconfig.build.json" },
+        { "path": "./packages/editor/tsconfig.build.json" }
+    ],
+    "files": []
+}

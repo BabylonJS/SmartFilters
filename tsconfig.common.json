@@ -1,0 +1,11 @@
+{
+    "extends": "./tsconfig.common.build.json",
+    "compilerOptions": {
+        "baseUrl": "packages",
+
+        "paths": {
+            "@videofilters/core": ["core/src"],
+            "@videofilters/editor": ["editor/src"],
+        }
+    },
+}
