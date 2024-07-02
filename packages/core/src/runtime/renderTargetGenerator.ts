@@ -127,10 +127,10 @@ export class RenderTargetGenerator {
             };
         }
 
-        let rtts = this._renderTargetPool.get(ratio);
-        if (!rtts) {
-            rtts = new Set();
-            this._renderTargetPool.set(ratio, rtts);
+        let refCountedTextures = this._renderTargetPool.get(ratio);
+        if (!refCountedTextures) {
+            refCountedTextures = new Set();
+            this._renderTargetPool.set(ratio, refCountedTextures);
         }
 
         let refCountedTexture = this._findAvailableTexture(ratio);
@@ -139,7 +139,7 @@ export class RenderTargetGenerator {
                 texture: this._createTexture(runtime, ratio),
                 refCount: 0,
             };
-            rtts.add(refCountedTexture);
+            refCountedTextures.add(refCountedTexture);
             this._numTargetsCreated++;
         }
 
@@ -151,14 +151,14 @@ export class RenderTargetGenerator {
             return;
         }
 
-        const rtts = this._renderTargetPool.get(ratio);
-        if (!rtts) {
+        const refCountedTextures = this._renderTargetPool.get(ratio);
+        if (!refCountedTextures) {
             throw new Error(`_releaseTextureToPool: Trying to add a texture to a non existing pool ${ratio}!`);
         }
 
-        for (const rtt of rtts) {
-            if (rtt.texture === texture) {
-                rtt.refCount--;
+        for (const refCountedTexture of refCountedTextures) {
+            if (refCountedTexture.texture === texture) {
+                refCountedTexture.refCount--;
                 return;
             }
         }
@@ -175,7 +175,7 @@ export class RenderTargetGenerator {
     private _createTexture(runtime: InternalSmartFilterRuntime, ratio: number): ThinRenderTargetTexture {
         const engine = runtime.engine;
 
-        // We are only rendering full screen post process without depth or stencil informations
+        // We are only rendering full screen post process without depth or stencil information
         const setup = {
             generateDepthBuffer: false,
             generateStencilBuffer: false,

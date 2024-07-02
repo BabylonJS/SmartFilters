@@ -4,9 +4,9 @@ import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import type { SmartFilter } from "../smartFilter";
 import type { StrongRef } from "../runtime/strongRef";
-import { ConnectionPointType } from "../connection/connectionPointType";
-import { ShaderBlock } from "./shaderBlock";
-import { ShaderBinding } from "../runtime/shaderRuntime";
+import { ConnectionPointType } from "../connection/connectionPointType.js";
+import { ShaderBlock } from "./shaderBlock.js";
+import { ShaderBinding } from "../runtime/shaderRuntime.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -51,10 +51,7 @@ export class CopyShaderBinding extends ShaderBinding {
      * @internal
      */
     public override bind(effect: Effect): void {
-        effect.setTexture(
-            this.getRemappedName("input"),
-            this._inputTexture.value
-        );
+        effect.setTexture(this.getRemappedName("input"), this._inputTexture.value);
     }
 }
 
@@ -74,10 +71,7 @@ export class CopyBlock extends ShaderBlock {
     /**
      * The input connection point of the block.
      */
-    public readonly input = this._registerInput(
-        "input",
-        ConnectionPointType.Texture
-    );
+    public readonly input = this._registerInput("input", ConnectionPointType.Texture);
 
     /**
      * The shader program (vertex and fragment code) to use to render the block
@@ -101,9 +95,7 @@ export class CopyBlock extends ShaderBlock {
         const input = this.input.runtimeData;
 
         if (!input) {
-            throw new Error(
-                `The input texture is missing for the CopyBlock named ${this.name}`
-            );
+            throw new Error(`The input texture is missing for the CopyBlock named ${this.name}`);
         }
 
         return new CopyShaderBinding(this, input);

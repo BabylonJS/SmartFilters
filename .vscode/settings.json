@@ -1,16 +1,21 @@
 {
     "cSpell.words": [
         "acumin",
+        "ADDRESSMODE",
         "babylonjs",
+        "Consts",
         "fontawesome",
         "fortawesome",
+        "htpasswd",
         "minifiers",
         "multilines",
+        "NPOT",
         "runtimes",
         "Sebastien",
         "smartfilter",
         "tsbuildinfo",
         "tsdoc",
+        "unmerge",
         "VANDENBERGHE",
         "webgl",
         "webgpu"

@@ -1,9 +1,9 @@
 import type { InitializationData, SmartFilter } from "../smartFilter";
-import { ConnectionPointType } from "../connection/connectionPointType";
-import { BaseBlock } from "./baseBlock";
-import { CopyBlock } from "./copyBlock";
-import { ShaderRuntime } from "../runtime/shaderRuntime";
-import { createCommand } from "../command/command";
+import { ConnectionPointType } from "../connection/connectionPointType.js";
+import { BaseBlock } from "./baseBlock.js";
+import { CopyBlock } from "./copyBlock.js";
+import { ShaderRuntime } from "../runtime/shaderRuntime.js";
+import { createCommand } from "../command/command.js";
 
 /**
  * The output block of a smart filter.
@@ -21,10 +21,7 @@ export class OutputBlock extends BaseBlock {
      * Input connection point of the output block.
      * This takes a texture as input.
      */
-    public readonly input = this._registerInput(
-        "input",
-        ConnectionPointType.Texture
-    );
+    public readonly input = this._registerInput("input", ConnectionPointType.Texture);
 
     private _copyBlock: CopyBlock | null;
 
@@ -86,9 +83,7 @@ export class OutputBlock extends BaseBlock {
             copyBlock.getShaderProgram(),
             copyBlock.getShaderBinding()
         );
-        initializationData.initializationPromises.push(
-            shaderBlockRuntime.onReadyAsync
-        );
+        initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
         runtime.registerResource(shaderBlockRuntime);
 
         runtime.registerCommand(
@@ -97,9 +92,6 @@ export class OutputBlock extends BaseBlock {
             })
         );
 
-        super.generateCommandsAndGatherInitPromises(
-            initializationData,
-            finalOutput
-        );
+        super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
     }
 }

@@ -1,12 +1,12 @@
 import type { Nullable } from "@babylonjs/core/types";
-import { UniqueIdGenerator } from "@babylonjs/core/Misc/uniqueIdGenerator";
+import { UniqueIdGenerator } from "@babylonjs/core/Misc/uniqueIdGenerator.js";
 
-import { ConnectionPointType, type ConnectionPointValue } from "../connection/connectionPointType";
+import { ConnectionPointType, type ConnectionPointValue } from "../connection/connectionPointType.js";
 import type { InitializationData, SmartFilter } from "../smartFilter";
 import type { ICommandOwner } from "../command/command";
-import { ConnectionPoint, type RuntimeData } from "../connection/connectionPoint";
-import { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault";
-import { ConnectionPointDirection } from "../connection/connectionPointDirection";
+import { ConnectionPoint, type RuntimeData } from "../connection/connectionPoint.js";
+import { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault.js";
+import { ConnectionPointDirection } from "../connection/connectionPointDirection.js";
 
 /**
  * Defines a callback function that is triggered when visiting a block,

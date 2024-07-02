@@ -6,7 +6,7 @@ import type { InputBlock } from "../blocks/inputBlock";
 import type { BaseBlock } from "../blocks/baseBlock";
 import { SmartFilter } from "../smartFilter.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import { ShaderBlock } from "../blocks/shaderBlock";
+import { ShaderBlock } from "../blocks/shaderBlock.js";
 import { isTextureInputBlock } from "../blocks/inputBlock.js";
 import { OptimizedShaderBlock } from "./optimizedShaderBlock.js";
 import { decorateChar, decorateSymbol, getShaderFragmentCode, undecorateSymbol } from "../utils/shaderCodeUtils.js";
@@ -310,7 +310,7 @@ export class SmartFilterOptimizer {
 
         let match = rx.exec(declarations);
         while (match !== null) {
-            const singleinstance = forceSingleInstance || varDecl === "const";
+            const singleInstance = forceSingleInstance || varDecl === "const";
             const varType = match[1]!;
             const varName = match[2]!;
             const varValue = hasValue ? match[3]! : null;
@@ -327,7 +327,7 @@ export class SmartFilterOptimizer {
                         s.owners[0] &&
                         s.owners[0].getClassName() === block.getClassName()
                 );
-                if (existingRemapped && singleinstance) {
+                if (existingRemapped && singleInstance) {
                     newVarName = existingRemapped.remappedName;
                     if (varDecl === "uniform") {
                         existingRemapped.owners.push(block);

@@ -2,10 +2,17 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
-import { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { SmartFilterOptimizer, createImageTexture, type SmartFilter } from "@babylonjs/smart-filters";
-import { SmartFilterRenderer } from "./smartFilterRenderer";
+import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import {
+    SmartFilterOptimizer,
+    createImageTexture,
+    logCommands,
+    type SmartFilter,
+    type SmartFilterRuntime,
+} from "@babylonjs/smart-filters";
 import { createSimpleWebcamFilter } from "./createSmartFilter";
+import { SmartFilterRenderer } from "./smartFilterRenderer";
+import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink");
@@ -67,20 +74,20 @@ switch (prebuildGraphId) {
 }
 
 if (editActionLink) {
-    // editActionLink.onclick = () => {
-    //     if (filter) {
-    //         // Display the editor
-    //         SmartFilterEditor.Show({
-    //             engine,
-    //             filter: (window as any).sm, // use filter instead of (window as any).sm if you want to edit the optimized graph (when optimizer is enabled)
-    //             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-    //                 renderer.setRuntime(runtime);
-    //             },
-    //         });
-    //     }
-    //     if (renderer.runtime) {
-    //         // Display debug info in the console
-    //         logCommands(renderer.runtime.commandBuffer);
-    //     }
-    // };
+    editActionLink.onclick = () => {
+        if (filter) {
+            // Display the editor
+            SmartFilterEditor.Show({
+                engine,
+                filter: (window as any).sm, // use filter instead of (window as any).sm if you want to edit the optimized graph (when optimizer is enabled)
+                onRuntimeCreated: (runtime: SmartFilterRuntime) => {
+                    renderer.setRuntime(runtime);
+                },
+            });
+        }
+        if (renderer.runtime) {
+            // Display debug info in the console
+            logCommands(renderer.runtime.commandBuffer);
+        }
+    };
 }

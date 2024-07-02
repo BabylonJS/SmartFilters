@@ -11,6 +11,10 @@ var buildConfig = function (env) {
         entry: {
             index: SRC_DIR + "/app.ts"
         },
+        performance: {
+            maxEntrypointSize: 5120000,
+            maxAssetSize: 5120000
+        },
         output: {
             path: (isProd ? DIST_DIR : DEV_DIR) + "/scripts/",
             publicPath: "/scripts/",
@@ -24,7 +28,7 @@ var buildConfig = function (env) {
             static: ["www"],
         },
         resolve: {
-            extensions: [".ts", ".tsx", ".js", ".scss", "*.svg"],
+            extensions: [".ts", ".tsx", ".js", ".scss", ".svg"],
             alias: {
                 // "core": path.resolve("node_modules/@babylonjs/core"),
                 // "shared-ui-components": path.resolve("node_modules/@dev/shared-ui-components"),

@@ -6,9 +6,9 @@ import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import type { StrongRef } from "../runtime/strongRef";
 import type { RuntimeData } from "../connection/connectionPoint";
-import { ShaderBlock } from "../blocks/shaderBlock";
-import { Binding } from "../runtime/shaderRuntime";
-import { ConnectionPointType } from "../connection/connectionPointType";
+import { ShaderBlock } from "../blocks/shaderBlock.js";
+import { Binding } from "../runtime/shaderRuntime.js";
+import { ConnectionPointType } from "../connection/connectionPointType.js";
 
 /**
  * The shader bindings for the OptimizedShader block.
@@ -23,10 +23,7 @@ export class OptimizedShaderBinding extends Binding {
      * @param shaderBindings - The list of shader bindings to process
      * @param inputTextures - The list of input textures to bind
      */
-    constructor(
-        shaderBindings: Binding[],
-        inputTextures: { [name: string]: StrongRef<ThinTexture> }
-    ) {
+    constructor(shaderBindings: Binding[], inputTextures: { [name: string]: StrongRef<ThinTexture> }) {
         super();
 
         this._shaderBindings = shaderBindings;
@@ -127,14 +124,10 @@ export class OptimizedShaderBlock extends ShaderBlock {
                  * These are the inputs created by the OptimizedShaderBlock
                  * We pass them to OptimizedShaderBinding so that their value can be set appropriately at runtime (in the bind method)
                  */
-                this._inputTextures[name] =
-                    input.runtimeData as RuntimeData<ConnectionPointType.Texture>;
+                this._inputTextures[name] = input.runtimeData as RuntimeData<ConnectionPointType.Texture>;
             }
         }
 
-        return new OptimizedShaderBinding(
-            this._shaderBindings,
-            this._inputTextures
-        );
+        return new OptimizedShaderBinding(this._shaderBindings, this._inputTextures);
     }
 }

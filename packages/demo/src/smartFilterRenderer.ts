@@ -1,4 +1,4 @@
-import { Observable } from "@babylonjs/core/Misc/observable";
+import { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import type { SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";

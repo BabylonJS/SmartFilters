@@ -1,6 +1,6 @@
-import { EffectRenderer } from "@babylonjs/core/Materials/effectRenderer";
+import { EffectRenderer } from "@babylonjs/core/Materials/effectRenderer.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { CommandBuffer } from "../command/commandBuffer";
+import { CommandBuffer } from "../command/commandBuffer.js";
 import type { IDisposable } from "../IDisposable";
 import type { Command } from "../command/command";
 

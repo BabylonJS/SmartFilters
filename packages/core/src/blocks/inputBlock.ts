@@ -3,9 +3,9 @@ import type { ConnectionPointValue } from "../connection/connectionPointType";
 import type { RuntimeData } from "../connection/connectionPoint";
 import type { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault";
 import type { DisableableBlock } from "./disableableBlock";
-import { BaseBlock } from "../blocks/baseBlock";
-import { createStrongRef } from "../runtime/strongRef";
-import { ConnectionPointType } from "../connection/connectionPointType";
+import { BaseBlock } from "../blocks/baseBlock.js";
+import { createStrongRef } from "../runtime/strongRef.js";
+import { ConnectionPointType } from "../connection/connectionPointType.js";
 
 /**
  * Type predicate to check if value is a strong ref or a direct value
@@ -23,13 +23,8 @@ function isRuntimeData<U extends ConnectionPointType>(
  * @param block - The block to check
  * @returns true if the block is a texture input block, otherwise false
  */
-export function isTextureInputBlock(
-    block: BaseBlock
-): block is InputBlock<ConnectionPointType.Texture> {
-    return (
-        (block as InputBlock<ConnectionPointType.Texture>).type ===
-        ConnectionPointType.Texture
-    );
+export function isTextureInputBlock(block: BaseBlock): block is InputBlock<ConnectionPointType.Texture> {
+    return (block as InputBlock<ConnectionPointType.Texture>).type === ConnectionPointType.Texture;
 }
 
 /**
@@ -37,9 +32,7 @@ export function isTextureInputBlock(
  * @param block - The block to check
  * @returns true if the block is a disableable block, otherwise false
  */
-export function isDisableableBlock(
-    block: BaseBlock
-): block is DisableableBlock {
+export function isDisableableBlock(block: BaseBlock): block is DisableableBlock {
     return (block as DisableableBlock).disabled !== undefined;
 }
 
@@ -101,9 +94,7 @@ export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
         this.output = this._registerOutputWithDefault(
             "output",
             type,
-            isRuntimeData(initialValue)
-                ? initialValue
-                : createStrongRef(initialValue)
+            isRuntimeData(initialValue) ? initialValue : createStrongRef(initialValue)
         );
 
         // Creates a strong reference to the initial value in case a reference has not been provided
@@ -119,7 +110,5 @@ export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
  * Unionised type of all the possible input types.
  */
 export type AnyInputBlock = {
-    [T in keyof typeof ConnectionPointType]: InputBlock<
-        (typeof ConnectionPointType)[T]
-    >;
+    [T in keyof typeof ConnectionPointType]: InputBlock<(typeof ConnectionPointType)[T]>;
 }[keyof typeof ConnectionPointType];

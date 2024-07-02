@@ -1,5 +1,5 @@
 import type { BaseBlock } from "../blocks/baseBlock";
-import { ConnectionPoint, type RuntimeData } from "./connectionPoint";
+import { ConnectionPoint, type RuntimeData } from "./connectionPoint.js";
 import type { ConnectionPointDirection } from "./connectionPointDirection";
 import type { ConnectionPointType } from "./connectionPointType";
 
@@ -7,7 +7,7 @@ import type { ConnectionPointType } from "./connectionPointType";
  * A ConnectionPoint whose runtimeData is never null - if not hooked up to a connection, it will use a default value.
  */
 export class ConnectionPointWithDefault<
-    U extends ConnectionPointType = ConnectionPointType
+    U extends ConnectionPointType = ConnectionPointType,
 > extends ConnectionPoint<U> {
     /**
      * The runtime data for this ConnectionPoint - it will never be null - if not hooked up to a connection, it will use the default value.

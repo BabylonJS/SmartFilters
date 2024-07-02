@@ -1,9 +1,9 @@
 import type { SmartFilter } from "../smartFilter";
 import type { ConnectionPoint } from "../connection/connectionPoint";
 
-import { BaseBlock } from "../blocks/baseBlock";
-import { ConnectionPointType } from "../connection/connectionPointType";
-import { createStrongRef } from "../runtime/strongRef";
+import { BaseBlock } from "../blocks/baseBlock.js";
+import { ConnectionPointType } from "../connection/connectionPointType.js";
+import { createStrongRef } from "../runtime/strongRef.js";
 
 /**
  * The interface that describes the disableable block.
@@ -34,11 +34,7 @@ export class DisableableBlock extends BaseBlock implements IDisableableBlock {
      * @param name - Defines the name of the block
      * @param disableOptimization - Defines if the block should not be optimized (default: false)
      */
-    constructor(
-        smartFilter: SmartFilter,
-        name: string,
-        disableOptimization = false
-    ) {
+    constructor(smartFilter: SmartFilter, name: string, disableOptimization = false) {
         super(smartFilter, name, disableOptimization);
     }
 }
