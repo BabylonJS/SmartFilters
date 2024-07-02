@@ -1,6 +1,6 @@
 /**
  * Represents the owner of a command.
- * In practice, it will mostly be a block, the smart filter or a tool injectings commands.
+ * In practice, it will mostly be a block, the smart filter or a tool injecting commands.
  */
 export interface ICommandOwner {
     /**
@@ -15,7 +15,7 @@ export interface ICommandOwner {
 }
 
 /**
- * Represents a the action of a @see Command. This is what will be exectuted during a command buffer execution.
+ * Represents a the action of a @see Command. This is what will be executed during a command buffer execution.
  */
 export type CommandAction = () => void;
 
@@ -34,12 +34,12 @@ export type Command = {
 
     /**
      * The owner of the command.
-     * In practice, it will mostly be a block, the smart filter or a tool injectings commands.
+     * In practice, it will mostly be a block, the smart filter or a tool injecting commands.
      */
     readonly owner: ICommandOwner;
 
     /**
-     * Defines the action to exectute.
+     * Defines the action to execute.
      */
     readonly action: CommandAction;
 };

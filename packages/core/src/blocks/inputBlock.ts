@@ -107,7 +107,7 @@ export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
 }
 
 /**
- * Unionised type of all the possible input types.
+ * Unionized type of all the possible input types.
  */
 export type AnyInputBlock = {
     [T in keyof typeof ConnectionPointType]: InputBlock<(typeof ConnectionPointType)[T]>;

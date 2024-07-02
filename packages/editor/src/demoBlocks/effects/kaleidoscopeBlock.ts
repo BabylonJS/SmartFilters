@@ -54,30 +54,30 @@ const shaderProgram = injectDisableUniform({
                         float pointTheta = atan(vUV.y, vUV.x);
                         pointTheta += _time_;
                         for (float i = -1.; i < 2.; i += 1.) {
-                            float chunck = floor(pointTheta / _segmentArc_) + i;
-                            float chunckStart = -_time_ + chunck * _segmentArc_ + _segmentArc_ * 0.5;
-                            vec2 chunckStartCenter = vec2(cos(chunckStart), sin(chunckStart)) * _radius_;
-                            vec2 chunckStartPoint = vUV - chunckStartCenter;
-                            chunckStartPoint *= _imageRatio_;
-                            chunckStartPoint *= vec2(0.5, 0.5);
-                            chunckStartPoint += vec2(0.5, 0.5);
+                            float chunk = floor(pointTheta / _segmentArc_) + i;
+                            float chunkStart = -_time_ + chunk * _segmentArc_ + _segmentArc_ * 0.5;
+                            vec2 chunkStartCenter = vec2(cos(chunkStart), sin(chunkStart)) * _radius_;
+                            vec2 chunkStartPoint = vUV - chunkStartCenter;
+                            chunkStartPoint *= _imageRatio_;
+                            chunkStartPoint *= vec2(0.5, 0.5);
+                            chunkStartPoint += vec2(0.5, 0.5);
                 
-                            if (chunckStartPoint.x > 0. && chunckStartPoint.x < 1. && chunckStartPoint.y > 0. && chunckStartPoint.y < 1.) {
-                                result = texture2D(_input_, chunckStartPoint);
+                            if (chunkStartPoint.x > 0. && chunkStartPoint.x < 1. && chunkStartPoint.y > 0. && chunkStartPoint.y < 1.) {
+                                result = texture2D(_input_, chunkStartPoint);
                             }
                         }
                 
                         for (float i = -1.; i < 2.; i += 1.) {
-                            float chunck = floor(pointTheta / _segmentArc_) + i;
-                            float chunckStart = -_time_ + chunck * _segmentArc_ + _segmentArc_ * 0.5;
-                            vec2 chunckStartCenter = vec2(cos(chunckStart), sin(chunckStart)) * _radius2_;
-                            vec2 chunckStartPoint = vUV - chunckStartCenter;
-                            chunckStartPoint *= _imageRatio_;
-                            chunckStartPoint *= vec2(0.5, 0.5);
-                            chunckStartPoint += vec2(0.5, 0.5);
+                            float chunk = floor(pointTheta / _segmentArc_) + i;
+                            float chunkStart = -_time_ + chunk * _segmentArc_ + _segmentArc_ * 0.5;
+                            vec2 chunkStartCenter = vec2(cos(chunkStart), sin(chunkStart)) * _radius2_;
+                            vec2 chunkStartPoint = vUV - chunkStartCenter;
+                            chunkStartPoint *= _imageRatio_;
+                            chunkStartPoint *= vec2(0.5, 0.5);
+                            chunkStartPoint += vec2(0.5, 0.5);
                 
-                            if (chunckStartPoint.x > 0. && chunckStartPoint.x < 1. && chunckStartPoint.y > 0. && chunckStartPoint.y < 1.) {
-                                result = texture2D(_input_, chunckStartPoint);
+                            if (chunkStartPoint.x > 0. && chunkStartPoint.x < 1. && chunkStartPoint.y > 0. && chunkStartPoint.y < 1.) {
+                                result = texture2D(_input_, chunkStartPoint);
                             }
                         }
                     }
