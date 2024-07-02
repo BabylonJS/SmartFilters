@@ -25,7 +25,7 @@ jobs:
           - script: "npm install"
             displayName: "Npm install"
 
-    - job: Unit Tests
+    - job: UnitTests
       displayName: "2. Unit Tests"
       pool:
           vmImage: "Ubuntu-latest"
