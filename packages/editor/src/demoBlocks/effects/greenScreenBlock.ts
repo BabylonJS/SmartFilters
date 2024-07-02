@@ -90,7 +90,7 @@ export class GreenShaderBinding extends ShaderBinding {
 }
 
 /**
- * A simple block to incrustate a background in place of a green screen.
+ * A simple block to insert a background in place of a green screen.
  */
 export class GreenScreenBlock extends ShaderBlock {
     /**
