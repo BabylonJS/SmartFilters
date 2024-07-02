@@ -20,7 +20,7 @@
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}",
             "preLaunchTask": "Serve and watch (Dev)"
-        },
+        }
         // {
         //     /*
         //     Launch tests

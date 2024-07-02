@@ -7,15 +7,15 @@
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
-        "types" : ["jest"],
+        "types": ["jest"],
         "lib": ["dom", "es2015"],
         "jsx": "react-jsx",
-        
+
         "removeComments": false,
 
         "strict": true,
         "alwaysStrict": true,
-        
+
         "exactOptionalPropertyTypes": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
@@ -32,6 +32,6 @@
         "strictBindCallApply": true,
         "strictPropertyInitialization": true,
 
-        "forceConsistentCasingInFileNames": true,
+        "forceConsistentCasingInFileNames": true
     }
 }

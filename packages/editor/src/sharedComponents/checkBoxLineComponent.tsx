@@ -13,7 +13,10 @@ export interface ICheckBoxLineComponentProps {
     disabled?: boolean;
 }
 
-export class CheckBoxLineComponent extends react.Component<ICheckBoxLineComponentProps, { isSelected: boolean; isDisabled?: boolean }> {
+export class CheckBoxLineComponent extends react.Component<
+    ICheckBoxLineComponentProps,
+    { isSelected: boolean; isDisabled?: boolean }
+> {
     private static _UniqueIdSeed = 0;
     private _uniqueId: number;
     private _localChange = false;
@@ -34,7 +37,10 @@ export class CheckBoxLineComponent extends react.Component<ICheckBoxLineComponen
         }
     }
 
-    override shouldComponentUpdate(nextProps: ICheckBoxLineComponentProps, nextState: { isSelected: boolean; isDisabled: boolean }) {
+    override shouldComponentUpdate(
+        nextProps: ICheckBoxLineComponentProps,
+        nextState: { isSelected: boolean; isDisabled: boolean }
+    ) {
         let currentState: boolean;
 
         if (nextProps.isSelected) {
@@ -95,7 +101,10 @@ export class CheckBoxLineComponent extends react.Component<ICheckBoxLineComponen
                         onChange={() => this.onChange()}
                         disabled={!!this.props.disabled}
                     />
-                    <label htmlFor={"checkbox" + this._uniqueId} className={`lbl${this.props.disabled ? " disabled" : ""}`}></label>
+                    <label
+                        htmlFor={"checkbox" + this._uniqueId}
+                        className={`lbl${this.props.disabled ? " disabled" : ""}`}
+                    ></label>
                 </div>
             </div>
         );

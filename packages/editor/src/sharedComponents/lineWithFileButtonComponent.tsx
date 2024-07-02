@@ -11,7 +11,10 @@ interface ILineWithFileButtonComponentProps {
     uploadName?: string;
 }
 
-export class LineWithFileButtonComponent extends react.Component<ILineWithFileButtonComponentProps, { isExpanded: boolean }> {
+export class LineWithFileButtonComponent extends react.Component<
+    ILineWithFileButtonComponentProps,
+    { isExpanded: boolean }
+> {
     private _uploadRef: react.RefObject<HTMLInputElement>;
     constructor(props: ILineWithFileButtonComponentProps) {
         super(props);
@@ -43,7 +46,10 @@ export class LineWithFileButtonComponent extends react.Component<ILineWithFileBu
                     <img className="img" src={this.props.iconImage} />
                 </div>
                 <div className="buttonLine" title={this.props.title}>
-                    <label htmlFor={this.props.uploadName ? this.props.uploadName : "file-upload"} className="file-upload" />
+                    <label
+                        htmlFor={this.props.uploadName ? this.props.uploadName : "file-upload"}
+                        className="file-upload"
+                    />
                     <input
                         ref={this._uploadRef}
                         id={this.props.uploadName ? this.props.uploadName : "file-upload"}

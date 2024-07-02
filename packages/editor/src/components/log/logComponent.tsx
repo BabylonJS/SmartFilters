@@ -48,7 +48,13 @@ export class LogComponent extends react.Component<ILogComponentProps, { logs: Lo
                 {this.state.logs.map((l, i) => {
                     return (
                         <div key={i} className={"log" + (l.isError ? " error" : "")}>
-                            {l.time.getHours() + ":" + l.time.getMinutes() + ":" + l.time.getSeconds() + ": " + l.message}
+                            {l.time.getHours() +
+                                ":" +
+                                l.time.getMinutes() +
+                                ":" +
+                                l.time.getSeconds() +
+                                ": " +
+                                l.message}
                         </div>
                     );
                 })}

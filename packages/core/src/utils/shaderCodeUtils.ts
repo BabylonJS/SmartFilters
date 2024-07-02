@@ -123,7 +123,10 @@ export function injectDisableUniform(shaderProgram: ShaderProgram) {
     for (let i = 0; i < shaderFragment.functions.length; ++i) {
         const func = shaderFragment.functions[i]!;
         if (func.name === shaderFragment.mainFunctionName) {
-            func.code = func.code.replace("{", `{\n    if (_disabled_) return texture2D(${shaderProgram.fragment.mainInputTexture}, vUV);\n`);
+            func.code = func.code.replace(
+                "{",
+                `{\n    if (_disabled_) return texture2D(${shaderProgram.fragment.mainInputTexture}, vUV);\n`
+            );
             break;
         }
     }
@@ -140,7 +143,13 @@ export function injectDisableUniform(shaderProgram: ShaderProgram) {
 export function getShaderFragmentCode(shaderProgram: ShaderProgram, mainCodeOnly = false): string {
     const shaderFragment = shaderProgram.fragment;
 
-    const declarations = (shaderFragment.const ?? "") + "\n" + shaderFragment.uniform + "\n" + (shaderFragment.uniformSingle ?? "") + "\n";
+    const declarations =
+        (shaderFragment.const ?? "") +
+        "\n" +
+        shaderFragment.uniform +
+        "\n" +
+        (shaderFragment.uniformSingle ?? "") +
+        "\n";
 
     let mainFunctionCode = "";
     let otherFunctionsCode = "";
@@ -189,7 +198,12 @@ export function getShaderCreateOptions(shaderProgram: ShaderProgram): ShaderCrea
         match = rx.exec(uniforms);
     }
 
-    code = "varying vec2 vUV;\n" + code + "\nvoid main(void) {\ngl_FragColor = " + shaderFragment.mainFunctionName + "(vUV);\n}";
+    code =
+        "varying vec2 vUV;\n" +
+        code +
+        "\nvoid main(void) {\ngl_FragColor = " +
+        shaderFragment.mainFunctionName +
+        "(vUV);\n}";
 
     const options: ShaderCreationOptions = {
         name: shaderFragment.mainFunctionName,

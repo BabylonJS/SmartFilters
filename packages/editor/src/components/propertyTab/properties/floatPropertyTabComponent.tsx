@@ -20,7 +20,9 @@ export class FloatPropertyTabComponent extends react.Component<IFloatPropertyTab
                     if (this.props.inputBlock.isConstant) {
                         this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
                     }
-                    this.props.globalState.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
+                    this.props.globalState.stateManager.onUpdateRequiredObservable.notifyObservers(
+                        this.props.inputBlock
+                    );
                 }}
             ></FloatLineComponent>
         );
