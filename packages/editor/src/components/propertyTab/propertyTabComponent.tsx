@@ -244,7 +244,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             src="https://www.babylonjs.com/Assets/logo-babylonjs-social-twitter.png"
                             alt="Babylon Logo"
                         />
-                        <div id="title">VIDEO FILTER EDITOR</div>
+                        <div id="title">SMART FILTER EDITOR</div>
                     </div>
                     {this.state.currentNode?.renderProperties() || this.state.currentNodePort?.node.renderProperties()}
                 </div>
@@ -280,7 +280,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         src="https://www.babylonjs.com/Assets/logo-babylonjs-social-twitter.png"
                         alt="Babylon Logo"
                     />
-                    <div id="title">VIDEO FILTER EDITOR</div>
+                    <div id="title">SMART FILTER EDITOR</div>
                 </div>
                 <div>
                     <LineContainerComponent title="GENERAL">

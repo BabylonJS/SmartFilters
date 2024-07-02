@@ -125,7 +125,7 @@ export class GreenScreenBlock extends ShaderBlock {
 
     /**
      * Instantiates a new Block.
-     * @param smartFilter - The video filter this block belongs to
+     * @param smartFilter - The smart filter this block belongs to
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {

@@ -169,7 +169,7 @@ export class BlockTools {
     }
 
     /**
-     * Gets the list of all input blocks attached to the video filter.
+     * Gets the list of all input blocks attached to the smart filter.
      * @returns The list of input blocks
      */
     public static GetInputBlocks(smartFilter: SmartFilter): AnyInputBlock[] {

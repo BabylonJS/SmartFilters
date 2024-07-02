@@ -178,7 +178,7 @@ export class OneCameraSpriteBlock extends ShaderBlock {
 
     /**
      * Instantiates a new Block.
-     * @param smartFilter - The video filter this block belongs to
+     * @param smartFilter - The smart filter this block belongs to
      * @param name - The friendly name of the block
      * @param rows - The number of rows in the sprite atlas
      * @param columns - The number of columns in the sprite atlas

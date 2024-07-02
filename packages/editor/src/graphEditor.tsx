@@ -169,7 +169,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                         this.props.globalState.engine
                     );
                 } catch (err: unknown) {
-                    console.error("Video Filter could not create a runtime", err);
+                    console.error("Smart Filter could not create a runtime", err);
                 }
             }
         });
@@ -274,7 +274,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         // setup the diagram model
         this._graphCanvas.reset();
 
-        // Load graph of nodes from the Video Filter
+        // Load graph of nodes from the Smart Filter
         if (this.props.globalState.smartFilter) {
             this.loadGraph();
         }

@@ -62,7 +62,7 @@ const optimizeFilters = (filters: SmartFilter) => {
 switch (prebuildGraphId) {
     case 0:
         {
-            const logoTexture = createImageTexture(engine, "./assets/babylonLogo.png");
+            const logoTexture = createImageTexture(engine, "./assets/logo.png");
             filter = createSimpleWebcamFilter(engine, logoTexture);
             filter = optimizeFilters(filter);
 

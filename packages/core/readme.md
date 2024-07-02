@@ -81,7 +81,7 @@ videoInput.output.connectTo(blur.input);
 blur.output.connectTo(blackAndWhite.input);
 ```
 
-Finally the last block should be linked into the video filter output:
+Finally the last block should be linked into the Smart Filter output:
 
 ```typescript
 titleInput.output.connectTo(smartFilter.output);

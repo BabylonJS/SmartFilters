@@ -47,7 +47,7 @@ export class SmartFilterEditor {
         let hostElement = options.hostElement;
 
         if (!hostElement) {
-            hostElement = Popup.CreatePopup("BABYLON.JS Filter EDITOR", filterEditorPopupId, 1500, 800)!;
+            hostElement = Popup.CreatePopup("BABYLON.JS Smart Filter EDITOR", filterEditorPopupId, 1500, 800)!;
         }
 
         const globalState = new GlobalState(options.engine, options.filter ?? null, hostElement);

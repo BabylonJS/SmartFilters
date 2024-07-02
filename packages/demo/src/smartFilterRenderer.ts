@@ -26,7 +26,7 @@ export class SmartFilterRenderer {
     public runtime: Nullable<SmartFilterRuntime> = null;
 
     /**
-     * Creates a new video filter renderer.
+     * Creates a new smart filter renderer.
      * @param engine - the engine to use to render the filter
      */
     public constructor(engine: ThinEngine) {

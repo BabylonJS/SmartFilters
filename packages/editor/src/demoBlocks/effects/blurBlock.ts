@@ -44,7 +44,7 @@ export class BlurBlock extends AggregateBlock {
 
     /**
      * Instantiates a new Block.
-     * @param smartFilter - The video filter this block belongs to
+     * @param smartFilter - The smart filter this block belongs to
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
@@ -66,7 +66,7 @@ export class BlurBlock extends AggregateBlock {
 
     /**
      * Prepares the block for runtime.
-     * This is called by the video filter just before creating the video filter runtime.
+     * This is called by the smart filter just before creating the smart filter runtime.
      */
     public override prepareForRuntime(): void {
         this._intermediateBlurV.blurTextureRatio = this.blurTextureRatioPerPass;

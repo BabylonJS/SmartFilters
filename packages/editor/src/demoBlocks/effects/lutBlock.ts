@@ -145,7 +145,7 @@ export class LUTBlock extends ShaderBlock {
 
     /**
      * Instantiates a new Block.
-     * @param smartFilter - The video filter this block belongs to
+     * @param smartFilter - The smart filter this block belongs to
      * @param name - The friendly name of the block
      * @param squareCount - The number of slices in the LUT texture (as well as the number of rows & columns in each slice)
      */

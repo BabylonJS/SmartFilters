@@ -18,7 +18,7 @@ export class DraggableLineComponent extends react.Component<IButtonLineComponent
                 title={this.props.tooltip}
                 draggable={true}
                 onDragStart={(event) => {
-                    event.dataTransfer.setData("babylonjs-videofilter-node", this.props.data);
+                    event.dataTransfer.setData("babylonjs-smartfilter-node", this.props.data);
                 }}
             >
                 {this.props.data.replace("Block", "")}

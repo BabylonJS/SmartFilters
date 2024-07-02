@@ -27,7 +27,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         Float: "A floating point number representing a value with a fractional component",
         Texture: "A node for reading a linked or embedded texture file",
         CopyBlock: "Copy the input texture to the output texture",
-        OutputBlock: "Final output of the video filter, this represents the canvas or an offscreen texture",
+        OutputBlock: "Final output of the Smart Filter, this represents the canvas or an offscreen texture",
         GlitchBlock: "Funky glitch transition",
         TileBlock: "Transition from one texture to another using tiles",
         WipeBlock: "Transition from one texture to another using a wipe",
@@ -38,7 +38,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         FrameBlock: "Green screen like effect",
         GlassBlock: "Creates a glass like effect",
         KaleidoscopeBlock: "Kaleidoscope effect",
-        InputBlock: "Adds inputs to the video filter",
+        InputBlock: "Adds inputs to the Smart Filter",
         PixelateBlock: "Add pixelation to the input texture",
         PosterizeBlock: "Posterize to the input texture",
         ContrastBlock: "Change the contrast of the input texture",
@@ -202,7 +202,9 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         const blockMenu = [];
         for (const key in allBlocks) {
             const blockList = (allBlocks as any)[key]
-                .filter((b: string) => !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1)
+                .filter(
+                    (b: string) => !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
+                )
                 .sort((a: string, b: string) => a.localeCompare(b))
                 .map((block: string) => {
                     // if (key === "Custom_Frames") {
@@ -229,7 +231,13 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                     //         />
                     //     );
                     // }
-                    return <DraggableLineComponent key={block} data={block} tooltip={NodeListComponent._Tooltips[block] || ""} />;
+                    return (
+                        <DraggableLineComponent
+                            key={block}
+                            data={block}
+                            tooltip={NodeListComponent._Tooltips[block] || ""}
+                        />
+                    );
                 });
 
             // if (key === "Custom_Frames") {
@@ -267,7 +275,11 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
             // }
             if (blockList.length) {
                 blockMenu.push(
-                    <LineContainerComponent key={key + " blocks"} title={key.replace("__", ": ").replace("_", " ")} closed={false}>
+                    <LineContainerComponent
+                        key={key + " blocks"}
+                        title={key.replace("__", ": ").replace("_", " ")}
+                        closed={false}
+                    >
                         {blockList}
                     </LineContainerComponent>
                 );
