@@ -1,2 +1,3 @@
-export * from "./smartFilterEditor.js";
-export * from "./demoBlocks/index.js";
+import { valueFromCore } from "@babylonjs/smart-filters";
+
+console.log("Editor", "Value from Core", valueFromCore);
