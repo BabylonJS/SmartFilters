@@ -1,8 +1,16 @@
 {
     "trailingComma": "es5",
     "tabWidth": 4,
-    "printWidth": 180,
+    "printWidth": 120,
     "singleQuote": false,
     "semi": true,
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "overrides": [
+        {
+            "files": ".eslintrc",
+            "options": {
+                "trailingComma": "none"
+            }
+        }
+    ]
 }

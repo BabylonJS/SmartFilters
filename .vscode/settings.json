@@ -1,21 +1,36 @@
 {
-  "cSpell.words": ["babylonjs"],
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/dist": false
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "search.exclude": {
-    "**/.git": true,
-    "**/node_modules": true,
-    "**/tmp": true,
-    "**/dist": true,
-    "**/.temp": true,
-    "**/*.tsbuildinfo": true,
-    "**/stats.json": true,
-    "**/www/scripts": true,
-    "junit.xml": true
-  }
+    "cSpell.words": [
+        "acumin",
+        "babylonjs",
+        "fontawesome",
+        "fortawesome",
+        "minifiers",
+        "multilines",
+        "runtimes",
+        "Sebastien",
+        "smartfilter",
+        "tsbuildinfo",
+        "tsdoc",
+        "VANDENBERGHE",
+        "webgl",
+        "webgpu"
+    ],
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/dist": false
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/tmp": true,
+        "**/dist": true,
+        "**/.temp": true,
+        "**/*.tsbuildinfo": true,
+        "**/stats.json": true,
+        "**/www/scripts": true,
+        "junit.xml": true
+    }
 }

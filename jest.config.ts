@@ -27,8 +27,8 @@ const createProject = (type: string) => {
         // ----
         // moduleNameMapper: pathsToModuleNameMapper(
         //     {
-        //         "@videofilters/core/dist/*": ["core/src/*"],
-        //         "@videofilters/core": ["core/src"],
+        //         "@babylonjs/smart-filters/dist/*": ["core/src/*"],
+        //         "@babylonjs/smart-filters": ["core/src"],
         //     },
         //     { prefix: "<rootDir>/packages/" }
         // ) as any,

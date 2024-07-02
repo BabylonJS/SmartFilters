@@ -11,12 +11,13 @@
     // Limit Usage on Demo and editor for now
     "overrides": [
         {
-          "files": ["packages/editor/**", "packages/demo/**", "**.test.ts"], // Or *.test.js
-          "rules": {
-            "jsdoc/require-jsdoc": "off",
-            "jsdoc/require-param": "off",
-            "jsdoc/require-returns": "off"
-          }
+            "files": ["packages/editor/**", "packages/core/**", "packages/demo/**", "**.test.ts"], // Or *.test.js
+            "rules": {
+                "jsdoc/require-jsdoc": "off",
+                "jsdoc/require-param": "off",
+                "jsdoc/require-returns": "off",
+                "import/extensions": "off"
+            }
         },
         {
             "files": ["packages/demo/**", "**.test.ts"],
@@ -56,7 +57,7 @@
         },
         "jsdoc": {
             "ignorePrivate": true,
-            "ignoreInternal" : true 
+            "ignoreInternal": true
         }
     },
     "rules": {
@@ -182,23 +183,29 @@
         "jest/no-standalone-expect": ["error", { "additionalTestBlockFunctions": ["afterEach"] }],
         "jest/valid-expect": "off",
         // "babylonjs/syntax": "warn",
-        "jsdoc/require-param": ["error", { 
-            "checkDestructured": false,
-            "checkRestProperty": false,
-            "enableFixer": false,
-            "checkGetters": false,
-            "checkSetters": false
-        }],
+        "jsdoc/require-param": [
+            "error",
+            {
+                "checkDestructured": false,
+                "checkRestProperty": false,
+                "enableFixer": false,
+                "checkGetters": false,
+                "checkSetters": false
+            }
+        ],
         "jsdoc/check-param-names": ["error", { "checkRestProperty": false }],
         "jsdoc/check-property-names": "error",
         // "jsdoc/require-param": ["error", { "checkDestructured": false, "checkRestProperty": false, "contexts":[
         //     // {"comment":"JsdocBlock:has(JsdocTag[tag=\"hidden\"])"}
         // ]}],
         "jsdoc/require-param-name": "error",
-        "jsdoc/require-returns": ["error", {
-            "checkGetters": false,
-            "checkConstructors": false
-        }],
+        "jsdoc/require-returns": [
+            "error",
+            {
+                "checkGetters": false,
+                "checkConstructors": false
+            }
+        ],
         "jsdoc/require-returns-check": "error",
         "import/export": "error",
         "import/extensions": ["error", "always"],
