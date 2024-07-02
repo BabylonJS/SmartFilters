@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "incremental": true,
+        "moduleResolution": "node",
+        "module": "esNext",
+        "target": "es2018",
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "types": ["jest"],
+        "lib": ["dom", "es2015"],
+        "jsx": "react-jsx",
+
+        "removeComments": false,
+
+        "strict": true,
+        "alwaysStrict": true,
+
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedParameters": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "verbatimModuleSyntax": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strictBindCallApply": true,
+        "strictPropertyInitialization": true,
+
+        "forceConsistentCasingInFileNames": true
+    }
+}

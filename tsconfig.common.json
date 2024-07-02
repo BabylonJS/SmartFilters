@@ -1,0 +1,11 @@
+{
+    "extends": "./tsconfig.common.build.json",
+    "compilerOptions": {
+        "baseUrl": "packages",
+
+        "paths": {
+            "@babylonjs/smart-filters": ["core/src"],
+            "@babylonjs/smart-filters-editor": ["editor/src"]
+        }
+    }
+}

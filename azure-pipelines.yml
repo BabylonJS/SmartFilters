@@ -4,16 +4,34 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+    - main
 
 pool:
-  vmImage: ubuntu-latest
+    vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+pr:
+    autoCancel: true
+    branches:
+        include:
+            - main
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+jobs:
+    - job: TscBuild
+      displayName: "1. Tsc Build"
+      pool:
+          vmImage: "Ubuntu-latest"
+          demands: npm
+      steps:
+          - script: "npm install"
+            displayName: "Npm install"
+
+    - job: UnitTests
+      displayName: "2. Unit Tests"
+      pool:
+          vmImage: "Ubuntu-latest"
+          demands: npm
+      steps:
+          - script: "npm install"
+            displayName: "Npm install"
+          - script: "npm run test"
+            displayName: "Jest Unit Tests"

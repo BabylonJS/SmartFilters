@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.common.json",
+
+    "compilerOptions": {
+        "rootDir": "../",
+        "outDir": "./.temp",
+        "composite": true
+    },
+
+    "include": ["../**/*.ts", "../**/*.tsx"],
+    "exclude": ["**/node_modules", "**/.temp"]
+}
