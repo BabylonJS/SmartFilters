@@ -43,7 +43,7 @@ export class LineWithFileButtonComponent extends react.Component<
             <div className="nonDraggableLine withButton">
                 {this.props.label}
                 <div className="icon" title={this.props.title}>
-                    <img className="img" src={this.props.iconImage} />
+                    <img className="img" src={this.props.iconImage} alt="icon" />
                 </div>
                 <div className="buttonLine" title={this.props.title}>
                     <label

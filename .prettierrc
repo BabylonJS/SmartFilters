@@ -7,7 +7,10 @@
     "endOfLine": "auto",
     "overrides": [
         {
-            "files": ".eslintrc",
+            "files": [
+                ".eslintrc",
+                ".hintrc"
+            ],
             "options": {
                 "trailingComma": "none"
             }
