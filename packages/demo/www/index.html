@@ -119,6 +119,11 @@
                 color: #bb464b;
                 text-decoration: unset;
             }
+
+            .footer p {
+                margin-block: 0;
+                line-height: normal;
+            }
         </style>
     </head>
 
@@ -133,14 +138,21 @@
                 <a href="https://www.babylonjs.com"> Smart Filter </a>
             </div>
             <div class="editAction">
-                <a id="editActionLink" href="#">EDIT</a>
+                <a id="editActionLink" href="#">Edit</a>
             </div>
             <div class="content" id="container" width="1024" height="700">
                 <canvas id="renderCanvas" width="1024" height="700"></canvas>
             </div>
             <div class="footer">
-                You can have a look at all the awesome tools from babylon at
-                <a href="https://www.babylonjs.com">our website</a>.
+                <p>This demo filter starts with a texture of the Babylon logo, then loads your webcam.</p>
+                <p>
+                    If you see a black screen, you may need to turn on your webcam, or select a different webcam source
+                    (click Edit).
+                </p>
+                <p>
+                    You can have a look at all the awesome tools from babylon at
+                    <a href="https://www.babylonjs.com">our website</a>.
+                </p>
             </div>
         </div>
 
