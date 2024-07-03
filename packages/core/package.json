@@ -33,8 +33,9 @@
     ],
     "scripts": {
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+        "versionUp": "node tools/versionUp.js",
         "build": "tsc -p ./tsconfig.build.json",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {
         "@babylonjs/core": "^7.11.2"
