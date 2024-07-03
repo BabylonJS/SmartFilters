@@ -25,6 +25,10 @@
     "types": "dist/index",
     "type": "module",
     "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BabylonJS/SmartFilters.git"
+    },
     "files": [
         "dist",
         "src",
