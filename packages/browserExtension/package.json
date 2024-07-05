@@ -1,0 +1,68 @@
+{
+    "name": "@babylonjs/smart-filters-browser-extension",
+    "private": true,
+    "version": "0.1.0",
+    "description": "A browser extension to allow for viewing Babylon.js Smart Filters in websites",
+    "author": {
+        "name": "Sebastien VANDENBERGHE"
+    },
+    "keywords": [
+        "video",
+        "composition",
+        "3D",
+        "2D",
+        "javascript",
+        "html5",
+        "webgl",
+        "webgl2",
+        "webgpu",
+        "babylon"
+    ],
+    "license": "MIT",
+    "readme": "README.md",
+    "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BabylonJS/SmartFilters.git"
+    },
+    "files": [
+        "dist",
+        "src",
+        "license.md",
+        "readme.md"
+    ],
+    "scripts": {
+        "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+        "versionUp": "node tools/versionUp.js",
+        "build": "webpack --env=prod",
+        "watch": "webpack --env=dev --watch",
+        "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
+    },
+    "peerDependencies": {
+        "@babylonjs/core": "^7.11.2"
+    },
+    "devDependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.1.0",
+        "@fortawesome/free-solid-svg-icons": "^6.1.0",
+        "@fortawesome/react-fontawesome": "^0.1.18",
+        "@types/chrome": "^0.0.268",
+        "@types/react": "^17.0.30",
+        "@types/react-dom": "^17.0.10",
+        "copy-webpack-plugin": "^12.0.2",
+        "css-loader": "^6.4.0",
+        "file-loader": "^6.2.0",
+        "node-sass": "^9.0.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "sass-loader": "^13.0.2",
+        "source-map-loader": "^3.0.0",
+        "split.js": "^1.6.5",
+        "style-loader": "^3.3.0",
+        "ts-loader": "^9.4.1",
+        "url-loader": "^4.1.1",
+        "webpack": "^5.76.0",
+        "webpack-bundle-analyzer": "^4.7.0",
+        "webpack-cli": "^4.10.0",
+        "webpack-dev-server": "^4.9.2"
+    }
+}

@@ -55,9 +55,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
     appendBlock(dataToAppend: BaseBlock | INodeData, recursion = true) {
         return this._graphCanvas.createNodeFromObject(
-            dataToAppend instanceof BaseBlock
-                ? TypeLedger.NodeDataBuilder(dataToAppend, this._graphCanvas)
-                : dataToAppend,
+            //dataToAppend instanceof BaseBlock
+            /*?*/ TypeLedger.NodeDataBuilder(dataToAppend, this._graphCanvas),
+            //: dataToAppend,
             (block: BaseBlock) => {
                 if (this.props.globalState.smartFilter!.attachedBlocks.indexOf(block) === -1) {
                     // TODO manage add but should not be possible to arrive here.

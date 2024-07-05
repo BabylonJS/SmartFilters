@@ -19,6 +19,7 @@ junit.xml
 
 # Node Modules
 node_modules/*
+packages/browserExtension/node_modules/*
 
 # Local dist
 **/www/scripts/**
