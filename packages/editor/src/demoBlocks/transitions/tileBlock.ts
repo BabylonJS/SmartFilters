@@ -1,7 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 
 const shaderProgram = injectDisableUniform({
@@ -55,9 +54,9 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Tile block.
  */
 export class TileShaderBinding extends ShaderBinding {
-    private readonly _textureA: StrongRef<ThinTexture>;
-    private readonly _textureB: StrongRef<ThinTexture>;
-    private readonly _mix: StrongRef<number>;
+    private readonly _textureA: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _textureB: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _mix: RuntimeData<ConnectionPointType.Float>;
     private readonly _tileCount: number;
 
     /**
@@ -70,9 +69,9 @@ export class TileShaderBinding extends ShaderBinding {
      */
     constructor(
         parentBlock: IDisableableBlock,
-        textureA: StrongRef<ThinTexture>,
-        textureB: StrongRef<ThinTexture>,
-        mix: StrongRef<number>,
+        textureA: RuntimeData<ConnectionPointType.Texture>,
+        textureB: RuntimeData<ConnectionPointType.Texture>,
+        mix: RuntimeData<ConnectionPointType.Float>,
         tileCount: number
     ) {
         super(parentBlock);

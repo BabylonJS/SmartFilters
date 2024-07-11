@@ -1,7 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
     ShaderBlock,
     ConnectionPointType,
@@ -80,12 +79,12 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Composition block.
  */
 export class CompositionShaderBinding extends ShaderBinding {
-    private readonly _backgroundTexture: StrongRef<ThinTexture>;
-    private readonly _foregroundTexture: StrongRef<ThinTexture>;
-    private readonly _foregroundTop: StrongRef<number>;
-    private readonly _foregroundLeft: StrongRef<number>;
-    private readonly _foregroundWidth: StrongRef<number>;
-    private readonly _foregroundHeight: StrongRef<number>;
+    private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _foregroundTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _foregroundTop: RuntimeData<ConnectionPointType.Float>;
+    private readonly _foregroundLeft: RuntimeData<ConnectionPointType.Float>;
+    private readonly _foregroundWidth: RuntimeData<ConnectionPointType.Float>;
+    private readonly _foregroundHeight: RuntimeData<ConnectionPointType.Float>;
     private readonly _alphaMode: number;
 
     /**
@@ -101,12 +100,12 @@ export class CompositionShaderBinding extends ShaderBinding {
      */
     constructor(
         parentBlock: IDisableableBlock,
-        backgroundTexture: StrongRef<ThinTexture>,
-        foregroundTexture: StrongRef<ThinTexture>,
-        foregroundTop: StrongRef<number>,
-        foregroundLeft: StrongRef<number>,
-        foregroundWidth: StrongRef<number>,
-        foregroundHeight: StrongRef<number>,
+        backgroundTexture: RuntimeData<ConnectionPointType.Texture>,
+        foregroundTexture: RuntimeData<ConnectionPointType.Texture>,
+        foregroundTop: RuntimeData<ConnectionPointType.Float>,
+        foregroundLeft: RuntimeData<ConnectionPointType.Float>,
+        foregroundWidth: RuntimeData<ConnectionPointType.Float>,
+        foregroundHeight: RuntimeData<ConnectionPointType.Float>,
         alphaMode: number
     ) {
         super(parentBlock);
@@ -136,21 +135,24 @@ export class CompositionShaderBinding extends ShaderBinding {
         const foregroundHeight = this._foregroundHeight.value;
         const alphaMode = this._alphaMode;
 
-        const fgSize = foreground.getSize();
-
         effect.setInt(this.getRemappedName("alphaMode"), alphaMode);
         effect.setTexture(this.getRemappedName("background"), background);
         effect.setTexture(this.getRemappedName("foreground"), foreground);
-        effect.setFloat2(
-            this.getRemappedName("scaleUV"),
-            (foregroundWidth * fgSize.width) / width,
-            (foregroundHeight * fgSize.height) / height
-        );
-        effect.setFloat2(
-            this.getRemappedName("translateUV"),
-            (foregroundLeft * fgSize.width) / width,
-            (foregroundTop * fgSize.height) / height
-        );
+
+        if (foreground) {
+            const fgSize = foreground.getSize();
+
+            effect.setFloat2(
+                this.getRemappedName("scaleUV"),
+                (foregroundWidth * fgSize.width) / width,
+                (foregroundHeight * fgSize.height) / height
+            );
+            effect.setFloat2(
+                this.getRemappedName("translateUV"),
+                (foregroundLeft * fgSize.width) / width,
+                (foregroundTop * fgSize.height) / height
+            );
+        }
     }
 }
 
@@ -178,7 +180,11 @@ export class CompositionBlock extends ShaderBlock {
     /**
      * The foreground texture to composite in.
      */
-    public readonly foreground = this._registerInput("foreground", ConnectionPointType.Texture);
+    public readonly foreground = this._registerOptionalInput(
+        "foreground",
+        ConnectionPointType.Texture,
+        createStrongRef(null)
+    );
 
     /**
      * Defines where the top of the texture to composite in should be displayed. (between 0 and 1).

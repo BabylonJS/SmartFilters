@@ -1,7 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
     ShaderBlock,
     ConnectionPointType,
@@ -67,8 +66,8 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Contrast block.
  */
 export class ContrastShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
-    private readonly _intensity: StrongRef<number>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _intensity: RuntimeData<ConnectionPointType.Float>;
 
     /**
      * Creates a new shader binding instance for the Contrast block.
@@ -76,7 +75,11 @@ export class ContrastShaderBinding extends ShaderBinding {
      * @param inputTexture - The input texture
      * @param intensity - The intensity of the effect
      */
-    constructor(parentBlock: IDisableableBlock, inputTexture: StrongRef<ThinTexture>, intensity: StrongRef<number>) {
+    constructor(
+        parentBlock: IDisableableBlock,
+        inputTexture: RuntimeData<ConnectionPointType.Texture>,
+        intensity: RuntimeData<ConnectionPointType.Float>
+    ) {
         super(parentBlock);
         this._inputTexture = inputTexture;
         this._intensity = intensity;

@@ -1,7 +1,5 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
-
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 
 const shaderProgram = injectDisableUniform({
@@ -36,14 +34,14 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the BlackAndWhite block.
  */
 export class BlackAndWhiteShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**
      * Creates a new shader binding instance for the BlackAndWhite block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      */
-    constructor(parentBlock: IDisableableBlock, inputTexture: StrongRef<ThinTexture>) {
+    constructor(parentBlock: IDisableableBlock, inputTexture: RuntimeData<ConnectionPointType.Texture>) {
         super(parentBlock);
         this._inputTexture = inputTexture;
     }

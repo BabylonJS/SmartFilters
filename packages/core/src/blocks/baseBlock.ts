@@ -220,7 +220,7 @@ export abstract class BaseBlock implements ICommandOwner {
         // Check if any inputs are Textures which aren't yet ready, and if so, ensure init waits for them to be ready
         for (const input of this._inputs) {
             if (input.type === ConnectionPointType.Texture) {
-                const texture = input.runtimeData?.value as Nullable<ConnectionPointValue<typeof input.type>>;
+                const texture = input.runtimeData?.value as ConnectionPointValue<ConnectionPointType.Texture>;
                 if (texture && !texture.isReady()) {
                     const internalTexture = texture.getInternalTexture();
                     if (internalTexture) {

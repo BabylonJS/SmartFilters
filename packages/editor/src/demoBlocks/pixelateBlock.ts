@@ -1,5 +1,4 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 import {
     ConnectionPointType,
     injectDisableUniform,
@@ -7,8 +6,8 @@ import {
     ShaderBlock,
     type SmartFilter,
     type IDisableableBlock,
-    type StrongRef,
     createStrongRef,
+    type RuntimeData,
 } from "@babylonjs/smart-filters";
 
 const shaderProgram = injectDisableUniform({
@@ -54,8 +53,8 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Pixelate block.
  */
 export class PixelateShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
-    private readonly _intensity: StrongRef<number>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _intensity: RuntimeData<ConnectionPointType.Float>;
 
     /**
      * Creates a new shader binding instance for the Kaleidoscope block.
@@ -63,7 +62,11 @@ export class PixelateShaderBinding extends ShaderBinding {
      * @param inputTexture - The input texture
      * @param intensity - The intensity of the effect
      */
-    constructor(parentBlock: IDisableableBlock, inputTexture: StrongRef<ThinTexture>, intensity: StrongRef<number>) {
+    constructor(
+        parentBlock: IDisableableBlock,
+        inputTexture: RuntimeData<ConnectionPointType.Texture>,
+        intensity: RuntimeData<ConnectionPointType.Float>
+    ) {
         super(parentBlock);
         this._inputTexture = inputTexture;
         this._intensity = intensity;

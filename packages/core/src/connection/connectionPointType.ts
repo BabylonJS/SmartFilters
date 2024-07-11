@@ -1,5 +1,6 @@
 import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 import type { IColor3Like, IColor4Like } from "@babylonjs/core/Maths/math.like";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * Defines the type of a connection point.
@@ -23,7 +24,7 @@ export enum ConnectionPointType {
 // prettier-ignore
 export type ConnectionPointValue<T extends ConnectionPointType = ConnectionPointType> =
     T extends ConnectionPointType.Float ? number :
-    T extends ConnectionPointType.Texture ? ThinTexture :
+    T extends ConnectionPointType.Texture ? Nullable<ThinTexture> :
     T extends ConnectionPointType.Color3 ? IColor3Like :
     T extends ConnectionPointType.Color4 ? IColor4Like :
     T extends ConnectionPointType.Boolean ? boolean :

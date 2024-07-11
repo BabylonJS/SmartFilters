@@ -1,7 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 
 const shaderProgram = injectDisableUniform({
@@ -82,8 +81,8 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Glass block.
  */
 export class GlassShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
-    private readonly _time: StrongRef<number>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
      * Creates a new shader binding instance for the Glass block.
@@ -91,7 +90,11 @@ export class GlassShaderBinding extends ShaderBinding {
      * @param inputTexture - the input texture
      * @param time - the time
      */
-    constructor(parentBlock: IDisableableBlock, inputTexture: StrongRef<ThinTexture>, time: StrongRef<number>) {
+    constructor(
+        parentBlock: IDisableableBlock,
+        inputTexture: RuntimeData<ConnectionPointType.Texture>,
+        time: RuntimeData<ConnectionPointType.Float>
+    ) {
         super(parentBlock);
         this._inputTexture = inputTexture;
         this._time = time;

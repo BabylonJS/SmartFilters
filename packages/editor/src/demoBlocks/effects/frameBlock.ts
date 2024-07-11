@@ -1,7 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 
 const shaderProgram = injectDisableUniform({
@@ -51,10 +50,10 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Frame block.
  */
 export class FrameShaderBinding extends ShaderBinding {
-    private readonly _backgroundTexture: StrongRef<ThinTexture>;
-    private readonly _frameTexture: StrongRef<ThinTexture>;
-    private readonly _foregroundTexture: StrongRef<ThinTexture>;
-    private readonly _overlayTexture: StrongRef<ThinTexture>;
+    private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _frameTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _foregroundTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _overlayTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**
      * Creates a new shader binding instance for the Frame block.
@@ -66,10 +65,10 @@ export class FrameShaderBinding extends ShaderBinding {
      */
     constructor(
         parentBlock: IDisableableBlock,
-        backgroundTexture: StrongRef<ThinTexture>,
-        frameTexture: StrongRef<ThinTexture>,
-        foregroundTexture: StrongRef<ThinTexture>,
-        overlayTexture: StrongRef<ThinTexture>
+        backgroundTexture: RuntimeData<ConnectionPointType.Texture>,
+        frameTexture: RuntimeData<ConnectionPointType.Texture>,
+        foregroundTexture: RuntimeData<ConnectionPointType.Texture>,
+        overlayTexture: RuntimeData<ConnectionPointType.Texture>
     ) {
         super(parentBlock);
         this._backgroundTexture = backgroundTexture;
