@@ -1,8 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
-import type { IColor3Like } from "@babylonjs/core/Maths/math.like";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
     ShaderBlock,
     ConnectionPointType,
@@ -49,10 +47,10 @@ const shaderProgram = injectDisableUniform({
  * The shader bindings for the Green block.
  */
 export class GreenShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
-    private readonly _backgroundTexture: StrongRef<ThinTexture>;
-    private readonly _reference: StrongRef<IColor3Like>;
-    private readonly _distance: StrongRef<number>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
+    private readonly _reference: RuntimeData<ConnectionPointType.Color3>;
+    private readonly _distance: RuntimeData<ConnectionPointType.Float>;
 
     /**
      * Creates a new shader binding instance for the Green block.
@@ -64,10 +62,10 @@ export class GreenShaderBinding extends ShaderBinding {
      */
     constructor(
         parentBlock: IDisableableBlock,
-        inputTexture: StrongRef<ThinTexture>,
-        backgroundTexture: StrongRef<ThinTexture>,
-        reference: StrongRef<IColor3Like>,
-        distance: StrongRef<number>
+        inputTexture: RuntimeData<ConnectionPointType.Texture>,
+        backgroundTexture: RuntimeData<ConnectionPointType.Texture>,
+        reference: RuntimeData<ConnectionPointType.Color3>,
+        distance: RuntimeData<ConnectionPointType.Float>
     ) {
         super(parentBlock);
         this._inputTexture = inputTexture;

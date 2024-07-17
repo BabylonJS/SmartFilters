@@ -93,7 +93,11 @@ export class RenderTargetGenerator {
                             continue;
                         }
                         const connectedBlock = input.connectedTo.ownerBlock;
-                        if (connectedBlock instanceof ShaderBlock && connectedBlock.output.runtimeData) {
+                        if (
+                            connectedBlock instanceof ShaderBlock &&
+                            connectedBlock.output.runtimeData &&
+                            connectedBlock.output.runtimeData.value
+                        ) {
                             this._releaseTexture(connectedBlock.output.runtimeData.value, connectedBlock.textureRatio);
                         }
                     }

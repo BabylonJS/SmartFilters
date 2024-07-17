@@ -1,6 +1,6 @@
 {
     "name": "@babylonjs/smart-filters",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Babylon.js Smart Filter core and common block library",
     "author": {
         "name": "Sebastien VANDENBERGHE"
@@ -39,6 +39,7 @@
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "versionUp": "node tools/versionUp.js",
         "build": "tsc -p ./tsconfig.build.json",
+        "watch": "tsc -p ./tsconfig.build.json --watch",
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {

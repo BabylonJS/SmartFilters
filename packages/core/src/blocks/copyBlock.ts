@@ -1,12 +1,11 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import type { SmartFilter } from "../smartFilter";
-import type { StrongRef } from "../runtime/strongRef";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBlock } from "./shaderBlock.js";
 import { ShaderBinding } from "../runtime/shaderRuntime.js";
+import type { RuntimeData } from "../connection/connectionPoint";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -33,14 +32,14 @@ const shaderProgram: ShaderProgram = {
  * The shader bindings for the Copy block.
  */
 export class CopyShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**
      * Creates a new shader binding instance for the copy block.
      * @param parentBlock - The parent block
      * @param inputTexture - defines the input texture to copy
      */
-    constructor(parentBlock: CopyBlock, inputTexture: StrongRef<ThinTexture>) {
+    constructor(parentBlock: CopyBlock, inputTexture: RuntimeData<ConnectionPointType.Texture>) {
         super(parentBlock);
         this._inputTexture = inputTexture;
     }

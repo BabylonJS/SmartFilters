@@ -18,7 +18,7 @@ nbproject
 junit.xml
 
 # Node Modules
-node_modules/*
+**/node_modules/*
 
 # Local dist
 **/www/scripts/**

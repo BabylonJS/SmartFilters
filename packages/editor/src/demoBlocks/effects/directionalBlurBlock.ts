@@ -1,7 +1,6 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
-import type { SmartFilter, StrongRef, IDisableableBlock } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 
 const shaderProgram = injectDisableUniform({
@@ -51,7 +50,7 @@ const wideWeights = Float32Array.from([0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05]);
  * The shader bindings for the DirectionalBlur block.
  */
 export class DirectionalBlurShaderBinding extends ShaderBinding {
-    private readonly _inputTexture: StrongRef<ThinTexture>;
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _blurHorizontalWidth: number;
     private readonly _blurVerticalWidth: number;
 
@@ -64,7 +63,7 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
      */
     constructor(
         parentBlock: IDisableableBlock,
-        inputTexture: StrongRef<ThinTexture>,
+        inputTexture: RuntimeData<ConnectionPointType.Texture>,
         blurHorizontalWidth: number,
         blurVerticalWidth: number
     ) {

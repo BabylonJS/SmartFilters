@@ -1,10 +1,8 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { Nullable } from "@babylonjs/core/types";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
 import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
-import type { StrongRef } from "../runtime/strongRef";
 import type { RuntimeData } from "../connection/connectionPoint";
 import { ShaderBlock } from "../blocks/shaderBlock.js";
 import { Binding } from "../runtime/shaderRuntime.js";
@@ -16,14 +14,17 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
  */
 export class OptimizedShaderBinding extends Binding {
     private _shaderBindings: Binding[];
-    private _inputTextures: { [name: string]: StrongRef<ThinTexture> };
+    private _inputTextures: { [name: string]: RuntimeData<ConnectionPointType.Texture> };
 
     /**
      * Creates a new shader binding instance for the OptimizedShader block.
      * @param shaderBindings - The list of shader bindings to process
      * @param inputTextures - The list of input textures to bind
      */
-    constructor(shaderBindings: Binding[], inputTextures: { [name: string]: StrongRef<ThinTexture> }) {
+    constructor(
+        shaderBindings: Binding[],
+        inputTextures: { [name: string]: RuntimeData<ConnectionPointType.Texture> }
+    ) {
         super();
 
         this._shaderBindings = shaderBindings;
@@ -56,7 +57,7 @@ export class OptimizedShaderBinding extends Binding {
  */
 export class OptimizedShaderBlock extends ShaderBlock {
     private _shaderBindings: Nullable<Binding[]>;
-    private _inputTextures: { [name: string]: StrongRef<ThinTexture> } = {};
+    private _inputTextures: { [name: string]: RuntimeData<ConnectionPointType.Texture> } = {};
     private _shaderProgram: ShaderProgram;
 
     /**
