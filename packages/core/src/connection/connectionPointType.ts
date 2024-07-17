@@ -1,5 +1,5 @@
 import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
-import type { IColor3Like, IColor4Like } from "@babylonjs/core/Maths/math.like";
+import type { IColor3Like, IColor4Like, IVector2Like } from "@babylonjs/core/Maths/math.like";
 import type { Nullable } from "@babylonjs/core/types";
 
 /**
@@ -16,6 +16,8 @@ export enum ConnectionPointType {
     Color4 = 4,
     /** Boolean */
     Boolean = 5,
+    /** Vector2 */
+    Vector2 = 6,
 }
 
 /**
@@ -28,4 +30,5 @@ export type ConnectionPointValue<T extends ConnectionPointType = ConnectionPoint
     T extends ConnectionPointType.Color3 ? IColor3Like :
     T extends ConnectionPointType.Color4 ? IColor4Like :
     T extends ConnectionPointType.Boolean ? boolean :
+    T extends ConnectionPointType.Vector2 ? IVector2Like :
     never;

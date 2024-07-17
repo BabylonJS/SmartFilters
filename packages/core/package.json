@@ -39,6 +39,7 @@
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "versionUp": "node tools/versionUp.js",
         "build": "tsc -p ./tsconfig.build.json",
+        "watch": "tsc -p ./tsconfig.build.json --watch",
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {
