@@ -59,7 +59,7 @@ export class CopyShaderBinding extends ShaderBinding {
  *
  * This might be helpful to duplicate a texture if necessary.
  *
- * It simply takes a texture as input and outputs it to another texture or the main canvas.
+ * It simply takes a texture as input and outputs it to another texture or to the main canvas.
  */
 export class CopyBlock extends ShaderBlock {
     /**
