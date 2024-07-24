@@ -6,9 +6,10 @@ import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/no
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
-import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
+import { ConnectionPointType, type InputBlock, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
 import { WebCamInputBlock, type WebCamSource } from "../../demoBlocks/index.js";
+import { ImageSourcePropertyTabComponent } from "./imageSourcePropertyTabComponent.js";
 
 type InputPropertyTabComponentState = {
     webCamSourceOptions: IInspectableOptions[];
@@ -215,6 +216,14 @@ export class InputPropertyTabComponent extends react.Component<
                                 ></OptionsLine>
                             );
                         }
+                    } else {
+                        return (
+                            <ImageSourcePropertyTabComponent
+                                inputBlock={inputBlock as InputBlock<ConnectionPointType.Texture>}
+                                nodeData={this.props.nodeData}
+                                stateManager={this.props.stateManager}
+                            />
+                        );
                     }
                 }
                 break;
