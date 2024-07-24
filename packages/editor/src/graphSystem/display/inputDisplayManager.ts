@@ -74,7 +74,7 @@ export class InputDisplayManager implements IDisplayManager {
                     const webCamInputBlock = inputBlock as WebCamInputBlock;
                     value = webCamInputBlock.webcamSource?.name ?? "Default";
                 } else {
-                    value = "Display TBD";
+                    value = `<img src="${inputBlock.runtimeValue.value?.getInternalTexture()?.url}" />`;
                 }
                 break;
             }
