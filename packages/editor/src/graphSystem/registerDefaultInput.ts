@@ -1,13 +1,11 @@
 import { BlockNodeData } from "./blockNodeData.js";
 import type { ConnectionPoint, SmartFilter, RuntimeData } from "@babylonjs/smart-filters";
-import { InputBlock, ConnectionPointType, createStrongRef } from "@babylonjs/smart-filters";
-import { RawTexture } from "@babylonjs/core/Materials/Textures/rawTexture.js";
+import { InputBlock, ConnectionPointType, createStrongRef, createImageTexture } from "@babylonjs/smart-filters";
 import type { GlobalState } from "../globalState";
 import type { INodeContainer } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeContainer";
 import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/portData";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
 import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture.js";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture.js";
@@ -28,15 +26,7 @@ function createDefaultValue<U extends ConnectionPointType>(type: U, engine: Thin
         case ConnectionPointType.Color3:
             return createStrongRef({ r: 0, g: 0, b: 0 }) as RuntimeData<U>;
         case ConnectionPointType.Texture:
-            return createStrongRef(
-                new RawTexture(
-                    new Uint8Array([255, 255, 255, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 255, 255, 255]),
-                    2,
-                    2,
-                    5,
-                    engine
-                ) as ThinTexture
-            ) as RuntimeData<U>; // Constants.TEXTUREFORMAT_RGBA = 5
+            return createStrongRef(createImageTexture(engine, "/assets/logo.png")) as RuntimeData<U>;
         default:
             throw new Error(`Unknown connection point type ${type}`);
     }
