@@ -8,8 +8,10 @@ import {
 } from "@babylonjs/smart-filters";
 import { BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-editor";
 
+export const simpleLogoSmartFilterName = "Simple Logo";
+
 export function createSimpleLogoSmartFilter(engine: ThinEngine): SmartFilter {
-    const smartFilter = new SmartFilter("Simple Logo Filter");
+    const smartFilter = new SmartFilter(simpleLogoSmartFilterName);
     const logoTexture = createImageTexture(engine, "/assets/logo.png");
     const logoInput = new InputBlock(smartFilter, "logo", ConnectionPointType.Texture, createStrongRef(logoTexture));
     const blackAndWhite = new BlackAndWhiteBlock(smartFilter, "blackAndWhite");

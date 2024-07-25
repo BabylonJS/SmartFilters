@@ -38,6 +38,7 @@ let currentSmartFilter: SmartFilter | undefined;
  */
 function loadSmartFilter(name: string, optimize: boolean): void {
     SmartFilterEditor.Hide();
+    localStorage.setItem(LocalStorateSmartFilterName, name);
     currentSmartFilter = smartFilterLoader.loadSmartFilter(name, optimize);
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
