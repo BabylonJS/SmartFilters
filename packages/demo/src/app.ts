@@ -12,11 +12,19 @@ import {
 } from "@babylonjs/smart-filters";
 import { createSimpleWebcamFilter } from "./createSmartFilter";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { SmartFilterEditor, type TexturePreset } from "@babylonjs/smart-filters-editor";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink");
 const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
+
+// Editor inputs
+const texturePresets: TexturePreset[] = [
+    {
+        name: "Bablyon.js Logo",
+        url: "/assets/logo.png",
+    },
+];
 
 // Create the Web Engine.
 const antialias = true;
@@ -83,6 +91,7 @@ if (editActionLink) {
                 onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                     renderer.setRuntime(runtime);
                 },
+                texturePresets,
             });
         }
         if (renderer.runtime) {

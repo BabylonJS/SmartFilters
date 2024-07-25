@@ -9,6 +9,11 @@ import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
 
+export type TexturePreset = {
+    name: string;
+    url: string;
+};
+
 export class GlobalState {
     engine: ThinEngine;
 
@@ -38,6 +43,8 @@ export class GlobalState {
 
     onRuntimeCreatedObservable = new Observable<SmartFilterRuntime>();
 
+    texturePresets: TexturePreset[];
+
     private _runtime: Nullable<SmartFilterRuntime> = null;
     public get runtime(): Nullable<SmartFilterRuntime> {
         return this._runtime;
@@ -52,7 +59,12 @@ export class GlobalState {
         }
     }
 
-    public constructor(engine: ThinEngine, smartFilter: Nullable<SmartFilter>, hostElement: HTMLElement) {
+    public constructor(
+        engine: ThinEngine,
+        smartFilter: Nullable<SmartFilter>,
+        hostElement: HTMLElement,
+        texturePresets: TexturePreset[] = []
+    ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
         this.stateManager.lockObject = this.lockObject;
@@ -67,5 +79,6 @@ export class GlobalState {
         this.hostDocument = hostElement.ownerDocument!;
         this.hostWindow = hostElement.ownerDocument!.defaultView!;
         this.stateManager.hostDocument = this.hostDocument;
+        this.texturePresets = texturePresets;
     }
 }

@@ -1,7 +1,7 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import * as react from "react";
 import * as reactDOM from "react-dom";
-import { GlobalState } from "./globalState.js";
+import { GlobalState, type TexturePreset } from "./globalState.js";
 import { GraphEditor } from "./graphEditor.js";
 import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger.js";
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
@@ -17,6 +17,8 @@ export type SmartFilterEditorOptions = {
     hostElement?: HTMLElement;
 
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
+
+    texturePresets?: TexturePreset[];
 };
 
 const filterEditorPopupId = "filter-editor";
@@ -50,7 +52,12 @@ export class SmartFilterEditor {
             hostElement = Popup.CreatePopup("BABYLON.JS Smart Filter EDITOR", filterEditorPopupId, 1500, 800)!;
         }
 
-        const globalState = new GlobalState(options.engine, options.filter ?? null, hostElement);
+        const globalState = new GlobalState(
+            options.engine,
+            options.filter ?? null,
+            hostElement,
+            options.texturePresets
+        );
 
         const graphEditor = react.createElement(GraphEditor, {
             globalState: globalState,
