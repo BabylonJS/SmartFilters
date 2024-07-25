@@ -1,10 +1,16 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
-import { ConnectionPointType, InputBlock, SmartFilter, createStrongRef } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlock, PixelateBlock, WebCamInputBlock } from "@babylonjs/smart-filters-editor";
+import {
+    ConnectionPointType,
+    InputBlock,
+    SmartFilter,
+    createImageTexture,
+    createStrongRef,
+} from "@babylonjs/smart-filters";
+import { WebCamInputBlock, BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-editor";
 
-export function createSimpleWebcamFilter(engine: ThinEngine, logoTexture: ThinTexture): SmartFilter {
+export function createSimpleWebcamSmartFilter(engine: ThinEngine): SmartFilter {
     const smartFilter = new SmartFilter("Simple Webcam Filter");
+    const logoTexture = createImageTexture(engine, "/assets/logo.png");
     const webcamInput = new WebCamInputBlock(smartFilter, engine, createStrongRef(logoTexture));
     const blackAndWhite = new BlackAndWhiteBlock(smartFilter, "blackAndWhite");
     const pixelate = new PixelateBlock(smartFilter, "pixelate");
