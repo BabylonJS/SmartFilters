@@ -19,8 +19,9 @@ const optimize: boolean = false;
 const LocalStorateSmartFilterName = "SmartFilterName";
 
 // Manage our HTML elements
-const editActionLink = document.getElementById("editActionLink");
-const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
+const editActionLink = document.getElementById("editActionLink")!;
+const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
+const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -48,23 +49,35 @@ loadSmartFilter(
     optimize
 );
 
+// Populate the smart filter <select> list
+smartFilterLoader.manifests.forEach((manifest) => {
+    const option = document.createElement("option");
+    option.value = manifest.name;
+    option.innerText = manifest.name;
+    option.selected = manifest.name === currentSmartFilter?.name;
+    smartFilterSelect?.appendChild(option);
+});
+
+// Set up SmartFilter <select> handler
+smartFilterSelect.addEventListener("change", () => {
+    loadSmartFilter(smartFilterSelect.value, optimize);
+});
+
 // Set up editor button
-if (editActionLink) {
-    editActionLink.onclick = () => {
-        if (currentSmartFilter) {
-            // Display the editor
-            SmartFilterEditor.Show({
-                engine,
-                filter: currentSmartFilter,
-                onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-                    renderer.setRuntime(runtime);
-                },
-                texturePresets,
-            });
-        }
-        if (renderer.runtime) {
-            // Display debug info in the console
-            logCommands(renderer.runtime.commandBuffer);
-        }
-    };
-}
+editActionLink.onclick = () => {
+    if (currentSmartFilter) {
+        // Display the editor
+        SmartFilterEditor.Show({
+            engine,
+            filter: currentSmartFilter,
+            onRuntimeCreated: (runtime: SmartFilterRuntime) => {
+                renderer.setRuntime(runtime);
+            },
+            texturePresets,
+        });
+    }
+    if (renderer.runtime) {
+        // Display debug info in the console
+        logCommands(renderer.runtime.commandBuffer);
+    }
+};

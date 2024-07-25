@@ -8,20 +8,20 @@ export type SmartFilterManifest = {
 
 export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
-    private readonly _manifests: SmartFilterManifest[];
 
+    public readonly manifests: SmartFilterManifest[];
     public currentOptimizedSmartFilter: SmartFilter | undefined;
     public currentSmartFilter: SmartFilter | undefined;
 
     public get defaultSmartFilterName(): string {
-        const firstManifest = this._manifests[0];
+        const firstManifest = this.manifests[0];
         return firstManifest?.name || "";
     }
 
     constructor(engine: ThinEngine, manifests: SmartFilterManifest[]) {
         this._engine = engine;
-        this._manifests = manifests;
-        if (this._manifests.length === 0) {
+        this.manifests = manifests;
+        if (this.manifests.length === 0) {
             throw new Error(
                 "No SmartFilterManifests were passed to the SmartFilterLoader - add some manifests to smartFilterManifests.ts"
             );
@@ -29,9 +29,9 @@ export class SmartFilterLoader {
     }
 
     public loadSmartFilter(name: string, optimize: boolean): SmartFilter {
-        let manifest = this._manifests.find((m: SmartFilterManifest) => m.name === name);
+        let manifest = this.manifests.find((m: SmartFilterManifest) => m.name === name);
         if (!manifest) {
-            const firstSmartFilter = this._manifests[0];
+            const firstSmartFilter = this.manifests[0];
             if (!firstSmartFilter) {
                 throw new Error("No SmartFilter manifests were registered");
             }
