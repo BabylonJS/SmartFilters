@@ -100,4 +100,11 @@ export class SmartFilterEditor {
             globalState.onRuntimeCreatedObservable.add(options.onRuntimeCreated);
         }
     }
+
+    public static Hide() {
+        const popupWindow = (Popup as any)[filterEditorPopupId];
+        if (popupWindow) {
+            popupWindow.close();
+        }
+    }
 }

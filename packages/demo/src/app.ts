@@ -37,6 +37,7 @@ let currentSmartFilter: SmartFilter | undefined;
  * @param optimize - If true, the SmartFilter will be automatically optimized
  */
 function loadSmartFilter(name: string, optimize: boolean): void {
+    SmartFilterEditor.Hide();
     currentSmartFilter = smartFilterLoader.loadSmartFilter(name, optimize);
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
