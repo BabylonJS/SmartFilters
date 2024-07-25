@@ -1,8 +1,5 @@
 # To Do
 
-1. Default images
-    - Pass in list of texture images to editor (not baked in)
-    - Displayed as dropdown under Upload button
 1. BUG: use texture input, change, create new texture input, use it - new one is disposed
 1. Serialization system
     - Each block should come with serialize / deserialize / editor "extensions" (note that you should be able to include deserialize without the others)
