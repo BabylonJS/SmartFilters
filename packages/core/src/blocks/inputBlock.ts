@@ -15,7 +15,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 function isRuntimeData<U extends ConnectionPointType>(
     value: ConnectionPointValue<U> | RuntimeData<U>
 ): value is RuntimeData<U> {
-    return (value as RuntimeData<ConnectionPointType>).value !== undefined;
+    return value && (value as RuntimeData<ConnectionPointType>).value !== undefined;
 }
 
 /**

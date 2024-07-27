@@ -14,6 +14,7 @@ import { texturePresets } from "./configuration/texturePresets";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilterManifests";
+import { blockDeserializers } from "./configuration/blockDeserializers";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -31,7 +32,7 @@ const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 // Create our services
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine);
-const smartFilterLoader = new SmartFilterLoader(engine, smartFilterManifests);
+const smartFilterLoader = new SmartFilterLoader(engine, smartFilterManifests, blockDeserializers);
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;

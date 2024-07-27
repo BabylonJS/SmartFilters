@@ -1,6 +1,8 @@
+import type { Nullable } from "@babylonjs/core";
+
 export interface ISerializedBlockV1 {
     name: string;
-    type: string;
-    comments: string;
+    className: string;
+    comments: Nullable<string>;
     data: any;
 }

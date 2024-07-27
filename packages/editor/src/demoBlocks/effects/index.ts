@@ -10,3 +10,5 @@ export * from "./desaturateBlock.js";
 export * from "./contrastBlock.js";
 export * from "./greenScreenBlock.js";
 export * from "./blackAndWhiteAndBlurBlock.js";
+export * from "./blackAndWhiteBlock.deserializer.js";
+export * from "./pixelateBlock.deserializer.js";

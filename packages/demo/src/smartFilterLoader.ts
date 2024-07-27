@@ -1,13 +1,27 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { SmartFilterOptimizer, type SmartFilter } from "@babylonjs/smart-filters";
+import {
+    SmartFilterOptimizer,
+    type SmartFilter,
+    SmartFilterDeserializer,
+    type IBlockDeserializer,
+} from "@babylonjs/smart-filters";
 
-export type SmartFilterManifest = {
+export type SerializedSmartFilterManifest = {
+    type: "Serialized";
+    name: string;
+    smartFilterString: string;
+};
+export type HardCodedSmartFilterManifest = {
+    type: "HardCoded";
     name: string;
     createSmartFilter: (engine: ThinEngine) => SmartFilter;
 };
 
+export type SmartFilterManifest = HardCodedSmartFilterManifest | SerializedSmartFilterManifest;
+
 export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
+    private readonly _deserializer: SmartFilterDeserializer;
 
     public readonly manifests: SmartFilterManifest[];
     public currentOptimizedSmartFilter: SmartFilter | undefined;
@@ -18,7 +32,7 @@ export class SmartFilterLoader {
         return firstManifest?.name || "";
     }
 
-    constructor(engine: ThinEngine, manifests: SmartFilterManifest[]) {
+    constructor(engine: ThinEngine, manifests: SmartFilterManifest[], blockDeserializers: IBlockDeserializer[]) {
         this._engine = engine;
         this.manifests = manifests;
         if (this.manifests.length === 0) {
@@ -26,6 +40,7 @@ export class SmartFilterLoader {
                 "No SmartFilterManifests were passed to the SmartFilterLoader - add some manifests to smartFilterManifests.ts"
             );
         }
+        this._deserializer = new SmartFilterDeserializer(blockDeserializers);
     }
 
     public loadSmartFilter(name: string, optimize: boolean): SmartFilter {
@@ -38,7 +53,19 @@ export class SmartFilterLoader {
             manifest = firstSmartFilter;
         }
 
-        const smartFilter = manifest.createSmartFilter(this._engine);
+        let smartFilter: SmartFilter;
+        switch (manifest.type) {
+            case "HardCoded":
+                {
+                    smartFilter = manifest.createSmartFilter(this._engine);
+                }
+                break;
+            case "Serialized":
+                {
+                    smartFilter = this._deserializer.deserialize(manifest.smartFilterString);
+                }
+                break;
+        }
 
         if (optimize) {
             return this._optimize(smartFilter);

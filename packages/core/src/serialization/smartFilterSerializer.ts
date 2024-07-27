@@ -1,15 +1,15 @@
 import type { SmartFilter } from "../smartFilter";
-import type { ISerializedSmartFilterV1 } from "./v1/ISerializedSmartFilterV1";
+import type { SerializedSmartFilterV1 } from "./v1/SerializedSmartFilterV1";
 import type { ISerializedBlockV1 } from "./v1/ISerializedBlockV1";
 import type { BaseBlock } from "../blocks/baseBlock";
-import { inputBlockSerializer } from "../blocks/inputBlock.serialize.js";
+import { inputBlockSerializer } from "../blocks/inputBlock.serializer.js";
 import { OutputBlock } from "../blocks/outputBlock.js";
 import type { ISerializedConnectionV1 } from "./v1/ISerializedConnectionV1";
 import type { ConnectionPoint } from "../connection/connectionPoint";
 
 export interface IBlockSerializer {
     className: string;
-    serializeData: (block: BaseBlock) => any;
+    serialize: (block: BaseBlock) => ISerializedBlockV1;
 }
 
 function serializedConnectionPointsEqual(a: ISerializedConnectionV1, b: ISerializedConnectionV1): boolean {
@@ -26,7 +26,7 @@ export class SmartFilterSerializer {
     private readonly _blockSerializers: IBlockSerializer[];
 
     /**
-     * Creates a new SmartFilterSerializers
+     * Creates a new SmartFilterSerializer
      * @param blocksUsingDefaultSerialization - A list of the classNames of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
      * @param additionalBlockSerializers - An array of block serializers to use, beyond those for the core blocks
      */
@@ -35,7 +35,7 @@ export class SmartFilterSerializer {
         this._blockSerializers = [inputBlockSerializer, ...additionalBlockSerializers];
     }
 
-    public serialize(smartFilter: SmartFilter): ISerializedSmartFilterV1 {
+    public serialize(smartFilter: SmartFilter): SerializedSmartFilterV1 {
         const connections: ISerializedConnectionV1[] = [];
 
         const blocks = smartFilter.attachedBlocks.map((block: BaseBlock) => {
@@ -48,12 +48,12 @@ export class SmartFilterSerializer {
                 if (!serializer) {
                     throw new Error(`No serializer was provided for a block of type ${blockClassName}`);
                 }
-                data = serializer.serializeData(block);
+                data = serializer.serialize(block);
             }
 
             const serializedBlock: ISerializedBlockV1 = {
                 name: block.name,
-                type: block.getClassName(),
+                className: block.getClassName(),
                 comments: "", // TODO
                 data,
             };
@@ -92,6 +92,7 @@ export class SmartFilterSerializer {
 
         return {
             version: 1,
+            name: smartFilter.name,
             blocks,
             connections,
         };
