@@ -36,6 +36,18 @@ export function isDisableableBlock(block: BaseBlock): block is DisableableBlock 
     return (block as DisableableBlock).disabled !== undefined;
 }
 
+export abstract class InputBlockBase extends BaseBlock {
+    /**
+     * The class name of the block.
+     */
+    public static override ClassName = "InputBlock";
+
+    /**
+     * The type of the input.
+     */
+    public abstract readonly type: ConnectionPointType;
+}
+
 /**
  * This represents any inputs used in the graph.
  *
@@ -43,12 +55,7 @@ export function isDisableableBlock(block: BaseBlock): block is DisableableBlock 
  *
  * The value is dynamically set by the user.
  */
-export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
-    /**
-     * The class name of the block.
-     */
-    public static override ClassName = "InputBlock";
-
+export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
     /**
      * The output connection point of the block.
      */

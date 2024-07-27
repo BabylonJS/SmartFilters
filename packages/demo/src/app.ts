@@ -2,9 +2,14 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
-import { logCommands, type SmartFilter, type SmartFilterRuntime } from "@babylonjs/smart-filters";
+import {
+    logCommands,
+    SmartFilterSerializer,
+    type SmartFilter,
+    type SmartFilterRuntime,
+} from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { BlackAndWhiteBlock, PixelateBlock, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { texturePresets } from "./configuration/texturePresets";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
@@ -43,6 +48,9 @@ function loadSmartFilter(name: string, optimize: boolean): void {
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
+
+    const serializer = new SmartFilterSerializer([BlackAndWhiteBlock.ClassName, PixelateBlock.ClassName], []);
+    console.log(JSON.stringify(serializer.serialize(currentSmartFilter), null, 2));
 }
 
 // Load the initial SmartFilter
