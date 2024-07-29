@@ -4,9 +4,10 @@
     "compilerOptions": {
         "rootDir": "../",
         "outDir": "./.temp",
-        "composite": true
+        "composite": true,
+        "resolveJsonModule": true
     },
 
-    "include": ["../**/*.ts", "../**/*.tsx"],
+    "include": ["../**/*.ts", "../**/*.tsx", "./src/configuration/smartFilters/serialized/*.json"],
     "exclude": ["**/node_modules", "**/.temp"]
 }

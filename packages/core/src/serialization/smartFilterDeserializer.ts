@@ -23,8 +23,8 @@ export class SmartFilterDeserializer {
         );
     }
 
-    public deserialize(engine: ThinEngine, serializedData: string): SmartFilter {
-        const serializedSmartFilter: SerializedSmartFilter = JSON.parse(serializedData);
+    public deserialize(engine: ThinEngine, smartFilterJson: any): SmartFilter {
+        const serializedSmartFilter: SerializedSmartFilter = smartFilterJson;
         switch (serializedSmartFilter.version) {
             case 1:
                 return this._deserializeV1(engine, serializedSmartFilter);

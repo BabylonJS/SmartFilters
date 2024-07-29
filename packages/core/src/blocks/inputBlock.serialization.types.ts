@@ -1,5 +1,5 @@
 import type { Nullable } from "@babylonjs/core";
-import { ConnectionPointType } from "../connection/connectionPointType.js";
+import type { ConnectionPointType } from "../connection/connectionPointType.js";
 
 export type SerializedTextureInputBlockData = {
     inputType: ConnectionPointType.Texture;

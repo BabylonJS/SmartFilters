@@ -9,7 +9,7 @@ import {
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
     name: string;
-    smartFilterString: string;
+    smartFilterJson: any;
 };
 export type HardCodedSmartFilterManifest = {
     type: "HardCoded";
@@ -62,7 +62,7 @@ export class SmartFilterLoader {
                 break;
             case "Serialized":
                 {
-                    smartFilter = this._deserializer.deserialize(this._engine, manifest.smartFilterString);
+                    smartFilter = this._deserializer.deserialize(this._engine, manifest.smartFilterJson);
                 }
                 break;
         }

@@ -13,7 +13,7 @@ import { BlackAndWhiteBlock, PixelateBlock, SmartFilterEditor } from "@babylonjs
 import { texturePresets } from "./configuration/texturePresets";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
-import { smartFilterManifests } from "./configuration/smartFilterManifests";
+import { smartFilterManifests } from "./configuration/smartFilters";
 import { blockDeserializers } from "./configuration/blockDeserializers";
 
 // Hardcoded options there is no UI for
