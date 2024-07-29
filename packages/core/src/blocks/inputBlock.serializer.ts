@@ -1,5 +1,4 @@
 import { InputBlockBase, type InputBlock } from "./inputBlock.js";
-import type { IBlockSerializer } from "../serialization/smartFilterSerializer.js";
 import type { BaseBlock } from "./baseBlock.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import type {
@@ -8,15 +7,16 @@ import type {
     SerializedInputBlockData,
     SerializedTextureInputBlockData,
 } from "./inputBlock.serialization.types";
+import type { IBlockSerializer } from "../serialization/smartFilterSerializer.types.js";
 
 function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlockData {
     switch (inputBlock.type) {
         case ConnectionPointType.Texture:
-            return SerializeTextureInputBlock(inputBlock as InputBlock<ConnectionPointType.Texture>);
+            return serializeTextureInputBlock(inputBlock as InputBlock<ConnectionPointType.Texture>);
         case ConnectionPointType.Boolean:
-            return SerializeBooleanInputBlock(inputBlock as InputBlock<ConnectionPointType.Boolean>);
+            return serializeBooleanInputBlock(inputBlock as InputBlock<ConnectionPointType.Boolean>);
         case ConnectionPointType.Float:
-            return SerializeFloatInputBlock(inputBlock as InputBlock<ConnectionPointType.Float>);
+            return serializeFloatInputBlock(inputBlock as InputBlock<ConnectionPointType.Float>);
         case ConnectionPointType.Color3:
             throw new Error("Not implemented: Color3");
         case ConnectionPointType.Color4:
@@ -26,7 +26,7 @@ function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlo
     }
 }
 
-function SerializeTextureInputBlock(
+function serializeTextureInputBlock(
     inputBlock: InputBlock<ConnectionPointType.Texture>
 ): SerializedTextureInputBlockData {
     return {
@@ -35,7 +35,7 @@ function SerializeTextureInputBlock(
     };
 }
 
-function SerializeBooleanInputBlock(
+function serializeBooleanInputBlock(
     inputBlock: InputBlock<ConnectionPointType.Boolean>
 ): SerializedBooleanInputBlockData {
     return {
@@ -44,7 +44,7 @@ function SerializeBooleanInputBlock(
     };
 }
 
-function SerializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Float>): SerializedFloatInputBlockData {
+function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Float>): SerializedFloatInputBlockData {
     return {
         inputType: ConnectionPointType.Float,
         value: inputBlock.runtimeValue.value,

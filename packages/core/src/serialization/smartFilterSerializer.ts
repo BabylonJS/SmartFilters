@@ -3,14 +3,11 @@ import type { SerializedSmartFilterV1 } from "./v1/SerializedSmartFilterV1";
 import type { ISerializedBlockV1 } from "./v1/ISerializedBlockV1";
 import type { BaseBlock } from "../blocks/baseBlock";
 import { inputBlockSerializer } from "../blocks/inputBlock.serializer.js";
-import { OutputBlock } from "../blocks/outputBlock.js";
 import type { ISerializedConnectionV1 } from "./v1/ISerializedConnectionV1";
 import type { ConnectionPoint } from "../connection/connectionPoint";
-
-export interface IBlockSerializer {
-    className: string;
-    serialize: (block: BaseBlock) => ISerializedBlockV1;
-}
+import type { IBlockSerializer, SerializeBlockV1 } from "./smartFilterSerializer.types";
+import { defaultBlockSerializer } from "./defaultBlockSerializer.js";
+import { OutputBlock } from "../blocks/outputBlock.js";
 
 function serializedConnectionPointsEqual(a: ISerializedConnectionV1, b: ISerializedConnectionV1): boolean {
     return (
@@ -22,8 +19,7 @@ function serializedConnectionPointsEqual(a: ISerializedConnectionV1, b: ISeriali
 }
 
 export class SmartFilterSerializer {
-    private readonly _blocksUsingDefaultSerialization: string[];
-    private readonly _blockSerializers: IBlockSerializer[];
+    private readonly _blockSerializers: Map<string, SerializeBlockV1> = new Map();
 
     /**
      * Creates a new SmartFilterSerializer
@@ -31,33 +27,28 @@ export class SmartFilterSerializer {
      * @param additionalBlockSerializers - An array of block serializers to use, beyond those for the core blocks
      */
     public constructor(blocksUsingDefaultSerialization: string[], additionalBlockSerializers: IBlockSerializer[]) {
-        this._blocksUsingDefaultSerialization = [OutputBlock.ClassName, ...blocksUsingDefaultSerialization];
-        this._blockSerializers = [inputBlockSerializer, ...additionalBlockSerializers];
+        this._blockSerializers.set(inputBlockSerializer.className, inputBlockSerializer.serialize);
+        this._blockSerializers.set(OutputBlock.ClassName, defaultBlockSerializer);
+        blocksUsingDefaultSerialization.forEach((block) => {
+            this._blockSerializers.set(block, defaultBlockSerializer);
+        });
+        additionalBlockSerializers.forEach((serializer) =>
+            this._blockSerializers.set(serializer.className, serializer.serialize)
+        );
     }
 
     public serialize(smartFilter: SmartFilter): SerializedSmartFilterV1 {
         const connections: ISerializedConnectionV1[] = [];
 
         const blocks = smartFilter.attachedBlocks.map((block: BaseBlock) => {
-            const blockClassName = block.getClassName();
-            let data: any = undefined;
-            if (!this._blocksUsingDefaultSerialization.find((b: string) => b === blockClassName)) {
-                const serializer = this._blockSerializers.find(
-                    (serializer: IBlockSerializer) => serializer.className === blockClassName
-                );
-                if (!serializer) {
-                    throw new Error(`No serializer was provided for a block of type ${blockClassName}`);
-                }
-                data = serializer.serialize(block);
+            // Serialize the block itself
+            const serializeFn = this._blockSerializers.get(block.getClassName());
+            if (!serializeFn) {
+                throw new Error(`No serializer was provided for a block of type ${block.getClassName()}`);
             }
+            const serializedBlock: ISerializedBlockV1 = serializeFn(block);
 
-            const serializedBlock: ISerializedBlockV1 = {
-                name: block.name,
-                className: block.getClassName(),
-                comments: "", // TODO
-                data,
-            };
-
+            // Serialize the connections to the inputs
             block.inputs.forEach((input: ConnectionPoint) => {
                 const connectedTo = input.connectedTo;
                 if (connectedTo) {
@@ -73,6 +64,7 @@ export class SmartFilterSerializer {
                 }
             });
 
+            // Serialize the connections to the outputs
             block.outputs.forEach((output: ConnectionPoint) => {
                 output.endpoints.forEach((input: ConnectionPoint) => {
                     const newConnection: ISerializedConnectionV1 = {

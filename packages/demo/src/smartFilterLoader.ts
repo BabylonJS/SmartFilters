@@ -62,7 +62,7 @@ export class SmartFilterLoader {
                 break;
             case "Serialized":
                 {
-                    smartFilter = this._deserializer.deserialize(manifest.smartFilterString);
+                    smartFilter = this._deserializer.deserialize(this._engine, manifest.smartFilterString);
                 }
                 break;
         }

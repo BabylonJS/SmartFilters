@@ -21,70 +21,71 @@ export const smartFilterManifests: SmartFilterManifest[] = [
         type: "Serialized",
         name: "Serialization Test",
         smartFilterString: `
-        {
+            {
             "version": 1,
             "name": "Serialization Test",
             "blocks": [
-              {
+                {
                 "name": "output",
                 "className": "OutputBlock",
                 "comments": ""
-              },
-              {
-                "name": "WebCam",
+                },
+                {
+                "name": "logo",
                 "className": "InputBlock",
-                "comments": "",
+                "comments": null,
                 "data": {
-                  "inputType": 2,
-                  "url": "/assets/logo.png"
+                    "inputType": 2,
+                    "url": "/assets/logo.png"
                 }
-              },
-              {
+                },
+                {
                 "name": "blackAndWhite",
                 "className": "BlackAndWhiteBlock",
                 "comments": ""
-              },
-              {
+                },
+                {
                 "name": "pixelate",
                 "className": "PixelateBlock",
                 "comments": ""
-              },
-              {
+                },
+                {
                 "name": "intensity",
                 "className": "InputBlock",
-                "comments": "",
+                "comments": null,
                 "data": {
-                  "inputType": 1,
-                  "value": 0.4
+                    "inputType": 1,
+                    "value": 0.4
                 }
-              }
+                }
             ],
             "connections": [
-              {
+                {
                 "inputBlock": "output",
                 "inputConnectionPoint": "input",
                 "outputBlock": "pixelate",
                 "outputConnectionPoint": "output"
-              },
-              {
+                },
+                {
                 "inputBlock": "blackAndWhite",
                 "inputConnectionPoint": "input",
-                "outputBlock": "WebCam",
+                "outputBlock": "logo",
                 "outputConnectionPoint": "output"
-              },
-              {
+                },
+                {
                 "inputBlock": "pixelate",
                 "inputConnectionPoint": "input",
                 "outputBlock": "blackAndWhite",
                 "outputConnectionPoint": "output"
-              },
-              {
+                },
+                {
                 "inputBlock": "pixelate",
                 "inputConnectionPoint": "intensity",
                 "outputBlock": "intensity",
                 "outputConnectionPoint": "output"
-              }
+                }
             ]
-          }`,
+            }
+        `,
     },
 ];
