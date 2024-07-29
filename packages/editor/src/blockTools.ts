@@ -17,7 +17,7 @@ import {
     PosterizeBlock,
     TileBlock,
     WipeBlock,
-} from "./demoBlocks/index.js";
+} from "@babylonjs/smart-filters-demo-block-library";
 
 export class BlockTools {
     public static GetBlockFromString(data: string, smartFilter: SmartFilter): Nullable<BaseBlock> {

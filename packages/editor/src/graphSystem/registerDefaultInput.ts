@@ -9,7 +9,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 
 import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture.js";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture.js";
-import { WebCamInputBlock } from "../demoBlocks/index.js";
+import { WebCamInputBlock } from "@babylonjs/smart-filters-demo-block-library";
 
 /**
  * Creates a default value for the input block of a certain type

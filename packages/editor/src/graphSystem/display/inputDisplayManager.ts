@@ -6,7 +6,7 @@ import styles from "../../assets/styles/graphSystem/display/inputDisplayManager.
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { Color3 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";
-import type { WebCamInputBlock } from "../../demoBlocks/index.js";
+import type { WebCamInputBlock } from "@babylonjs/smart-filters-demo-block-library";
 
 export class InputDisplayManager implements IDisplayManager {
     public getHeaderClass(_nodeData: INodeData) {

@@ -5,3 +5,4 @@ export * from "./smartFilterSerializer.js";
 export * from "./defaultBlockSerializer.js";
 export * from "./defaultShaderBlockDeserializer.js";
 export * from "./smartFilterDeserializer.types.js";
+export * from "./smartFilterSerializer.types.js";

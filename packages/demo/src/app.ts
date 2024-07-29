@@ -9,12 +9,13 @@ import {
     type SmartFilterRuntime,
 } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { BlackAndWhiteBlock, PixelateBlock, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { texturePresets } from "./configuration/texturePresets";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { blockDeserializers } from "./configuration/blockDeserializers";
+import { blocksUsingDefaultSerialization, additionalBlockSerializers } from "./configuration/blockSerializers";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -50,7 +51,7 @@ function loadSmartFilter(name: string, optimize: boolean): void {
         console.error("Could not start rendering", err);
     });
 
-    const serializer = new SmartFilterSerializer([BlackAndWhiteBlock.ClassName, PixelateBlock.ClassName], []);
+    const serializer = new SmartFilterSerializer(blocksUsingDefaultSerialization, additionalBlockSerializers);
     console.log(JSON.stringify(serializer.serialize(currentSmartFilter), null, 2));
 }
 

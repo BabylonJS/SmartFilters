@@ -5,6 +5,7 @@
 
         "paths": {
             "@babylonjs/smart-filters": ["core/src"],
+            "@babylonjs/smart-filters-demo-block-library": ["demoBlocks/src"],
             "@babylonjs/smart-filters-editor": ["editor/src"]
         }
     }

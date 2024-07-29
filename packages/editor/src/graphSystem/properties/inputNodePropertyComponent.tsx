@@ -8,7 +8,7 @@ import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineCo
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type InputBlock, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
-import { WebCamInputBlock, type WebCamSource } from "../../demoBlocks/index.js";
+import { WebCamInputBlock, type WebCamSource } from "@babylonjs/smart-filters-demo-block-library";
 import { ImageSourcePropertyTabComponent } from "./imageSourcePropertyTabComponent.js";
 
 type InputPropertyTabComponentState = {

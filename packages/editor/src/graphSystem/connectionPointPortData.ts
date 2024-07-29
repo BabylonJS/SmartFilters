@@ -6,7 +6,7 @@ import { PortDataDirection } from "@babylonjs/shared-ui-components/nodeGraphSyst
 import { TypeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/typeLedger.js";
 import type { ConnectionPoint } from "@babylonjs/smart-filters";
 import { getCompatibilityIssueMessage, ConnectionPointDirection } from "@babylonjs/smart-filters";
-import { asIMonitorConnectionChanges } from "../demoBlocks/inputs/IMonitorConnectionChanges.js";
+import { asIMonitorConnectionChanges } from "@babylonjs/smart-filters-demo-block-library";
 
 export class ConnectionPointPortData implements IPortData {
     private _connectedPort: Nullable<IPortData> = null;

@@ -4,8 +4,7 @@ import { simpleWebcamSmartFilterName, createSimpleWebcamSmartFilter } from "./sm
 import * as serializedSimpleLogo from "./smartFilters/serialized/serializedSimpleLogo.json";
 
 /**
- * The manifests describing all of the Smart Filters than can be loaded in the app's
- * UI.
+ * The manifests describing all of the Smart Filters than can be loaded in the app's UI.
  */
 export const smartFilterManifests: SmartFilterManifest[] = [
     {

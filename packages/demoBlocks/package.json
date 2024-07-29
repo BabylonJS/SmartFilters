@@ -1,7 +1,7 @@
 {
-    "name": "@babylonjs/smart-filters",
+    "name": "@babylonjs/smart-filters-demo-block-library",
     "version": "0.2.0",
-    "description": "Babylon.js Smart Filter core",
+    "description": "Babylon.js Smart Filter block library for the demo app",
     "author": {
         "name": "Sebastien VANDENBERGHE"
     },
