@@ -3,7 +3,7 @@ import {
     SmartFilterOptimizer,
     type SmartFilter,
     SmartFilterDeserializer,
-    type IBlockDeserializer,
+    type IBlockDeserializerV1,
 } from "@babylonjs/smart-filters";
 
 export type SerializedSmartFilterManifest = {
@@ -32,7 +32,7 @@ export class SmartFilterLoader {
         return firstManifest?.name || "";
     }
 
-    constructor(engine: ThinEngine, manifests: SmartFilterManifest[], blockDeserializers: IBlockDeserializer[]) {
+    constructor(engine: ThinEngine, manifests: SmartFilterManifest[], blockDeserializers: IBlockDeserializerV1[]) {
         this._engine = engine;
         this.manifests = manifests;
         if (this.manifests.length === 0) {

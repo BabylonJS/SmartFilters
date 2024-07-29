@@ -6,7 +6,7 @@ export const defaultBlockSerializer: SerializeBlockV1 = (block: BaseBlock): ISer
     return {
         name: block.name,
         className: block.getClassName(),
-        comments: "", // TODO
+        comments: "", // TODO - serialize comments and editor data about block positions
         data: undefined,
     };
 };

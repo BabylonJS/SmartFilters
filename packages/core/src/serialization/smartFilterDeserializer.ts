@@ -7,20 +7,16 @@ import { inputBlockDeserializer } from "../blocks/inputBlock.deserializer.js";
 import { OutputBlock } from "../blocks/outputBlock.js";
 import type { ISerializedConnectionV1 } from "./v1/ISerializedConnectionV1.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-
-export interface IBlockDeserializer {
-    className: string;
-    deserialize: (engine: ThinEngine, smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => BaseBlock;
-}
+import type { IBlockDeserializerV1 } from "./smartFilterDeserializer.types";
 
 export class SmartFilterDeserializer {
-    private readonly _blockDeserializers: Map<string, IBlockDeserializer> = new Map();
+    private readonly _blockDeserializers: Map<string, IBlockDeserializerV1> = new Map();
 
     /**
      * Creates a new SmartFilterDeserializer
      * @param additionalBlockDeserializers - An array of block serializers to use, beyond those for the core blocks
      */
-    public constructor(additionalBlockDeserializers: IBlockDeserializer[]) {
+    public constructor(additionalBlockDeserializers: IBlockDeserializerV1[]) {
         this._blockDeserializers.set(inputBlockDeserializer.className, inputBlockDeserializer);
         additionalBlockDeserializers.forEach((deserializer) =>
             this._blockDeserializers.set(deserializer.className, deserializer)

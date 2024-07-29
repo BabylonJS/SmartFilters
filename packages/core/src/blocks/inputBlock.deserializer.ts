@@ -1,13 +1,13 @@
 import { InputBlockBase, InputBlock } from "./inputBlock.js";
-import type { IBlockDeserializer } from "../serialization/smartFilterDeserializer.js";
 import type { SerializedInputBlockData } from "./inputBlock.serialization.types.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import type { SmartFilter } from "../smartFilter.js";
 import type { ISerializedBlockV1 } from "../serialization/v1/ISerializedBlockV1.js";
 import { createImageTexture } from "../utils/textureLoaders.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import type { IBlockDeserializerV1 } from "../serialization/smartFilterDeserializer.types.js";
 
-export const inputBlockDeserializer: IBlockDeserializer = {
+export const inputBlockDeserializer: IBlockDeserializerV1 = {
     className: InputBlockBase.ClassName,
     deserialize: (engine: ThinEngine, smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const blockData = serializedBlock.data as SerializedInputBlockData;
