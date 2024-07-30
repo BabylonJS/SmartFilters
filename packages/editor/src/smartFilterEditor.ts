@@ -15,6 +15,8 @@ export type BlockRegistration = {
     getBlockFromString(data: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
     getInputNodePropertyComponent(inputBlock: AnyInputBlock, globalState: GlobalState): Nullable<JSX.Element>;
     createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock>;
+    allBlockNames: { [key: string]: string[] };
+    blockTooltips: { [key: string]: string };
     inputDisplayManager?: any;
 };
 

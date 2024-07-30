@@ -21,6 +21,7 @@ import { getBlockFromString } from "./configuration/editor/getBlockFromString";
 import { getInputNodePropertyComponent } from "./configuration/editor/getInputNodePropertyComponent";
 import { CustomInputDisplayManager } from "./configuration/editor/customInputDisplayManager";
 import { createInputBlock } from "./configuration/editor/createInputBlock";
+import { allBlockNames, blockTooltips } from "./configuration/editor/blockNamesAndTooltips";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -86,6 +87,8 @@ const blockRegistration: BlockRegistration = {
     getBlockFromString,
     getInputNodePropertyComponent,
     createInputBlock,
+    allBlockNames,
+    blockTooltips,
     inputDisplayManager: CustomInputDisplayManager,
 };
 
