@@ -3,6 +3,7 @@ import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
 import {
+    type BaseBlock,
     logCommands,
     SmartFilterSerializer,
     type SmartFilter,
@@ -17,11 +18,11 @@ import { smartFilterManifests } from "./configuration/smartFilters";
 import { blockDeserializers } from "./configuration/blockDeserializers";
 import { blocksUsingDefaultSerialization, additionalBlockSerializers } from "./configuration/blockSerializers";
 import { getIsUniqueBlock } from "./configuration/editor/getIsUniqueBlock";
-import { getBlockFromString } from "./configuration/editor/getBlockFromString";
 import { getInputNodePropertyComponent } from "./configuration/editor/getInputNodePropertyComponent";
 import { CustomInputDisplayManager } from "./configuration/editor/customInputDisplayManager";
 import { createInputBlock } from "./configuration/editor/createInputBlock";
-import { allBlockNames, blockTooltips } from "./configuration/editor/blockNamesAndTooltips";
+import { blockEditorRegistrations } from "./configuration/editor/blockEditorRegistrations";
+import type { IBlockEditorRegistration } from "./configuration/editor/IBlockEditorRegistration";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -82,6 +83,24 @@ smartFilterSelect.addEventListener("change", () => {
 });
 
 // Set up block registration
+const blockTooltips: { [key: string]: string } = {};
+const allBlockNames: { [key: string]: string[] } = {};
+blockEditorRegistrations.forEach((registration: IBlockEditorRegistration) => {
+    blockTooltips[registration.name] = registration.tooltip;
+    if (typeof allBlockNames[registration.category] === "object") {
+        allBlockNames[registration.category]!.push(registration.name);
+    } else {
+        allBlockNames[registration.category] = [registration.name];
+    }
+});
+const getBlockFromString = (blockType: string, smartFilter: SmartFilter): BaseBlock | null => {
+    const registration = blockEditorRegistrations.find((r) => r.name === blockType);
+    if (registration && registration.factory) {
+        return registration.factory(smartFilter);
+    }
+    return null;
+};
+
 const blockRegistration: BlockRegistration = {
     getIsUniqueBlock,
     getBlockFromString,

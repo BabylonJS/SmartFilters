@@ -44,7 +44,7 @@ export class SmartFilterDeserializer {
                 if (!blockDeserializer) {
                     throw new Error(`No deserializer found for block type ${serializedBlock.className}`);
                 }
-                const newBlock = blockDeserializer.deserialize(engine, smartFilter, serializedBlock);
+                const newBlock = blockDeserializer.deserialize(smartFilter, serializedBlock, engine);
 
                 blockMap.set(newBlock.name, newBlock);
             }

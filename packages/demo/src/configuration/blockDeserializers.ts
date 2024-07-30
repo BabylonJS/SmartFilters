@@ -1,4 +1,3 @@
-import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import {
     defaultShaderBlockDeserializer,
     type SmartFilter,
@@ -16,12 +15,12 @@ import { BlackAndWhiteBlock, PixelateBlock } from "./blocks";
 export const blockDeserializers: IBlockDeserializerV1[] = [
     defaultShaderBlockDeserializer(
         PixelateBlock.ClassName,
-        (_engine: ThinEngine, smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) =>
+        (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) =>
             new PixelateBlock(smartFilter, serializedBlock.name)
     ),
     defaultShaderBlockDeserializer(
         BlackAndWhiteBlock.ClassName,
-        (_engine: ThinEngine, smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) =>
+        (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) =>
             new BlackAndWhiteBlock(smartFilter, serializedBlock.name)
     ),
 ];

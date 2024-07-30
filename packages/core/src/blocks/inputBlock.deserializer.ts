@@ -9,7 +9,7 @@ import type { IBlockDeserializerV1 } from "../serialization/smartFilterDeseriali
 
 export const inputBlockDeserializer: IBlockDeserializerV1 = {
     className: InputBlockBase.ClassName,
-    deserialize: (engine: ThinEngine, smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+    deserialize: (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) => {
         const blockData = serializedBlock.data as SerializedInputBlockData;
 
         switch (blockData.inputType) {

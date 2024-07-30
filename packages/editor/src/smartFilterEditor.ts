@@ -12,7 +12,7 @@ import type { Nullable } from "@babylonjs/core/types.js";
 
 export type BlockRegistration = {
     getIsUniqueBlock: (block: BaseBlock) => boolean;
-    getBlockFromString(data: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
+    getBlockFromString(blockType: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
     getInputNodePropertyComponent(inputBlock: AnyInputBlock, globalState: GlobalState): Nullable<JSX.Element>;
     createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock>;
     allBlockNames: { [key: string]: string[] };
