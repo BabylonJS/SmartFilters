@@ -1,8 +1,8 @@
 import type { ConnectionPoint, ConnectionPointType } from "@babylonjs/smart-filters";
 import { AggregateBlock, SmartFilter } from "@babylonjs/smart-filters";
 
-import { BlackAndWhiteBlock } from "./blackAndWhiteBlock.js";
-import { BlurBlock } from "./blurBlock.js";
+import { BlackAndWhiteBlock } from "./blackAndWhiteBlock";
+import { BlurBlock } from "./blurBlock";
 
 /**
  * An example of an aggregate block that contains another aggregate block.

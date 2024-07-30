@@ -8,12 +8,7 @@ import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineCo
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type InputBlock, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
-import { WebCamInputBlock, type WebCamSource } from "@babylonjs/smart-filters-demo-block-library";
 import { ImageSourcePropertyTabComponent } from "./imageSourcePropertyTabComponent.js";
-
-type InputPropertyTabComponentState = {
-    webCamSourceOptions: IInspectableOptions[];
-};
 
 const booleanOptions: IInspectableOptions[] = [
     {
@@ -26,13 +21,8 @@ const booleanOptions: IInspectableOptions[] = [
     },
 ];
 
-export class InputPropertyTabComponent extends react.Component<
-    IPropertyComponentProps,
-    InputPropertyTabComponentState
-> {
+export class InputPropertyTabComponent extends react.Component<IPropertyComponentProps> {
     // private _onValueChangedObserver: Nullable<Observer<AnyInputBlock>> = null;
-    private _loadWebCamSourcesPromise: Promise<void> | undefined;
-
     constructor(props: IPropertyComponentProps) {
         super(props);
 
@@ -59,6 +49,25 @@ export class InputPropertyTabComponent extends react.Component<
 
     renderValue(globalState: GlobalState) {
         const inputBlock = this.props.nodeData.data as AnyInputBlock;
+
+        // See if the app provided a custom property component for this block
+        const customPropertyComponent = globalState.blockRegistration.getInputNodePropertyComponent(
+            inputBlock,
+            globalState
+        );
+        if (customPropertyComponent) {
+            return (
+                <div>
+                    <GeneralPropertyTabComponent
+                        stateManager={this.props.stateManager}
+                        nodeData={this.props.nodeData}
+                    />
+                    <LineContainerComponent title="PROPERTIES">{customPropertyComponent}</LineContainerComponent>
+                </div>
+            );
+        }
+
+        // Use the default property component
         switch (inputBlock.type) {
             case ConnectionPointType.Boolean: {
                 const dummyTarget = {
@@ -170,61 +179,13 @@ export class InputPropertyTabComponent extends react.Component<
             }
             case ConnectionPointType.Texture:
                 {
-                    if (inputBlock.name === "WebCam") {
-                        if (!this._loadWebCamSourcesPromise) {
-                            // Kick off lazy load of the WebCam sources
-                            this._loadWebCamSourcesPromise = WebCamInputBlock.EnumerateWebCamSources().then(
-                                (sources: WebCamSource[]) => {
-                                    const options = sources.map((source: WebCamSource) => ({
-                                        label: source.name,
-                                        value: source.id,
-                                    }));
-                                    this.setState({ webCamSourceOptions: options });
-                                }
-                            );
-                        }
-                        if (this.state.webCamSourceOptions.length === 0) {
-                            return <></>;
-                        } else {
-                            const webCamInputBlock = inputBlock as WebCamInputBlock;
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            return (
-                                <OptionsLine
-                                    label="Source"
-                                    target={inputBlock}
-                                    propertyName="deviceId"
-                                    options={this.state.webCamSourceOptions}
-                                    extractValue={() => {
-                                        return webCamInputBlock.webcamSource?.id || "";
-                                    }}
-                                    valuesAreStrings
-                                    noDirectUpdate
-                                    onSelect={(newDeviceId: string | number) => {
-                                        const option = this.state.webCamSourceOptions.find(
-                                            (option) => option.value === newDeviceId
-                                        );
-                                        if (option) {
-                                            webCamInputBlock.onWebCamSourceChanged.notifyObservers({
-                                                name: option.label,
-                                                id: option.value as string,
-                                            });
-                                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
-                                                inputBlock
-                                            );
-                                        }
-                                    }}
-                                ></OptionsLine>
-                            );
-                        }
-                    } else {
-                        return (
-                            <ImageSourcePropertyTabComponent
-                                inputBlock={inputBlock as InputBlock<ConnectionPointType.Texture>}
-                                nodeData={this.props.nodeData}
-                                stateManager={this.props.stateManager}
-                            />
-                        );
-                    }
+                    return (
+                        <ImageSourcePropertyTabComponent
+                            inputBlock={inputBlock as InputBlock<ConnectionPointType.Texture>}
+                            nodeData={this.props.nodeData}
+                            stateManager={this.props.stateManager}
+                        />
+                    );
                 }
                 break;
             // case NodeMaterialBlockConnectionPointTypes.Vector2:

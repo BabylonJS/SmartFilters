@@ -16,7 +16,7 @@ import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
 import { BlockTools } from "./blockTools.js";
 import { PropertyTabComponent } from "./components/propertyTab/propertyTabComponent.js";
 import { NodeListComponent } from "./components/nodeList/nodeListComponent.js";
-import { createDefaultInput, createWebCamInput } from "./graphSystem/registerDefaultInput.js";
+import { createDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
@@ -75,10 +75,12 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     addValueNode(type: string) {
         const nodeType = BlockTools.GetConnectionNodeTypeFromString(type);
 
-        let newInputBlock: BaseBlock;
-        if (type === "WebCam") {
-            newInputBlock = createWebCamInput(this.props.globalState.smartFilter, this.props.globalState.engine);
-        } else {
+        let newInputBlock: Nullable<BaseBlock> = this.props.globalState.blockRegistration.createInputBlock(
+            this.props.globalState,
+            type
+        );
+
+        if (!newInputBlock) {
             newInputBlock = createDefaultInput(
                 this.props.globalState.smartFilter,
                 nodeType,
@@ -433,8 +435,11 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             //     block = BlockTools.GetBlockFromString(blockType, this.props.globalState.smartFilter.engine)!;
             // }
 
-            const block = BlockTools.GetBlockFromString(blockType, this.props.globalState.smartFilter)!;
-            if (BlockTools.IsUniqueBlock(block)) {
+            const block = this.props.globalState.blockRegistration.getBlockFromString(
+                blockType,
+                this.props.globalState.smartFilter
+            )!;
+            if (this.props.globalState.blockRegistration.getIsUniqueBlock(block)) {
                 const className = block.getClassName();
                 for (const other of this._graphCanvas.getCachedData()) {
                     if (other !== block && other.getClassName() === className) {

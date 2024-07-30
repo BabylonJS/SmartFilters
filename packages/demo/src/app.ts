@@ -9,13 +9,18 @@ import {
     type SmartFilterRuntime,
 } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { SmartFilterEditor, type BlockRegistration } from "@babylonjs/smart-filters-editor";
 import { texturePresets } from "./configuration/texturePresets";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { blockDeserializers } from "./configuration/blockDeserializers";
 import { blocksUsingDefaultSerialization, additionalBlockSerializers } from "./configuration/blockSerializers";
+import { getIsUniqueBlock } from "./configuration/editor/getIsUniqueBlock";
+import { getBlockFromString } from "./configuration/editor/getBlockFromString";
+import { getInputNodePropertyComponent } from "./configuration/editor/getInputNodePropertyComponent";
+import { CustomInputDisplayManager } from "./configuration/editor/customInputDisplayManager";
+import { createInputBlock } from "./configuration/editor/createInputBlock";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -75,12 +80,22 @@ smartFilterSelect.addEventListener("change", () => {
     loadSmartFilter(smartFilterSelect.value, optimize);
 });
 
+// Set up block registration
+const blockRegistration: BlockRegistration = {
+    getIsUniqueBlock,
+    getBlockFromString,
+    getInputNodePropertyComponent,
+    createInputBlock,
+    inputDisplayManager: CustomInputDisplayManager,
+};
+
 // Set up editor button
 editActionLink.onclick = () => {
     if (currentSmartFilter) {
         // Display the editor
         SmartFilterEditor.Show({
             engine,
+            blockRegistration,
             filter: currentSmartFilter,
             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                 renderer.setRuntime(runtime);

@@ -8,6 +8,7 @@ import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
+import type { BlockRegistration } from "./smartFilterEditor";
 
 export type TexturePreset = {
     name: string;
@@ -18,6 +19,8 @@ export class GlobalState {
     engine: ThinEngine;
 
     smartFilter: SmartFilter;
+
+    blockRegistration: BlockRegistration;
 
     hostElement: HTMLElement;
 
@@ -62,6 +65,7 @@ export class GlobalState {
     public constructor(
         engine: ThinEngine,
         smartFilter: Nullable<SmartFilter>,
+        blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
         texturePresets: TexturePreset[] = []
     ) {
@@ -75,6 +79,7 @@ export class GlobalState {
 
         this.engine = engine;
         this.smartFilter = smartFilter ?? new SmartFilter("New Filter");
+        this.blockRegistration = blockRegistration;
         this.hostElement = hostElement;
         this.hostDocument = hostElement.ownerDocument!;
         this.hostWindow = hostElement.ownerDocument!.defaultView!;

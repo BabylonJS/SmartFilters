@@ -7,10 +7,21 @@ import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
 import { Popup } from "./sharedComponents/popup.js";
-import type { SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";
+import type { AnyInputBlock, BaseBlock, SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";
+import type { Nullable } from "@babylonjs/core/types.js";
+
+export type BlockRegistration = {
+    getIsUniqueBlock: (block: BaseBlock) => boolean;
+    getBlockFromString(data: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
+    getInputNodePropertyComponent(inputBlock: AnyInputBlock, globalState: GlobalState): Nullable<JSX.Element>;
+    createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock>;
+    inputDisplayManager?: any;
+};
 
 export type SmartFilterEditorOptions = {
     engine: ThinEngine;
+
+    blockRegistration: BlockRegistration;
 
     filter?: SmartFilter;
 
@@ -34,10 +45,6 @@ export class SmartFilterEditor {
      * @param options - defines the options to use to configure the node editor
      */
     public static Show(options: SmartFilterEditorOptions) {
-        RegisterToDisplayManagers();
-        RegisterToPropertyTabManagers();
-        RegisterTypeLedger();
-
         if (this._CurrentState) {
             const popupWindow = (Popup as any)[filterEditorPopupId];
             if (popupWindow) {
@@ -55,9 +62,14 @@ export class SmartFilterEditor {
         const globalState = new GlobalState(
             options.engine,
             options.filter ?? null,
+            options.blockRegistration,
             hostElement,
             options.texturePresets
         );
+
+        RegisterToDisplayManagers(globalState);
+        RegisterToPropertyTabManagers();
+        RegisterTypeLedger();
 
         const graphEditor = react.createElement(GraphEditor, {
             globalState: globalState,

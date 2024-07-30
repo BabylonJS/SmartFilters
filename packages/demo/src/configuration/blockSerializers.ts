@@ -1,5 +1,5 @@
 import type { IBlockSerializer } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-demo-block-library";
+import { BlackAndWhiteBlock, PixelateBlock } from "./blocks";
 
 export const blocksUsingDefaultSerialization: string[] = [BlackAndWhiteBlock.ClassName, PixelateBlock.ClassName];
 

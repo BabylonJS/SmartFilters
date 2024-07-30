@@ -6,7 +6,7 @@ import {
     createImageTexture,
     createStrongRef,
 } from "@babylonjs/smart-filters";
-import { WebCamInputBlock, BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-demo-block-library";
+import { WebCamInputBlock, BlackAndWhiteBlock, PixelateBlock } from "../../blocks";
 
 export const simpleWebcamSmartFilterName = "Simple Webcam";
 

@@ -9,14 +9,13 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 
 import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture.js";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture.js";
-import { WebCamInputBlock } from "@babylonjs/smart-filters-demo-block-library";
 
 /**
  * Creates a default value for the input block of a certain type
  * @param type - defines the type of the input block
  * @returns a strong ref containing the default value
  */
-function createDefaultValue<U extends ConnectionPointType>(type: U, engine: ThinEngine): RuntimeData<U> {
+export function createDefaultValue<U extends ConnectionPointType>(type: U, engine: ThinEngine): RuntimeData<U> {
     // conversion needed due to https://github.com/microsoft/TypeScript/issues/33014
     switch (type) {
         case ConnectionPointType.Boolean:
@@ -55,13 +54,6 @@ export function createDefaultInputForConnectionPoint<U extends ConnectionPointTy
         point.defaultRuntimeData ?? createDefaultValue(point.type, engine)
     );
     return inputBlock;
-}
-
-export function createWebCamInput(
-    smartFilter: SmartFilter,
-    engine: ThinEngine
-): InputBlock<ConnectionPointType.Texture> {
-    return new WebCamInputBlock(smartFilter, engine, createDefaultValue(ConnectionPointType.Texture, engine));
 }
 
 export const RegisterDefaultInput = (stateManager: StateManager) => {

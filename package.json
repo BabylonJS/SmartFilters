@@ -37,7 +37,6 @@
     },
     "workspaces": [
         "packages/core",
-        "packages/demoBlocks",
         "packages/editor",
         "packages/demo"
     ],

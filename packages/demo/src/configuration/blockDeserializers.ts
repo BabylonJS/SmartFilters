@@ -5,7 +5,7 @@ import {
     type IBlockDeserializerV1,
     type ISerializedBlockV1,
 } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-demo-block-library";
+import { BlackAndWhiteBlock, PixelateBlock } from "./blocks";
 
 /**
  * The list of block deserializers used when loaded serialized Smart Filters.

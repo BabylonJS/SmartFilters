@@ -6,7 +6,7 @@ import {
     createImageTexture,
     createStrongRef,
 } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-demo-block-library";
+import { BlackAndWhiteBlock, PixelateBlock } from "../../blocks";
 
 export const simpleLogoSmartFilterName = "Simple Logo";
 

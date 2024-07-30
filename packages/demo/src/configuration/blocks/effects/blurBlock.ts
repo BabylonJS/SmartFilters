@@ -1,7 +1,7 @@
 import type { ConnectionPoint, ConnectionPointType } from "@babylonjs/smart-filters";
 import { AggregateBlock, SmartFilter } from "@babylonjs/smart-filters";
 
-import { DirectionalBlurBlock } from "./directionalBlurBlock.js";
+import { DirectionalBlurBlock } from "./directionalBlurBlock";
 
 const defaultBlurTextureRatioPerPass = 0.5;
 const defaultBlurSize = 2;
