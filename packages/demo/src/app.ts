@@ -2,14 +2,13 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
-import { SmartFilterSerializer, type SmartFilter } from "@babylonjs/smart-filters";
+import { type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
-import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "./configuration/blockSerializers";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -47,8 +46,8 @@ async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
 
     // Demonstrate the serializer - TODO: do this on button press then trigger a download instead
     // TODO: make serialization happen in a new chunk
-    const serializer = new SmartFilterSerializer(blocksUsingDefaultSerialization, additionalBlockSerializers);
-    console.log(JSON.stringify(serializer.serialize(currentSmartFilter), null, 2));
+    // const serializer = new SmartFilterSerializer(blocksUsingDefaultSerialization, additionalBlockSerializers);
+    // console.log(JSON.stringify(serializer.serialize(currentSmartFilter), null, 2));
 }
 
 // Load the initial SmartFilter
