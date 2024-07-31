@@ -6,7 +6,11 @@ import { BlockNames } from "./blocks/blockNames";
  * should go in this list. If the serializer needs to store additional info in ISerializedBlockV1.data (e.g.
  * webcam source name), then it should be registered in additionalBlockSerializers below.
  */
-export const blocksUsingDefaultSerialization: string[] = [BlockNames.blackAndWhite, BlockNames.pixelate];
+export const blocksUsingDefaultSerialization: string[] = [
+    BlockNames.blackAndWhite,
+    BlockNames.pixelate,
+    BlockNames.exposure,
+];
 
 /**
  * Any blocks which require serializing more information than just the connections should be registered here.

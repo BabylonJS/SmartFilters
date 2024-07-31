@@ -29,5 +29,10 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         }
     );
 
+    deserializers.set(BlockNames.exposure, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock");
+        return new module.ExposureBlock(smartFilter, serializedBlock.name);
+    });
+
     return deserializers;
 }

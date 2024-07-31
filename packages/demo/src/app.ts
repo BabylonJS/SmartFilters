@@ -43,11 +43,6 @@ async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
-
-    // Demonstrate the serializer - TODO: do this on button press then trigger a download instead
-    // TODO: make serialization happen in a new chunk
-    // const serializer = new SmartFilterSerializer(blocksUsingDefaultSerialization, additionalBlockSerializers);
-    // console.log(JSON.stringify(serializer.serialize(currentSmartFilter), null, 2));
 }
 
 // Load the initial SmartFilter
