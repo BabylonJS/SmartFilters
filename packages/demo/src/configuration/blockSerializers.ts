@@ -10,6 +10,8 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.blackAndWhite,
     BlockNames.pixelate,
     BlockNames.exposure,
+    BlockNames.contrast,
+    BlockNames.desaturate,
 ];
 
 /**

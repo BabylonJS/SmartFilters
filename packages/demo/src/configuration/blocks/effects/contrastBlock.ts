@@ -8,6 +8,7 @@ import {
     injectDisableUniform,
     createStrongRef,
 } from "@babylonjs/smart-filters";
+import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -103,7 +104,7 @@ export class ContrastBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = "ContrastBlock";
+    public static override ClassName = BlockNames.contrast;
 
     /**
      * The input texture connection point.

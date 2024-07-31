@@ -34,5 +34,15 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new module.ExposureBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.contrast, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "contrastBlock" */ "./blocks/effects/contrastBlock");
+        return new module.ContrastBlock(smartFilter, serializedBlock.name);
+    });
+
+    deserializers.set(BlockNames.desaturate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/desaturateBlock");
+        return new module.DesaturateBlock(smartFilter, serializedBlock.name);
+    });
+
     return deserializers;
 }
