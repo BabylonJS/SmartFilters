@@ -2,27 +2,14 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
-import {
-    type BaseBlock,
-    logCommands,
-    SmartFilterSerializer,
-    type SmartFilter,
-    type SmartFilterRuntime,
-} from "@babylonjs/smart-filters";
+import { SmartFilterSerializer, type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { SmartFilterEditor, type BlockRegistration } from "@babylonjs/smart-filters-editor";
-import { texturePresets } from "./configuration/texturePresets";
+import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
 import { blocksUsingDefaultSerialization, additionalBlockSerializers } from "./configuration/blockSerializers";
-import { getIsUniqueBlock } from "./configuration/editor/getIsUniqueBlock";
-import { getInputNodePropertyComponent } from "./configuration/editor/getInputNodePropertyComponent";
-import { CustomInputDisplayManager } from "./configuration/editor/customInputDisplayManager";
-import { createInputBlock } from "./configuration/editor/createInputBlock";
-import { blockEditorRegistrations } from "./configuration/editor/blockEditorRegistrations";
-import type { IBlockEditorRegistration } from "./configuration/editor/IBlockEditorRegistration";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -58,6 +45,7 @@ async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
         console.error("Could not start rendering", err);
     });
 
+    // Demonstrate the serializer - TODO: do this on button press then trigger a download instead
     const serializer = new SmartFilterSerializer(blocksUsingDefaultSerialization, additionalBlockSerializers);
     console.log(JSON.stringify(serializer.serialize(currentSmartFilter), null, 2));
 }
@@ -81,51 +69,10 @@ smartFilterSelect.addEventListener("change", () => {
     loadSmartFilter(smartFilterSelect.value, optimize);
 });
 
-// Set up block registration
-const blockTooltips: { [key: string]: string } = {};
-const allBlockNames: { [key: string]: string[] } = {};
-blockEditorRegistrations.forEach((registration: IBlockEditorRegistration) => {
-    blockTooltips[registration.name] = registration.tooltip;
-    if (typeof allBlockNames[registration.category] === "object") {
-        allBlockNames[registration.category]!.push(registration.name);
-    } else {
-        allBlockNames[registration.category] = [registration.name];
-    }
-});
-const getBlockFromString = (blockType: string, smartFilter: SmartFilter): BaseBlock | null => {
-    const registration = blockEditorRegistrations.find((r) => r.name === blockType);
-    if (registration && registration.factory) {
-        return registration.factory(smartFilter);
-    }
-    return null;
-};
-
-const blockRegistration: BlockRegistration = {
-    getIsUniqueBlock,
-    getBlockFromString,
-    getInputNodePropertyComponent,
-    createInputBlock,
-    allBlockNames,
-    blockTooltips,
-    inputDisplayManager: CustomInputDisplayManager,
-};
-
 // Set up editor button
-editActionLink.onclick = () => {
+editActionLink.onclick = async () => {
     if (currentSmartFilter) {
-        // Display the editor
-        SmartFilterEditor.Show({
-            engine,
-            blockRegistration,
-            filter: currentSmartFilter,
-            onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-                renderer.setRuntime(runtime);
-            },
-            texturePresets,
-        });
-    }
-    if (renderer.runtime) {
-        // Display debug info in the console
-        logCommands(renderer.runtime.commandBuffer);
+        const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./launchEditor");
+        module.launchEditor(currentSmartFilter, engine, renderer);
     }
 };

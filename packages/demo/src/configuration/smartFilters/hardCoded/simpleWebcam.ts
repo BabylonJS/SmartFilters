@@ -7,11 +7,10 @@ import {
     createStrongRef,
 } from "@babylonjs/smart-filters";
 import { WebCamInputBlock, BlackAndWhiteBlock, PixelateBlock } from "../../blocks";
-
-export const simpleWebcamSmartFilterName = "Simple Webcam";
+import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
 
 export function createSimpleWebcamSmartFilter(engine: ThinEngine): SmartFilter {
-    const smartFilter = new SmartFilter(simpleWebcamSmartFilterName);
+    const smartFilter = new SmartFilter(HardCodedSmartFilterNames.simpleWebcam);
     const logoTexture = createImageTexture(engine, "/assets/logo.png");
     const webcamInput = new WebCamInputBlock(smartFilter, engine, createStrongRef(logoTexture));
     const blackAndWhite = new BlackAndWhiteBlock(smartFilter, "blackAndWhite");

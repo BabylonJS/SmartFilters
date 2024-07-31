@@ -9,12 +9,12 @@ import {
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
     name: string;
-    smartFilterJson: any;
+    getSmartFilterJson: () => Promise<any>;
 };
 export type HardCodedSmartFilterManifest = {
     type: "HardCoded";
     name: string;
-    createSmartFilter: (engine: ThinEngine) => SmartFilter;
+    createSmartFilter: (engine: ThinEngine) => Promise<SmartFilter>;
 };
 
 export type SmartFilterManifest = HardCodedSmartFilterManifest | SerializedSmartFilterManifest;
@@ -61,12 +61,13 @@ export class SmartFilterLoader {
         switch (manifest.type) {
             case "HardCoded":
                 {
-                    smartFilter = manifest.createSmartFilter(this._engine);
+                    smartFilter = await manifest.createSmartFilter(this._engine);
                 }
                 break;
             case "Serialized":
                 {
-                    smartFilter = await this._deserializer.deserialize(this._engine, manifest.smartFilterJson);
+                    const smartFilterJson = await manifest.getSmartFilterJson();
+                    smartFilter = await this._deserializer.deserialize(this._engine, smartFilterJson);
                 }
                 break;
         }
