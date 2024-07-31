@@ -8,7 +8,7 @@ import {
     injectDisableUniform,
     createStrongRef,
 } from "@babylonjs/smart-filters";
-import { PixelateBlockName } from "../blockNames";
+import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -90,7 +90,7 @@ export class PixelateBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = PixelateBlockName;
+    public static override ClassName = BlockNames.pixelate;
 
     /**
      * The input texture connection point.

@@ -1,5 +1,5 @@
 import { type SmartFilter, type DeserializeBlockV1, type ISerializedBlockV1 } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlockName, PixelateBlockName } from "./blocks/blockNames";
+import { BlockNames } from "./blocks/blockNames";
 
 /**
  * Generates the Map of block deserializers used when loaded serialized Smart Filters.
@@ -14,15 +14,20 @@ import { BlackAndWhiteBlockName, PixelateBlockName } from "./blocks/blockNames";
 export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     const deserializers = new Map<string, DeserializeBlockV1>();
 
-    deserializers.set(PixelateBlockName, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+    deserializers.set(BlockNames.pixelate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const module = await import(/* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock");
         return new module.PixelateBlock(smartFilter, serializedBlock.name);
     });
 
-    deserializers.set(BlackAndWhiteBlockName, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock");
-        return new module.BlackAndWhiteBlock(smartFilter, serializedBlock.name);
-    });
+    deserializers.set(
+        BlockNames.blackAndWhite,
+        async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+            const module = await import(
+                /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock"
+            );
+            return new module.BlackAndWhiteBlock(smartFilter, serializedBlock.name);
+        }
+    );
 
     return deserializers;
 }

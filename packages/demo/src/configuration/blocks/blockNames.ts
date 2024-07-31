@@ -1,2 +1,4 @@
-export const PixelateBlockName = "PixelateBlock";
-export const BlackAndWhiteBlockName = "BlackAndWhiteBlock";
+export const BlockNames = {
+    pixelate: "PixelateBlock",
+    blackAndWhite: "BlackAndWhiteBlock",
+};

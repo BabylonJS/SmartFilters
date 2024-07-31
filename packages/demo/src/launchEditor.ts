@@ -7,7 +7,7 @@ import { getInputNodePropertyComponent } from "./configuration/editor/getInputNo
 import { getIsUniqueBlock } from "./configuration/editor/getIsUniqueBlock";
 import type { IBlockEditorRegistration } from "./configuration/editor/IBlockEditorRegistration";
 import { texturePresets } from "./configuration/texturePresets";
-import type { ThinEngine } from "@babylonjs/core";
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 
 export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine, renderer: SmartFilterRenderer) {

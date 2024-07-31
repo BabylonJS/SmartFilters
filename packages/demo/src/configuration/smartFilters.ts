@@ -1,4 +1,4 @@
-import type { ThinEngine } from "@babylonjs/core";
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterManifest } from "../smartFilterLoader";
 import { HardCodedSmartFilterNames } from "./smartFilters/hardCoded/hardCodedSmartFilterNames";
 

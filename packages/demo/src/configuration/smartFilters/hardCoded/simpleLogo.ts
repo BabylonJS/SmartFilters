@@ -6,8 +6,9 @@ import {
     createImageTexture,
     createStrongRef,
 } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlock, PixelateBlock } from "../../blocks";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
+import { BlackAndWhiteBlock } from "../../blocks/effects/blackAndWhiteBlock";
+import { PixelateBlock } from "../../blocks/effects/pixelateBlock";
 
 export function createSimpleLogoSmartFilter(engine: ThinEngine): SmartFilter {
     const smartFilter = new SmartFilter(HardCodedSmartFilterNames.simpleLogo);

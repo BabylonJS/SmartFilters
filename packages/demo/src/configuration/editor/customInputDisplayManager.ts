@@ -1,7 +1,7 @@
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { InputDisplayManager } from "@babylonjs/smart-filters-editor";
-import type { WebCamInputBlock } from "../blocks/index.js";
+import type { WebCamInputBlock } from "../blocks/inputs/webCamInputBlock";
 
 export class CustomInputDisplayManager extends InputDisplayManager {
     public override updatePreviewContent(nodeData: INodeData, contentArea: HTMLDivElement): void {

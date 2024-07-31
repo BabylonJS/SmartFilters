@@ -1,21 +1,20 @@
 import { defaultBlockEditorRegistrations } from "../../defaults/defaultBlockEditorRegistrations";
-import {
-    BlackAndWhiteAndBlurBlock,
-    BlackAndWhiteBlock,
-    BlurBlock,
-    CompositionBlock,
-    ContrastBlock,
-    DesaturateBlock,
-    FrameBlock,
-    GlassBlock,
-    GlitchBlock,
-    GreenScreenBlock,
-    KaleidoscopeBlock,
-    PixelateBlock,
-    PosterizeBlock,
-    TileBlock,
-    WipeBlock,
-} from "../blocks";
+import { BlackAndWhiteAndBlurBlock } from "../blocks/effects/blackAndWhiteAndBlurBlock";
+import { BlackAndWhiteBlock } from "../blocks/effects/blackAndWhiteBlock";
+import { BlurBlock } from "../blocks/effects/blurBlock";
+import { CompositionBlock } from "../blocks/effects/compositionBlock";
+import { ContrastBlock } from "../blocks/effects/contrastBlock";
+import { DesaturateBlock } from "../blocks/effects/desaturateBlock";
+import { FrameBlock } from "../blocks/effects/frameBlock";
+import { GlassBlock } from "../blocks/effects/glassBlock";
+import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
+import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
+import { PixelateBlock } from "../blocks/effects/pixelateBlock";
+import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
+import { GlitchBlock } from "../blocks/transitions/glitchBlock";
+import { TileBlock } from "../blocks/transitions/tileBlock";
+import { WipeBlock } from "../blocks/transitions/wipeBlock";
+
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
 import { ConnectionPointType, CopyBlock, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 
