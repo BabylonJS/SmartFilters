@@ -14,4 +14,8 @@ export const texturePresets: TexturePreset[] = [
         name: "Bablyon.js Logo",
         url: "/assets/logo.png",
     },
+    {
+        name: "Kittens",
+        url: "/assets/kittens.jpeg",
+    },
 ];
