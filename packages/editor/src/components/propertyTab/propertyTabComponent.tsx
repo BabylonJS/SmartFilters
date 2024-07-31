@@ -302,7 +302,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             lockObject={this.props.globalState.lockObject}
                             value={this.props.globalState.smartFilter!.comments ?? ""}
                             target={this.props.globalState.smartFilter}
-                            propertyName="comment"
+                            propertyName="comments"
                         />
                     </LineContainerComponent>
                     <LineContainerComponent title="UI">

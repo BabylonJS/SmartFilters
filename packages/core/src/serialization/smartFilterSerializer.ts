@@ -85,7 +85,7 @@ export class SmartFilterSerializer {
         return {
             version: 1,
             name: smartFilter.name,
-            comments: smartFilter.comments, // TODO: make sure these are set
+            comments: smartFilter.comments,
             editorData: smartFilter.editorData,
             blocks,
             connections,

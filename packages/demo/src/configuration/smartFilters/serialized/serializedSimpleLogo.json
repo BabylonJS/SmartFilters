@@ -1,6 +1,7 @@
 {
     "version": 1,
     "name": "Serialized Simple Logo",
+    "comments": "A simple smart filter",
     "editorData": {
         "locations": [
             {
@@ -85,7 +86,7 @@
             "name": "pixelate",
             "uniqueId": 16,
             "className": "PixelateBlock",
-            "comments": ""
+            "comments": "Makes it blocky!"
         }
     ],
     "connections": [

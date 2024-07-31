@@ -59,10 +59,11 @@ export class SmartFilterDeserializer {
                 }
                 blockDeserializationWork.push(
                     blockDeserializer(smartFilter, serializedBlock, engine).then((newBlock) => {
-                        // Deserializers are not responsible for setting the uniqueId
+                        // Deserializers are not responsible for setting the uniqueId or comments.
                         // This is so they don't have to be passed into the constructors when programmatically creating
                         // blocks, and so each deserializer doesn't have to remember to do it.
                         newBlock.uniqueId = serializedBlock.uniqueId;
+                        newBlock.comments = serializedBlock.comments;
 
                         // Save in the map
                         blockMap.set(newBlock.name, newBlock);
