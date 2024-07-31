@@ -59,6 +59,7 @@ export const inputBlockSerializer: IBlockSerializer = {
         }
         return {
             name: block.name,
+            uniqueId: block.uniqueId,
             className: InputBlockBase.ClassName,
             comments: block.comments,
             data: serializeInputBlockData(block as unknown as InputBlockBase),

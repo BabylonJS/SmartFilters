@@ -43,6 +43,10 @@ export class SmartFilterDeserializer {
         const smartFilter = new SmartFilter(serializedSmartFilter.name);
         const blockMap = new Map<string, BaseBlock>();
 
+        // Deserialize the SmartFilter level data
+        smartFilter.comments = serializedSmartFilter.comments;
+        smartFilter.editorData = serializedSmartFilter.editorData;
+
         // Deserialize the blocks
         const blockDeserializationWork: Promise<void>[] = [];
         serializedSmartFilter.blocks.forEach((serializedBlock: ISerializedBlockV1) => {
@@ -55,6 +59,12 @@ export class SmartFilterDeserializer {
                 }
                 blockDeserializationWork.push(
                     blockDeserializer(smartFilter, serializedBlock, engine).then((newBlock) => {
+                        // Deserializers are not responsible for setting the uniqueId
+                        // This is so they don't have to be passed into the constructors when programmatically creating
+                        // blocks, and so each deserializer doesn't have to remember to do it.
+                        newBlock.uniqueId = serializedBlock.uniqueId;
+
+                        // Save in the map
                         blockMap.set(newBlock.name, newBlock);
                     })
                 );

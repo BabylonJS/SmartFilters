@@ -22,6 +22,7 @@ import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
 import { BaseBlock } from "@babylonjs/smart-filters";
+import { setEditorData } from "./serializationTools.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -160,6 +161,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
         this.props.globalState.stateManager.onRebuildRequiredObservable.add(async () => {
             if (this.props.globalState.smartFilter) {
+                this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
                 // this.buildMaterial(autoConfigure);
 
                 if (this.props.globalState.runtime) {
@@ -174,6 +176,10 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                     console.error("Smart Filter could not create a runtime", err);
                 }
             }
+        });
+
+        this.props.globalState.onSaveEditorDataRequiredObservable.add(() => {
+            setEditorData(this.props.globalState.smartFilter, this.props.globalState);
         });
 
         this.props.globalState.onResetRequiredObservable.add((isDefault) => {
@@ -209,9 +215,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             this.reOrganize();
         });
 
-        // this.props.globalState.onGetNodeFromBlock = (block) => {
-        //     return this._graphCanvas.findNodeFromData(block);
-        // };
+        this.props.globalState.onGetNodeFromBlock = (block: BaseBlock) => {
+            return this._graphCanvas.findNodeFromData(block);
+        };
 
         this.props.globalState.hostDocument!.addEventListener("keydown", (evt) => {
             this._graphCanvas.handleKeyDown(
@@ -264,14 +270,8 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     // }
 
     build(ignoreEditorData = false) {
-        let editorData = ignoreEditorData ? null : this.props.globalState.smartFilter.editorData;
+        const editorData = ignoreEditorData ? null : this.props.globalState.smartFilter.editorData;
         this._graphCanvas._isLoading = true; // Will help loading large graphs
-
-        if (editorData instanceof Array) {
-            editorData = {
-                locations: editorData,
-            };
-        }
 
         // setup the diagram model
         this._graphCanvas.reset();

@@ -38,7 +38,7 @@ export abstract class BaseBlock implements ICommandOwner {
     /**
      * Global unique id of the block (This is unique for the current session).
      */
-    public readonly uniqueId: number;
+    public uniqueId: number;
 
     /**
      * The name of the block. This is used to identify the block in the smart filter or in debug.

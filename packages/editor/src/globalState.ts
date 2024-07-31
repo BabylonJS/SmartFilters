@@ -3,12 +3,13 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 import { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject.js";
-import { SmartFilter, type SmartFilterRuntime } from "@babylonjs/smart-filters";
+import { type BaseBlock, SmartFilter, type SmartFilterRuntime } from "@babylonjs/smart-filters";
 import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
 import type { BlockRegistration } from "./smartFilterEditor";
+import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
 
 export type TexturePreset = {
     name: string;
@@ -34,6 +35,8 @@ export class GlobalState {
 
     pointerOverCanvas: boolean = false;
 
+    onGetNodeFromBlock: (block: BaseBlock) => Nullable<GraphNode> = () => null;
+
     onLogRequiredObservable = new Observable<LogEntry>();
 
     onPopupClosedObservable = new Observable<void>();
@@ -45,6 +48,8 @@ export class GlobalState {
     onResetRequiredObservable = new Observable<boolean>();
 
     onRuntimeCreatedObservable = new Observable<SmartFilterRuntime>();
+
+    onSaveEditorDataRequiredObservable = new Observable<void>();
 
     texturePresets: TexturePreset[];
 

@@ -1,14 +1,53 @@
 {
     "version": 1,
     "name": "Serialized Simple Logo",
+    "editorData": {
+        "locations": [
+            {
+                "blockId": 1,
+                "x": 1000,
+                "y": 260
+            },
+            {
+                "blockId": 13,
+                "x": 0,
+                "y": 20
+            },
+            {
+                "blockId": 14,
+                "x": 380,
+                "y": 420
+            },
+            {
+                "blockId": 6,
+                "x": 380,
+                "y": 180
+            },
+            {
+                "blockId": 15,
+                "x": 380,
+                "y": 280
+            },
+            {
+                "blockId": 16,
+                "x": 720,
+                "y": 260
+            }
+        ],
+        "x": 0,
+        "y": 0,
+        "zoom": 1
+    },
     "blocks": [
         {
             "name": "output",
+            "uniqueId": 1,
             "className": "OutputBlock",
             "comments": ""
         },
         {
             "name": "logo",
+            "uniqueId": 13,
             "className": "InputBlock",
             "comments": null,
             "data": {
@@ -17,23 +56,36 @@
             }
         },
         {
-            "name": "blackAndWhite",
-            "className": "BlackAndWhiteBlock",
-            "comments": ""
-        },
-        {
-            "name": "pixelate",
-            "className": "PixelateBlock",
-            "comments": ""
-        },
-        {
             "name": "intensity",
+            "uniqueId": 14,
             "className": "InputBlock",
             "comments": null,
             "data": {
                 "inputType": 1,
                 "value": 0.7
             }
+        },
+        {
+            "name": "disabled",
+            "uniqueId": 6,
+            "className": "InputBlock",
+            "comments": null,
+            "data": {
+                "inputType": 5,
+                "value": false
+            }
+        },
+        {
+            "name": "blackAndWhite",
+            "uniqueId": 15,
+            "className": "BlackAndWhiteBlock",
+            "comments": ""
+        },
+        {
+            "name": "pixelate",
+            "uniqueId": 16,
+            "className": "PixelateBlock",
+            "comments": ""
         }
     ],
     "connections": [
@@ -51,14 +103,20 @@
         },
         {
             "inputBlock": "pixelate",
-            "inputConnectionPoint": "input",
-            "outputBlock": "blackAndWhite",
+            "inputConnectionPoint": "intensity",
+            "outputBlock": "intensity",
             "outputConnectionPoint": "output"
         },
         {
             "inputBlock": "pixelate",
-            "inputConnectionPoint": "intensity",
-            "outputBlock": "intensity",
+            "inputConnectionPoint": "disabled",
+            "outputBlock": "disabled",
+            "outputConnectionPoint": "output"
+        },
+        {
+            "inputBlock": "pixelate",
+            "inputConnectionPoint": "input",
+            "outputBlock": "blackAndWhite",
             "outputConnectionPoint": "output"
         }
     ]
