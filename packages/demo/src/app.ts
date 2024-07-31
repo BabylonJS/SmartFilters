@@ -5,7 +5,7 @@ import "@babylonjs/core/Misc/fileTools";
 import { type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
-import { createThinEngine } from "./createThinEngine";
+import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
@@ -26,7 +26,7 @@ const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 // Create our services
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine);
-const smartFilterLoader = new SmartFilterLoader(engine, smartFilterManifests, getBlockDeserializers());
+const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterManifests, getBlockDeserializers());
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
@@ -72,7 +72,7 @@ smartFilterSelect.addEventListener("change", () => {
 // Set up editor button
 editActionLink.onclick = async () => {
     if (currentSmartFilter) {
-        const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./launchEditor");
+        const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
         module.launchEditor(currentSmartFilter, engine, renderer);
     }
 };
