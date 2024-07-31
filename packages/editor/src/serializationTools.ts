@@ -1,12 +1,13 @@
 import type { SmartFilter } from "@babylonjs/smart-filters";
 import type { GlobalState } from "./globalState";
+import type { GraphCanvasComponent } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphCanvas";
 
-export function setEditorData(smartFilter: SmartFilter, globalState: GlobalState) {
+export function setEditorData(smartFilter: SmartFilter, globalState: GlobalState, graphCanvas: GraphCanvasComponent) {
     smartFilter.editorData = {
         locations: [],
-        x: 0,
-        y: 0,
-        zoom: 1,
+        x: graphCanvas.x,
+        y: graphCanvas.y,
+        zoom: graphCanvas.zoom,
     };
 
     for (const block of smartFilter.attachedBlocks) {

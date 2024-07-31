@@ -179,7 +179,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         });
 
         this.props.globalState.onSaveEditorDataRequiredObservable.add(() => {
-            setEditorData(this.props.globalState.smartFilter, this.props.globalState);
+            setEditorData(this.props.globalState.smartFilter, this.props.globalState, this._graphCanvas);
         });
 
         this.props.globalState.onResetRequiredObservable.add((isDefault) => {
