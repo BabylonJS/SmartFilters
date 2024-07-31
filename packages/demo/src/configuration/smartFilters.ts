@@ -35,6 +35,16 @@ export const smartFilterManifests: SmartFilterManifest[] = [
         },
     },
     {
+        type: "HardCoded",
+        name: HardCodedSmartFilterNames.simplePhotoEdit,
+        createSmartFilter: async (engine: ThinEngine) => {
+            const module = await import(
+                /* webpackChunkName: "simplePhotoEdit" */ "./smartFilters/hardCoded/simplePhotoEdit"
+            );
+            return module.createSimplePhotoEditSmartFilter(engine);
+        },
+    },
+    {
         type: "Serialized",
         name: "Serialized Simple Logo",
         getSmartFilterJson: async () => {
