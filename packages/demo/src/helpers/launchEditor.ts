@@ -1,4 +1,10 @@
-import { type BaseBlock, logCommands, type SmartFilter, type SmartFilterRuntime } from "@babylonjs/smart-filters";
+import {
+    type BaseBlock,
+    logCommands,
+    type SmartFilter,
+    type SmartFilterRuntime,
+    SmartFilterSerializer,
+} from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
@@ -9,6 +15,8 @@ import type { IBlockEditorRegistration } from "../configuration/editor/IBlockEdi
 import { texturePresets } from "../configuration/texturePresets";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
+import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
+import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 
 export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine, renderer: SmartFilterRenderer) {
     // Set up block registration
@@ -48,6 +56,18 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
             filter: currentSmartFilter,
             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                 renderer.setRuntime(runtime);
+            },
+            saveSmartFilter: () => {
+                const serializer = new SmartFilterSerializer(
+                    blocksUsingDefaultSerialization,
+                    additionalBlockSerializers
+                );
+
+                StringTools.DownloadAsFile(
+                    document,
+                    JSON.stringify(serializer.serialize(currentSmartFilter), null, 2),
+                    currentSmartFilter.name + ".json"
+                );
             },
             texturePresets,
         });

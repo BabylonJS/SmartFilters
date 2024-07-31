@@ -146,8 +146,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     save() {
-        // const json = SerializationTools.Serialize(this.props.globalState.nodeMaterial, this.props.globalState);
-        // StringTools.DownloadAsFile(this.props.globalState.hostDocument, json, "nodeMaterial.json");
+        this.props.globalState.saveSmartFilter();
     }
 
     customSave() {
@@ -347,6 +346,14 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             onSelect={(value: boolean) => {
                                 DataStorage.WriteBoolean("ShowGrid", value);
                                 this.props.globalState.stateManager.onGridSizeChanged.notifyObservers();
+                            }}
+                        />
+                    </LineContainerComponent>
+                    <LineContainerComponent title="FILE">
+                        <ButtonLineComponent
+                            label="Save"
+                            onClick={() => {
+                                this.save();
                             }}
                         />
                     </LineContainerComponent>

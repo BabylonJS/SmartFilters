@@ -48,6 +48,8 @@ export class GlobalState {
 
     texturePresets: TexturePreset[];
 
+    saveSmartFilter: () => void;
+
     private _runtime: Nullable<SmartFilterRuntime> = null;
     public get runtime(): Nullable<SmartFilterRuntime> {
         return this._runtime;
@@ -67,6 +69,7 @@ export class GlobalState {
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
+        saveSmartFilter: () => void,
         texturePresets: TexturePreset[] = []
     ) {
         this.stateManager = new StateManager();
@@ -84,6 +87,7 @@ export class GlobalState {
         this.hostDocument = hostElement.ownerDocument!;
         this.hostWindow = hostElement.ownerDocument!.defaultView!;
         this.stateManager.hostDocument = this.hostDocument;
+        this.saveSmartFilter = saveSmartFilter;
         this.texturePresets = texturePresets;
     }
 }

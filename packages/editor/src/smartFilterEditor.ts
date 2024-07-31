@@ -29,6 +29,8 @@ export type SmartFilterEditorOptions = {
 
     hostElement?: HTMLElement;
 
+    saveSmartFilter: () => void;
+
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 
     texturePresets?: TexturePreset[];
@@ -66,6 +68,7 @@ export class SmartFilterEditor {
             options.filter ?? null,
             options.blockRegistration,
             hostElement,
+            options.saveSmartFilter,
             options.texturePresets
         );
 
