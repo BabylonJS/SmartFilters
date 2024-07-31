@@ -6,6 +6,8 @@
         "Consts",
         "dmax",
         "dmin",
+        "deserializer",
+        "deserializers",
         "fontawesome",
         "fortawesome",
         "fract",

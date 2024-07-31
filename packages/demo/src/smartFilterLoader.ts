@@ -3,7 +3,7 @@ import {
     SmartFilterOptimizer,
     type SmartFilter,
     SmartFilterDeserializer,
-    type IBlockDeserializerV1,
+    type DeserializeBlockV1,
 } from "@babylonjs/smart-filters";
 
 export type SerializedSmartFilterManifest = {
@@ -32,7 +32,11 @@ export class SmartFilterLoader {
         return firstManifest?.name || "";
     }
 
-    constructor(engine: ThinEngine, manifests: SmartFilterManifest[], blockDeserializers: IBlockDeserializerV1[]) {
+    constructor(
+        engine: ThinEngine,
+        manifests: SmartFilterManifest[],
+        blockDeserializers: Map<string, DeserializeBlockV1>
+    ) {
         this._engine = engine;
         this.manifests = manifests;
         if (this.manifests.length === 0) {
@@ -43,7 +47,7 @@ export class SmartFilterLoader {
         this._deserializer = new SmartFilterDeserializer(blockDeserializers);
     }
 
-    public loadSmartFilter(name: string, optimize: boolean): SmartFilter {
+    public async loadSmartFilter(name: string, optimize: boolean): Promise<SmartFilter> {
         let manifest = this.manifests.find((m: SmartFilterManifest) => m.name === name);
         if (!manifest) {
             const firstSmartFilter = this.manifests[0];
@@ -62,7 +66,7 @@ export class SmartFilterLoader {
                 break;
             case "Serialized":
                 {
-                    smartFilter = this._deserializer.deserialize(this._engine, manifest.smartFilterJson);
+                    smartFilter = await this._deserializer.deserialize(this._engine, manifest.smartFilterJson);
                 }
                 break;
         }

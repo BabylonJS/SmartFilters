@@ -15,7 +15,7 @@ import { texturePresets } from "./configuration/texturePresets";
 import { createThinEngine } from "./createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
-import { blockDeserializers } from "./configuration/blockDeserializers";
+import { getBlockDeserializers } from "./configuration/blockDeserializers";
 import { blocksUsingDefaultSerialization, additionalBlockSerializers } from "./configuration/blockSerializers";
 import { getIsUniqueBlock } from "./configuration/editor/getIsUniqueBlock";
 import { getInputNodePropertyComponent } from "./configuration/editor/getInputNodePropertyComponent";
@@ -30,7 +30,7 @@ const useTextureAnalyzer: boolean = false;
 const optimize: boolean = false;
 
 // Constants
-const LocalStorateSmartFilterName = "SmartFilterName";
+const LocalStorageSmartFilterName = "SmartFilterName";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
@@ -40,7 +40,7 @@ const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 // Create our services
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine);
-const smartFilterLoader = new SmartFilterLoader(engine, smartFilterManifests, blockDeserializers);
+const smartFilterLoader = new SmartFilterLoader(engine, smartFilterManifests, getBlockDeserializers());
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
@@ -50,10 +50,10 @@ let currentSmartFilter: SmartFilter | undefined;
  * @param name - The name of the SmartFilter to load
  * @param optimize - If true, the SmartFilter will be automatically optimized
  */
-function loadSmartFilter(name: string, optimize: boolean): void {
+async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
     SmartFilterEditor.Hide();
-    localStorage.setItem(LocalStorateSmartFilterName, name);
-    currentSmartFilter = smartFilterLoader.loadSmartFilter(name, optimize);
+    localStorage.setItem(LocalStorageSmartFilterName, name);
+    currentSmartFilter = await smartFilterLoader.loadSmartFilter(name, optimize);
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
@@ -63,17 +63,16 @@ function loadSmartFilter(name: string, optimize: boolean): void {
 }
 
 // Load the initial SmartFilter
-loadSmartFilter(
-    localStorage.getItem(LocalStorateSmartFilterName) || smartFilterLoader.defaultSmartFilterName,
-    optimize
-);
+const initialSmartFilterName =
+    localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
+loadSmartFilter(initialSmartFilterName, optimize);
 
 // Populate the smart filter <select> list
 smartFilterLoader.manifests.forEach((manifest) => {
     const option = document.createElement("option");
     option.value = manifest.name;
     option.innerText = manifest.name;
-    option.selected = manifest.name === currentSmartFilter?.name;
+    option.selected = manifest.name === initialSmartFilterName;
     smartFilterSelect?.appendChild(option);
 });
 

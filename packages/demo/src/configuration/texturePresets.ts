@@ -1,10 +1,13 @@
 import type { TexturePreset } from "@babylonjs/smart-filters-editor";
 
 /**
- * Add new assets to packages/demo/www/assets then add them to this list
- * to have them appear in the editor. These make it easy to quickly assign
- * an asset to texture InputBlock without the user having to find the file
- * in a file dialog box each time the editor is reloaded.
+ * Texture presets are used to provide a list of assets that can be used
+ * easily in the editor.
+ *
+ * You can either a base64 encoded image or a URL to an image.
+ *
+ * For a URL to an image, you can add the assets to packages/demo/www/assets then add them to this list.
+ *
  */
 export const texturePresets: TexturePreset[] = [
     {

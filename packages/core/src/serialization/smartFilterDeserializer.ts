@@ -7,35 +7,44 @@ import { inputBlockDeserializer } from "../blocks/inputBlock.deserializer.js";
 import { OutputBlock } from "../blocks/outputBlock.js";
 import type { ISerializedConnectionV1 } from "./v1/ISerializedConnectionV1.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { IBlockDeserializerV1 } from "./smartFilterDeserializer.types";
+import type { DeserializeBlockV1 } from "./smartFilterDeserializer.types";
+import { InputBlock } from "../blocks/inputBlock.js";
 
 export class SmartFilterDeserializer {
-    private readonly _blockDeserializers: Map<string, IBlockDeserializerV1> = new Map();
+    private readonly _blockDeserializers: Map<string, DeserializeBlockV1> = new Map();
 
     /**
      * Creates a new SmartFilterDeserializer
-     * @param additionalBlockDeserializers - An array of block serializers to use, beyond those for the core blocks
+     * @param blockDeserializers - The map of block serializers to use, beyond those for the core blocks
      */
-    public constructor(additionalBlockDeserializers: IBlockDeserializerV1[]) {
-        this._blockDeserializers.set(inputBlockDeserializer.className, inputBlockDeserializer);
-        additionalBlockDeserializers.forEach((deserializer) =>
-            this._blockDeserializers.set(deserializer.className, deserializer)
+    public constructor(blockDeserializers: Map<string, DeserializeBlockV1>) {
+        this._blockDeserializers = blockDeserializers;
+
+        // Add in the core block deserializers - they are not delay loaded, so they are wrapped in Promise.resolve()
+        this._blockDeserializers.set(
+            InputBlock.ClassName,
+            (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) =>
+                Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock, engine))
         );
     }
 
-    public deserialize(engine: ThinEngine, smartFilterJson: any): SmartFilter {
+    public async deserialize(engine: ThinEngine, smartFilterJson: any): Promise<SmartFilter> {
         const serializedSmartFilter: SerializedSmartFilter = smartFilterJson;
         switch (serializedSmartFilter.version) {
             case 1:
-                return this._deserializeV1(engine, serializedSmartFilter);
+                return await this._deserializeV1(engine, serializedSmartFilter);
         }
     }
 
-    private _deserializeV1(engine: ThinEngine, serializedSmartFilter: SerializedSmartFilterV1): SmartFilter {
+    private async _deserializeV1(
+        engine: ThinEngine,
+        serializedSmartFilter: SerializedSmartFilterV1
+    ): Promise<SmartFilter> {
         const smartFilter = new SmartFilter(serializedSmartFilter.name);
         const blockMap = new Map<string, BaseBlock>();
 
         // Deserialize the blocks
+        const blockDeserializationWork: Promise<void>[] = [];
         serializedSmartFilter.blocks.forEach((serializedBlock: ISerializedBlockV1) => {
             if (serializedBlock.className === OutputBlock.ClassName) {
                 blockMap.set(smartFilter.output.ownerBlock.name, smartFilter.output.ownerBlock);
@@ -44,11 +53,14 @@ export class SmartFilterDeserializer {
                 if (!blockDeserializer) {
                     throw new Error(`No deserializer found for block type ${serializedBlock.className}`);
                 }
-                const newBlock = blockDeserializer.deserialize(smartFilter, serializedBlock, engine);
-
-                blockMap.set(newBlock.name, newBlock);
+                blockDeserializationWork.push(
+                    blockDeserializer(smartFilter, serializedBlock, engine).then((newBlock) => {
+                        blockMap.set(newBlock.name, newBlock);
+                    })
+                );
             }
         });
+        await Promise.all(blockDeserializationWork);
 
         // Deserialize the connections
         serializedSmartFilter.connections.forEach((connection: ISerializedConnectionV1) => {

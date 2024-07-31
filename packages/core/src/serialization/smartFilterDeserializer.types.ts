@@ -7,9 +7,4 @@ export type DeserializeBlockV1 = (
     smartFilter: SmartFilter,
     serializedBlock: ISerializedBlockV1,
     engine: ThinEngine
-) => BaseBlock;
-
-export interface IBlockDeserializerV1 {
-    className: string;
-    deserialize: DeserializeBlockV1;
-}
+) => Promise<BaseBlock>;
