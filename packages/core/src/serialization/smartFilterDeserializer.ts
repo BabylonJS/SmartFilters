@@ -77,7 +77,7 @@ export class SmartFilterDeserializer {
 
         // Deserialize the connections
         serializedSmartFilter.connections.forEach((connection: ISerializedConnectionV1) => {
-            // Find the source block and it's connection point's connectTo function
+            // Find the source block and its connection point's connectTo function
             const sourceBlock = blockMap.get(connection.outputBlock);
             if (!sourceBlock) {
                 throw new Error(`Source block ${connection.outputBlock} not found`);
