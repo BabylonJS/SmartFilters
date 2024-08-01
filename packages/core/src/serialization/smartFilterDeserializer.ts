@@ -11,6 +11,7 @@ import type {
     ISerializedConnectionV1,
     SerializedSmartFilterV1,
 } from "./v1/serialization.types";
+import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
 
 /**
  * Deserializes serialized SmartFilters. The caller passes in a map of block deserializers it wants to use,
@@ -77,6 +78,10 @@ export class SmartFilterDeserializer {
                         // blocks, and so each deserializer doesn't have to remember to do it.
                         newBlock.uniqueId = serializedBlock.uniqueId;
                         newBlock.comments = serializedBlock.comments;
+
+                        // We need to ensure any uniqueIds generated in the future (e.g. a new block is added to the SmartFilter)
+                        // are higher than this one.
+                        UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
 
                         // Save in the map
                         blockMap.set(newBlock.name, newBlock);
