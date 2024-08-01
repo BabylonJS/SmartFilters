@@ -64,7 +64,7 @@ export abstract class BaseBlock implements ICommandOwner {
         name: string,
         public readonly disableOptimization = false
     ) {
-        this.uniqueId = UniqueIdGenerator.UniqueId;
+        this.uniqueId = UniqueIdGenerator.UniqueId; // TODO: fix
         this.name = name;
         this.smartFilter = smartFilter;
 

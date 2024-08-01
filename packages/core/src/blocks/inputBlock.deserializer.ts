@@ -6,6 +6,13 @@ import type { ISerializedBlockV1 } from "../serialization/v1/serialization.types
 import { createImageTexture } from "../utils/textureLoaders.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
+/**
+ * V1 Input Block Deserializer
+ * @param smartFilter - The SmartFilter to deserialize the block into
+ * @param serializedBlock - The serialized block data
+ * @param engine - The ThinEngine to use for loading textures
+ * @returns A deserialized InputBlock
+ */
 export function inputBlockDeserializer(
     smartFilter: SmartFilter,
     serializedBlock: ISerializedBlockV1,

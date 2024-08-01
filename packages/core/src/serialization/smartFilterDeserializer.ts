@@ -12,6 +12,11 @@ import type {
     SerializedSmartFilterV1,
 } from "./v1/serialization.types";
 
+/**
+ * Deserializes serialized SmartFilters. The caller passes in a map of block deserializers it wants to use,
+ * which allows the caller to provide custom deserializers for blocks beyond the core blocks.
+ * The deserializer supports versioned serialized SmartFilters.
+ */
 export class SmartFilterDeserializer {
     private readonly _blockDeserializersV1: Map<string, DeserializeBlockV1> = new Map();
 
@@ -30,6 +35,12 @@ export class SmartFilterDeserializer {
         );
     }
 
+    /**
+     * Deserializes a SmartFilter from a JSON object - can be safely called multiple times and has no side effects within the class.
+     * @param engine - The ThinEngine to pass to the new SmartFilter
+     * @param smartFilterJson - The JSON object to deserialize
+     * @returns A promise that resolves to the deserialized SmartFilter
+     */
     public async deserialize(engine: ThinEngine, smartFilterJson: any): Promise<SmartFilter> {
         const serializedSmartFilter: SerializedSmartFilter = smartFilterJson;
         switch (serializedSmartFilter.version) {

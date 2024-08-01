@@ -12,6 +12,12 @@ import type {
     SerializedSmartFilterV1,
 } from "./v1/serialization.types";
 
+/**
+ * Determines if two serialized connection points are equivalent to each other
+ * @param a - The first connection point to compare
+ * @param b - The second connection point to compare
+ * @returns True if the connection points are equivalent, false otherwise
+ */
 function serializedConnectionPointsEqual(a: ISerializedConnectionV1, b: ISerializedConnectionV1): boolean {
     return (
         a.inputBlock === b.inputBlock &&
@@ -21,6 +27,11 @@ function serializedConnectionPointsEqual(a: ISerializedConnectionV1, b: ISeriali
     );
 }
 
+/**
+ * Serializes SmartFilters using the latest SmartFilter serialization version.
+ * The caller passes in information necessary to serialize the blocks in the SmartFilter.
+ * This allows the caller to provide custom serializers for blocks beyond the core blocks.
+ */
 export class SmartFilterSerializer {
     private readonly _blockSerializers: Map<string, SerializeBlockV1> = new Map();
 
@@ -40,6 +51,11 @@ export class SmartFilterSerializer {
         );
     }
 
+    /**
+     * Serializes a SmartFilter to a JSON object of the latest version
+     * @param smartFilter - The SmartFilter to serialize
+     * @returns The serialized SmartFilter
+     */
     public serialize(smartFilter: SmartFilter): SerializedSmartFilterV1 {
         const connections: ISerializedConnectionV1[] = [];
 

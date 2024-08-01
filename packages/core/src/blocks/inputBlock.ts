@@ -36,6 +36,10 @@ export function isDisableableBlock(block: BaseBlock): block is DisableableBlock 
     return (block as DisableableBlock).disabled !== undefined;
 }
 
+/**
+ * This base class exists to provide a type that the serializer can use to represent
+ * any InputBlock without knowing the exact type it is.
+ */
 export abstract class InputBlockBase extends BaseBlock {
     /**
      * The class name of the block.
