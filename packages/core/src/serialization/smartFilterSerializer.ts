@@ -1,13 +1,16 @@
 import type { SmartFilter } from "../smartFilter";
-import type { SerializedSmartFilterV1 } from "./v1/SerializedSmartFilterV1";
-import type { ISerializedBlockV1 } from "./v1/ISerializedBlockV1";
 import type { BaseBlock } from "../blocks/baseBlock";
 import { inputBlockSerializer } from "../blocks/inputBlock.serializer.js";
-import type { ISerializedConnectionV1 } from "./v1/ISerializedConnectionV1";
 import type { ConnectionPoint } from "../connection/connectionPoint";
-import type { IBlockSerializer, SerializeBlockV1 } from "./smartFilterSerializer.types";
-import { defaultBlockSerializer } from "./defaultBlockSerializer.js";
+import { defaultBlockSerializer } from "./v1/defaultBlockSerializer.js";
 import { OutputBlock } from "../blocks/outputBlock.js";
+import type {
+    IBlockSerializerV1,
+    ISerializedBlockV1,
+    ISerializedConnectionV1,
+    SerializeBlockV1,
+    SerializedSmartFilterV1,
+} from "./v1/serialization.types";
 
 function serializedConnectionPointsEqual(a: ISerializedConnectionV1, b: ISerializedConnectionV1): boolean {
     return (
@@ -26,7 +29,7 @@ export class SmartFilterSerializer {
      * @param blocksUsingDefaultSerialization - A list of the classNames of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
      * @param additionalBlockSerializers - An array of block serializers to use, beyond those for the core blocks
      */
-    public constructor(blocksUsingDefaultSerialization: string[], additionalBlockSerializers: IBlockSerializer[]) {
+    public constructor(blocksUsingDefaultSerialization: string[], additionalBlockSerializers: IBlockSerializerV1[]) {
         this._blockSerializers.set(inputBlockSerializer.className, inputBlockSerializer.serialize);
         this._blockSerializers.set(OutputBlock.ClassName, defaultBlockSerializer);
         blocksUsingDefaultSerialization.forEach((block) => {

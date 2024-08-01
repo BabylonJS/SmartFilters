@@ -1,27 +1,29 @@
-import type { SerializedSmartFilterV1 } from "./v1/SerializedSmartFilterV1";
 import type { BaseBlock } from "../blocks/baseBlock";
 import type { SerializedSmartFilter } from "./serializedSmartFilter.js";
-import type { ISerializedBlockV1 } from "./v1/ISerializedBlockV1.js";
 import { SmartFilter } from "../smartFilter.js";
 import { inputBlockDeserializer } from "../blocks/inputBlock.deserializer.js";
 import { OutputBlock } from "../blocks/outputBlock.js";
-import type { ISerializedConnectionV1 } from "./v1/ISerializedConnectionV1.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { DeserializeBlockV1 } from "./smartFilterDeserializer.types";
 import { InputBlock } from "../blocks/inputBlock.js";
+import type {
+    DeserializeBlockV1,
+    ISerializedBlockV1,
+    ISerializedConnectionV1,
+    SerializedSmartFilterV1,
+} from "./v1/serialization.types";
 
 export class SmartFilterDeserializer {
-    private readonly _blockDeserializers: Map<string, DeserializeBlockV1> = new Map();
+    private readonly _blockDeserializersV1: Map<string, DeserializeBlockV1> = new Map();
 
     /**
      * Creates a new SmartFilterDeserializer
      * @param blockDeserializers - The map of block serializers to use, beyond those for the core blocks
      */
     public constructor(blockDeserializers: Map<string, DeserializeBlockV1>) {
-        this._blockDeserializers = blockDeserializers;
+        this._blockDeserializersV1 = blockDeserializers;
 
         // Add in the core block deserializers - they are not delay loaded, so they are wrapped in Promise.resolve()
-        this._blockDeserializers.set(
+        this._blockDeserializersV1.set(
             InputBlock.ClassName,
             (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) =>
                 Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock, engine))
@@ -53,7 +55,7 @@ export class SmartFilterDeserializer {
             if (serializedBlock.className === OutputBlock.ClassName) {
                 blockMap.set(smartFilter.output.ownerBlock.name, smartFilter.output.ownerBlock);
             } else {
-                const blockDeserializer = this._blockDeserializers.get(serializedBlock.className);
+                const blockDeserializer = this._blockDeserializersV1.get(serializedBlock.className);
                 if (!blockDeserializer) {
                     throw new Error(`No deserializer found for block type ${serializedBlock.className}`);
                 }

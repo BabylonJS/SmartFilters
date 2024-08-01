@@ -2,7 +2,7 @@ import { InputBlock } from "./inputBlock.js";
 import type { SerializedInputBlockData } from "./inputBlock.serialization.types.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import type { SmartFilter } from "../smartFilter.js";
-import type { ISerializedBlockV1 } from "../serialization/v1/ISerializedBlockV1.js";
+import type { ISerializedBlockV1 } from "../serialization/v1/serialization.types.js";
 import { createImageTexture } from "../utils/textureLoaders.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 

@@ -7,7 +7,7 @@ import type {
     SerializedInputBlockData,
     SerializedTextureInputBlockData,
 } from "./inputBlock.serialization.types";
-import type { IBlockSerializer } from "../serialization/smartFilterSerializer.types.js";
+import type { IBlockSerializerV1 } from "../serialization/v1/serialization.types";
 
 function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlockData {
     switch (inputBlock.type) {
@@ -51,7 +51,7 @@ function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Flo
     };
 }
 
-export const inputBlockSerializer: IBlockSerializer = {
+export const inputBlockSerializer: IBlockSerializerV1 = {
     className: InputBlockBase.ClassName,
     serialize: (block: BaseBlock) => {
         if (block.getClassName() !== InputBlockBase.ClassName) {
