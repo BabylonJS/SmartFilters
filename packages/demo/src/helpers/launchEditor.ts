@@ -18,6 +18,13 @@ import type { SmartFilterRenderer } from "../smartFilterRenderer";
 import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 
+/**
+ * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
+ * knows how to instantiate all registered blocks (so it includes all the block code).
+ * @param currentSmartFilter - The smart filter to edit
+ * @param engine - The engine to use
+ * @param renderer - The renderer to use
+ */
 export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine, renderer: SmartFilterRenderer) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};

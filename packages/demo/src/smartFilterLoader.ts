@@ -20,6 +20,9 @@ export type HardCodedSmartFilterManifest = {
 
 export type SmartFilterManifest = HardCodedSmartFilterManifest | SerializedSmartFilterManifest;
 
+/**
+ * Manges loading SmartFilters for the demo app
+ */
 export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
     private readonly _deserializer: SmartFilterDeserializer;

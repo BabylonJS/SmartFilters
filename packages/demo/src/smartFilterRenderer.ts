@@ -5,9 +5,7 @@ import type { SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
 
 /**
- * Simple class representing a filter renderer for POC purpose.
- *
- * It helps managing compat across web and native.
+ * Simple example of rendering a Smart Filter
  */
 export class SmartFilterRenderer {
     /**

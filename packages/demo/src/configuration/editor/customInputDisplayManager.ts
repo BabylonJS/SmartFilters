@@ -3,6 +3,9 @@ import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filter
 import { InputDisplayManager } from "@babylonjs/smart-filters-editor";
 import type { WebCamInputBlock } from "../blocks/inputs/webCamInputBlock";
 
+/**
+ * Optional override of the InputDisplayManager to provide custom display for particular blocks if desired.
+ */
 export class CustomInputDisplayManager extends InputDisplayManager {
     public override updatePreviewContent(nodeData: INodeData, contentArea: HTMLDivElement): void {
         super.updatePreviewContent(nodeData, contentArea);
