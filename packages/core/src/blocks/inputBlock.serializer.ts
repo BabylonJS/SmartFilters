@@ -2,10 +2,13 @@ import { InputBlockBase, type InputBlock } from "./inputBlock.js";
 import type { BaseBlock } from "./baseBlock.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import type {
-    SerializedBooleanInputBlockData,
-    SerializedFloatInputBlockData,
+    BooleanInputBlockData,
+    Color3InputBlockData,
+    Color4InputBlockData,
+    FloatInputBlockData,
     SerializedInputBlockData,
-    SerializedTextureInputBlockData,
+    TextureInputBlockData,
+    Vector2InputBlockData,
 } from "./inputBlock.serialization.types";
 import type { IBlockSerializerV1 } from "../serialization/v1/serialization.types";
 
@@ -18,35 +21,52 @@ function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlo
         case ConnectionPointType.Float:
             return serializeFloatInputBlock(inputBlock as InputBlock<ConnectionPointType.Float>);
         case ConnectionPointType.Color3:
-            throw new Error("Not implemented: Color3");
+            return serializeColor3InputBlock(inputBlock as InputBlock<ConnectionPointType.Color3>);
         case ConnectionPointType.Color4:
-            throw new Error("Not implemented: Color4");
+            return serializeColor4InputBlock(inputBlock as InputBlock<ConnectionPointType.Color4>);
         case ConnectionPointType.Vector2:
-            throw new Error("Not implemented: Vector2");
+            return serializeVector2InputBlock(inputBlock as InputBlock<ConnectionPointType.Vector2>);
     }
 }
 
-function serializeTextureInputBlock(
-    inputBlock: InputBlock<ConnectionPointType.Texture>
-): SerializedTextureInputBlockData {
+function serializeTextureInputBlock(inputBlock: InputBlock<ConnectionPointType.Texture>): TextureInputBlockData {
     return {
         inputType: ConnectionPointType.Texture,
         url: inputBlock.runtimeValue.value?.getInternalTexture()?.url || null,
     };
 }
 
-function serializeBooleanInputBlock(
-    inputBlock: InputBlock<ConnectionPointType.Boolean>
-): SerializedBooleanInputBlockData {
+function serializeBooleanInputBlock(inputBlock: InputBlock<ConnectionPointType.Boolean>): BooleanInputBlockData {
     return {
         inputType: ConnectionPointType.Boolean,
         value: inputBlock.runtimeValue.value,
     };
 }
 
-function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Float>): SerializedFloatInputBlockData {
+function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Float>): FloatInputBlockData {
     return {
         inputType: ConnectionPointType.Float,
+        value: inputBlock.runtimeValue.value,
+    };
+}
+
+function serializeColor3InputBlock(inputBlock: InputBlock<ConnectionPointType.Color3>): Color3InputBlockData {
+    return {
+        inputType: ConnectionPointType.Color3,
+        value: inputBlock.runtimeValue.value,
+    };
+}
+
+function serializeColor4InputBlock(inputBlock: InputBlock<ConnectionPointType.Color4>): Color4InputBlockData {
+    return {
+        inputType: ConnectionPointType.Color4,
+        value: inputBlock.runtimeValue.value,
+    };
+}
+
+function serializeVector2InputBlock(inputBlock: InputBlock<ConnectionPointType.Vector2>): Vector2InputBlockData {
+    return {
+        inputType: ConnectionPointType.Vector2,
         value: inputBlock.runtimeValue.value,
     };
 }
