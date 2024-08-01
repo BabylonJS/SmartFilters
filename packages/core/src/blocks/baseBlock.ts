@@ -1,12 +1,11 @@
 import type { Nullable } from "@babylonjs/core/types";
-import { UniqueIdGenerator } from "@babylonjs/core/Misc/uniqueIdGenerator.js";
-
 import { ConnectionPointType, type ConnectionPointValue } from "../connection/connectionPointType.js";
 import type { InitializationData, SmartFilter } from "../smartFilter";
 import type { ICommandOwner } from "../command/command";
 import { ConnectionPoint, type RuntimeData } from "../connection/connectionPoint.js";
 import { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault.js";
 import { ConnectionPointDirection } from "../connection/connectionPointDirection.js";
+import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
 
 /**
  * Defines a callback function that is triggered when visiting a block,
@@ -38,7 +37,7 @@ export abstract class BaseBlock implements ICommandOwner {
     /**
      * Global unique id of the block (This is unique for the current session).
      */
-    public readonly uniqueId: number;
+    public uniqueId: number;
 
     /**
      * The name of the block. This is used to identify the block in the smart filter or in debug.

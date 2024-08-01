@@ -9,15 +9,29 @@ import { type ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
  * * A base64 string of in-line texture data, e.g. 'data:image/jpg;base64,/...'
  * @param flipY - Indicates if the Y axis should be flipped
  * @param samplingMode - The sampling mode to use
+ * @param forcedExtension - defines the extension to use to pick the right loader
  * @returns A ThinTexture of the image
  */
 export function createImageTexture(
     engine: ThinEngine,
     url: string,
     flipY: boolean = true,
-    samplingMode: number | undefined = undefined
+    samplingMode: number | undefined = undefined,
+    forcedExtension: string | null = null
 ): ThinTexture {
-    const internalTexture = engine.createTexture(url, true, flipY, null, samplingMode);
+    const internalTexture = engine.createTexture(
+        url,
+        true,
+        flipY,
+        null,
+        samplingMode,
+        null,
+        null,
+        null,
+        null,
+        null,
+        forcedExtension
+    );
     return new ThinTexture(internalTexture);
 }
 

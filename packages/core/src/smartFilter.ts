@@ -8,6 +8,7 @@ import { OutputBlock } from "./blocks/outputBlock.js";
 import { InternalSmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 import { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
 import { AggregateBlock } from "./blocks/aggregateBlock.js";
+import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 
 /**
  * How long to wait for shader compilation and texture loading to complete before erroring out.
@@ -61,9 +62,8 @@ export class SmartFilter {
 
     /**
      * Data used by the smart filter editor.
-     * TODO. strong type and hide this.
      */
-    public editorData: any = null;
+    public editorData: Nullable<IEditorData> = null;
 
     private readonly _attachedBlocks: Array<BaseBlock>;
     private readonly _outputBlock: OutputBlock;

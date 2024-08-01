@@ -2,92 +2,72 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
-import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
-import {
-    SmartFilterOptimizer,
-    createImageTexture,
-    logCommands,
-    type SmartFilter,
-    type SmartFilterRuntime,
-} from "@babylonjs/smart-filters";
-import { createSimpleWebcamFilter } from "./createSmartFilter";
+import { type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { createThinEngine } from "./helpers/createThinEngine";
+import { SmartFilterLoader } from "./smartFilterLoader";
+import { smartFilterManifests } from "./configuration/smartFilters";
+import { getBlockDeserializers } from "./configuration/blockDeserializers";
+
+// Hardcoded options there is no UI for
+const useTextureAnalyzer: boolean = false;
+// TODO: add UI for toggling between regular and optimized graphs
+const optimize: boolean = false;
+
+// Constants
+const LocalStorageSmartFilterName = "SmartFilterName";
 
 // Manage our HTML elements
-const editActionLink = document.getElementById("editActionLink");
-const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
+const editActionLink = document.getElementById("editActionLink")!;
+const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
+const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 
-// Create the Web Engine.
-const antialias = true;
-const engine = new ThinEngine(
-    canvas,
-    antialias,
-    {
-        alpha: false,
-        stencil: false,
-        depth: false,
-        antialias,
-        audioEngine: false,
-        // Important to allow skip frame and tiled optimizations
-        preserveDrawingBuffer: false,
-        // Useful during debug to simulate WebGL1 devices (Safari)
-        // disableWebGL2Support: true,
-    },
-    false
-);
-
-// Creates a smart filter renderer
+// Create our services
+const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine);
-let filter: SmartFilter | undefined = undefined;
+const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterManifests, getBlockDeserializers());
 
-const prebuildGraphId: number = 0;
-const useGraphOptimizer = false;
-const forceMaxSamplersInFragmentShader = 0;
-const useTextureAnalyzer = false;
+// Track the current Smart Filter
+let currentSmartFilter: SmartFilter | undefined;
 
-const optimizeFilters = (filters: SmartFilter) => {
-    (window as any).sm = filters;
-    if (useGraphOptimizer) {
-        const vfo = new SmartFilterOptimizer(filters, {
-            maxSamplersInFragmentShader: forceMaxSamplersInFragmentShader || engine.getCaps().maxTexturesImageUnits,
-            removeDisabledBlocks: true,
-        });
-        filters = vfo.optimize()!;
-        (window as any).smo = filters;
+/**
+ * Loads a SmartFilter
+ * @param name - The name of the SmartFilter to load
+ * @param optimize - If true, the SmartFilter will be automatically optimized
+ */
+async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
+    SmartFilterEditor.Hide();
+    localStorage.setItem(LocalStorageSmartFilterName, name);
+    currentSmartFilter = await smartFilterLoader.loadSmartFilter(name, optimize);
+    renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
+        console.error("Could not start rendering", err);
+    });
+}
+
+// Load the initial SmartFilter
+const initialSmartFilterName =
+    localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
+loadSmartFilter(initialSmartFilterName, optimize);
+
+// Populate the smart filter <select> list
+smartFilterLoader.manifests.forEach((manifest) => {
+    const option = document.createElement("option");
+    option.value = manifest.name;
+    option.innerText = manifest.name;
+    option.selected = manifest.name === initialSmartFilterName;
+    smartFilterSelect?.appendChild(option);
+});
+
+// Set up SmartFilter <select> handler
+smartFilterSelect.addEventListener("change", () => {
+    loadSmartFilter(smartFilterSelect.value, optimize);
+});
+
+// Set up editor button
+editActionLink.onclick = async () => {
+    if (currentSmartFilter) {
+        const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
+        module.launchEditor(currentSmartFilter, engine, renderer);
     }
-    return filters;
 };
-
-switch (prebuildGraphId) {
-    case 0:
-        {
-            const logoTexture = createImageTexture(engine, "./assets/logo.png");
-            filter = createSimpleWebcamFilter(engine, logoTexture);
-            filter = optimizeFilters(filter);
-
-            renderer.startRendering(filter, useTextureAnalyzer).catch((err: unknown) => {
-                console.error("Could not start rendering", err);
-            });
-        }
-        break;
-}
-
-if (editActionLink) {
-    editActionLink.onclick = () => {
-        if (filter) {
-            // Display the editor
-            SmartFilterEditor.Show({
-                engine,
-                filter: (window as any).sm, // use filter instead of (window as any).sm if you want to edit the optimized graph (when optimizer is enabled)
-                onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-                    renderer.setRuntime(runtime);
-                },
-            });
-        }
-        if (renderer.runtime) {
-            // Display debug info in the console
-            logCommands(renderer.runtime.commandBuffer);
-        }
-    };
-}

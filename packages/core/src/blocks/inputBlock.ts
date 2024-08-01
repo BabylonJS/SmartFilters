@@ -15,7 +15,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 function isRuntimeData<U extends ConnectionPointType>(
     value: ConnectionPointValue<U> | RuntimeData<U>
 ): value is RuntimeData<U> {
-    return (value as RuntimeData<ConnectionPointType>).value !== undefined;
+    return value && (value as RuntimeData<ConnectionPointType>).value !== undefined;
 }
 
 /**
@@ -37,18 +37,29 @@ export function isDisableableBlock(block: BaseBlock): block is DisableableBlock 
 }
 
 /**
+ * This base class exists to provide a type that the serializer can use to represent
+ * any InputBlock without knowing the exact type it is.
+ */
+export abstract class InputBlockBase extends BaseBlock {
+    /**
+     * The class name of the block.
+     */
+    public static override ClassName = "InputBlock";
+
+    /**
+     * The type of the input.
+     */
+    public abstract readonly type: ConnectionPointType;
+}
+
+/**
  * This represents any inputs used in the graph.
  *
  * This is used to provide a way to connect the graph to the outside world.
  *
  * The value is dynamically set by the user.
  */
-export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
-    /**
-     * The class name of the block.
-     */
-    public static override ClassName = "InputBlock";
-
+export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
     /**
      * The output connection point of the block.
      */

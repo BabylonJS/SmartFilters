@@ -1,7 +1,7 @@
 {
     "name": "@babylonjs/smart-filters",
-    "version": "0.2.0",
-    "description": "Babylon.js Smart Filter core and common block library",
+    "version": "0.3.0",
+    "description": "Babylon.js Smart Filter core",
     "author": {
         "name": "Sebastien VANDENBERGHE"
     },

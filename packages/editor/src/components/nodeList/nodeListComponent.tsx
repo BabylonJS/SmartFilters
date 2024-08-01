@@ -23,28 +23,6 @@ interface INodeListComponentProps {
 export class NodeListComponent extends react.Component<INodeListComponentProps, { filter: string }> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
 
-    private static _Tooltips: { [key: string]: string } = {
-        Float: "A floating point number representing a value with a fractional component",
-        Texture: "A node for reading a linked or embedded texture file",
-        CopyBlock: "Copy the input texture to the output texture",
-        OutputBlock: "Final output of the Smart Filter, this represents the canvas or an offscreen texture",
-        GlitchBlock: "Funky glitch transition",
-        TileBlock: "Transition from one texture to another using tiles",
-        WipeBlock: "Transition from one texture to another using a wipe",
-        BlackAndWhiteBlock: "Transform the input texture to black and white",
-        BlurBlock: "Blur the input texture",
-        BlackAndWhiteAndBlurBlock: "Transforms the input texture to black and white and blurs it",
-        CompositionBlock: "Composite the foreground texture over the background texture",
-        FrameBlock: "Green screen like effect",
-        GlassBlock: "Creates a glass like effect",
-        KaleidoscopeBlock: "Kaleidoscope effect",
-        InputBlock: "Adds inputs to the Smart Filter",
-        PixelateBlock: "Add pixelation to the input texture",
-        PosterizeBlock: "Posterize to the input texture",
-        ContrastBlock: "Change the contrast of the input texture",
-        GreenScreenBlock: "Help replacing a green screen background with a different texture",
-    };
-
     // private _customFrameList: { [key: string]: string };
     // private _customBlockList: { [key: string]: string };
 
@@ -175,33 +153,10 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         //     customBlockNames.push(block);
         // }
 
-        // Block types used to create the menu from
-        const allBlocks = {
-            // Custom_Frames: customFrameNames,
-            // Custom_Blocks: customBlockNames,
-            Inputs: ["Float", "Color3", "Texture", "WebCam"],
-            Transitions: ["GlitchBlock", "TileBlock", "WipeBlock"],
-            Effects: [
-                "CopyBlock",
-                "BlackAndWhiteBlock",
-                "BlurBlock",
-                "CompositionBlock",
-                "FrameBlock",
-                "GlassBlock",
-                "KaleidoscopeBlock",
-                "PixelateBlock",
-                "PosterizeBlock",
-                "DesaturateBlock",
-                "ContrastBlock",
-                "GreenScreenBlock",
-                "BlackAndWhiteAndBlurBlock",
-            ],
-        };
-
         // Create node menu
         const blockMenu = [];
-        for (const key in allBlocks) {
-            const blockList = (allBlocks as any)[key]
+        for (const key in this.props.globalState.blockRegistration.allBlockNames) {
+            const blockList = (this.props.globalState.blockRegistration.allBlockNames as any)[key]
                 .filter(
                     (b: string) => !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
                 )
@@ -235,7 +190,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         <DraggableLineComponent
                             key={block}
                             data={block}
-                            tooltip={NodeListComponent._Tooltips[block] || ""}
+                            tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
                         />
                     );
                 });
