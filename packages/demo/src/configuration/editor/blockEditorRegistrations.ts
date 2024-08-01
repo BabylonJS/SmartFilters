@@ -5,6 +5,7 @@ import { BlurBlock } from "../blocks/effects/blurBlock";
 import { CompositionBlock } from "../blocks/effects/compositionBlock";
 import { ContrastBlock } from "../blocks/effects/contrastBlock";
 import { DesaturateBlock } from "../blocks/effects/desaturateBlock";
+import { ExposureBlock } from "../blocks/effects/exposureBlock";
 import { FrameBlock } from "../blocks/effects/frameBlock";
 import { GlassBlock } from "../blocks/effects/glassBlock";
 import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
@@ -168,5 +169,16 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         },
         category: "Effects",
         tooltip: "Add pixelation to the input texture",
+    },
+    {
+        name: "ExposureBlock",
+        factory: (smartFilter: SmartFilter) => {
+            const block = new ExposureBlock(smartFilter, "Exposure");
+            const input = new InputBlock(smartFilter, "Amount", ConnectionPointType.Float, 0.7);
+            input.output.connectTo(block.amount);
+            return block;
+        },
+        category: "Effects",
+        tooltip: "Alters the exposure of the input texture",
     },
 ];
