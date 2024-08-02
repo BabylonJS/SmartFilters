@@ -25,6 +25,7 @@
         "clean": "npm run clean --workspaces",
         "assets": "npm run assets -w @babylonjs/smart-filters-editor",
         "build": "npm run clean && npm run lint:check && npm run assets && tsc -b -v && npm run build -w @babylonjs/smart-filters-demo",
+        "build:core": "npm run clean && tsc -b -v",
         "build:shaders": "build-shaders",
         "watch": "tsc -b -v -w",
         "start": "npm run assets && concurrently \"npm run watch\" \"npm run start -w @babylonjs/smart-filters-demo\"",
@@ -42,16 +43,18 @@
         "packages/demo"
     ],
     "devDependencies": {
+        "@alex_neo/jest-expect-message": "~1.0.5",
+        "@babel/plugin-transform-modules-commonjs": "^7.23.3",
+        "@babel/preset-env": "^7.23.3",
+        "@babel/preset-react": "^7.23.3",
         "@babylonjs/core": "^7.11.2",
         "@babylonjs/shared-ui-components": "^7.11.2",
         "@types/jest": "~29.5.8",
         "@types/jest-expect-message": "~1.1.0",
+        "@types/node": "^22.0.2",
         "@typescript-eslint/eslint-plugin": "~6.11.0",
         "@typescript-eslint/parser": "~6.11.0",
-        "typescript": "^5.1.0",
-        "rimraf": "^5.0.5",
         "concurrently": "^8.2.2",
-        "prettier": "^3.1.0",
         "eslint": "^8.54.0",
         "eslint-config-prettier": "~9.0.0",
         "eslint-plugin-import": "~2.29.0",
@@ -61,12 +64,11 @@
         "eslint-plugin-tsdoc": "~0.2.17",
         "jest": "~29.7.0",
         "jest-junit": "~16.0.0",
+        "prettier": "^3.1.0",
+        "rimraf": "^5.0.5",
         "ts-jest": "~29.1.1",
         "ts-node": "~10.9.1",
         "ts-patch": "~3.0.2",
-        "@alex_neo/jest-expect-message": "~1.0.5",
-        "@babel/preset-env": "^7.23.3",
-        "@babel/preset-react": "^7.23.3",
-        "@babel/plugin-transform-modules-commonjs": "^7.23.3"
+        "typescript": "^5.1.0"
     }
 }
