@@ -35,8 +35,8 @@
     ],
     "files.exclude": {
         "**/node_modules": true,
-        "**/dist": false
-        /* TODO: add .shader.ts */
+        "**/dist": false,
+        "**/*.shader.ts": true
     },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
