@@ -1,4 +1,4 @@
-import { determineVersion, removePrereleaseFlags, getNpmVersion } from "../../tools/determineVersion.js";
+import { determineVersion, removePrereleaseFlags, getNpmVersion } from "../../buildTools/determineVersion.js";
 
 describe("versionUp", () => {
     beforeAll(() => {

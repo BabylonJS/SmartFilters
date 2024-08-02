@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.build.json",
+
+    "compilerOptions": {
+        "rootDir": "./src/utils/buildTools",
+        "outDir": "./buildTools/dist",
+        "composite": true
+    },
+
+    "include": ["./src/utils/buildTools/**/*.ts"],
+    "exclude": ["**/node_modules", "**/dist"]
+}
