@@ -1,32 +1,11 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import type { SmartFilter } from "../smartFilter";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBlock } from "./shaderBlock.js";
 import { ShaderBinding } from "../runtime/shaderRuntime.js";
 import type { RuntimeData } from "../connection/connectionPoint";
-
-const shaderProgram: ShaderProgram = {
-    fragment: {
-        uniform: `
-            uniform sampler2D _input_;
-        `,
-
-        mainFunctionName: "_copy_",
-
-        functions: [
-            {
-                name: "_copy_",
-                code: `
-                    vec4 _copy_(vec2 vUV) {
-                        return texture2D(_input_, vUV);
-                    }
-                `,
-            },
-        ],
-    },
-};
+import { shaderProgram } from "./copyBlock.shader.js";
 
 /**
  * The shader bindings for the Copy block.

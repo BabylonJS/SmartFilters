@@ -163,3 +163,15 @@ The overall system is trying at best to follow 3 simple rules:
 -   Be CPU efficient: for instance, we are trying to be branchless in most of our commands and we try to keep the number of commands as low as possible.
 -   Be memory efficient: no commands should allocate memory as it could trigger some garbage collection at the expense of frame loss.
 -   Be GPU efficient: the graph and texture optimizers minimize the number of "passes" required to render an image and the GPU resources used by the graph.
+
+## Requirements for GLSL code
+
+To be imported into blocks, the following requirements must be met by .glsl files:
+
+1. There must be a sampler2D uniform designed as the main input texture (the one to be passed along) if this block is disabled. It must have a comment on its line like this:
+   `// main`
+1. There must be a single main function which takes in a vec2 named vUV and returns a vec4, and it must have a comment on its line like this:
+   `// main`
+1. Any uniforms which should have the same value across all instances of the same block should have a comment on its line like this:
+   `// single`
+1. Functions must be declared with the open { on the same line as the function name

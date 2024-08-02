@@ -1,53 +1,9 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import {
-    ShaderBlock,
-    ConnectionPointType,
-    ShaderBinding,
-    injectDisableUniform,
-    createStrongRef,
-} from "@babylonjs/smart-filters";
+import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-
-const shaderProgram = injectDisableUniform({
-    fragment: {
-        uniform: `
-            uniform sampler2D _input_;
-            uniform float _intensity_;
-            `,
-
-        const: `
-            const float _videoPixelatePower_ = 6.0;
-            const float _videoPixelateMin_ = 10.0;
-            const float _videoPixelateMax_ = 1920.0;
-            
-            const float _aspect_ = 1.72;
-            `,
-
-        mainFunctionName: "_pixelate_",
-
-        mainInputTexture: "_input_",
-
-        functions: [
-            {
-                name: "_pixelate_",
-                code: `
-                vec4 _pixelate_(vec2 vUV)
-                {
-                    float pixelateStrength = mix(_videoPixelateMin_, _videoPixelateMax_, pow(1. - _intensity_, _videoPixelatePower_));
-                
-                    vec2 pixelate = vec2(pixelateStrength * _aspect_, pixelateStrength);
-                
-                    vec2 pixelateStep = floor(pixelate * vUV) / pixelate;
-                
-                    return vec4(texture2D(_input_, pixelateStep).rgb, 1.);
-                }
-            `,
-            },
-        ],
-    },
-});
+import { shaderProgram } from "./pixelateBlock.shader";
 
 /**
  * The shader bindings for the Pixelate block.

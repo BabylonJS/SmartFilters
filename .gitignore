@@ -20,6 +20,9 @@ junit.xml
 # Node Modules
 **/node_modules/*
 
+# Build tools
+/packages/core/buildTools/dist/
+
 # Local dist
 **/www/scripts/**
 dist
@@ -28,3 +31,6 @@ dist
 
 # unignore
 !/src/smartFiltersEditor/components/log
+
+# generated shader TS files
+**/*.shader.ts

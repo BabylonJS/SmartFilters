@@ -30,11 +30,13 @@
         "unmerge",
         "VANDENBERGHE",
         "webgl",
-        "webgpu"
+        "webgpu",
+        "glsl"
     ],
     "files.exclude": {
         "**/node_modules": true,
-        "**/dist": false
+        "**/dist": false,
+        "**/*.shader.ts": true
     },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

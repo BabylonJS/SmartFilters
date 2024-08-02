@@ -24,7 +24,9 @@
     "esnext": "dist/index",
     "types": "dist/index",
     "type": "module",
-    "sideEffects": false,
+    "sideEffects": [
+        "./dist/utils/buildTools/**"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/BabylonJS/SmartFilters.git"
@@ -37,8 +39,11 @@
     ],
     "scripts": {
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
-        "versionUp": "node tools/versionUp.js",
-        "build": "tsc -p ./tsconfig.build.json",
+        "versionUp": "node buildTools/versionUp.js",
+        "build": "npm run build:buildTools && npm run build:runTools && npm run build:core",
+        "build:core": "tsc -p ./tsconfig.build.json",
+        "build:buildTools": "tsc -p ./tsconfig.buildTools.build.json",
+        "build:runTools": "node buildTools/dist/shaderConverter.js ./src/blocks ../utils/shaderCodeUtils",
         "watch": "tsc -p ./tsconfig.build.json --watch",
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
