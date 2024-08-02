@@ -20,7 +20,8 @@
     ],
     "license": "MIT",
     "scripts": {
-        "build": "webpack --env=prod",
+        "build": "npm run build:runTools && webpack --env=prod",
+        "build:runTools": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/shaderConverter.js ./src/configuration/blocks @babylonjs/smart-filters",
         "clean": "rimraf .temp && rimraf www/scripts",
         "start": "npx webpack-dev-server",
         "analyze": "webpack --profile --json > www/scripts/stats.json && npx webpack-bundle-analyzer www/scripts/stats.json"

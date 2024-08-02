@@ -1,35 +1,8 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-
-const shaderProgram = injectDisableUniform({
-    fragment: {
-        uniform: `
-            uniform sampler2D _input_;
-            `,
-
-        mainFunctionName: "_blackAndWhite_",
-
-        mainInputTexture: "_input_",
-
-        functions: [
-            {
-                name: "_blackAndWhite_",
-                code: `
-                vec4 _blackAndWhite_(vec2 vUV) {
-                    vec3 color = texture2D(_input_, vUV).rgb;
-                
-                    float luminance = dot(color, vec3(0.3, 0.59, 0.11));
-                    vec3 bg = vec3(luminance, luminance, luminance);
-                
-                    return vec4(bg, 1.0);
-                }
-            `,
-            },
-        ],
-    },
-});
+import { shaderProgram } from "./blackAndWhiteBlock.shader";
 
 /**
  * The shader bindings for the BlackAndWhite block.

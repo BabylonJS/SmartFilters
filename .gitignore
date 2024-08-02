@@ -31,3 +31,6 @@ dist
 
 # unignore
 !/src/smartFiltersEditor/components/log
+
+# generated shader TS files
+**/*.shader.ts
