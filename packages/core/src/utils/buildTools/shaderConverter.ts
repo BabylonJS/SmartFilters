@@ -164,7 +164,7 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
     const symbolsToDecorate = [...uniforms, ...consts, ...functionNames];
     let fragmentShaderWithRenamedSymbols = fragmentShader;
     for (const symbol of symbolsToDecorate) {
-        const regex = new RegExp(`(\\S*(?:\\s|;|,|\\()+)${symbol}((\\s|;|,|\\()+)`, "gs");
+        const regex = new RegExp(`(\\S*(?:\\s|;|,|\\)|\\()+)${symbol}((\\s|;|,|\\)|\\()+)`, "gs");
         fragmentShaderWithRenamedSymbols = fragmentShaderWithRenamedSymbols.replace(regex, `$1_${symbol}_$2`);
     }
     console.log(`${symbolsToDecorate.length} symbol(s) renamed`);
