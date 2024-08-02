@@ -38,7 +38,7 @@ export class CopyShaderBinding extends ShaderBinding {
  *
  * This might be helpful to duplicate a texture if necessary.
  *
- * It simply takes a texture as input and outputs it to another texture or the main canvas.
+ * It simply takes a texture as input and outputs it to another texture or to the main canvas.
  */
 export class CopyBlock extends ShaderBlock {
     /**
@@ -70,11 +70,7 @@ export class CopyBlock extends ShaderBlock {
      * @returns The class instance that binds the data to the effect
      */
     public getShaderBinding(): ShaderBinding {
-        const input = this.input.runtimeData;
-
-        if (!input) {
-            throw new Error(`The input texture is missing for the CopyBlock named ${this.name}`);
-        }
+        const input = this._confirmRuntimeDataSupplied(this.input);
 
         return new CopyShaderBinding(this, input);
     }
