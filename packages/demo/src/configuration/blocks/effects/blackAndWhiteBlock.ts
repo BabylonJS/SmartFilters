@@ -2,7 +2,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram } from "./blackAndWhiteBlock.shader";
+import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader";
 
 /**
  * The shader bindings for the BlackAndWhite block.
@@ -26,7 +26,7 @@ export class BlackAndWhiteShaderBinding extends ShaderBinding {
      */
     public override bind(effect: Effect): void {
         super.bind(effect);
-        effect.setTexture(this.getRemappedName("input"), this._inputTexture.value);
+        effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
     }
 }
 

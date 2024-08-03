@@ -3,7 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram } from "./pixelateBlock.shader";
+import { shaderProgram, uniforms } from "./pixelateBlock.shader";
 
 /**
  * The shader bindings for the Pixelate block.
@@ -34,8 +34,8 @@ export class PixelateShaderBinding extends ShaderBinding {
      */
     public override bind(effect: Effect): void {
         super.bind(effect);
-        effect.setTexture(this.getRemappedName("input"), this._inputTexture.value);
-        effect.setFloat(this.getRemappedName("intensity"), this._intensity.value);
+        effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
+        effect.setFloat(this.getRemappedName(uniforms.intensity), this._intensity.value);
     }
 }
 
