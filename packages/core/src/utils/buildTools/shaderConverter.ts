@@ -11,6 +11,7 @@ const MAIN_FUNCTION_NAME = "@MAIN_FUNCTION_NAME@";
 const FUNCTIONS = "@FUNCTIONS@";
 const FUNCTION_NAME = "@FUNCTION_NAME@";
 const FUNCTION_CODE = "@FUNCTION_CODE@";
+const UNIFORM_NAMES = "@UNIFORM_NAMES@";
 
 const ConstsTemplate = `
         const: \`${CONSTS_VALUE}\`,`;
@@ -42,7 +43,17 @@ export const shaderProgram: ShaderProgram = {
         ],
     },
 };
+
+/**
+ * The uniform names for this shader, to be used in the shader binding so
+ * that the names are always in sync.
+ */
+export const uniforms = {
+${UNIFORM_NAMES}
+};
 `;
+
+const UniformNameLinePrefix = "    ";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
@@ -106,7 +117,8 @@ function convertShader(fragmentShaderPath: string, importPath: string): void {
                   )
                 : ""
         )
-        .replace(FUNCTIONS, fragmentShaderInfo.extractedFunctions.join(""));
+        .replace(FUNCTIONS, fragmentShaderInfo.extractedFunctions.join(""))
+        .replace(UNIFORM_NAMES, addLinePrefixes(fragmentShaderInfo.uniformNames.join("\n"), UniformNameLinePrefix));
 
     fs.writeFileSync(shaderFile, finalContents);
 }
@@ -116,7 +128,7 @@ function convertShader(fragmentShaderPath: string, importPath: string): void {
  */
 type FragmentShaderInfo = {
     /**
-     * The final uniforms
+     * The lines of code which declare the uniforms
      */
     finalUniforms: (string | undefined)[];
 
@@ -131,14 +143,19 @@ type FragmentShaderInfo = {
     mainInputName: string;
 
     /**
-     * The final consts
+     * The lines of code which declare the consts
      */
     finalConsts: (string | undefined)[];
 
     /**
-     * The extracted functions
+     * The lines of code which declare the functions
      */
     extractedFunctions: string[];
+
+    /**
+     * The lines of code which declare the uniform names
+     */
+    uniformNames: string[];
 };
 
 /**
@@ -168,6 +185,7 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
         fragmentShaderWithRenamedSymbols = fragmentShaderWithRenamedSymbols.replace(regex, `$1_${symbol}_$2`);
     }
     console.log(`${symbolsToDecorate.length} symbol(s) renamed`);
+    const uniformNames = uniforms.map((uniform) => `${uniform}: "${uniform}",`);
 
     // Extract all the uniforms
     const finalUniforms = [...fragmentShaderWithRenamedSymbols.matchAll(/^\s*(uniform\s.*)/gm)].map(
@@ -195,6 +213,7 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
         mainInputName,
         finalConsts,
         extractedFunctions,
+        uniformNames,
     };
 }
 

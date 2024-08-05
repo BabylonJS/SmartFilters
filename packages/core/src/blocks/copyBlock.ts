@@ -5,7 +5,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBlock } from "./shaderBlock.js";
 import { ShaderBinding } from "../runtime/shaderRuntime.js";
 import type { RuntimeData } from "../connection/connectionPoint";
-import { shaderProgram } from "./copyBlock.shader.js";
+import { shaderProgram, uniforms } from "./copyBlock.shader.js";
 
 /**
  * The shader bindings for the Copy block.
@@ -29,7 +29,7 @@ export class CopyShaderBinding extends ShaderBinding {
      * @internal
      */
     public override bind(effect: Effect): void {
-        effect.setTexture(this.getRemappedName("input"), this._inputTexture.value);
+        effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
     }
 }
 
