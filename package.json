@@ -31,11 +31,11 @@
         "start": "npm run assets && concurrently \"npm run watch\" \"npm run start -w @babylonjs/smart-filters-demo\"",
         "test": "jest",
         "format": "npm run format:check && npm run format:fix",
-        "format:check": "prettier --check ./packages/**/src/**/*.{ts,tsx,js,json,scss,css}",
-        "format:fix": "prettier --write ./packages/**/src/**/*.{ts,tsx,js,json,scss,css}",
+        "format:check": "prettier --check \"./packages/**/src/**/*.{ts,tsx,js,json,scss,css}\"",
+        "format:fix": "prettier --write \"./packages/**/src/**/*.{ts,tsx,js,json,scss,css}\"",
         "lint": "npm run lint:check && npm run lint:fix",
-        "lint:check": "eslint ./packages/**/src/**/*.{ts,tsx,js,json}",
-        "lint:fix": "eslint ./packages/**/src/**/*.{ts,tsx,js,json} --fix"
+        "lint:check": "eslint \"./packages/**/src/**/*.{ts,tsx,js,json}\"",
+        "lint:fix": "eslint \"./packages/**/src/**/*.{ts,tsx,js,json}\" --fix"
     },
     "workspaces": [
         "packages/core",
