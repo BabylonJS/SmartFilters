@@ -11,7 +11,11 @@
     // Limit Usage on Demo and editor for now
     "overrides": [
         {
-            "files": ["packages/editor/**", "packages/demo/**", "**.test.ts"], // Or *.test.js
+            "files": [
+                "packages/editor/**",
+                "packages/demo/**",
+                "**.test.ts"
+            ], // Or *.test.js
             "rules": {
                 "jsdoc/require-jsdoc": "off",
                 "jsdoc/require-param": "off",
@@ -20,7 +24,10 @@
             }
         },
         {
-            "files": ["packages/demo/**", "**.test.ts"],
+            "files": [
+                "packages/demo/**",
+                "**.test.ts"
+            ],
             "rules": {
                 "import/extensions": "off"
             }
@@ -33,7 +40,7 @@
     },
     "plugins": [
         //   "react"
-        "prettier", // add this if we want to use prettier error reporting
+        //"prettier", // add this if we want to use prettier error reporting
         "jest",
         "@typescript-eslint",
         // "babylonjs",
@@ -48,7 +55,7 @@
         "plugin:import/typescript",
         "plugin:jest/recommended",
         // "plugin:jsdoc/recommended",
-        "prettier"
+        //"prettier"
     ],
     "settings": {
         "react": {
@@ -70,12 +77,21 @@
         "import/no-unresolved": "off", // because of the way the repo is structured
         // todo - make this work with external modules
         "import/named": "error",
-        "import/no-cycle": [1, { "maxDepth": 1, "ignoreExternal": true }],
+        "import/no-cycle": [
+            1,
+            {
+                "maxDepth": 1,
+                "ignoreExternal": true
+            }
+        ],
         "import/no-internal-modules": [
             "error",
             {
                 // {   "allow": ["**/*.ts", "**/*.tsx"]
-                "forbid": ["**/index", "**/"]
+                "forbid": [
+                    "**/index",
+                    "**/"
+                ]
             }
         ],
         // Another way of implementing that:
@@ -87,100 +103,180 @@
         // }],
         // "no-duplicate-imports": ["error", { "includeExports": true }],
         // should be error, no?
-        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-        "@typescript-eslint/consistent-type-imports": ["error", { "disallowTypeAnnotations": false }],
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "@typescript-eslint/consistent-type-imports": [
+            "error",
+            {
+                "disallowTypeAnnotations": false
+            }
+        ],
         "@typescript-eslint/no-this-alias": "error",
         "@typescript-eslint/naming-convention": [
             "error",
             {
                 "selector": "default",
-                "format": ["camelCase"]
+                "format": [
+                    "camelCase"
+                ]
             },
             {
                 "selector": "variable",
-                "format": ["camelCase", "UPPER_CASE", "snake_case"],
+                "format": [
+                    "camelCase",
+                    "UPPER_CASE",
+                    "snake_case"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "parameter",
-                "format": ["camelCase"],
+                "format": [
+                    "camelCase"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "enumMember",
-                "format": ["PascalCase", "UPPER_CASE"]
+                "format": [
+                    "PascalCase",
+                    "UPPER_CASE"
+                ]
             },
             {
                 "selector": "memberLike",
-                "modifiers": ["public", "static"],
-                "format": ["PascalCase", "UPPER_CASE"],
+                "modifiers": [
+                    "public",
+                    "static"
+                ],
+                "format": [
+                    "PascalCase",
+                    "UPPER_CASE"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "memberLike",
-                "modifiers": ["private", "static"],
-                "format": ["PascalCase", "UPPER_CASE"],
+                "modifiers": [
+                    "private",
+                    "static"
+                ],
+                "format": [
+                    "PascalCase",
+                    "UPPER_CASE"
+                ],
                 "leadingUnderscore": "require"
             },
             {
                 "selector": "memberLike",
-                "modifiers": ["public"],
-                "format": ["camelCase"],
+                "modifiers": [
+                    "public"
+                ],
+                "format": [
+                    "camelCase"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "memberLike",
-                "modifiers": ["private"],
-                "format": ["camelCase"],
+                "modifiers": [
+                    "private"
+                ],
+                "format": [
+                    "camelCase"
+                ],
                 "leadingUnderscore": "require"
             },
             {
                 "selector": "memberLike",
-                "modifiers": ["protected"],
-                "format": ["camelCase"],
+                "modifiers": [
+                    "protected"
+                ],
+                "format": [
+                    "camelCase"
+                ],
                 "leadingUnderscore": "require"
             },
             {
                 "selector": "typeLike",
-                "format": ["PascalCase"]
+                "format": [
+                    "PascalCase"
+                ]
             },
             {
                 "selector": "variable",
-                "format": ["camelCase", "UPPER_CASE"]
+                "format": [
+                    "camelCase",
+                    "UPPER_CASE"
+                ]
             },
             {
                 "selector": "variable",
-                "modifiers": ["const", "global"],
-                "format": ["PascalCase", "camelCase", "UPPER_CASE"],
+                "modifiers": [
+                    "const",
+                    "global"
+                ],
+                "format": [
+                    "PascalCase",
+                    "camelCase",
+                    "UPPER_CASE"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "function",
-                "format": ["camelCase"],
+                "format": [
+                    "camelCase"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "function",
-                "modifiers": ["exported", "global"],
-                "format": ["camelCase"],
+                "modifiers": [
+                    "exported",
+                    "global"
+                ],
+                "format": [
+                    "camelCase"
+                ],
                 "leadingUnderscore": "allow"
             },
             {
                 "selector": "interface",
-                "format": ["PascalCase"]
+                "format": [
+                    "PascalCase"
+                ]
             },
             {
                 "selector": "class",
-                "format": ["PascalCase"],
+                "format": [
+                    "PascalCase"
+                ],
                 "leadingUnderscore": "allow"
             }
         ],
         "no-unused-vars": "off",
-        "no-empty": ["error", { "allowEmptyCatch": true }],
+        "no-empty": [
+            "error",
+            {
+                "allowEmptyCatch": true
+            }
+        ],
         "space-infix-ops": "error",
         "template-curly-spacing": "error",
         "template-tag-spacing": "error",
-        "jest/no-standalone-expect": ["error", { "additionalTestBlockFunctions": ["afterEach"] }],
+        "jest/no-standalone-expect": [
+            "error",
+            {
+                "additionalTestBlockFunctions": [
+                    "afterEach"
+                ]
+            }
+        ],
         "jest/valid-expect": "off",
         // "babylonjs/syntax": "warn",
         "jsdoc/require-param": [
@@ -193,7 +289,12 @@
                 "checkSetters": false
             }
         ],
-        "jsdoc/check-param-names": ["error", { "checkRestProperty": false }],
+        "jsdoc/check-param-names": [
+            "error",
+            {
+                "checkRestProperty": false
+            }
+        ],
         "jsdoc/check-property-names": "error",
         // "jsdoc/require-param": ["error", { "checkDestructured": false, "checkRestProperty": false, "contexts":[
         //     // {"comment":"JsdocBlock:has(JsdocTag[tag=\"hidden\"])"}
@@ -208,7 +309,10 @@
         ],
         "jsdoc/require-returns-check": "error",
         "import/export": "error",
-        "import/extensions": ["error", "always"],
+        "import/extensions": [
+            "error",
+            "always"
+        ],
         "no-useless-escape": "error",
         "no-case-declarations": "error",
         "no-prototype-builtins": "error",
@@ -217,7 +321,7 @@
         "prefer-rest-params": "off",
         "no-fallthrough": "error",
         "no-async-promise-executor": "error",
-        "prettier/prettier": "error", // add this if we want to use prettier error reporting.
+        //"prettier/prettier": "error", // add this if we want to use prettier error reporting.
         "tsdoc/syntax": "error",
         "jsdoc/require-jsdoc": [
             "error",
@@ -226,7 +330,6 @@
                     "MethodDefinition:not([accessibility=\"private\"]):not([accessibility=\"protected\"])",
                     "PropertyDefinition:not([accessibility=\"private\"]):not([accessibility=\"protected\"])",
                     "FunctionDeclaration:not([accessibility=\"private\"]):not([accessibility=\"protected\"])",
-
                     "TSInterfaceDeclaration",
                     "TSPropertySignature:not([accessibility=\"private\"]):not([accessibility=\"protected\"])",
                     "TSMethodSignature:not([accessibility=\"private\"]):not([accessibility=\"protected\"])",
@@ -234,19 +337,16 @@
                     "TSEnumDeclaration",
                     "TSEnumMember"
                 ],
-
                 "require": {
                     "ClassDeclaration": true,
                     "ClassExpression": true,
                     "FunctionExpression": true
                 },
-
                 "checkConstructors": true,
                 "checkGetters": true,
                 "checkSetters": "no-getter",
                 "enableFixer": false,
                 "minLineCount": 1
-
                 // "publicOnly": true, // Would be cool if that worked...
             }
         ]
