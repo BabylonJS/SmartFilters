@@ -12,6 +12,7 @@ import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
 import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
+import { TintBlock } from "../blocks/effects/tintBlock";
 import { GlitchBlock } from "../blocks/transitions/glitchBlock";
 import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
@@ -95,6 +96,19 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         },
         category: "Effects",
         tooltip: "Posterize to the input texture",
+    },
+    {
+        name: "TintBlock", 
+        factory: (smartFilter: SmartFilter) => {
+            const block = new TintBlock(smartFilter, "Tint");
+            const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.5);
+            input.output.connectTo(block.intensity);
+            const tintColor = new InputBlock(smartFilter, "TintColor", ConnectionPointType.Color3, {r:1, g:0, b:0});
+            tintColor.output.connectTo(block.tintColor);
+            return block;
+        },
+        category: "Effects",
+        tooltip: "Tint the input texture by a color",
     },
     {
         name: "DesaturateBlock",

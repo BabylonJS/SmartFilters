@@ -4,4 +4,5 @@ export const BlockNames = {
     exposure: "ExposureBlock",
     contrast: "ContrastBlock",
     desaturate: "DesaturateBlock",
+    tint: "TintBlock",
 };
