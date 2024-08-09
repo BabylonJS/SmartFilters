@@ -67,7 +67,7 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                 renderer.setRuntime(runtime);
             },
-            saveSmartFilter: () => {
+            saveSmartFilter: (filter: SmartFilter) => {
                 const serializer = new SmartFilterSerializer(
                     blocksUsingDefaultSerialization,
                     additionalBlockSerializers
@@ -75,7 +75,7 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
 
                 StringTools.DownloadAsFile(
                     document,
-                    JSON.stringify(serializer.serialize(currentSmartFilter), null, 2),
+                    JSON.stringify(serializer.serialize(filter), null, 2),
                     currentSmartFilter.name + ".json"
                 );
             },

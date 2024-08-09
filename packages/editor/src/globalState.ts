@@ -53,6 +53,7 @@ export class GlobalState {
 
     texturePresets: TexturePreset[];
 
+    saveSmartFilter: (filter: SmartFilter) => void;
     
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
@@ -75,6 +76,7 @@ export class GlobalState {
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
+        saveSmartFilter: (filter: SmartFilter) => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
         texturePresets: TexturePreset[] = []
     ) {

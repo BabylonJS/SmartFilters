@@ -141,7 +141,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
 
     save() {
         this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-        this.props.globalState.saveSmartFilter();
+        this.props.globalState.saveSmartFilter(this.props.globalState.smartFilter);
     }
 
     customSave() {

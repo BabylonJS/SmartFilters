@@ -29,6 +29,7 @@ export type SmartFilterEditorOptions = {
 
     hostElement?: HTMLElement;
 
+    saveSmartFilter: (filter: SmartFilter) => void;
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
