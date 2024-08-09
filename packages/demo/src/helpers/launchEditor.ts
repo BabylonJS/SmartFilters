@@ -82,7 +82,8 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
             loadSmartFilter: async (file: File) => {
                 const deserializer = new SmartFilterDeserializer(getBlockDeserializers());
                 
-                const data = await new Promise<Uint8Array>((resolve, reject) => {
+                // Wrap the file read in a promise so we can wait for the result
+                const data = await new Promise<ArrayBuffer>((resolve, reject) => {
                     Tools.ReadFile(
                         file,
                         (data) => resolve(data),
