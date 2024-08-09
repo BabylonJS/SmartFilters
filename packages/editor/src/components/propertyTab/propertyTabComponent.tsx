@@ -5,6 +5,7 @@ import * as react from "react";
 import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
 import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
+import { FileButtonLineComponent } from "../../sharedComponents/fileButtonLineComponent.js";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 
@@ -351,6 +352,12 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         />
                     </LineContainerComponent>
                     <LineContainerComponent title="FILE">
+                        <FileButtonLineComponent 
+                            label="Load" 
+                            onClick={(file) => 
+                                this.load(file)} 
+                            accept=".json" 
+                        />
                         <ButtonLineComponent
                             label="Save"
                             onClick={() => {
