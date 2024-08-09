@@ -12,6 +12,7 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.exposure,
     BlockNames.contrast,
     BlockNames.desaturate,
+    BlockNames.posterize,
 ];
 
 /**

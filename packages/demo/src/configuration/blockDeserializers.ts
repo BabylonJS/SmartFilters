@@ -44,5 +44,10 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new module.DesaturateBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.posterize, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/posterizeBlock");
+        return new module.PosterizeBlock(smartFilter, serializedBlock.name);
+    });
+
     return deserializers;
 }
