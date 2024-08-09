@@ -5,4 +5,5 @@ export const BlockNames = {
     contrast: "ContrastBlock",
     desaturate: "DesaturateBlock",
     posterize: "PosterizeBlock",
+    kaleidoscope: "KaleidoscopeBlock",
 };

@@ -49,5 +49,10 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new module.PosterizeBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.kaleidoscope, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/kaleidoscopeBlock");
+        return new module.KaleidoscopeBlock(smartFilter, serializedBlock.name);
+    });
+
     return deserializers;
 }
