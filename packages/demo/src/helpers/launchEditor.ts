@@ -79,10 +79,11 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
                     currentSmartFilter.name + ".json"
                 );
             },
+            // TODO: See if can or should use smartFilterLoader here
             loadSmartFilter: async (file: File) => {
                 const deserializer = new SmartFilterDeserializer(getBlockDeserializers());
                 
-                // Wrap the file read in a promise so we can wait for the result
+                // Since the return depends on (data), wrap ReadFile in a promise
                 const data = await new Promise<ArrayBuffer>((resolve, reject) => {
                     Tools.ReadFile(
                         file,
