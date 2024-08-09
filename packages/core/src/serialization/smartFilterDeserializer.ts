@@ -34,6 +34,13 @@ export class SmartFilterDeserializer {
             (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) =>
                 Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock, engine))
         );
+
+        this._blockDeserializersV1.set(
+            OutputBlock.ClassName,
+            (smartFilter: SmartFilter) => {
+                return Promise.resolve(smartFilter.output.ownerBlock);
+            }
+        );
     }
 
     /**
@@ -64,30 +71,26 @@ export class SmartFilterDeserializer {
         // Deserialize the blocks
         const blockDeserializationWork: Promise<void>[] = [];
         serializedSmartFilter.blocks.forEach((serializedBlock: ISerializedBlockV1) => {
-            if (serializedBlock.className === OutputBlock.ClassName) {
-                blockMap.set(smartFilter.output.ownerBlock.name, smartFilter.output.ownerBlock);
-            } else {
-                const blockDeserializer = this._blockDeserializersV1.get(serializedBlock.className);
-                if (!blockDeserializer) {
-                    throw new Error(`No deserializer found for block type ${serializedBlock.className}`);
-                }
-                blockDeserializationWork.push(
-                    blockDeserializer(smartFilter, serializedBlock, engine).then((newBlock) => {
-                        // Deserializers are not responsible for setting the uniqueId or comments.
-                        // This is so they don't have to be passed into the constructors when programmatically creating
-                        // blocks, and so each deserializer doesn't have to remember to do it.
-                        newBlock.uniqueId = serializedBlock.uniqueId;
-                        newBlock.comments = serializedBlock.comments;
-
-                        // We need to ensure any uniqueIds generated in the future (e.g. a new block is added to the SmartFilter)
-                        // are higher than this one.
-                        UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
-
-                        // Save in the map
-                        blockMap.set(newBlock.name, newBlock);
-                    })
-                );
+            const blockDeserializer = this._blockDeserializersV1.get(serializedBlock.className);
+            if (!blockDeserializer) {
+                throw new Error(`No deserializer found for block type ${serializedBlock.className}`);
             }
+            blockDeserializationWork.push(
+                blockDeserializer(smartFilter, serializedBlock, engine).then((newBlock) => {
+                    // Deserializers are not responsible for setting the uniqueId or comments.
+                    // This is so they don't have to be passed into the constructors when programmatically creating
+                    // blocks, and so each deserializer doesn't have to remember to do it.
+                    newBlock.uniqueId = serializedBlock.uniqueId;
+                    newBlock.comments = serializedBlock.comments;
+
+                    // We need to ensure any uniqueIds generated in the future (e.g. a new block is added to the SmartFilter)
+                    // are higher than this one.
+                    UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
+
+                    // Save in the map
+                    blockMap.set(newBlock.name, newBlock);
+                })
+            );
         });
         await Promise.all(blockDeserializationWork);
 
