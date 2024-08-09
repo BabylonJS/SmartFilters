@@ -29,7 +29,8 @@ export type SmartFilterEditorOptions = {
 
     hostElement?: HTMLElement;
 
-    saveSmartFilter: () => void;
+
+    loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 
@@ -69,6 +70,7 @@ export class SmartFilterEditor {
             options.blockRegistration,
             hostElement,
             options.saveSmartFilter,
+            options.loadSmartFilter,
             options.texturePresets
         );
 

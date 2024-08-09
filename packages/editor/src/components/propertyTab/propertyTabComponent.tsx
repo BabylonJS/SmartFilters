@@ -116,20 +116,13 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         // }
     }
 
-    load(_file: File) {
-        // Tools.ReadFile(
-        //     file,
-        //     (data) => {
-        //         const decoder = new TextDecoder("utf-8");
-        //         SerializationTools.Deserialize(JSON.parse(decoder.decode(data)), this.props.globalState);
-        //         if (!this.changeMode(this.props.globalState.nodeMaterial!.mode, true, false)) {
-        //             this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-        //         }
-        //         this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
-        //     },
-        //     undefined,
-        //     true
-        // );
+    async load(_file: File) {
+        this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
+
+        // TODO: Double check which events to fire here
+        this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null); 
+        this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+        this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
     }
 
     loadFrame(_file: File) {

@@ -4,6 +4,7 @@ import {
     type SmartFilter,
     type SmartFilterRuntime,
     SmartFilterSerializer,
+    SmartFilterDeserializer
 } from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
@@ -16,7 +17,9 @@ import { texturePresets } from "../configuration/texturePresets";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
 import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
+import { Tools } from "@babylonjs/core/Misc/tools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
+import { getBlockDeserializers } from "../configuration/blockDeserializers";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -75,6 +78,23 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
                     JSON.stringify(serializer.serialize(currentSmartFilter), null, 2),
                     currentSmartFilter.name + ".json"
                 );
+            },
+            loadSmartFilter: async (file: File) => {
+                const deserializer = new SmartFilterDeserializer(getBlockDeserializers());
+                
+                const data = await new Promise<Uint8Array>((resolve, reject) => {
+                    Tools.ReadFile(
+                        file,
+                        (data) => resolve(data),
+                        undefined,
+                        true,
+                        (error) => reject(error),
+                    );
+                });
+
+                const decoder = new TextDecoder("utf-8");
+                const smartFilterJson = JSON.parse(decoder.decode(data));
+                return deserializer.deserialize(engine, smartFilterJson);
             },
             texturePresets,
         });
