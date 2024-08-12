@@ -54,7 +54,7 @@ export class GlobalState {
     texturePresets: TexturePreset[];
 
     saveSmartFilter: (filter: SmartFilter) => void;
-    
+
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
     private _runtime: Nullable<SmartFilterRuntime> = null;
@@ -96,7 +96,7 @@ export class GlobalState {
         this.hostWindow = hostElement.ownerDocument!.defaultView!;
         this.stateManager.hostDocument = this.hostDocument;
         this.saveSmartFilter = saveSmartFilter;
-        this.loadSmartFilter = loadSmartFilter
+        this.loadSmartFilter = loadSmartFilter;
         this.texturePresets = texturePresets;
     }
 }

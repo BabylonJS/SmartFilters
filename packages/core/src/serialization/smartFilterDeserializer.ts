@@ -35,11 +35,8 @@ export class SmartFilterDeserializer {
                 Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock, engine))
         );
 
-        this._blockDeserializersV1.set(
-            OutputBlock.ClassName,
-            (smartFilter: SmartFilter) => {
-                return Promise.resolve(smartFilter.output.ownerBlock);
-            }
+        this._blockDeserializersV1.set(OutputBlock.ClassName, (smartFilter: SmartFilter) =>
+            Promise.resolve(smartFilter.output.ownerBlock)
         );
     }
 

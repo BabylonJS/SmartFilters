@@ -4,7 +4,7 @@ import {
     type SmartFilter,
     type SmartFilterRuntime,
     SmartFilterSerializer,
-    SmartFilterDeserializer
+    SmartFilterDeserializer,
 } from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
@@ -82,7 +82,7 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
             // TODO: See if can or should use smartFilterLoader here
             loadSmartFilter: async (file: File) => {
                 const deserializer = new SmartFilterDeserializer(getBlockDeserializers());
-                
+
                 // Since the return depends on (data), wrap ReadFile in a promise
                 const data = await new Promise<ArrayBuffer>((resolve, reject) => {
                     Tools.ReadFile(
@@ -90,7 +90,7 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
                         (data) => resolve(data),
                         undefined,
                         true,
-                        (error) => reject(error),
+                        (error) => reject(error)
                     );
                 });
 
