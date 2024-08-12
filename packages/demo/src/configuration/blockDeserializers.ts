@@ -77,5 +77,13 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return module.blurBlockDeserializer(smartFilter, serializedBlock);
     });
 
+    deserializers.set(
+        BlockNames.directionalBlur,
+        async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+            const module = await import("./blocks/effects/directionalBlurBlock.deserializer");
+            return module.directionalBlurDeserializer(smartFilter, serializedBlock);
+        }
+    );
+
     return deserializers;
 }

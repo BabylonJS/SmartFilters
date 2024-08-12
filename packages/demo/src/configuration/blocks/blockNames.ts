@@ -10,4 +10,5 @@ export const BlockNames = {
     glass: "GlassBlock",
     frame: "FrameBlock",
     blur: "BlurBlock",
+    directionalBlur: "DirectionalBlurBlock",
 };
