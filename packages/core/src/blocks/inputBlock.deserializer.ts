@@ -32,6 +32,8 @@ export function inputBlockDeserializer(
                 ConnectionPointType.Texture,
                 blockData.url !== null ? createImageTexture(engine, blockData.url) : null
             );
+        case ConnectionPointType.Color3:
+            return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Color3, blockData.value);
     }
 
     throw new Error("Could not deserialize input block, unknown input type");

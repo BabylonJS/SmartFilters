@@ -6,4 +6,5 @@ export const BlockNames = {
     desaturate: "DesaturateBlock",
     posterize: "PosterizeBlock",
     kaleidoscope: "KaleidoscopeBlock",
+    greenScreen: "GreenScreenBlock",
 };

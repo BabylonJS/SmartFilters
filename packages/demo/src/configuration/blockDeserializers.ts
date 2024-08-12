@@ -56,6 +56,10 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
             return new module.KaleidoscopeBlock(smartFilter, serializedBlock.name);
         }
     );
+
+    deserializers.set(BlockNames.greenScreen, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/greenScreenBlock");
+        return new module.GreenScreenBlock(smartFilter, serializedBlock.name);
     });
 
     return deserializers;
