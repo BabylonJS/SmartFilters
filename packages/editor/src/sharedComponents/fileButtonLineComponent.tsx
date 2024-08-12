@@ -1,4 +1,4 @@
-import * as react from "react";
+import { Component, type RefObject, createRef } from "react";
 
 interface IFileButtonLineComponentProps {
     label: string;
@@ -7,13 +7,13 @@ interface IFileButtonLineComponentProps {
     uploadName?: string;
 }
 
-export class FileButtonLineComponent extends react.Component<IFileButtonLineComponentProps> {
-    private _uploadRef: react.RefObject<HTMLInputElement>;
+export class FileButtonLineComponent extends Component<IFileButtonLineComponentProps> {
+    private _uploadRef: RefObject<HTMLInputElement>;
 
     constructor(props: IFileButtonLineComponentProps) {
         super(props);
 
-        this._uploadRef = react.createRef();
+        this._uploadRef = createRef();
     }
 
     onChange(evt: any) {

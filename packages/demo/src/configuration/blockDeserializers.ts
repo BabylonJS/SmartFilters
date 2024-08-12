@@ -45,30 +45,32 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     });
 
     deserializers.set(BlockNames.posterize, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/posterizeBlock");
+        const module = await import(/* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock");
         return new module.PosterizeBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(
         BlockNames.kaleidoscope,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-            const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/kaleidoscopeBlock");
+            const module = await import(
+                /* webpackChunkName: "kaleidoscopeBlock" */ "./blocks/effects/kaleidoscopeBlock"
+            );
             return new module.KaleidoscopeBlock(smartFilter, serializedBlock.name);
         }
     );
 
     deserializers.set(BlockNames.greenScreen, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/greenScreenBlock");
+        const module = await import(/* webpackChunkName: "greenScreenBlock" */ "./blocks/effects/greenScreenBlock");
         return new module.GreenScreenBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.glass, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/glassBlock");
+        const module = await import(/* webpackChunkName: "glassBlock" */ "./blocks/effects/glassBlock");
         return new module.GlassBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.frame, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/frameBlock");
+        const module = await import(/* webpackChunkName: "frameBlock" */ "./blocks/effects/frameBlock");
         return new module.FrameBlock(smartFilter, serializedBlock.name);
     });
 

@@ -25,7 +25,4 @@ export const blocksUsingDefaultSerialization: string[] = [
  * Any blocks which require serializing more information than just the connections should be registered here.
  * They should make use of the ISerializedBlockV1.data field to store this information.
  */
-export const additionalBlockSerializers: IBlockSerializerV1[] = [
-    blurBlockSerializer, 
-    directionalBlurBlockSerializer
-];
+export const additionalBlockSerializers: IBlockSerializerV1[] = [blurBlockSerializer, directionalBlurBlockSerializer];
