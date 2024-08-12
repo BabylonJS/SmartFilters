@@ -8,4 +8,5 @@ export const BlockNames = {
     kaleidoscope: "KaleidoscopeBlock",
     greenScreen: "GreenScreenBlock",
     glass: "GlassBlock",
+    frame: "FrameBlock",
 };
