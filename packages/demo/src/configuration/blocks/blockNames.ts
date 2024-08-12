@@ -9,4 +9,5 @@ export const BlockNames = {
     greenScreen: "GreenScreenBlock",
     glass: "GlassBlock",
     frame: "FrameBlock",
+    blur: "BlurBlock",
 };

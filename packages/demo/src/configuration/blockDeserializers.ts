@@ -72,5 +72,10 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new module.FrameBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import("./blocks/effects/blurBlock.deserializer");
+        return module.blurBlockDeserializer(smartFilter, serializedBlock);
+    });
+
     return deserializers;
 }
