@@ -36,7 +36,8 @@ const ShaderTemplate = `import type { ShaderProgram } from "${TYPE_IMPORT_PATH}"
 export const shaderProgram: ShaderProgram = {
     vertex: ${VERTEX_SHADER},
     fragment: {
-        uniform: \`${UNIFORMS}\`,${CONSTS_PROPERTY}
+        uniform: \`${UNIFORMS}
+            uniform bool _disabled_;\`,${CONSTS_PROPERTY}
         mainInputTexture: "${MAIN_INPUT_NAME}",
         mainFunctionName: "${MAIN_FUNCTION_NAME}",
         functions: [${FUNCTIONS}
@@ -195,9 +196,6 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
     // Extract all the consts
     const finalConsts = [...fragmentShaderWithRenamedSymbols.matchAll(/^\s*(const\s.*)/gm)].map((match) => match[1]);
 
-    // Extract all the functions
-    const { extractedFunctions, mainFunctionName } = extractFunctions(fragmentShaderWithRenamedSymbols);
-
     // Find the main input
     const mainInputs = [...fragmentShaderWithRenamedSymbols.matchAll(/\S*uniform.*\s(\w*);\s*\/\/\s*main/gm)].map(
         (match) => match[1]
@@ -206,6 +204,9 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
         throw new Error("Exactly one main input must be defined in the shader");
     }
     const mainInputName = mainInputs[0];
+
+    // Extract all the functions
+    const { extractedFunctions, mainFunctionName } = extractFunctions(fragmentShaderWithRenamedSymbols, mainInputName);
 
     return {
         finalUniforms,
@@ -233,9 +234,13 @@ function addLinePrefixes(input: string, prefix: string): string {
 /**
  * Extracts all the functions from the shader
  * @param fragment - The shader code to process
+ * @param mainInputName - The name of the main input
  * @returns A list of functions
  */
-function extractFunctions(fragment: string): {
+function extractFunctions(
+    fragment: string,
+    mainInputName: string
+): {
     /**
      * The extracted functions
      */
@@ -270,10 +275,16 @@ function extractFunctions(fragment: string): {
         if (inFunction && depth === 0) {
             inFunction = false;
             const { functionBody, functionName, isMainFunction } = processFunctionBody(currentFunction);
+
+            let body = functionBody;
+            if (isMainFunction) {
+                body = functionBody.replace("{", `{\n    if (_disabled_) return texture2D(${mainInputName}, vUV);\n`);
+            }
+
             extractedFunctions.push(
                 FunctionTemplate.replace(FUNCTION_NAME, functionName).replace(
                     FUNCTION_CODE,
-                    addLinePrefixes(functionBody, CodeLinePrefix)
+                    addLinePrefixes(body, CodeLinePrefix)
                 )
             );
             if (isMainFunction) {
