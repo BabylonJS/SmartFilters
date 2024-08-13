@@ -19,6 +19,7 @@ import { WipeBlock } from "../blocks/transitions/wipeBlock";
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
 import { ConnectionPointType, CopyBlock, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 
+// TODO: Missing directional blur here?
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
     {

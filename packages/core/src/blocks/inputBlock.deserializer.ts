@@ -34,7 +34,8 @@ export function inputBlockDeserializer(
             );
         case ConnectionPointType.Color3:
             return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Color3, blockData.value);
-    }
+        // TODO: Can I add the rest of the ConnectionPointTypes here? They all seem supported.
+        }
 
     throw new Error("Could not deserialize input block, unknown input type");
 }

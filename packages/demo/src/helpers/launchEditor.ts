@@ -28,6 +28,8 @@ import { getBlockDeserializers } from "../configuration/blockDeserializers";
  * @param engine - The engine to use
  * @param renderer - The renderer to use
  */
+// TODO: If the Editor is closed and reopened, and the last SmartFilter was something loaded from a file,
+//       the editor doesn't put the blocks back to their position nor sets up their connections
 export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine, renderer: SmartFilterRenderer) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
@@ -79,11 +81,12 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
                     currentSmartFilter.name + ".json"
                 );
             },
-            // TODO: See if can or should use smartFilterLoader here
+            // TODO: See if can or should use smartFilterLoader here to get access to the optimization options
             loadSmartFilter: async (file: File) => {
                 const deserializer = new SmartFilterDeserializer(getBlockDeserializers());
 
-                // Since the return depends on (data), wrap ReadFile in a promise
+                // Since the function return depends on (data), and because there is no
+                // FileReadAsync available, just wrap ReadFile in a promise and await
                 const data = await new Promise<ArrayBuffer>((resolve, reject) => {
                     Tools.ReadFile(
                         file,

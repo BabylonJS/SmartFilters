@@ -21,6 +21,7 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.frame,
 ];
 
+// TODO: Functions are all mostly the same apart from actual data stored. Can I make this more generic?
 /**
  * Any blocks which require serializing more information than just the connections should be registered here.
  * They should make use of the ISerializedBlockV1.data field to store this information.
