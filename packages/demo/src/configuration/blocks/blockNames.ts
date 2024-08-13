@@ -11,4 +11,9 @@ export const BlockNames = {
     frame: "FrameBlock",
     blur: "BlurBlock",
     directionalBlur: "DirectionalBlurBlock",
+    composition: "CompositionBlock",
+    blackAndWhiteAndBlur: "BlackAndWhiteAndBlurBlock",
+    glitch: "GlitchBlock",
+    tile: "TileBlock",
+    wipe: "WipeBlock",
 };

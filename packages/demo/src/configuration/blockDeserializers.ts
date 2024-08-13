@@ -77,6 +77,21 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new module.FrameBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(
+        BlockNames.blackAndWhiteAndBlur,
+        async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+            const module = await import(
+                /* webpackChunkName: "blackAndWhiteAndBlurBlock" */ "./blocks/effects/blackAndWhiteAndBlurBlock"
+            );
+            return new module.BlackAndWhiteAndBlurBlock(smartFilter, serializedBlock.name);
+        }
+    );
+
+    deserializers.set(BlockNames.glitch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import(/* webpackChunkName: "glitchBlock" */ "./blocks/transitions/glitchBlock");
+        return new module.GlitchBlock(smartFilter, serializedBlock.name);
+    });
+
     // Non-trivial deserializers begin.
     // Their deserializer functions import the block directly in their files, so they're only loaded when needed.
     // TODO: These blocks only have public class properties that are being put in the .data field.
@@ -95,6 +110,21 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
             return module.directionalBlurDeserializer(smartFilter, serializedBlock);
         }
     );
+
+    deserializers.set(BlockNames.composition, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import("./blocks/effects/compositionBlock.deserializer");
+        return module.compositionDeserializer(smartFilter, serializedBlock);
+    });
+
+    deserializers.set(BlockNames.tile, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import("./blocks/transitions/tileBlock.deserializer");
+        return module.tileDeserializer(smartFilter, serializedBlock);
+    });
+
+    deserializers.set(BlockNames.wipe, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const module = await import("./blocks/transitions/wipeBlock.deserializer");
+        return module.wipeDeserializer(smartFilter, serializedBlock);
+    });
 
     return deserializers;
 }
