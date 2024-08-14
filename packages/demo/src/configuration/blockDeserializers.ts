@@ -15,81 +15,81 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     const deserializers = new Map<string, DeserializeBlockV1>();
 
     deserializers.set(BlockNames.pixelate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock");
-        return new module.PixelateBlock(smartFilter, serializedBlock.name);
+        const { PixelateBlock } = await import(/* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock");
+        return new PixelateBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(
         BlockNames.blackAndWhite,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-            const module = await import(
+            const { BlackAndWhiteBlock } = await import(
                 /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock"
             );
-            return new module.BlackAndWhiteBlock(smartFilter, serializedBlock.name);
+            return new BlackAndWhiteBlock(smartFilter, serializedBlock.name);
         }
     );
 
     deserializers.set(BlockNames.exposure, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock");
-        return new module.ExposureBlock(smartFilter, serializedBlock.name);
+        const { ExposureBlock } = await import(/* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock");
+        return new ExposureBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.contrast, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "contrastBlock" */ "./blocks/effects/contrastBlock");
-        return new module.ContrastBlock(smartFilter, serializedBlock.name);
+        const { ContrastBlock } = await import(/* webpackChunkName: "contrastBlock" */ "./blocks/effects/contrastBlock");
+        return new ContrastBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.desaturate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/desaturateBlock");
-        return new module.DesaturateBlock(smartFilter, serializedBlock.name);
+        const { DesaturateBlock } = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/desaturateBlock");
+        return new DesaturateBlock(smartFilter, serializedBlock.name);
     });
 
     // TODO: Can I make this all more generic? Or at least something more like how serializers are defined?
     //       Or is it because of the dynamic imports-- can their paths not be generated programmatically?
 
     deserializers.set(BlockNames.posterize, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock");
-        return new module.PosterizeBlock(smartFilter, serializedBlock.name);
+        const { PosterizeBlock } = await import(/* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock");
+        return new PosterizeBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(
         BlockNames.kaleidoscope,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-            const module = await import(
+            const { KaleidoscopeBlock } = await import(
                 /* webpackChunkName: "kaleidoscopeBlock" */ "./blocks/effects/kaleidoscopeBlock"
             );
-            return new module.KaleidoscopeBlock(smartFilter, serializedBlock.name);
+            return new KaleidoscopeBlock(smartFilter, serializedBlock.name);
         }
     );
 
     deserializers.set(BlockNames.greenScreen, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "greenScreenBlock" */ "./blocks/effects/greenScreenBlock");
-        return new module.GreenScreenBlock(smartFilter, serializedBlock.name);
+        const { GreenScreenBlock } = await import(/* webpackChunkName: "greenScreenBlock" */ "./blocks/effects/greenScreenBlock");
+        return new GreenScreenBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.glass, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "glassBlock" */ "./blocks/effects/glassBlock");
-        return new module.GlassBlock(smartFilter, serializedBlock.name);
+        const { GlassBlock } = await import(/* webpackChunkName: "glassBlock" */ "./blocks/effects/glassBlock");
+        return new GlassBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.frame, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "frameBlock" */ "./blocks/effects/frameBlock");
-        return new module.FrameBlock(smartFilter, serializedBlock.name);
+        const { FrameBlock } = await import(/* webpackChunkName: "frameBlock" */ "./blocks/effects/frameBlock");
+        return new FrameBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(
         BlockNames.blackAndWhiteAndBlur,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-            const module = await import(
+            const { BlackAndWhiteAndBlurBlock } = await import(
                 /* webpackChunkName: "blackAndWhiteAndBlurBlock" */ "./blocks/effects/blackAndWhiteAndBlurBlock"
             );
-            return new module.BlackAndWhiteAndBlurBlock(smartFilter, serializedBlock.name);
+            return new BlackAndWhiteAndBlurBlock(smartFilter, serializedBlock.name);
         }
     );
 
     deserializers.set(BlockNames.glitch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import(/* webpackChunkName: "glitchBlock" */ "./blocks/transitions/glitchBlock");
-        return new module.GlitchBlock(smartFilter, serializedBlock.name);
+        const { GlitchBlock } = await import(/* webpackChunkName: "glitchBlock" */ "./blocks/transitions/glitchBlock");
+        return new GlitchBlock(smartFilter, serializedBlock.name);
     });
 
     // Non-trivial deserializers begin.
@@ -99,31 +99,41 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     // TODO: On that note, if they stay as props, should they have UI to edit them? Like the webcam source does?
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import("./blocks/effects/blurBlock.deserializer");
-        return module.blurBlockDeserializer(smartFilter, serializedBlock);
+        const { blurBlockDeserializer } = await import(
+            /* webpackChunkName: "blurBlockDeserializer" */ "./blocks/effects/blurBlock.deserializer"
+        );
+        return blurBlockDeserializer(smartFilter, serializedBlock);
     });
 
     deserializers.set(
         BlockNames.directionalBlur,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-            const module = await import("./blocks/effects/directionalBlurBlock.deserializer");
-            return module.directionalBlurDeserializer(smartFilter, serializedBlock);
+            const { directionalBlurDeserializer } = await import(
+                /* webpackChunkName: "directionalBlurBlockDeserializer" */ "./blocks/effects/directionalBlurBlock.deserializer"
+            );
+            return directionalBlurDeserializer(smartFilter, serializedBlock);
         }
     );
 
     deserializers.set(BlockNames.composition, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import("./blocks/effects/compositionBlock.deserializer");
-        return module.compositionDeserializer(smartFilter, serializedBlock);
+        const { compositionDeserializer } = await import(
+            /* webpackChunkName: "compositionBlockDeserializer" */ "./blocks/effects/compositionBlock.deserializer"
+        );
+        return compositionDeserializer(smartFilter, serializedBlock);
     });
 
     deserializers.set(BlockNames.tile, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import("./blocks/transitions/tileBlock.deserializer");
-        return module.tileDeserializer(smartFilter, serializedBlock);
+        const { tileDeserializer } = await import(
+            /* webpackChunkName: "tileBlockDeserializer" */ "./blocks/transitions/tileBlock.deserializer"
+        );
+        return tileDeserializer(smartFilter, serializedBlock);
     });
 
     deserializers.set(BlockNames.wipe, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const module = await import("./blocks/transitions/wipeBlock.deserializer");
-        return module.wipeDeserializer(smartFilter, serializedBlock);
+        const { wipeDeserializer } = await import(
+            /* webpackChunkName: "wipeBlockDeserializer" */ "./blocks/transitions/wipeBlock.deserializer"
+        );
+        return wipeDeserializer(smartFilter, serializedBlock);
     });
 
     return deserializers;
