@@ -87,19 +87,17 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
 
                 // Since the function return depends on (data), and because there is no
                 // FileReadAsync available, just wrap ReadFile in a promise and await
-                const data = await new Promise<ArrayBuffer>((resolve, reject) => {
+                const data = await new Promise<string>((resolve, reject) => {
                     Tools.ReadFile(
                         file,
                         (data) => resolve(data),
                         undefined,
-                        true,
+                        false,
                         (error) => reject(error)
                     );
                 });
 
-                const decoder = new TextDecoder("utf-8");
-                const smartFilterJson = JSON.parse(decoder.decode(data));
-                return deserializer.deserialize(engine, smartFilterJson);
+                return deserializer.deserialize(engine, JSON.parse(data));
             },
             texturePresets,
         });
