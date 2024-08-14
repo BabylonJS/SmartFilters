@@ -15,7 +15,9 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     const deserializers = new Map<string, DeserializeBlockV1>();
 
     deserializers.set(BlockNames.pixelate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { PixelateBlock } = await import(/* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock");
+        const { PixelateBlock } = await import(
+            /* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock"
+        );
         return new PixelateBlock(smartFilter, serializedBlock.name);
     });
 
@@ -30,17 +32,23 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     );
 
     deserializers.set(BlockNames.exposure, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { ExposureBlock } = await import(/* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock");
+        const { ExposureBlock } = await import(
+            /* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock"
+        );
         return new ExposureBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.contrast, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { ContrastBlock } = await import(/* webpackChunkName: "contrastBlock" */ "./blocks/effects/contrastBlock");
+        const { ContrastBlock } = await import(
+            /* webpackChunkName: "contrastBlock" */ "./blocks/effects/contrastBlock"
+        );
         return new ContrastBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.desaturate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { DesaturateBlock } = await import(/* webpackChunkName: "desaturateBlock" */ "./blocks/effects/desaturateBlock");
+        const { DesaturateBlock } = await import(
+            /* webpackChunkName: "desaturateBlock" */ "./blocks/effects/desaturateBlock"
+        );
         return new DesaturateBlock(smartFilter, serializedBlock.name);
     });
 
@@ -48,7 +56,9 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     //       Or is it because of the dynamic imports-- can their paths not be generated programmatically?
 
     deserializers.set(BlockNames.posterize, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { PosterizeBlock } = await import(/* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock");
+        const { PosterizeBlock } = await import(
+            /* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock"
+        );
         return new PosterizeBlock(smartFilter, serializedBlock.name);
     });
 
@@ -63,7 +73,9 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     );
 
     deserializers.set(BlockNames.greenScreen, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { GreenScreenBlock } = await import(/* webpackChunkName: "greenScreenBlock" */ "./blocks/effects/greenScreenBlock");
+        const { GreenScreenBlock } = await import(
+            /* webpackChunkName: "greenScreenBlock" */ "./blocks/effects/greenScreenBlock"
+        );
         return new GreenScreenBlock(smartFilter, serializedBlock.name);
     });
 
