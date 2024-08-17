@@ -4,7 +4,6 @@ import {
     type SmartFilter,
     type SmartFilterRuntime,
     SmartFilterSerializer,
-    SmartFilterDeserializer,
 } from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
@@ -17,9 +16,8 @@ import { texturePresets } from "../configuration/texturePresets";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
 import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
-import { Tools } from "@babylonjs/core/Misc/tools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
-import { getBlockDeserializers } from "../configuration/blockDeserializers";
+import type { SmartFilterLoader } from "../smartFilterLoader";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -30,7 +28,12 @@ import { getBlockDeserializers } from "../configuration/blockDeserializers";
  */
 // TODO: If the Editor is closed and reopened, and the last SmartFilter was something loaded from a file,
 //       the editor doesn't put the blocks back to their position nor sets up their connections
-export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine, renderer: SmartFilterRenderer) {
+export function launchEditor(
+    currentSmartFilter: SmartFilter,
+    engine: ThinEngine,
+    renderer: SmartFilterRenderer,
+    smartFilterLoader: SmartFilterLoader
+) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
     const allBlockNames: { [key: string]: string[] } = {};
@@ -83,21 +86,45 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
             },
             // TODO: See if can or should use smartFilterLoader here to get access to the optimization options
             loadSmartFilter: async (file: File) => {
-                const deserializer = new SmartFilterDeserializer(getBlockDeserializers());
+                return smartFilterLoader.loadFromFile(file, false); // todo update w/ optimize
+            },
+            customSave: async (filter: SmartFilter) => {
+                const serializer = new SmartFilterSerializer(
+                    blocksUsingDefaultSerialization,
+                    additionalBlockSerializers
+                );
 
-                // Since the function return depends on (data), and because there is no
-                // FileReadAsync available, just wrap ReadFile in a promise and await
-                const data = await new Promise<string>((resolve, reject) => {
-                    Tools.ReadFile(
-                        file,
-                        (data) => resolve(data),
-                        undefined,
-                        false,
-                        (error) => reject(error)
-                    );
+                const smartFilterJson = JSON.stringify(serializer.serialize(filter));
+
+                // Prepare the data to send
+                const dataToSend = {
+                    payload: JSON.stringify({
+                        smartFilter: smartFilterJson,
+                    }),
+                    name: "",
+                    description: "",
+                    tags: "",
+                };
+
+                // Post the data
+                const response = await fetch(smartFilterLoader.snippetUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(dataToSend),
                 });
 
-                return deserializer.deserialize(engine, JSON.parse(data));
+                // Check if the response is ok
+                if (!response.ok) {
+                    throw new Error(`Could not save snippet: ${response.statusText}`);
+                }
+
+                // Parse the response
+                const snippet = await response.json();
+
+                // Update the location hash to trigger a hashchange event
+                location.hash = snippet.id;
             },
             texturePresets,
         });

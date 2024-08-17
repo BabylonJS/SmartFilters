@@ -6,6 +6,7 @@ import {
     type DeserializeBlockV1,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
+import { Observable, ReadFile } from "@babylonjs/core";
 
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
@@ -27,6 +28,10 @@ export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
     private readonly _deserializer: SmartFilterDeserializer;
     private readonly _renderer: SmartFilterRenderer;
+
+    public readonly snippetUrl = "https://snippet.babylonjs.com";
+
+    public readonly onSmartFilterLoadedObservable = new Observable<SmartFilter>();
 
     public readonly manifests: SmartFilterManifest[];
     public currentOptimizedSmartFilter: SmartFilter | undefined;
@@ -54,36 +59,83 @@ export class SmartFilterLoader {
         this._deserializer = new SmartFilterDeserializer(blockDeserializers);
     }
 
-    public async loadSmartFilter(name: string, optimize: boolean): Promise<SmartFilter> {
+    /**
+     * Loads a SmartFilter
+     * @param source - Either a snippet token or a name from the manifest registry
+     * @param optimize - If true, the SmartFilter will be automatically optimized
+     */
+    public async loadFromSnippet(snippetToken: string, optimize: boolean): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            const response = await fetch(`${this.snippetUrl}/${snippetToken}`);
+
+            if (!response.ok) {
+                throw new Error(`Could not fetch snippet ${snippetToken}. Response was: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const snippet = JSON.parse(data.jsonPayload);
+            const serializedSmartFilter = JSON.parse(snippet.smartFilter);
+
+            return this._deserializer.deserialize(this._engine, serializedSmartFilter);
+        }, optimize);
+    }
+
+    public async loadFromManifest(name: string, optimize: boolean): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            const manifest = this.manifests.find((manifest) => manifest.name === name);
+            switch (manifest?.type) {
+                case "HardCoded": {
+                    return manifest.createSmartFilter(this._engine, this._renderer);
+                }
+                case "Serialized": {
+                    const smartFilterJson = await manifest.getSmartFilterJson();
+                    return this._deserializer.deserialize(this._engine, smartFilterJson);
+                }
+            }
+            throw new Error("Could not read manifest " + name);
+        }, optimize);
+    }
+
+    public async loadFromFile(file: File, optimize: boolean): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            // Since the function return depends on (data), and because there is no
+            // FileReadAsync available, just wrap ReadFile in a promise and await
+            const data = await new Promise<string>((resolve, reject) => {
+                ReadFile(
+                    file,
+                    (data) => resolve(data),
+                    undefined,
+                    false,
+                    (error) => reject(error)
+                );
+            });
+            return this._deserializer.deserialize(this._engine, JSON.parse(data));
+        }, optimize);
+    }
+
+    private async _loadSmartFilter(loader: () => Promise<SmartFilter>, optimize: boolean): Promise<SmartFilter> {
         this._renderer.beforeRenderObservable.clear();
 
-        let manifest = this.manifests.find((m: SmartFilterManifest) => m.name === name);
-        if (!manifest) {
-            const firstSmartFilter = this.manifests[0];
-            if (!firstSmartFilter) {
-                throw new Error("No SmartFilter manifests were registered");
-            }
-            manifest = firstSmartFilter;
-        }
-
+        // Load the SmartFilter using the provided function, or attempt to load the default SmartFilter
         let smartFilter: SmartFilter;
-        switch (manifest.type) {
-            case "HardCoded":
-                {
-                    smartFilter = await manifest.createSmartFilter(this._engine, this._renderer);
-                }
-                break;
-            case "Serialized":
-                {
-                    const smartFilterJson = await manifest.getSmartFilterJson();
-                    smartFilter = await this._deserializer.deserialize(this._engine, smartFilterJson);
-                }
-                break;
+        try {
+            smartFilter = await loader();
+        } catch (e) {
+            console.error("Failed to load SmartFilter.", e);
+
+            const defaultSmartFilterName = this.defaultSmartFilterName;
+            if (!defaultSmartFilterName) {
+                throw new Error("Cannot fallback to default SmartFilter - no SmartFilter manifests were registered");
+            }
+            smartFilter = await this.loadFromManifest(defaultSmartFilterName, optimize); // recall TODO
         }
 
+        // Optimize the SmartFilter if requested
         if (optimize) {
-            return this._optimize(smartFilter);
+            smartFilter = this._optimize(smartFilter);
         }
+
+        this.onSmartFilterLoadedObservable.notifyObservers(smartFilter);
 
         return smartFilter;
     }

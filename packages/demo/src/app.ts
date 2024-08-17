@@ -15,9 +15,6 @@ const useTextureAnalyzer: boolean = false;
 // TODO: add UI for toggling between regular and optimized graphs
 const optimize: boolean = false;
 
-// Constants
-const LocalStorageSmartFilterName = "SmartFilterName";
-
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
@@ -31,43 +28,57 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
 
-/**
- * Loads a SmartFilter
- * @param name - The name of the SmartFilter to load
- * @param optimize - If true, the SmartFilter will be automatically optimized
- */
-async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
+// When SmartFilters are loaded, update currentSmartFilter and start rendering
+smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
     SmartFilterEditor.Hide();
-    localStorage.setItem(LocalStorageSmartFilterName, name);
-    currentSmartFilter = await smartFilterLoader.loadSmartFilter(name, optimize);
+    currentSmartFilter = smartFilter;
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
-}
+});
 
 // Load the initial SmartFilter
-const initialSmartFilterName =
-    localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-loadSmartFilter(initialSmartFilterName, optimize);
+// todo move this down or make mroe asyc
+const snippetToken = location.hash.substring(1).split("#")[0];
+if (snippetToken) {
+    smartFilterLoader.loadFromSnippet(snippetToken, optimize);
+} else {
+    smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName, optimize);
+}
+
+// Set up hash change handler
+window.addEventListener("hashchange", () => {
+    // Get the snippet token (the first token) from the hash
+    const snippetToken = location.hash.substring(1).split("#")[0] || undefined;
+    if (!snippetToken) {
+        return;
+    }
+
+    // If it exists and is new, load the new SmartFilter
+    smartFilterLoader.loadFromSnippet(snippetToken, optimize);
+});
 
 // Populate the smart filter <select> list
 smartFilterLoader.manifests.forEach((manifest) => {
     const option = document.createElement("option");
     option.value = manifest.name;
     option.innerText = manifest.name;
-    option.selected = manifest.name === initialSmartFilterName;
+    //option.selected = manifest.name === initialSmartFilter;
     smartFilterSelect?.appendChild(option);
 });
 
 // Set up SmartFilter <select> handler
 smartFilterSelect.addEventListener("change", () => {
-    loadSmartFilter(smartFilterSelect.value, optimize);
+    const manifest = smartFilterManifests.find((manifest) => manifest.name === smartFilterSelect.value);
+    if (manifest) {
+        smartFilterLoader.loadFromManifest(smartFilterSelect.value, optimize);
+    }
 });
 
 // Set up editor button
 editActionLink.onclick = async () => {
     if (currentSmartFilter) {
         const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
-        module.launchEditor(currentSmartFilter, engine, renderer);
+        module.launchEditor(currentSmartFilter, engine, renderer, smartFilterLoader);
     }
 };

@@ -144,7 +144,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         this.props.globalState.saveSmartFilter(this.props.globalState.smartFilter);
     }
 
-    customSave() {
+    async customSave() {
         // this.setState({ uploadInProgress: true });
         // this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry("Saving your material to Babylon.js snippet server...", false));
         // this.props.globalState
@@ -157,6 +157,10 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         //         this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry(err, true));
         //         this.setState({ uploadInProgress: false });
         //     });
+
+        this.setState({ uploadInProgress: true });
+        await this.props.globalState.customSave(this.props.globalState.smartFilter);
+        this.setState({ uploadInProgress: false });
     }
 
     saveToSnippetServer() {
@@ -350,6 +354,13 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             label="Save"
                             onClick={() => {
                                 this.save();
+                            }}
+                        />
+                        <ButtonLineComponent
+                            label="Save to unique URL"
+                            isDisabled={this.state.uploadInProgress}
+                            onClick={() => {
+                                this.customSave();
                             }}
                         />
                     </LineContainerComponent>

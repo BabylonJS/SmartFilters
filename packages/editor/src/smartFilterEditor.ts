@@ -33,6 +33,8 @@ export type SmartFilterEditorOptions = {
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
+    customSave: (filter: SmartFilter) => void;
+
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 
     texturePresets?: TexturePreset[];
@@ -72,6 +74,7 @@ export class SmartFilterEditor {
             hostElement,
             options.saveSmartFilter,
             options.loadSmartFilter,
+            options.customSave,
             options.texturePresets
         );
 
