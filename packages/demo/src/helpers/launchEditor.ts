@@ -84,7 +84,6 @@ export function launchEditor(
                     currentSmartFilter.name + ".json"
                 );
             },
-            // TODO: See if can or should use smartFilterLoader here to get access to the optimization options
             loadSmartFilter: async (file: File) => {
                 return smartFilterLoader.loadFromFile(file, false); // todo update w/ optimize
             },

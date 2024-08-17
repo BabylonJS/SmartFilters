@@ -30,9 +30,7 @@ export class SmartFilterLoader {
     private readonly _renderer: SmartFilterRenderer;
 
     public readonly snippetUrl = "https://snippet.babylonjs.com";
-
-    public readonly onSmartFilterLoadedObservable = new Observable<SmartFilter>();
-
+    public readonly onSmartFilterLoadedObservable: Observable<SmartFilter>;
     public readonly manifests: SmartFilterManifest[];
     public currentOptimizedSmartFilter: SmartFilter | undefined;
     public currentSmartFilter: SmartFilter | undefined;
@@ -51,6 +49,7 @@ export class SmartFilterLoader {
         this._engine = engine;
         this._renderer = renderer;
         this.manifests = manifests;
+        this.onSmartFilterLoadedObservable = new Observable<SmartFilter>();
         if (this.manifests.length === 0) {
             throw new Error(
                 "No SmartFilterManifests were passed to the SmartFilterLoader - add some manifests to smartFilterManifests.ts"
@@ -60,8 +59,50 @@ export class SmartFilterLoader {
     }
 
     /**
-     * Loads a SmartFilter
-     * @param source - Either a snippet token or a name from the manifest registry
+     * Loads a SmartFilter from the manifest registered with the given name.
+     * @param name - Name of manifest to load
+     * @param optimize - If true, the SmartFilter will be automatically optimized
+     */
+    public async loadFromManifest(name: string, optimize: boolean): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            const manifest = this.manifests.find((manifest) => manifest.name === name);
+            switch (manifest?.type) {
+                case "HardCoded": {
+                    return manifest.createSmartFilter(this._engine, this._renderer);
+                }
+                case "Serialized": {
+                    const smartFilterJson = await manifest.getSmartFilterJson();
+                    return this._deserializer.deserialize(this._engine, smartFilterJson);
+                }
+            }
+            throw new Error("Could not read manifest " + name);
+        }, optimize);
+    }
+
+    /**
+     * Loads a SmartFilter from the provided file.
+     * @param file - File object to load from
+     * @param optimize - If true, the SmartFilter will be automatically optimized
+     */
+    public async loadFromFile(file: File, optimize: boolean): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            // Await (data)
+            const data = await new Promise<string>((resolve, reject) => {
+                ReadFile(
+                    file,
+                    (data) => resolve(data),
+                    undefined,
+                    false,
+                    (error) => reject(error)
+                );
+            });
+            return this._deserializer.deserialize(this._engine, JSON.parse(data));
+        }, optimize);
+    }
+
+    /**
+     * Loads a SmartFilter from the snippet server.
+     * @param snippetToken - Snippet token to load
      * @param optimize - If true, the SmartFilter will be automatically optimized
      */
     public async loadFromSnippet(snippetToken: string, optimize: boolean): Promise<SmartFilter> {
@@ -80,57 +121,27 @@ export class SmartFilterLoader {
         }, optimize);
     }
 
-    public async loadFromManifest(name: string, optimize: boolean): Promise<SmartFilter> {
-        return this._loadSmartFilter(async () => {
-            const manifest = this.manifests.find((manifest) => manifest.name === name);
-            switch (manifest?.type) {
-                case "HardCoded": {
-                    return manifest.createSmartFilter(this._engine, this._renderer);
-                }
-                case "Serialized": {
-                    const smartFilterJson = await manifest.getSmartFilterJson();
-                    return this._deserializer.deserialize(this._engine, smartFilterJson);
-                }
-            }
-            throw new Error("Could not read manifest " + name);
-        }, optimize);
-    }
-
-    public async loadFromFile(file: File, optimize: boolean): Promise<SmartFilter> {
-        return this._loadSmartFilter(async () => {
-            // Since the function return depends on (data), and because there is no
-            // FileReadAsync available, just wrap ReadFile in a promise and await
-            const data = await new Promise<string>((resolve, reject) => {
-                ReadFile(
-                    file,
-                    (data) => resolve(data),
-                    undefined,
-                    false,
-                    (error) => reject(error)
-                );
-            });
-            return this._deserializer.deserialize(this._engine, JSON.parse(data));
-        }, optimize);
-    }
-
+    /**
+     * Internal method to reuse common loading logic and fallback handling.
+     * @param loader - Function that loads the SmartFilter from some source
+     * @param optimize - If true, the SmartFilter will be automatically optimized
+     */
     private async _loadSmartFilter(loader: () => Promise<SmartFilter>, optimize: boolean): Promise<SmartFilter> {
         this._renderer.beforeRenderObservable.clear();
 
-        // Load the SmartFilter using the provided function, or attempt to load the default SmartFilter
+        // Load the SmartFilter using the provided function. If that fails, retry with the default SmartFilter.
         let smartFilter: SmartFilter;
         try {
             smartFilter = await loader();
         } catch (e) {
             console.error("Failed to load SmartFilter.", e);
-
             const defaultSmartFilterName = this.defaultSmartFilterName;
             if (!defaultSmartFilterName) {
                 throw new Error("Cannot fallback to default SmartFilter - no SmartFilter manifests were registered");
             }
-            smartFilter = await this.loadFromManifest(defaultSmartFilterName, optimize); // recall TODO
+            smartFilter = await this.loadFromManifest(defaultSmartFilterName, optimize);
         }
 
-        // Optimize the SmartFilter if requested
         if (optimize) {
             smartFilter = this._optimize(smartFilter);
         }
