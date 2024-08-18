@@ -26,8 +26,6 @@ import type { SmartFilterLoader } from "../smartFilterLoader";
  * @param engine - The engine to use
  * @param renderer - The renderer to use
  */
-// TODO: If the Editor is closed and reopened, and the last SmartFilter was something loaded from a file,
-//       the editor doesn't put the blocks back to their position nor sets up their connections
 export function launchEditor(
     currentSmartFilter: SmartFilter,
     engine: ThinEngine,
