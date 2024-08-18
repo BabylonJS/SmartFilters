@@ -159,6 +159,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         //     });
 
         this.setState({ uploadInProgress: true });
+        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
         await this.props.globalState.customSave(this.props.globalState.smartFilter);
         this.setState({ uploadInProgress: false });
     }
