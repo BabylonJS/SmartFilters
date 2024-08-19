@@ -134,12 +134,12 @@ export class SmartFilterLoader {
         try {
             smartFilter = await loader();
         } catch (e) {
-            console.error("Failed to load SmartFilter.", e);
+            console.warn("Failed to load requested SmartFilter.", e);
             const defaultSmartFilterName = this.defaultSmartFilterName;
             if (!defaultSmartFilterName) {
                 throw new Error("Cannot fallback to default SmartFilter - no SmartFilter manifests were registered");
             }
-            smartFilter = await this.loadFromManifest(defaultSmartFilterName, optimize);
+            return this.loadFromManifest(defaultSmartFilterName, optimize);
         }
 
         if (optimize) {

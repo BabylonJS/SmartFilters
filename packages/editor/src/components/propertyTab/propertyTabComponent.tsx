@@ -119,7 +119,6 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     async load(_file: File) {
         this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
 
-        // TODO: Double check which events to fire here
         this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
         this.props.globalState.onResetRequiredObservable.notifyObservers(false);
         this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
@@ -145,23 +144,13 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     async customSave() {
-        // this.setState({ uploadInProgress: true });
-        // this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry("Saving your material to Babylon.js snippet server...", false));
-        // this.props.globalState
-        //     .customSave!.action(SerializationTools.Serialize(this.props.globalState.nodeMaterial, this.props.globalState))
-        //     .then(() => {
-        //         this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry("Material saved successfully", false));
-        //         this.setState({ uploadInProgress: false });
-        //     })
-        //     .catch((err) => {
-        //         this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry(err, true));
-        //         this.setState({ uploadInProgress: false });
-        //     });
-
         this.setState({ uploadInProgress: true });
-        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-        await this.props.globalState.customSave(this.props.globalState.smartFilter);
-        this.setState({ uploadInProgress: false });
+        try {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            await this.props.globalState.customSave(this.props.globalState.smartFilter);
+        } finally {
+            this.setState({ uploadInProgress: false });
+        }
     }
 
     saveToSnippetServer() {

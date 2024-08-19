@@ -28,7 +28,7 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
 
-// When SmartFilters are loaded, update currentSmartFilter and start rendering
+// Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
 smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
     SmartFilterEditor.Hide();
     currentSmartFilter = smartFilter;
@@ -37,33 +37,29 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
     });
 });
 
-// Load the initial SmartFilter
-// todo move this down or make mroe asyc
-const snippetToken = location.hash.substring(1).split("#")[0];
-if (snippetToken) {
-    smartFilterLoader.loadFromSnippet(snippetToken, optimize);
-} else {
-    smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName, optimize);
+/**
+ * Checks the hash for a snippet token and loads the SmartFilter if one is found.
+ * Otherwise, loads the default SmartFilter.
+ */
+async function checkHash() {
+    const snippetToken = location.hash.substring(1).split("#")[0];
+    if (snippetToken) {
+        smartFilterLoader.loadFromSnippet(snippetToken, optimize);
+    } else {
+        smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName, optimize);
+    }
 }
 
-// Set up hash change handler
-window.addEventListener("hashchange", () => {
-    // Get the snippet token (the first token) from the hash
-    const snippetToken = location.hash.substring(1).split("#")[0] || undefined;
-    if (!snippetToken) {
-        return;
-    }
-
-    // If it exists and is new, load the new SmartFilter
-    smartFilterLoader.loadFromSnippet(snippetToken, optimize);
-});
+// Initial load and hashchange listener
+checkHash();
+window.addEventListener("hashchange", checkHash);
 
 // Populate the smart filter <select> list
 smartFilterLoader.manifests.forEach((manifest) => {
     const option = document.createElement("option");
     option.value = manifest.name;
     option.innerText = manifest.name;
-    //option.selected = manifest.name === initialSmartFilter;
+    option.selected = manifest.name === currentSmartFilter?.name;
     smartFilterSelect?.appendChild(option);
 });
 
