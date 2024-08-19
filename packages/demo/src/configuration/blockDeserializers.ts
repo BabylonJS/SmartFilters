@@ -105,10 +105,6 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     });
 
     // Non-trivial deserializers begin.
-    // Their deserializer functions import the block directly in their files, so they're only loaded when needed.
-    // TODO: These blocks only have public class properties that are being put in the .data field.
-    //       Some of those props look like they could possibly be connection points instead of props...?
-    // TODO: On that note, if they stay as props, should they have UI to edit them? Like the webcam source does?
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const { blurBlockDeserializer } = await import(

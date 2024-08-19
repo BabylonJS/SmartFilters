@@ -93,7 +93,6 @@ export function launchEditor(
 
                 const smartFilterJson = JSON.stringify(serializer.serialize(filter));
 
-                // Prepare the data to send
                 const dataToSend = {
                     payload: JSON.stringify({
                         smartFilter: smartFilterJson,
@@ -103,7 +102,6 @@ export function launchEditor(
                     tags: "",
                 };
 
-                // Post the data
                 const response = await fetch(smartFilterLoader.snippetUrl, {
                     method: "POST",
                     headers: {
@@ -112,12 +110,10 @@ export function launchEditor(
                     body: JSON.stringify(dataToSend),
                 });
 
-                // Check if the response is ok
                 if (!response.ok) {
                     throw new Error(`Could not save snippet: ${response.statusText}`);
                 }
 
-                // Parse the response
                 const snippet = await response.json();
 
                 // Update the location hash to trigger a hashchange event

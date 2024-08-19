@@ -65,10 +65,7 @@ smartFilterLoader.manifests.forEach((manifest) => {
 
 // Set up SmartFilter <select> handler
 smartFilterSelect.addEventListener("change", () => {
-    const manifest = smartFilterManifests.find((manifest) => manifest.name === smartFilterSelect.value);
-    if (manifest) {
-        smartFilterLoader.loadFromManifest(smartFilterSelect.value, optimize);
-    }
+    smartFilterLoader.loadFromManifest(smartFilterSelect.value, optimize);
 });
 
 // Set up editor button
