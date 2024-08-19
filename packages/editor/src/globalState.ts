@@ -53,11 +53,11 @@ export class GlobalState {
 
     texturePresets: TexturePreset[];
 
-    saveSmartFilter: (filter: SmartFilter) => void;
+    saveSmartFilter: () => void;
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
-    customSave: (filter: SmartFilter) => void;
+    customSave: () => void;
 
     private _runtime: Nullable<SmartFilterRuntime> = null;
     public get runtime(): Nullable<SmartFilterRuntime> {
@@ -78,9 +78,9 @@ export class GlobalState {
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
-        saveSmartFilter: (filter: SmartFilter) => void,
+        saveSmartFilter: () => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
-        customSave: (filter: SmartFilter) => void,
+        customSave: () => void,
         texturePresets: TexturePreset[] = []
     ) {
         this.stateManager = new StateManager();

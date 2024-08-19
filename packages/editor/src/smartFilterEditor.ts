@@ -29,11 +29,11 @@ export type SmartFilterEditorOptions = {
 
     hostElement?: HTMLElement;
 
-    saveSmartFilter: (filter: SmartFilter) => void;
+    saveSmartFilter: () => void;
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
-    customSave: (filter: SmartFilter) => void;
+    customSave: () => void;
 
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 

@@ -70,7 +70,7 @@ export function launchEditor(
             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                 renderer.setRuntime(runtime);
             },
-            saveSmartFilter: (filter: SmartFilter) => {
+            saveSmartFilter: () => {
                 const serializer = new SmartFilterSerializer(
                     blocksUsingDefaultSerialization,
                     additionalBlockSerializers
@@ -78,20 +78,20 @@ export function launchEditor(
 
                 StringTools.DownloadAsFile(
                     document,
-                    JSON.stringify(serializer.serialize(filter), null, 2),
+                    JSON.stringify(serializer.serialize(currentSmartFilter), null, 2),
                     currentSmartFilter.name + ".json"
                 );
             },
             loadSmartFilter: async (file: File) => {
                 return smartFilterLoader.loadFromFile(file, false); // TODO: update optimize
             },
-            customSave: async (filter: SmartFilter) => {
+            customSave: async () => {
                 const serializer = new SmartFilterSerializer(
                     blocksUsingDefaultSerialization,
                     additionalBlockSerializers
                 );
 
-                const smartFilterJson = JSON.stringify(serializer.serialize(filter));
+                const smartFilterJson = JSON.stringify(serializer.serialize(currentSmartFilter));
 
                 const dataToSend = {
                     payload: JSON.stringify({
