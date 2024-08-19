@@ -52,9 +52,6 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new DesaturateBlock(smartFilter, serializedBlock.name);
     });
 
-    // TODO: Can I make this all more generic? Or at least something more like how serializers are defined?
-    //       Or is it because of the dynamic imports-- can their paths not be generated programmatically?
-
     deserializers.set(BlockNames.posterize, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const { PosterizeBlock } = await import(
             /* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock"

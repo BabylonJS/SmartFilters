@@ -16,6 +16,4 @@ export const defaultBlockEditorRegistrations: IBlockEditorRegistration[] = [
         category: "Inputs",
         tooltip: "A texture to be used as input",
     },
-    // TODO: Can I add the rest of the ConnectionPointTypes here? They all seem supported.
-    //       Or at least add the ones used by current blocks.
 ];

@@ -83,7 +83,7 @@ export function launchEditor(
                 );
             },
             loadSmartFilter: async (file: File) => {
-                return smartFilterLoader.loadFromFile(file, false); // todo update w/ optimize
+                return smartFilterLoader.loadFromFile(file, false); // TODO: update optimize
             },
             customSave: async (filter: SmartFilter) => {
                 const serializer = new SmartFilterSerializer(
