@@ -42,9 +42,9 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
  * Otherwise, loads the default SmartFilter.
  */
 async function checkHash() {
-    const snippetToken = location.hash.substring(1).split("#")[0];
+    const [snippetToken, version] = location.hash.substring(1).split("#"); // TODO: Pick another delimiter?
     if (snippetToken) {
-        smartFilterLoader.loadFromSnippet(snippetToken, optimize);
+        smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
         smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName, optimize);
     }

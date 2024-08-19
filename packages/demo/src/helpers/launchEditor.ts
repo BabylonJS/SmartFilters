@@ -102,7 +102,9 @@ export function launchEditor(
                     tags: "",
                 };
 
-                const response = await fetch(smartFilterLoader.snippetUrl, {
+                const [snippetToken] = location.hash.substring(1).split("#"); // TODO: Pick another delimiter?
+
+                const response = await fetch(`${smartFilterLoader.snippetUrl}/${snippetToken || ""}`, {
                     method: "POST",
                     headers: {
                         // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -118,7 +120,11 @@ export function launchEditor(
                 const snippet = await response.json();
 
                 // Update the location hash to trigger a hashchange event
-                location.hash = snippet.id;
+                let newHash = snippet.id;
+                if (snippet.version && snippet.version != "0") {
+                    newHash += "#" + snippet.version; // TODO: Pick another delimiter?
+                }
+                location.hash = newHash;
             },
             texturePresets,
         });

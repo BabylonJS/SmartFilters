@@ -103,11 +103,16 @@ export class SmartFilterLoader {
     /**
      * Loads a SmartFilter from the snippet server.
      * @param snippetToken - Snippet token to load
+     * @param version - Version of the snippet to load
      * @param optimize - If true, the SmartFilter will be automatically optimized
      */
-    public async loadFromSnippet(snippetToken: string, optimize: boolean): Promise<SmartFilter> {
+    public async loadFromSnippet(
+        snippetToken: string,
+        version: string | undefined,
+        optimize: boolean
+    ): Promise<SmartFilter> {
         return this._loadSmartFilter(async () => {
-            const response = await fetch(`${this.snippetUrl}/${snippetToken}`);
+            const response = await fetch(`${this.snippetUrl}/${snippetToken}/${version || ""}`);
 
             if (!response.ok) {
                 throw new Error(`Could not fetch snippet ${snippetToken}. Response was: ${response.statusText}`);
