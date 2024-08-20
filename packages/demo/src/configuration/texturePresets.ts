@@ -16,6 +16,6 @@ export const texturePresets: TexturePreset[] = [
     },
     {
         name: "Kittens",
-        url: "/assets/kittens.jpeg",
+        url: "/assets/kittens.jpg",
     },
 ];

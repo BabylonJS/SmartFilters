@@ -47,7 +47,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                 <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
                 <LineContainerComponent title="PROPERTIES">
                     <OptionsLine
-                        label="Texture"
+                        label="Source"
                         target={{}}
                         propertyName="value"
                         options={this._imageOptions}
