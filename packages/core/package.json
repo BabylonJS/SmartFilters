@@ -38,7 +38,7 @@
         "readme.md"
     ],
     "scripts": {
-        "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+        "clean": "rimraf dist && rimraf buildTools/dist && rimraf tsconfig.build.tsbuildinfo && rimraf ../tsconfig.buildTools.build.tsbuildinfo",
         "versionUp": "node buildTools/versionUp.js",
         "build": "npm run build:buildTools && npm run build:runTools && npm run build:core",
         "build:core": "tsc -p ./tsconfig.build.json",
