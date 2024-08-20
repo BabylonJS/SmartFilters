@@ -2,12 +2,20 @@ import * as react from "react";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButtonLineComponent.js";
 import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
-import { createImageTexture, type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
+import {
+    createImageTexture,
+    type ConnectionPointType,
+    type InputBlock,
+    type InputBlockEditorData,
+} from "@babylonjs/smart-filters";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { Tools } from "@babylonjs/core/Misc/tools.js";
 import type { GlobalState, TexturePreset } from "../../globalState.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
+import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
+import { NumericInputComponent } from "../../sharedComponents/numericInputComponent.js";
+import type { Nullable } from "@babylonjs/core/types.js";
 
 export interface ImageSourcePropertyTabComponentProps extends IPropertyComponentProps {
     inputBlock: InputBlock<ConnectionPointType.Texture>;
@@ -67,61 +75,91 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                 // Take no action, let the user click the Upload button
                                 return;
                             }
-                            if (this.props.inputBlock.runtimeValue.value) {
-                                this.props.inputBlock.runtimeValue.value.dispose();
-                            }
-                            this.props.inputBlock.runtimeValue.value = createImageTexture(
-                                (this.props.stateManager.data as GlobalState).engine,
-                                this._texturePresets[newSelectionValue]?.url || "",
-                                true,
-                                undefined
-                            );
-                            this.props.nodeData.refreshCallback?.();
-                            this.forceUpdate();
+                            this._getInputBlockEditorData().url = this._texturePresets[newSelectionValue]?.url || "";
+                            this._loadImage();
                         }}
                     />
                     <FileButtonLine
                         label="Upload Custom"
-                        onClick={(file) => this._replaceTexture(file)}
+                        onClick={(file: File) => {
+                            Tools.ReadFile(
+                                file,
+                                (data) => {
+                                    const blob = new Blob([data], { type: "octet/stream" });
+                                    const reader = new FileReader();
+                                    reader.readAsDataURL(blob);
+                                    reader.onloadend = () => {
+                                        const base64data = reader.result as string;
+                                        let extension: Nullable<string> = null;
+                                        if (file.name.toLowerCase().indexOf(".dds") > 0) {
+                                            extension = ".dds";
+                                        } else if (file.name.toLowerCase().indexOf(".env") > 0) {
+                                            extension = ".env";
+                                        }
+
+                                        const editorData = this._getInputBlockEditorData();
+                                        editorData.url = base64data;
+                                        editorData.forcedExtension = extension;
+                                        this._loadImage();
+                                    };
+                                },
+                                undefined,
+                                true
+                            );
+                        }}
                         accept=".jpg, .jpeg, .png, .tga, .dds, .env"
+                    />
+                    <CheckBoxLineComponent
+                        label="FlipY"
+                        target={this._getInputBlockEditorData()}
+                        propertyName="flipY"
+                        onValueChanged={() => this._loadImage()}
+                    />
+                    <NumericInputComponent
+                        lockObject={(this.props.stateManager.data as GlobalState).lockObject}
+                        label="AFL"
+                        labelTooltip="anisotropicFilteringLevel"
+                        precision={0}
+                        value={this._getInputBlockEditorData().anisotropicFilteringLevel ?? 4}
+                        onChange={(value: number) => {
+                            this._getInputBlockEditorData().anisotropicFilteringLevel = value;
+                            this._loadImage();
+                        }}
                     />
                 </LineContainerComponent>
             </div>
         );
     }
 
-    private _replaceTexture(file: File) {
-        Tools.ReadFile(
-            file,
-            (data) => {
-                const blob = new Blob([data], { type: "octet/stream" });
-                const reader = new FileReader();
-                reader.readAsDataURL(blob);
-                reader.onloadend = () => {
-                    const base64data = reader.result as string;
-                    let extension: string | undefined = undefined;
-                    if (file.name.toLowerCase().indexOf(".dds") > 0) {
-                        extension = ".dds";
-                    } else if (file.name.toLowerCase().indexOf(".env") > 0) {
-                        extension = ".env";
-                    }
+    private _getInputBlockEditorData(): InputBlockEditorData<ConnectionPointType.Texture> {
+        if (this.props.inputBlock.editorData === null) {
+            this.props.inputBlock.editorData = {
+                url: this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url ?? null,
+                anisotropicFilteringLevel: null,
+                flipY: true,
+                forcedExtension: null,
+            };
+        }
+        return this.props.inputBlock.editorData;
+    }
 
-                    if (this.props.inputBlock.runtimeValue.value) {
-                        this.props.inputBlock.runtimeValue.value.dispose();
-                    }
-                    this.props.inputBlock.runtimeValue.value = createImageTexture(
-                        (this.props.stateManager.data as GlobalState).engine,
-                        base64data,
-                        true,
-                        undefined,
-                        extension
-                    );
-                    this.props.nodeData.refreshCallback?.();
-                    this.forceUpdate();
-                };
-            },
-            undefined,
-            true
+    private _loadImage() {
+        if (this.props.inputBlock.runtimeValue.value) {
+            this.props.inputBlock.runtimeValue.value.dispose();
+        }
+        const editorData = this._getInputBlockEditorData();
+        this.props.inputBlock.runtimeValue.value = createImageTexture(
+            (this.props.stateManager.data as GlobalState).engine,
+            editorData.url ?? "",
+            editorData.flipY,
+            undefined /* samplingMode */,
+            editorData.forcedExtension
         );
+        if (editorData.anisotropicFilteringLevel !== null) {
+            this.props.inputBlock.runtimeValue.value.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
+        }
+
+        this.props.nodeData.refreshCallback?.();
+        this.forceUpdate();
     }
 }

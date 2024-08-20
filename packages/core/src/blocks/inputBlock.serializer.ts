@@ -43,7 +43,10 @@ function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlo
 function serializeTextureInputBlock(inputBlock: InputBlock<ConnectionPointType.Texture>): TextureInputBlockData {
     return {
         inputType: ConnectionPointType.Texture,
-        url: inputBlock.runtimeValue.value?.getInternalTexture()?.url || null,
+        url: inputBlock.runtimeValue.value?.getInternalTexture()?.url ?? null,
+        flipY: inputBlock.editorData?.flipY ?? null,
+        anisotropicFilteringLevel: inputBlock.editorData?.anisotropicFilteringLevel ?? null,
+        forcedExtension: inputBlock.editorData?.forcedExtension ?? null,
     };
 }
 

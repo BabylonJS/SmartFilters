@@ -1,4 +1,4 @@
-import type { Nullable } from "@babylonjs/core";
+import type { Nullable } from "@babylonjs/core/types.js";
 import type { ConnectionPointType } from "../connection/connectionPointType.js";
 import type { IColor3Like, IColor4Like, IVector2Like } from "@babylonjs/core/Maths/math.like.js";
 
@@ -11,6 +11,21 @@ export type TextureInputBlockData = {
 
     /** The URL, if available, of the texture */
     url: Nullable<string>;
+
+    /**
+     * Defines the anisotropic level to use, or default if null
+     */
+    anisotropicFilteringLevel: Nullable<number>;
+
+    /**
+     * Indicates if the Y axis should be flipped, or default if null
+     */
+    flipY: Nullable<boolean>;
+
+    /**
+     * The file extension to use, or default if null.
+     */
+    forcedExtension: Nullable<string>;
 };
 
 /**
