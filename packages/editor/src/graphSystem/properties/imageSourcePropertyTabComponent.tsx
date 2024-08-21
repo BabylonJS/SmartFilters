@@ -140,6 +140,9 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                 forcedExtension: null,
             };
         }
+        // Apply defaults
+        this.props.inputBlock.editorData.flipY = this.props.inputBlock.editorData.flipY ?? true;
+
         return this.props.inputBlock.editorData;
     }
 
