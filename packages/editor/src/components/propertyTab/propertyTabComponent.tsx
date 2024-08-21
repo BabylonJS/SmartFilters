@@ -138,68 +138,19 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         // );
     }
 
-    save() {
+    downloadSmartFilter() {
         this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-        this.props.globalState.saveSmartFilter();
+        this.props.globalState.downloadSmartFilter();
     }
 
-    async customSave() {
+    async saveToSnippetServer() {
         this.setState({ uploadInProgress: true });
         try {
             this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-            await this.props.globalState.customSave();
+            await this.props.globalState.saveToSnippetServer();
         } finally {
             this.setState({ uploadInProgress: false });
         }
-    }
-
-    saveToSnippetServer() {
-        // const material = this.props.globalState.nodeMaterial;
-        // const xmlHttp = new XMLHttpRequest();
-        // const json = SerializationTools.Serialize(material, this.props.globalState);
-        // xmlHttp.onreadystatechange = () => {
-        //     if (xmlHttp.readyState == 4) {
-        //         if (xmlHttp.status == 200) {
-        //             const snippet = JSON.parse(xmlHttp.responseText);
-        //             const oldId = material.snippetId;
-        //             material.snippetId = snippet.id;
-        //             if (snippet.version && snippet.version != "0") {
-        //                 material.snippetId += "#" + snippet.version;
-        //             }
-        //             this.forceUpdate();
-        //             if (navigator.clipboard) {
-        //                 navigator.clipboard.writeText(material.snippetId);
-        //             }
-        //             const windowAsAny = window as any;
-        //             if (windowAsAny.Playground && oldId) {
-        //                 windowAsAny.Playground.onRequestCodeChangeObservable.notifyObservers({
-        //                     regex: new RegExp(oldId, "g"),
-        //                     replace: material.snippetId,
-        //                 });
-        //             }
-        //             this.props.globalState.hostDocument.defaultView!.alert(
-        //                 "NodeMaterial saved with ID: " + material.snippetId + " (please note that the id was also saved to your clipboard)"
-        //             );
-        //         } else {
-        //             this.props.globalState.hostDocument.defaultView!.alert(
-        //                 `Unable to save your node material. It may be too large (${(dataToSend.payload.length / 1024).toFixed(
-        //                     2
-        //                 )} KB) because of embedded textures. Please reduce texture sizes or point to a specific url instead of embedding them and try again.`
-        //             );
-        //         }
-        //     }
-        // };
-        // xmlHttp.open("POST", NodeMaterial.SnippetUrl + (material.snippetId ? "/" + material.snippetId : ""), true);
-        // xmlHttp.setRequestHeader("Content-Type", "application/json");
-        // const dataToSend = {
-        //     payload: JSON.stringify({
-        //         nodeMaterial: json,
-        //     }),
-        //     name: "",
-        //     description: "",
-        //     tags: "",
-        // };
-        // xmlHttp.send(JSON.stringify(dataToSend));
     }
 
     loadFromSnippet() {
@@ -343,26 +294,17 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         <ButtonLineComponent
                             label="Save"
                             onClick={() => {
-                                this.save();
+                                this.downloadSmartFilter();
                             }}
                         />
                         <ButtonLineComponent
                             label="Save to unique URL"
                             isDisabled={this.state.uploadInProgress}
                             onClick={() => {
-                                this.customSave();
+                                this.saveToSnippetServer();
                             }}
                         />
-                    </LineContainerComponent>
-                    {/* <LineContainerComponent title="FILE">
-                        <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
-                        <ButtonLineComponent
-                            label="Save"
-                            onClick={() => {
-                                this.save();
-                            }}
-                        />
-                        <ButtonLineComponent
+                        {/*<ButtonLineComponent
                             label="Generate code"
                             onClick={() => {
                                 StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
@@ -375,17 +317,9 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
                             }}
                         />
-                        {this.props.globalState.customSave && (
-                            <ButtonLineComponent
-                                label={this.props.globalState.customSave!.label}
-                                isDisabled={this.state.uploadInProgress}
-                                onClick={() => {
-                                    this.customSave();
-                                }}
-                            />
-                        )}
-                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />
+                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/} 
                     </LineContainerComponent>
+                    {/*
                     {!this.props.globalState.customSave && (
                         <LineContainerComponent title="SNIPPET">
                             {this.props.globalState.nodeMaterial!.snippetId && <TextLineComponent label="Snippet ID" value={this.props.globalState.nodeMaterial!.snippetId} />}

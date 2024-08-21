@@ -29,11 +29,11 @@ export type SmartFilterEditorOptions = {
 
     hostElement?: HTMLElement;
 
-    saveSmartFilter: () => void;
+    downloadSmartFilter: () => void;
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
-    customSave: () => void;
+    saveToSnippetServer: () => void;
 
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 
@@ -72,9 +72,9 @@ export class SmartFilterEditor {
             options.filter ?? null,
             options.blockRegistration,
             hostElement,
-            options.saveSmartFilter,
+            options.downloadSmartFilter,
             options.loadSmartFilter,
-            options.customSave,
+            options.saveToSnippetServer,
             options.texturePresets
         );
 

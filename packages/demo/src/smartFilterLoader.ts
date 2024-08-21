@@ -32,8 +32,6 @@ export class SmartFilterLoader {
     public readonly snippetUrl = "https://snippet.babylonjs.com";
     public readonly onSmartFilterLoadedObservable: Observable<SmartFilter>;
     public readonly manifests: SmartFilterManifest[];
-    public currentOptimizedSmartFilter: SmartFilter | undefined;
-    public currentSmartFilter: SmartFilter | undefined;
 
     public get defaultSmartFilterName(): string {
         const firstManifest = this.manifests[0];
