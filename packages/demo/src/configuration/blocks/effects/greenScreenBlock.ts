@@ -8,6 +8,7 @@ import {
     injectDisableUniform,
     createStrongRef,
 } from "@babylonjs/smart-filters";
+import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -94,7 +95,7 @@ export class GreenScreenBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = "GreenScreenBlock";
+    public static override ClassName = BlockNames.greenScreen;
 
     /**
      * The input texture connection point.

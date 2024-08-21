@@ -48,6 +48,12 @@ export function inputBlockDeserializer(
 
             return inputBlock;
         }
+        case ConnectionPointType.Color3:
+            return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Color3, blockData.value);
+        case ConnectionPointType.Color4:
+            return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Color4, blockData.value);
+        case ConnectionPointType.Vector2:
+            return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Vector2, blockData.value);
     }
 
     throw new Error("Could not deserialize input block, unknown input type");

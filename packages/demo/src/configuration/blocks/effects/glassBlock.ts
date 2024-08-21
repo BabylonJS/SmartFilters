@@ -2,6 +2,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -118,7 +119,7 @@ export class GlassBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = "GlassBlock";
+    public static override ClassName = BlockNames.glass;
 
     /**
      * The input texture connection point.

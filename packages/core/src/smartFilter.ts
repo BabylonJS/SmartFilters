@@ -216,12 +216,14 @@ export class SmartFilter {
             }
         });
 
-        // Do the passed in work
-        work();
-
-        // Restore all aggregate blocks
-        for (const block of mergedAggregateBlocks) {
-            block._unmergeFromSmartFilter();
+        try {
+            // Do the passed in work
+            work();
+        } finally {
+            // Restore all aggregate blocks, even if work throws
+            for (const block of mergedAggregateBlocks) {
+                block._unmergeFromSmartFilter();
+            }
         }
     }
 }

@@ -122,6 +122,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             this.props.globalState.hostDocument!.removeEventListener("keyup", this._onWidgetKeyUpPointer, false);
         }
 
+        // Save new editor data
+        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+
         // if (this._previewManager) {
         //     this._previewManager.dispose();
         //     this._previewManager = null as any;
@@ -161,7 +164,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
         this.props.globalState.stateManager.onRebuildRequiredObservable.add(async () => {
             if (this.props.globalState.smartFilter) {
-                this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
                 // this.buildMaterial(autoConfigure);
 
                 if (this.props.globalState.runtime) {

@@ -8,6 +8,7 @@ import {
     injectDisableUniform,
     createStrongRef,
 } from "@babylonjs/smart-filters";
+import { BlockNames } from "../blockNames";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
@@ -170,7 +171,7 @@ export class CompositionBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = "CompositionBlock";
+    public static override ClassName = BlockNames.composition;
 
     /**
      * The background texture to composite on to.

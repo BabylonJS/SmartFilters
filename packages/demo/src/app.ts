@@ -9,6 +9,7 @@ import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
+import { getSnippet } from "./helpers/hashFunctions";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -31,43 +32,54 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
 
-/**
- * Loads a SmartFilter
- * @param name - The name of the SmartFilter to load
- * @param optimize - If true, the SmartFilter will be automatically optimized
- */
-async function loadSmartFilter(name: string, optimize: boolean): Promise<void> {
+// Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
+smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
     SmartFilterEditor.Hide();
-    localStorage.setItem(LocalStorageSmartFilterName, name);
-    currentSmartFilter = await smartFilterLoader.loadSmartFilter(name, optimize);
+    currentSmartFilter = smartFilter;
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
+});
+
+/**
+ * Checks the hash for a snippet token and loads the SmartFilter if one is found.
+ * Otherwise, loads the last in-repo SmartFilter or the default.
+ */
+async function checkHash() {
+    const [snippetToken, version] = getSnippet();
+
+    if (snippetToken) {
+        smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
+    } else {
+        const smartFilterName =
+            localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
+        smartFilterLoader.loadFromManifest(smartFilterName, optimize);
+    }
 }
 
-// Load the initial SmartFilter
-const initialSmartFilterName =
-    localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-loadSmartFilter(initialSmartFilterName, optimize);
+// Initial load and hashchange listener
+checkHash();
+window.addEventListener("hashchange", checkHash);
 
 // Populate the smart filter <select> list
 smartFilterLoader.manifests.forEach((manifest) => {
     const option = document.createElement("option");
     option.value = manifest.name;
     option.innerText = manifest.name;
-    option.selected = manifest.name === initialSmartFilterName;
+    option.selected = manifest.name === localStorage.getItem(LocalStorageSmartFilterName);
     smartFilterSelect?.appendChild(option);
 });
 
 // Set up SmartFilter <select> handler
 smartFilterSelect.addEventListener("change", () => {
-    loadSmartFilter(smartFilterSelect.value, optimize);
+    localStorage.setItem(LocalStorageSmartFilterName, smartFilterSelect.value);
+    smartFilterLoader.loadFromManifest(smartFilterSelect.value, optimize);
 });
 
 // Set up editor button
 editActionLink.onclick = async () => {
     if (currentSmartFilter) {
         const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
-        module.launchEditor(currentSmartFilter, engine, renderer);
+        module.launchEditor(currentSmartFilter, engine, renderer, smartFilterLoader);
     }
 };
