@@ -31,9 +31,6 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
-// Track the current snippet token
-let currentSnippetToken: string | undefined;
-let currentSnippetVersion: number | undefined;
 
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
 smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
@@ -51,14 +48,7 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
 async function checkHash() {
     const [snippetToken, version] = getSnippet();
 
-    // If this is the result of a new version being saved, no-op
-    if (snippetToken === currentSnippetToken && version && parseFloat(version) - 1 === currentSnippetVersion) {
-        return;
-    }
-
     if (snippetToken) {
-        currentSnippetToken = snippetToken;
-        currentSnippetVersion = version ? parseFloat(version) : 0;
         smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
         const smartFilterName =
