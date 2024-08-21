@@ -57,7 +57,7 @@ export class GlobalState {
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
-    saveToSnippetServer: () => void;
+    saveToSnippetServer?: (() => void) | undefined;
 
     private _runtime: Nullable<SmartFilterRuntime> = null;
     public get runtime(): Nullable<SmartFilterRuntime> {
@@ -80,7 +80,7 @@ export class GlobalState {
         hostElement: HTMLElement,
         downloadSmartFilter: () => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
-        saveToSnippetServer: () => void,
+        saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = []
     ) {
         this.stateManager = new StateManager();

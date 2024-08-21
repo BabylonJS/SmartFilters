@@ -18,6 +18,7 @@ import type { SmartFilterRenderer } from "../smartFilterRenderer";
 import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 import type { SmartFilterLoader } from "../smartFilterLoader";
+import { getSnippet, setSnippet } from "./hashFunctions";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -102,7 +103,7 @@ export function launchEditor(
                     tags: "",
                 };
 
-                const [snippetToken] = location.hash.substring(1).split("#"); // TODO: Pick another delimiter?
+                const [snippetToken] = getSnippet();
 
                 const response = await fetch(`${smartFilterLoader.snippetUrl}/${snippetToken || ""}`, {
                     method: "POST",
@@ -120,11 +121,7 @@ export function launchEditor(
                 const snippet = await response.json();
 
                 // Update the location hash to trigger a hashchange event
-                let newHash = snippet.id;
-                if (snippet.version && snippet.version != "0") {
-                    newHash += "#" + snippet.version; // TODO: Pick another delimiter?
-                }
-                location.hash = newHash;
+                setSnippet(snippet.id, snippet.version);
             },
             texturePresets,
         });

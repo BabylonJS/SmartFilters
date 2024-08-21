@@ -147,7 +147,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         this.setState({ uploadInProgress: true });
         try {
             this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-            await this.props.globalState.saveToSnippetServer();
+            await this.props.globalState.saveToSnippetServer!();
         } finally {
             this.setState({ uploadInProgress: false });
         }
@@ -297,13 +297,15 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 this.downloadSmartFilter();
                             }}
                         />
-                        <ButtonLineComponent
-                            label="Save to unique URL"
-                            isDisabled={this.state.uploadInProgress}
-                            onClick={() => {
-                                this.saveToSnippetServer();
-                            }}
-                        />
+                        {this.props.globalState.saveToSnippetServer && (
+                            <ButtonLineComponent
+                                label="Save to unique URL"
+                                isDisabled={this.state.uploadInProgress}
+                                onClick={() => {
+                                    this.saveToSnippetServer();
+                                }}
+                            />
+                        )}
                         {/*<ButtonLineComponent
                             label="Generate code"
                             onClick={() => {
@@ -317,7 +319,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
                             }}
                         />
-                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/} 
+                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
                     </LineContainerComponent>
                     {/*
                     {!this.props.globalState.customSave && (

@@ -33,7 +33,7 @@ export type SmartFilterEditorOptions = {
 
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
-    saveToSnippetServer: () => void;
+    saveToSnippetServer?: () => void;
 
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 

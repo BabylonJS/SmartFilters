@@ -9,6 +9,7 @@ import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
+import { getSnippet } from "./helpers/hashFunctions";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -30,6 +31,9 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
+// Track the current snippet token
+let currentSnippetToken: string | undefined;
+let currentSnippetVersion: number | undefined;
 
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
 smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
@@ -45,8 +49,16 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
  * Otherwise, loads the last in-repo SmartFilter or the default.
  */
 async function checkHash() {
-    const [snippetToken, version] = location.hash.substring(1).split("#"); // TODO: Pick another delimiter?
+    const [snippetToken, version] = getSnippet();
+
+    // If this is the result of a new version being saved, no-op
+    if (snippetToken === currentSnippetToken && version && parseFloat(version) - 1 === currentSnippetVersion) {
+        return;
+    }
+
     if (snippetToken) {
+        currentSnippetToken = snippetToken;
+        currentSnippetVersion = version ? parseFloat(version) : 0;
         smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
         const smartFilterName =
