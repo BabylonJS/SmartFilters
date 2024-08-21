@@ -1,5 +1,6 @@
 import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture.js";
 import { type ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * Helper that takes in a URL to an image and returns a ThinTexture
@@ -15,14 +16,14 @@ import { type ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 export function createImageTexture(
     engine: ThinEngine,
     url: string,
-    flipY: boolean = true,
+    flipY: Nullable<boolean> = null,
     samplingMode: number | undefined = undefined,
     forcedExtension: string | null = null
 ): ThinTexture {
     const internalTexture = engine.createTexture(
         url,
         true,
-        flipY,
+        flipY ?? true,
         null,
         samplingMode,
         null,

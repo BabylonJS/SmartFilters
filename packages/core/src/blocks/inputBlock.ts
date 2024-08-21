@@ -6,6 +6,7 @@ import type { DisableableBlock } from "./disableableBlock";
 import { BaseBlock } from "../blocks/baseBlock.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * Type predicate to check if value is a strong ref or a direct value
@@ -53,6 +54,33 @@ export abstract class InputBlockBase extends BaseBlock {
 }
 
 /**
+ * Describes the editor data that can be stored with an InputBlock of a given type.
+ */
+export type InputBlockEditorData<T extends ConnectionPointType> = T extends ConnectionPointType.Texture
+    ? {
+          /**
+           * The URL of the texture, or default if null.
+           */
+          url: Nullable<string>;
+
+          /**
+           * The anisotropic filtering level of the texture, or default if null.
+           */
+          anisotropicFilteringLevel: Nullable<number>;
+
+          /**
+           * Whether the Y axis should be flipped, or default if null.
+           */
+          flipY: Nullable<boolean>;
+
+          /**
+           * The file extension to use, or default if null.
+           */
+          forcedExtension: Nullable<string>;
+      }
+    : {};
+
+/**
  * This represents any inputs used in the graph.
  *
  * This is used to provide a way to connect the graph to the outside world.
@@ -69,6 +97,11 @@ export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
      * The type of the input.
      */
     public readonly type: U;
+
+    /**
+     * Data used by the Editor to store options required for instantiating the block in the Editor.
+     */
+    public editorData: Nullable<InputBlockEditorData<U>> = null;
 
     /**
      * Gets the current value of the input.

@@ -5,7 +5,8 @@ import type { SmartFilter } from "../smartFilter.js";
 import type { ISerializedBlockV1 } from "../serialization/v1/serialization.types.js";
 import { createImageTexture } from "../utils/textureLoaders.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
-
+import type { Nullable } from "@babylonjs/core/types.js";
+import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture.js";
 /**
  * V1 Input Block Deserializer
  * @param smartFilter - The SmartFilter to deserialize the block into
@@ -25,13 +26,28 @@ export function inputBlockDeserializer(
             return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Boolean, blockData.value);
         case ConnectionPointType.Float:
             return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Float, blockData.value);
-        case ConnectionPointType.Texture:
-            return new InputBlock(
-                smartFilter,
-                serializedBlock.name,
-                ConnectionPointType.Texture,
-                blockData.url !== null ? createImageTexture(engine, blockData.url) : null
-            );
+        case ConnectionPointType.Texture: {
+            // If information necessary to load an image was serialized, load the image
+            const texture: Nullable<ThinTexture> = blockData.url
+                ? createImageTexture(engine, blockData.url, blockData.flipY)
+                : null;
+            if (texture && blockData.anisotropicFilteringLevel !== null) {
+                texture.anisotropicFilteringLevel = blockData.anisotropicFilteringLevel;
+            }
+
+            // Create the input block
+            const inputBlock = new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Texture, texture);
+
+            // If editor data was serialized, set it on the deserialized block
+            inputBlock.editorData = {
+                url: blockData.url,
+                anisotropicFilteringLevel: blockData.anisotropicFilteringLevel,
+                flipY: blockData.flipY,
+                forcedExtension: blockData.forcedExtension,
+            };
+
+            return inputBlock;
+        }
         case ConnectionPointType.Color3:
             return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Color3, blockData.value);
         case ConnectionPointType.Color4:

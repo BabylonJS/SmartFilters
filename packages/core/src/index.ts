@@ -17,7 +17,7 @@ export { ConnectionPoint } from "./connection/connectionPoint.js";
 export { type RuntimeData } from "./connection/connectionPoint.js";
 
 export { BaseBlock } from "./blocks/baseBlock.js";
-export { InputBlock } from "./blocks/inputBlock.js";
+export { InputBlock, type InputBlockEditorData } from "./blocks/inputBlock.js";
 export { type AnyInputBlock } from "./blocks/inputBlock.js";
 export { ShaderBlock } from "./blocks/shaderBlock.js";
 export { AggregateBlock } from "./blocks/aggregateBlock.js";
