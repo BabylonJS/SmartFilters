@@ -41,12 +41,14 @@ function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlo
  * @returns The serialized data for the InputBlock
  */
 function serializeTextureInputBlock(inputBlock: InputBlock<ConnectionPointType.Texture>): TextureInputBlockData {
+    const internalTexture = inputBlock.runtimeValue.value?.getInternalTexture();
+    const forcedExtension = internalTexture?._extension ?? null;
     return {
         inputType: ConnectionPointType.Texture,
-        url: inputBlock.runtimeValue.value?.getInternalTexture()?.url ?? null,
-        flipY: inputBlock.editorData?.flipY ?? null,
-        anisotropicFilteringLevel: inputBlock.editorData?.anisotropicFilteringLevel ?? null,
-        forcedExtension: inputBlock.editorData?.forcedExtension ?? null,
+        url: internalTexture?.url ?? null,
+        flipY: internalTexture?.invertY ?? null,
+        anisotropicFilteringLevel: internalTexture?.anisotropicFilteringLevel ?? null,
+        forcedExtension: forcedExtension !== "" ? forcedExtension : null,
     };
 }
 
