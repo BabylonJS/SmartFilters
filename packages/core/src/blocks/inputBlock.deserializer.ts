@@ -27,6 +27,9 @@ export function inputBlockDeserializer(
         case ConnectionPointType.Float:
             return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Float, blockData.value);
         case ConnectionPointType.Texture: {
+            // Apply flipY default
+            blockData.flipY = blockData.flipY ?? true;
+
             // If information necessary to load an image was serialized, load the image
             const texture: Nullable<ThinTexture> = blockData.url
                 ? createImageTexture(engine, blockData.url, blockData.flipY)
