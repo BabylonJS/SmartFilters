@@ -15,6 +15,9 @@ const useTextureAnalyzer: boolean = false;
 // TODO: add UI for toggling between regular and optimized graphs
 const optimize: boolean = false;
 
+// Constants
+const LocalStorageSmartFilterName = "SmartFilterName";
+
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
@@ -39,14 +42,16 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
 
 /**
  * Checks the hash for a snippet token and loads the SmartFilter if one is found.
- * Otherwise, loads the default SmartFilter.
+ * Otherwise, loads the last in-repo SmartFilter or the default.
  */
 async function checkHash() {
     const [snippetToken, version] = location.hash.substring(1).split("#"); // TODO: Pick another delimiter?
     if (snippetToken) {
         smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
-        smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName, optimize);
+        const smartFilterName =
+            localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
+        smartFilterLoader.loadFromManifest(smartFilterName, optimize);
     }
 }
 
@@ -59,12 +64,13 @@ smartFilterLoader.manifests.forEach((manifest) => {
     const option = document.createElement("option");
     option.value = manifest.name;
     option.innerText = manifest.name;
-    option.selected = manifest.name === currentSmartFilter?.name;
+    option.selected = manifest.name === localStorage.getItem(LocalStorageSmartFilterName);
     smartFilterSelect?.appendChild(option);
 });
 
 // Set up SmartFilter <select> handler
 smartFilterSelect.addEventListener("change", () => {
+    localStorage.setItem(LocalStorageSmartFilterName, smartFilterSelect.value);
     smartFilterLoader.loadFromManifest(smartFilterSelect.value, optimize);
 });
 
