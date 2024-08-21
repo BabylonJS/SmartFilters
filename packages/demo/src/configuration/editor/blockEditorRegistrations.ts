@@ -40,7 +40,7 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     },
     {
         name: "BlurBlock",
-        factory: (smartFilter: SmartFilter) => new BlurBlock(smartFilter, "BlurBlock"),
+        factory: (smartFilter: SmartFilter) => new BlurBlock(smartFilter, "Blur"),
         category: "Effects",
         tooltip: "Blur the input texture",
     },

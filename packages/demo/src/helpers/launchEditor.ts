@@ -17,6 +17,8 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
 import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
+import type { SmartFilterLoader } from "../smartFilterLoader";
+import { getSnippet, setSnippet } from "./hashFunctions";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -25,7 +27,12 @@ import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../
  * @param engine - The engine to use
  * @param renderer - The renderer to use
  */
-export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine, renderer: SmartFilterRenderer) {
+export function launchEditor(
+    currentSmartFilter: SmartFilter,
+    engine: ThinEngine,
+    renderer: SmartFilterRenderer,
+    smartFilterLoader: SmartFilterLoader
+) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
     const allBlockNames: { [key: string]: string[] } = {};
@@ -64,7 +71,7 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                 renderer.setRuntime(runtime);
             },
-            saveSmartFilter: () => {
+            downloadSmartFilter: () => {
                 const serializer = new SmartFilterSerializer(
                     blocksUsingDefaultSerialization,
                     additionalBlockSerializers
@@ -75,6 +82,46 @@ export function launchEditor(currentSmartFilter: SmartFilter, engine: ThinEngine
                     JSON.stringify(serializer.serialize(currentSmartFilter), null, 2),
                     currentSmartFilter.name + ".json"
                 );
+            },
+            loadSmartFilter: async (file: File) => {
+                return smartFilterLoader.loadFromFile(file, false); // TODO: update optimize
+            },
+            saveToSnippetServer: async () => {
+                const serializer = new SmartFilterSerializer(
+                    blocksUsingDefaultSerialization,
+                    additionalBlockSerializers
+                );
+
+                const smartFilterJson = JSON.stringify(serializer.serialize(currentSmartFilter));
+
+                const dataToSend = {
+                    payload: JSON.stringify({
+                        smartFilter: smartFilterJson,
+                    }),
+                    name: "",
+                    description: "",
+                    tags: "",
+                };
+
+                const [snippetToken] = getSnippet();
+
+                const response = await fetch(`${smartFilterLoader.snippetUrl}/${snippetToken || ""}`, {
+                    method: "POST",
+                    headers: {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(dataToSend),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Could not save snippet: ${response.statusText}`);
+                }
+
+                const snippet = await response.json();
+
+                // Update the location hash to trigger a hashchange event
+                setSnippet(snippet.id, snippet.version);
             },
             texturePresets,
         });

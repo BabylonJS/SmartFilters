@@ -8,6 +8,7 @@ import {
     injectDisableUniform,
     createStrongRef,
 } from "@babylonjs/smart-filters";
+import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -91,7 +92,7 @@ export class PosterizeBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = "PosterizeBlock";
+    public static override ClassName = BlockNames.posterize;
 
     /**
      * The input texture connection point.
