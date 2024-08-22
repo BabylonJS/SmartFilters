@@ -34,13 +34,11 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
-let currentSource: SmartFilterSource | undefined;
 
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
 smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEvent) => {
     SmartFilterEditor.Hide();
     currentSmartFilter = event.smartFilter;
-    currentSource = event.source;
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
@@ -50,16 +48,16 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEve
         history.replaceState(null, "", window.location.pathname);
     }
 
-    // In case we fell back to the default SmartFilter (in-repo), update the <select>
+    // In case we fell back to the default (in-repo) SmartFilter, update the <select>
     if (event.source === SmartFilterSource.InRepo && smartFilterSelect.value !== currentSmartFilter.name) {
         localStorage.setItem(LocalStorageSmartFilterName, currentSmartFilter.name);
         smartFilterSelect.value = currentSmartFilter.name;
     }
 
     // Set appropriate footer
-    inRepoFooter.style.display = currentSource === SmartFilterSource.InRepo ? "block" : "none";
-    defaultFooter.style.display = currentSource === SmartFilterSource.InRepo ? "none" : "block";
-    sourceName.textContent = currentSource === SmartFilterSource.Snippet ? "snippet server" : "local file";
+    inRepoFooter.style.display = event.source === SmartFilterSource.InRepo ? "block" : "none";
+    defaultFooter.style.display = event.source === SmartFilterSource.InRepo ? "none" : "block";
+    sourceName.textContent = event.source === SmartFilterSource.Snippet ? "snippet server" : "local file";
 });
 
 /**
