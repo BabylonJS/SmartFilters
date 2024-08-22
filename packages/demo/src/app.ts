@@ -6,7 +6,7 @@ import { type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./helpers/createThinEngine";
-import { SmartFilterLoader } from "./smartFilterLoader";
+import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
 import { getSnippet } from "./helpers/hashFunctions";
@@ -23,6 +23,9 @@ const LocalStorageSmartFilterName = "SmartFilterName";
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
 const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
+const inRepoFooter = document.getElementById("inRepoFooter")!;
+const defaultFooter = document.getElementById("defaultFooter")!;
+const sourceName = document.getElementById("sourceName")!;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -31,14 +34,32 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
+let currentSource: SmartFilterSource | undefined;
 
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
-smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
+smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEvent) => {
     SmartFilterEditor.Hide();
-    currentSmartFilter = smartFilter;
+    currentSmartFilter = event.smartFilter;
+    currentSource = event.source;
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
+
+    // Ensure hash is empty if we're not loading from a snippet
+    if (event.source !== SmartFilterSource.Snippet) {
+        history.replaceState(null, "", window.location.pathname);
+    }
+
+    // In case we fell back to the default SmartFilter (in-repo), update the <select>
+    if (event.source === SmartFilterSource.InRepo && smartFilterSelect.value !== currentSmartFilter.name) {
+        localStorage.setItem(LocalStorageSmartFilterName, currentSmartFilter.name);
+        smartFilterSelect.value = currentSmartFilter.name;
+    }
+
+    // Set appropriate footer
+    inRepoFooter.style.display = currentSource === SmartFilterSource.InRepo ? "block" : "none";
+    defaultFooter.style.display = currentSource === SmartFilterSource.InRepo ? "none" : "block";
+    sourceName.textContent = currentSource === SmartFilterSource.Snippet ? "snippet server" : "local file";
 });
 
 /**
