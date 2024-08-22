@@ -6,7 +6,7 @@ import { type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./helpers/createThinEngine";
-import { SmartFilterLoader } from "./smartFilterLoader";
+import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
 import { getSnippet } from "./helpers/hashFunctions";
@@ -23,6 +23,9 @@ const LocalStorageSmartFilterName = "SmartFilterName";
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
 const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
+const inRepoFooter = document.getElementById("inRepoFooter")!;
+const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
+const sourceName = document.getElementById("sourceName")!;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -33,12 +36,42 @@ const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterMan
 let currentSmartFilter: SmartFilter | undefined;
 
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
-smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter) => {
+smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEvent) => {
     SmartFilterEditor.Hide();
-    currentSmartFilter = smartFilter;
+    currentSmartFilter = event.smartFilter;
     renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
+
+    // Ensure hash is empty if we're not loading from a snippet
+    if (event.source !== SmartFilterSource.Snippet) {
+        history.replaceState(null, "", window.location.pathname);
+    }
+
+    // In case we fell back to the default (in-repo) SmartFilter, update the <select>
+    if (event.source === SmartFilterSource.InRepo && smartFilterSelect.value !== currentSmartFilter.name) {
+        localStorage.setItem(LocalStorageSmartFilterName, currentSmartFilter.name);
+        smartFilterSelect.value = currentSmartFilter.name;
+    }
+
+    // Set appropriate footer elements based on source
+    switch (event.source) {
+        case SmartFilterSource.InRepo:
+            sourceName.textContent = "";
+            inRepoFooter.style.display = "block";
+            snippetAndFileFooter.style.display = "none";
+            break;
+        case SmartFilterSource.Snippet:
+            sourceName.textContent = "snippet server";
+            inRepoFooter.style.display = "none";
+            snippetAndFileFooter.style.display = "block";
+            break;
+        case SmartFilterSource.File:
+            sourceName.textContent = "local file";
+            inRepoFooter.style.display = "none";
+            snippetAndFileFooter.style.display = "block";
+            break;
+    }
 });
 
 /**
