@@ -2,12 +2,7 @@ import * as react from "react";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButtonLineComponent.js";
 import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
-import {
-    createImageTexture,
-    type ConnectionPointType,
-    type InputBlock,
-    type InputBlockEditorData,
-} from "@babylonjs/smart-filters";
+import { createImageTexture, type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { Tools } from "@babylonjs/core/Misc/tools.js";
 import type { GlobalState, TexturePreset } from "../../globalState.js";
@@ -16,6 +11,7 @@ import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 import { NumericInputComponent } from "../../sharedComponents/numericInputComponent.js";
 import type { Nullable } from "@babylonjs/core/types.js";
+import { getTextureInputBlockEditorData } from "../getEditorData.js";
 
 export interface ImageSourcePropertyTabComponentProps extends IPropertyComponentProps {
     inputBlock: InputBlock<ConnectionPointType.Texture>;
@@ -50,6 +46,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
     setDefaultValue() {}
 
     override render() {
+        const editorData = getTextureInputBlockEditorData(this.props.inputBlock);
         return (
             <div>
                 <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
@@ -75,7 +72,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                 // Take no action, let the user click the Upload button
                                 return;
                             }
-                            this._getInputBlockEditorData().url = this._texturePresets[newSelectionValue]?.url || "";
+                            editorData.url = this._texturePresets[newSelectionValue]?.url || "";
                             this._loadImage();
                         }}
                     />
@@ -97,7 +94,6 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                             extension = ".env";
                                         }
 
-                                        const editorData = this._getInputBlockEditorData();
                                         editorData.url = base64data;
                                         editorData.forcedExtension = extension;
                                         this._loadImage();
@@ -111,7 +107,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     />
                     <CheckBoxLineComponent
                         label="FlipY"
-                        target={this._getInputBlockEditorData()}
+                        target={editorData}
                         propertyName="flipY"
                         onValueChanged={() => this._loadImage()}
                     />
@@ -120,9 +116,9 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         label="AFL"
                         labelTooltip="anisotropicFilteringLevel"
                         precision={0}
-                        value={this._getInputBlockEditorData().anisotropicFilteringLevel ?? 4}
+                        value={editorData.anisotropicFilteringLevel ?? 4}
                         onChange={(value: number) => {
-                            this._getInputBlockEditorData().anisotropicFilteringLevel = value;
+                            editorData.anisotropicFilteringLevel = value;
                             this._loadImage();
                         }}
                     />
@@ -131,26 +127,11 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
         );
     }
 
-    private _getInputBlockEditorData(): InputBlockEditorData<ConnectionPointType.Texture> {
-        if (this.props.inputBlock.editorData === null) {
-            this.props.inputBlock.editorData = {
-                url: this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url ?? null,
-                anisotropicFilteringLevel: null,
-                flipY: true,
-                forcedExtension: null,
-            };
-        }
-        // Apply defaults
-        this.props.inputBlock.editorData.flipY = this.props.inputBlock.editorData.flipY ?? true;
-
-        return this.props.inputBlock.editorData;
-    }
-
     private _loadImage() {
         if (this.props.inputBlock.runtimeValue.value) {
             this.props.inputBlock.runtimeValue.value.dispose();
         }
-        const editorData = this._getInputBlockEditorData();
+        const editorData = getTextureInputBlockEditorData(this.props.inputBlock);
         this.props.inputBlock.runtimeValue.value = createImageTexture(
             (this.props.stateManager.data as GlobalState).engine,
             editorData.url ?? "",
