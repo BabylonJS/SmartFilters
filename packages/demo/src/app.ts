@@ -24,7 +24,7 @@ const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
 const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 const inRepoFooter = document.getElementById("inRepoFooter")!;
-const defaultFooter = document.getElementById("defaultFooter")!;
+const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
 
 // Create our services
@@ -54,10 +54,24 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEve
         smartFilterSelect.value = currentSmartFilter.name;
     }
 
-    // Set appropriate footer
-    inRepoFooter.style.display = event.source === SmartFilterSource.InRepo ? "block" : "none";
-    defaultFooter.style.display = event.source === SmartFilterSource.InRepo ? "none" : "block";
-    sourceName.textContent = event.source === SmartFilterSource.Snippet ? "snippet server" : "local file";
+    // Set appropriate footer elements based on source
+    switch (event.source) {
+        case SmartFilterSource.InRepo:
+            sourceName.textContent = "";
+            inRepoFooter.style.display = "block";
+            snippetAndFileFooter.style.display = "none";
+            break;
+        case SmartFilterSource.Snippet:
+            sourceName.textContent = "snippet server";
+            inRepoFooter.style.display = "none";
+            snippetAndFileFooter.style.display = "block";
+            break;
+        case SmartFilterSource.File:
+            sourceName.textContent = "local file";
+            inRepoFooter.style.display = "none";
+            snippetAndFileFooter.style.display = "block";
+            break;
+    }
 });
 
 /**

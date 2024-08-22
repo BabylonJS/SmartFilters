@@ -179,7 +179,7 @@ export class SmartFilterLoader {
 
         this.onSmartFilterLoadedObservable.notifyObservers({
             smartFilter,
-            source: source,
+            source,
         });
 
         return smartFilter;
