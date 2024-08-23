@@ -13,7 +13,7 @@ console.log("Adding dependency on core package to editor package");
 if (!editorPackageJSON.dependencies) {
     editorPackageJSON.dependencies = {};
 }
-editorPackageJSON.dependencies["@babylonjs/core"] = corePackageJSON.version;
+editorPackageJSON.dependencies["@babylonjs/smart-filters"] = corePackageJSON.version;
 
 console.log("Saving changes to editor package.json");
 fs.writeFileSync("package.json", JSON.stringify(editorPackageJSON, null, 4));
