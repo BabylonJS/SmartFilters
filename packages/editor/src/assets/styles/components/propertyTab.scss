@@ -620,22 +620,20 @@
             }
         }
 
-        .numericLine {
+        .numeric {
             padding-left: $line-padding-left;
             height: 30px;
             display: grid;
             grid-template-columns: 50% 50%;
 
-            .label {
+            .numeric-label {
                 grid-column: 1;
                 display: flex;
                 align-items: center;
             }
 
-            .numericInput {
-                grid-column: 2;
-                display: flex;
-                align-items: center;
+            .numeric-input {
+                margin: 5px;
             }
         }
 
