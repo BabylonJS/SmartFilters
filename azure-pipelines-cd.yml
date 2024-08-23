@@ -15,8 +15,8 @@ jobs:
             displayName: "Npm install and build"
           - script: "npm run test"
             displayName: "Jest Unit Tests"
-          - script: "npm run versionUp -w @babylonjs/smart-filters && npm run versionUp -w @babylonjs/smart-filters-editor"
-            displayName: "Npm version up"
+          - script: "npm run preparePublish"
+            displayName: "Npm preparePublish (version setting, cross-package dependency configuration)"
           - task: Npm@1
             displayName: "Npm publish"
             inputs:
