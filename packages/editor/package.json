@@ -1,6 +1,5 @@
 {
     "name": "@babylonjs/smart-filters-editor",
-    "private": true,
     "version": "0.0.0",
     "description": "An editor for the smart filters.",
     "author": {
