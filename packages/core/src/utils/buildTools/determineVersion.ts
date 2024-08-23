@@ -1,10 +1,13 @@
+import type { Nullable } from "@babylonjs/core/types";
+import type { ExecException } from "child_process";
+
 /**
  * Determines if the major and minor versions of two semver strings match
  * @param version1 - The first semver string
  * @param version2 - The second semver string
  * @returns True if the major and minor versions match, false otherwise
  */
-function majorAndMinorVersionsMatch(version1, version2) {
+function majorAndMinorVersionsMatch(version1: string, version2: string): boolean {
     const version1split = version1.split(".");
     const version2split = version2.split(".");
     return version1split[0] === version2split[0] && version1split[1] === version2split[1];
@@ -16,9 +19,12 @@ function majorAndMinorVersionsMatch(version1, version2) {
  * @param version - The semver string to operate on
  * @returns The incremented version string
  */
-function incrementPatchVersion(version) {
+function incrementPatchVersion(version: string): string {
     const spl = version.split(".");
-    spl[spl.length - 1] = Number.parseInt(spl[spl.length - 1]) + 1;
+    if (spl.length < 3) {
+        throw new Error("version string must have at least 3 parts");
+    }
+    spl[spl.length - 1] = (Number.parseInt(spl[spl.length - 1]!) + 1).toString();
     return spl.join(".");
 }
 
@@ -27,9 +33,12 @@ function incrementPatchVersion(version) {
  * @param version - The semver string to operate on
  * @returns The version string with the prerelease flag removed
  */
-export function removePrereleaseFlags(version) {
+export function removePrereleaseFlags(version: string): string {
     const spl = version.split(".");
-    spl[spl.length - 1] = Number.parseInt(spl[spl.length - 1]);
+    if (spl.length < 3) {
+        throw new Error("version string must have at least 3 parts");
+    }
+    spl[spl.length - 1] = Number.parseInt(spl[spl.length - 1]!).toString();
     return spl.join(".");
 }
 
@@ -40,7 +49,7 @@ export function removePrereleaseFlags(version) {
  * @param alpha - A flag to indicate if the version should have an alpha prerelease flag
  * @returns The version to use
  */
-export function determineVersion(npmVersion, packageJSONVersion, alpha) {
+export function determineVersion(npmVersion: Nullable<string>, packageJSONVersion: string, alpha: boolean): string {
     packageJSONVersion = removePrereleaseFlags(packageJSONVersion);
     npmVersion = npmVersion === null ? null : removePrereleaseFlags(npmVersion);
 
@@ -67,7 +76,7 @@ export function determineVersion(npmVersion, packageJSONVersion, alpha) {
  * @param stdout - The stdout string
  * @returns The version of the package
  */
-export function getNpmVersion(err, stdout) {
+export function getNpmVersion(err: Nullable<ExecException>, stdout: string): Nullable<string> {
     let npmVersion = null;
     if (err?.message && err.message.indexOf("E404") !== -1) {
         console.warn("NPM registry does not have a preview version.");
