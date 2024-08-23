@@ -10,33 +10,116 @@ import { Popup } from "./sharedComponents/popup.js";
 import type { AnyInputBlock, BaseBlock, SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 
+/**
+ * An object that contains all of the information the Editor needs to display and
+ * work with a set of Smart Filter blocks.
+ */
 export type BlockRegistration = {
+    /**
+     * Some blocks must appear only once in the graph (e.g. OutputBlock) - this function returns true if the block
+     * should be unique in the graph.
+     * @param block - The block to check
+     * @returns true if the block should be unique in the graph
+     */
     getIsUniqueBlock: (block: BaseBlock) => boolean;
+
+    /**
+     * Given a block's name, this function should return a new instance of that block with default values, or null if
+     * the block name is not recognized.
+     * @param blockType - The name of the block to create
+     * @param smartFilter - The Smart Filter to create the block for
+     * @returns A new instance of the block, or null if the block name is not recognized
+     */
     getBlockFromString(blockType: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
+
+    /**
+     * If there is an InputBlock that needs special property setting UI, this function should return that UI, otherwise null.
+     * @param inputBlock - The selected InputBlock
+     * @param globalState - The global state
+     * @returns The UI for the input block, or null if the input block does not need special UI
+     */
     getInputNodePropertyComponent(inputBlock: AnyInputBlock, globalState: GlobalState): Nullable<JSX.Element>;
+
+    /**
+     * Intercepts the creation of an input block and can return specialized input blocks.
+     * @param globalState - The global state of the editor.
+     * @param type - The type of input block to create.
+     * @returns Optionally creates an InputBock and returns it, null otherwise
+     */
     createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock>;
+
+    /**
+     * An object that contains the names of all of the blocks, organized by category.
+     */
     allBlockNames: { [key: string]: string[] };
+
+    /**
+     * An object that contains the tooltips for all of the blocks, keyed by block name.
+     */
     blockTooltips: { [key: string]: string };
+
+    /**
+     * Optional override of the InputDisplayManager to provide custom display for particular blocks if desired.
+     */
     inputDisplayManager?: any;
 };
 
+/**
+ * Options to configure the Smart Filter Editor
+ */
 export type SmartFilterEditorOptions = {
+    /**
+     * The ThinEngine to use
+     */
     engine: ThinEngine;
 
+    /**
+     * A BlockRegistration object which is responsible for providing the information
+     * required for the Editor to be able to display and work with the Smart Filter
+     * blocks the application uses. Note that each application may have its own set
+     * of blocks, so this information must be passed in and not baked into the editor.
+     */
     blockRegistration: BlockRegistration;
 
+    /**
+     * The Smart Filter to edit
+     */
     filter?: SmartFilter;
 
+    /**
+     * The host element to draw the editor in. If undefined, a popup window will be used.
+     */
     hostElement?: HTMLElement;
 
+    /**
+     * A callback that is responsible for doing the work of initiating a download of the
+     * serialized version of the Smart Filter.
+     */
     downloadSmartFilter: () => void;
 
+    /**
+     * A callback that is responsible for loading a serialized Smart Filter from the provided file,
+     * and should then call SmartFilterEditor.Show with the loaded Smart Filter.
+     */
     loadSmartFilter: (file: File) => Promise<SmartFilter>;
 
+    /**
+     * An optional callback to save the current Smart Filter to the snippet server.
+     * If not supplied, the button will not appear in the editor.
+     */
     saveToSnippetServer?: () => void;
 
+    /**
+     * An optional callback which is called when a new runtime is created due to the
+     * user editing the Smart Filter (beyond simply changing uniforms).
+     * It is used to allow the application to render the new runtime.
+     * @param runtime - The new runtime that was created
+     */
     onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
 
+    /**
+     * An optional array of texture presets to display in the editor.
+     */
     texturePresets?: TexturePreset[];
 };
 

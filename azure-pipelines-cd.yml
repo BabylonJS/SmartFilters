@@ -15,11 +15,11 @@ jobs:
             displayName: "Npm install and build"
           - script: "npm run test"
             displayName: "Jest Unit Tests"
-          - script: "npm run versionUp -w @babylonjs/smart-filters"
-            displayName: "Npm version up"
+          - script: "npm run preparePublish"
+            displayName: "Npm preparePublish (version setting, cross-package dependency configuration)"
           - task: Npm@1
             displayName: "Npm publish"
             inputs:
                 command: "custom"
-                customCommand: "publish --tag preview --access public -w @babylonjs/smart-filters"
+                customCommand: "publish --tag preview --access public -w @babylonjs/smart-filters && publish --tag preview --access public -w @babylonjs/smart-filters-editor"
                 customEndpoint: "NPMWithAccessToken"

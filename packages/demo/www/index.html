@@ -30,6 +30,10 @@
                 outline: none !important;
             }
 
+            .footer div {
+                display: none;
+            }
+
             .container {
                 display: grid;
                 grid-template-columns: auto 230px 494px 300px auto;
@@ -144,11 +148,17 @@
                 <canvas id="renderCanvas" width="1024" height="700"></canvas>
             </div>
             <div class="footer">
-                <p>
-                    SmartFilter:
-                    <select id="smartFilterSelect" title="SmartFilter"></select>
-                </p>
-                <p>To modify this list, see smartFilters.ts</p>
+                <div id = "inRepoFooter">
+                    <p>
+                        SmartFilter:
+                        <select id="smartFilterSelect" title="SmartFilter"></select>
+                    </p>
+                    <p>To modify this list, see smartFilters.ts</p>
+                </div>
+                <div id = "snippetAndFileFooter">
+                    <p>Viewing SmartFilter from <b id="sourceName">snippet server or local file</b>.</p>
+                    <p>To browse in-repo SmartFilters, reload the page with an empty hash.</p>
+                </div>
                 <p>
                     You can have a look at all the awesome tools from babylon at
                     <a href="https://www.babylonjs.com">our website</a>.
