@@ -1,7 +1,7 @@
 {
     "name": "@babylonjs/smart-filters-demo",
     "private": true,
-    "version": "0.0.1",
+    "version": "0.0.0",
     "description": "Demo usage of Smart Filters, as well as dev inner loop for working on the core.",
     "author": {
         "name": "Sebastien VANDENBERGHE"

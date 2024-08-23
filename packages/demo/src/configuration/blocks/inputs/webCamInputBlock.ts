@@ -2,7 +2,7 @@ import { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { WebCamSession } from "./webCamSession";
 import { ConnectionPointType, type SmartFilter, type RuntimeData, InputBlock } from "@babylonjs/smart-filters";
-import type { IMonitorConnectionChanges } from "../../../../../editor/src/graphSystem/IMonitorConnectionChanges.js";
+import type { IMonitorConnectionChanges } from "@babylonjs/smart-filters-editor";
 
 export type WebCamSource = {
     name: string;

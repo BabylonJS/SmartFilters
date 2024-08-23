@@ -1,4 +1,9 @@
-import { determineVersion, removePrereleaseFlags, getNpmVersion } from "../../buildTools/determineVersion.js";
+import {
+    determineVersion,
+    removePrereleaseFlags,
+    getNpmVersion,
+    compareVersions,
+} from "../../src/utils/buildTools/determineVersion.ts";
 
 describe("versionUp", () => {
     beforeAll(() => {
@@ -115,17 +120,84 @@ describe("versionUp", () => {
 
     describe("getNpmVersion", () => {
         it("should return the version if there is no error", () => {
-            expect(getNpmVersion(null, "1.2.3")).toBe("1.2.3");
+            expect(getNpmVersion("preview", null, "1.2.3")).toBe("1.2.3");
         });
 
         it("should return null if there is an E404 error", () => {
             const err = new Error("E404");
-            expect(getNpmVersion(err, null)).toBeNull();
+            expect(getNpmVersion("preview", err, null)).toBeNull();
         });
 
         it("should throw an error if there is a non-404 error", () => {
             const err = new Error("Some other error");
-            expect(() => getNpmVersion(err, null)).toThrow(err);
+            expect(() => getNpmVersion("preview", err, null)).toThrow(err);
         });
+    });
+
+    describe("compareVersions", () => {
+        it("should throw if version 1 does not have 3 parts", () => {
+            const version1 = "1.0.0";
+            const version2 = "1.0";
+            expect(() => compareVersions(version1, version2)).toThrow();
+        });
+
+        it("should throw if version 2 does not have 3 parts", () => {
+            const version1 = "1.0";
+            const version2 = "1.0.0";
+            expect(() => compareVersions(version1, version2)).toThrow();
+        });
+
+        it.each([
+            {
+                version1: "1.0.0",
+                version2: "1.0.0",
+                expectedResult: 0,
+            },
+            {
+                version1: "1.0.0",
+                version2: "2.0.0",
+                expectedResult: -1,
+            },
+            {
+                version1: "2.0.0",
+                version2: "1.0.0",
+                expectedResult: 1,
+            },
+            {
+                version1: "1.0.0",
+                version2: "1.1.0",
+                expectedResult: -1,
+            },
+            {
+                version1: "1.1.0",
+                version2: "1.0.0",
+                expectedResult: 1,
+            },
+            {
+                version1: "1.0.0",
+                version2: "1.0.1",
+                expectedResult: -1,
+            },
+            {
+                version1: "1.0.1",
+                version2: "1.0.0",
+                expectedResult: 1,
+            },
+            {
+                version1: "1.0.0-alpha",
+                version2: "1.0.1-alpha",
+                expectedResult: -1,
+            },
+            {
+                version1: "1.0.1-alpha",
+                version2: "1.0.0-alpha",
+                expectedResult: 1,
+            },
+        ])(
+            "when version1 is $version1 and version2 is $version2, it should return $expectedResult",
+            ({ version1, version2, expectedResult }) => {
+                expect(compareVersions(version1, version2)).toBe(expectedResult);
+            }
+        );
     });
 });
