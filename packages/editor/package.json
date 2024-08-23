@@ -36,7 +36,7 @@
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "assets": "node build/copyAssets.js",
         "build": "npm run assets && tsc -p ./tsconfig.build.json",
-        "versionUp": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/versionUp.js",
+        "versionUp": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/versionUp.js --alpha",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "devDependencies": {

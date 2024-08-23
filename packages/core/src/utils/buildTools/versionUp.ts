@@ -3,16 +3,19 @@ import { exec, type ExecException } from "child_process";
 import { determineVersion, getNpmVersion } from "./determineVersion.js";
 import type { Nullable } from "@babylonjs/core/types.js";
 
-exec("npm view @babylonjs/smart-filters dist-tags.preview", (err: Nullable<ExecException>, stdout) => {
-    const alpha = true;
+const alpha = process.argv.includes("--alpha");
+const packageText = fs.readFileSync("package.json");
+const packageJSON = JSON.parse(packageText.toString());
 
-    const packageText = fs.readFileSync("package.json");
-    const packageJSON = JSON.parse(packageText.toString());
-
+const packageName = packageJSON.name;
+console.log("Processing package:", packageName);
+console.log("Alpha flag:", alpha);
+console.log("Current package.json version:", packageJSON.version);
+console.log("Querying NPM Registry for last published version...");
+exec(`npm view ${packageName} dist-tags.preview`, (err: Nullable<ExecException>, stdout) => {
     const npmVersion = getNpmVersion(err, stdout);
 
     console.log("Current NPM Registry version:", npmVersion);
-    console.log("Current package.json version:", packageJSON.version);
 
     const versionToUse = determineVersion(npmVersion, packageJSON.version, alpha);
 

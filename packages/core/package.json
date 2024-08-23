@@ -39,7 +39,7 @@
     ],
     "scripts": {
         "clean": "rimraf dist && rimraf buildTools && rimraf tsconfig.build.tsbuildinfo && rimraf ../../tsconfig.buildTools.build.tsbuildinfo",
-        "versionUp": "node buildTools/versionUp.js",
+        "versionUp": "node buildTools/versionUp.js --alpha",
         "build": "npm run build:buildTools && npm run build:runTools && npm run build:core",
         "build:core": "tsc -p ./tsconfig.build.json",
         "build:buildTools": "tsc -p ./tsconfig.buildTools.build.json",
