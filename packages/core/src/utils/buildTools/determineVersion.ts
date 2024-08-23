@@ -71,15 +71,25 @@ export function determineVersion(npmVersion: Nullable<string>, packageJSONVersio
 }
 
 /**
- * Parses the npm view results to get the version of the package
+ * The supported version types
+ */
+export type VersionType = "preview" | "latest";
+
+/**
+ * Handles error cases and returns the JSON of the package versions
+ * @param versionType - The type of version to get
  * @param err - The error object
  * @param stdout - The stdout string
- * @returns The version of the package
+ * @returns The JSON of the package versions
  */
-export function getNpmVersion(err: Nullable<ExecException>, stdout: string): Nullable<string> {
+export function getNpmVersion(
+    versionType: VersionType,
+    err: Nullable<ExecException>,
+    stdout: string
+): Nullable<string> {
     let npmVersion = null;
     if (err?.message && err.message.indexOf("E404") !== -1) {
-        console.warn("NPM registry does not have a preview version.");
+        console.warn(`NPM registry does not have any ${versionType} version`);
     } else if (err) {
         console.error(err);
         throw err;
@@ -87,4 +97,31 @@ export function getNpmVersion(err: Nullable<ExecException>, stdout: string): Nul
         npmVersion = stdout;
     }
     return npmVersion;
+}
+
+/**
+ * Compares two semver strings, returning -1 if version1 is less than version2, 1 if version1 is greater than version2, and 0 if they are equal
+ * @param version1 - The first semver string
+ * @param version2 - The second semver string
+ * @returns -1 if version1 is less than version2, 1 if version1 is greater than version2, and 0 if they are equal
+ */
+export function compareVersions(version1: string, version2: string): number {
+    const version1split = removePrereleaseFlags(version1).split(".");
+    const version2split = removePrereleaseFlags(version2).split(".");
+
+    if (version1split.length !== 3 || version2split.length !== 3) {
+        throw new Error("version strings must have 3 parts");
+    }
+
+    for (let i = 0; i < 3; i++) {
+        const v1 = Number.parseInt(version1split[i]!);
+        const v2 = Number.parseInt(version2split[i]!);
+
+        if (v1 < v2) {
+            return -1;
+        } else if (v1 > v2) {
+            return 1;
+        }
+    }
+    return 0;
 }
