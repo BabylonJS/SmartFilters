@@ -1,6 +1,6 @@
 {
     "name": "@babylonjs/smart-filters-root",
-    "version": "0.0.1",
+    "version": "0.0.0",
     "description": "Babylon.js Smart Filter monorepo",
     "author": {
         "name": "Sebastien VANDENBERGHE"
