@@ -1,6 +1,7 @@
 import * as react from "react";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButtonLineComponent.js";
+import { NumericInput } from "@babylonjs/shared-ui-components/lines/numericInputComponent.js";
 import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
 import { createImageTexture, type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
@@ -9,7 +10,7 @@ import type { GlobalState, TexturePreset } from "../../globalState.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
-import { NumericInputComponent } from "../../sharedComponents/numericInputComponent.js";
+
 import type { Nullable } from "@babylonjs/core/types.js";
 import { getTextureInputBlockEditorData } from "../getEditorData.js";
 
@@ -111,7 +112,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         propertyName="flipY"
                         onValueChanged={() => this._loadImage()}
                     />
-                    <NumericInputComponent
+                    <NumericInput
                         lockObject={(this.props.stateManager.data as GlobalState).lockObject}
                         label="AFL"
                         labelTooltip="anisotropicFilteringLevel"
