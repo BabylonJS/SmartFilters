@@ -43,7 +43,7 @@ const shaderProgram = injectDisableUniform({
                 vec4 _composition_(vec2 vUV) {
                     vec4 result = texture2D(_background_, vUV);
 
-                    vec2 transformedUV = vUV / _scaleUV_ - _translateUV_;
+                    vec2 transformedUV = vUV * _scaleUV_ + _translateUV_;
                     if (transformedUV.x < 0.0 || transformedUV.x > 1.0 || transformedUV.y < 0.0 || transformedUV.y > 1.0) {
                         return result;
                     }
@@ -141,18 +141,8 @@ export class CompositionShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName("foreground"), foreground);
 
         if (foreground) {
-            const fgSize = foreground.getSize();
-
-            effect.setFloat2(
-                this.getRemappedName("scaleUV"),
-                (foregroundWidth * fgSize.width) / width,
-                (foregroundHeight * fgSize.height) / height
-            );
-            effect.setFloat2(
-                this.getRemappedName("translateUV"),
-                (foregroundLeft * fgSize.width) / width,
-                (foregroundTop * fgSize.height) / height
-            );
+            effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
+            effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
         }
     }
 }
