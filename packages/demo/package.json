@@ -22,9 +22,11 @@
     "scripts": {
         "build": "npm run build:runTools && webpack --env=prod",
         "build:runTools": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/buildShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
-        "watch": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/watchShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
+        "watch": "concurrently \"npm run watch:demo\" \"npm run watch:shaders\" \"npm run watch:shaders -w @babylonjs/smart-filters\"",
+        "watch:demo": "npx webpack-dev-server",
+        "watch:shaders": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/watchShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
         "clean": "rimraf .temp && rimraf www/scripts",
-        "start": "concurrently \"npx webpack-dev-server\" \"npm run watch\"",
+        "start": "npm run watch",
         "analyze": "webpack --profile --json > www/scripts/stats.json && npx webpack-bundle-analyzer www/scripts/stats.json"
     },
     "devDependencies": {
