@@ -183,7 +183,7 @@ export class CompositionBlock extends ShaderBlock {
     public readonly foregroundTop = this._registerOptionalInput(
         "foregroundTop",
         ConnectionPointType.Float,
-        createStrongRef(0.5)
+        createStrongRef(0.0)
     );
 
     /**
@@ -192,7 +192,7 @@ export class CompositionBlock extends ShaderBlock {
     public readonly foregroundLeft = this._registerOptionalInput(
         "foregroundLeft",
         ConnectionPointType.Float,
-        createStrongRef(0.5)
+        createStrongRef(0.0)
     );
 
     /**
@@ -201,7 +201,7 @@ export class CompositionBlock extends ShaderBlock {
     public readonly foregroundWidth = this._registerOptionalInput(
         "foregroundWidth",
         ConnectionPointType.Float,
-        createStrongRef(0.5)
+        createStrongRef(1.0)
     );
 
     /**
@@ -210,7 +210,7 @@ export class CompositionBlock extends ShaderBlock {
     public readonly foregroundHeight = this._registerOptionalInput(
         "foregroundHeight",
         ConnectionPointType.Float,
-        createStrongRef(0.5)
+        createStrongRef(1.0)
     );
 
     /**
