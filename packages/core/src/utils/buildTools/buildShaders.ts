@@ -1,7 +1,7 @@
 /**
  * Builds all .glsl files under <shaderPath>.
- * @param shaderPath The path to the shaders to watch
- * @param importPath The path to import the converted shaders
+ * @param shaderPath - The path to the shaders to watch
+ * @param importPath - The path to import the converted shaders
  * @example node buildShaders.js <shaderPath> <importPath>
  */
 

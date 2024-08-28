@@ -1,7 +1,7 @@
 /**
  * Watches all .glsl files under <shaderPath> and rebuilds them when changed.
- * @param shaderPath The path to the shaders to watch
- * @param importPath The path to import the converted shaders
+ * @param shaderPath - The path to the shaders to watch
+ * @param importPath - The path to import the converted shaders
  * @example node watchShaders.js <shaderPath> <importPath>
  */
 
