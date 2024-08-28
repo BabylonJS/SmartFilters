@@ -6,16 +6,16 @@
  */
 
 import { convertShader } from "./shaderConverter.js";
-import * as chokidar from "chokidar";
-import * as path from "path";
+import { watch } from "chokidar";
+import { extname } from "path";
 
 const externalArguments = process.argv.slice(2);
 if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1]) {
     const shaderPath = externalArguments[0];
     const importPath = externalArguments[1];
 
-    chokidar.watch(shaderPath).on("change", (file) => {
-        if (path.extname(file) === ".glsl") {
+    watch(shaderPath).on("change", (file) => {
+        if (extname(file) === ".glsl") {
             convertShader(file, importPath);
         }
     });
