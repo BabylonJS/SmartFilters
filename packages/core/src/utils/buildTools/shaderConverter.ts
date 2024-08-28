@@ -63,7 +63,7 @@ const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
  * @param fragmentShaderPath - The path to the fragment file for the shader
  * @param importPath - The path to import the ShaderProgram type from
  */
-function convertShader(fragmentShaderPath: string, importPath: string): void {
+export function convertShader(fragmentShaderPath: string, importPath: string): void {
     console.log(`Processing fragment shader: ${fragmentShaderPath}`);
 
     // See if there is a corresponding vertex shader
@@ -376,7 +376,7 @@ function removeFunctionBodies(input: string): string {
  * @param shaderPath - The path to the .glsl files to convert.
  * @param importPath - The path to import the ShaderProgram type from.
  */
-function convertShaders(shaderPath: string, importPath: string) {
+export function convertShaders(shaderPath: string, importPath: string) {
     // Get all files in the path
     const allFiles = fs.readdirSync(shaderPath, { withFileTypes: true, recursive: true });
 
@@ -389,11 +389,6 @@ function convertShaders(shaderPath: string, importPath: string) {
     for (const fragmentShaderFile of fragmentShaderFiles) {
         convertShader(path.join(fragmentShaderFile.path, fragmentShaderFile.name), importPath);
     }
-}
-
-const externalArguments = process.argv.slice(2);
-if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1]) {
-    convertShaders(externalArguments[0], externalArguments[1]);
 }
 
 // TODO: simple copy from shader file to .ts, get it to build (including import trick)

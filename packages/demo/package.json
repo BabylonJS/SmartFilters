@@ -21,9 +21,10 @@
     "license": "MIT",
     "scripts": {
         "build": "npm run build:runTools && webpack --env=prod",
-        "build:runTools": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/shaderConverter.js ./src/configuration/blocks @babylonjs/smart-filters",
+        "build:runTools": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/buildShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
+        "watch": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/watchShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
         "clean": "rimraf .temp && rimraf www/scripts",
-        "start": "npx webpack-dev-server",
+        "start": "concurrently \"npx webpack-dev-server\" \"npm run watch\"",
         "analyze": "webpack --profile --json > www/scripts/stats.json && npx webpack-bundle-analyzer www/scripts/stats.json"
     },
     "devDependencies": {
