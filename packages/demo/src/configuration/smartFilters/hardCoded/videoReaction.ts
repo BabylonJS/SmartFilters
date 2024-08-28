@@ -19,6 +19,8 @@ export async function createVideoReactionSmartFilter(
     renderer: SmartFilterRenderer
 ): Promise<SmartFilter> {
     const smartFilter = new SmartFilter(HardCodedSmartFilterNames.videoReaction);
+    const balloonUrl = "/assets/balloons.mp4";
+    const confettiUrl = "/assets/confetti.mp4";
 
     // Inputs
     const backgroundTexture = createImageTexture(engine, "/assets/teamsBackground1.png");
@@ -42,7 +44,7 @@ export async function createVideoReactionSmartFilter(
 
     const { videoTexture: behindPersonVideoTexture, update: updateBehindPersonVideo } = await createVideoTextureAsync(
         engine,
-        "/assets/balloons.mp4"
+        balloonUrl
     );
     const behindPersonInput = new InputBlock(
         smartFilter,
@@ -50,16 +52,31 @@ export async function createVideoReactionSmartFilter(
         ConnectionPointType.Texture,
         createStrongRef(behindPersonVideoTexture)
     );
+    behindPersonInput.editorData = {
+        url: balloonUrl,
+        urlTypeHint: "video",
+        flipY: null,
+        anisotropicFilteringLevel: null,
+        forcedExtension: null,
+    };
     const { videoTexture: foregroundVideoTexture, update: updateForegroundVideo } = await createVideoTextureAsync(
         engine,
-        "/assets/confetti.mp4"
+        confettiUrl
     );
+
     const foregroundInput = new InputBlock(
         smartFilter,
         "foreground",
         ConnectionPointType.Texture,
         createStrongRef(foregroundVideoTexture)
     );
+    foregroundInput.editorData = {
+        url: confettiUrl,
+        urlTypeHint: "video",
+        flipY: null,
+        anisotropicFilteringLevel: null,
+        forcedExtension: null,
+    };
     renderer.beforeRenderObservable.add(() => {
         updateBehindPersonVideo();
         updateForegroundVideo();

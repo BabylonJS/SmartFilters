@@ -64,6 +64,12 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
           url: Nullable<string>;
 
           /**
+           * If supplied, gives a hint as to which type of texture the URL points to.
+           * Default is assumed to be "image"
+           */
+          urlTypeHint: Nullable<"image" | "video">;
+
+          /**
            * The anisotropic filtering level of the texture, or default if null.
            */
           anisotropicFilteringLevel: Nullable<number>;
