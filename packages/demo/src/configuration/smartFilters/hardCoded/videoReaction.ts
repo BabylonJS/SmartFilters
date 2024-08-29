@@ -19,8 +19,10 @@ export async function createVideoReactionSmartFilter(
     renderer: SmartFilterRenderer
 ): Promise<SmartFilter> {
     const smartFilter = new SmartFilter(HardCodedSmartFilterNames.videoReaction);
-    const balloonUrl = "/assets/balloons.mp4";
-    const confettiUrl = "/assets/confetti.mp4";
+    const balloonUrl =
+        "https://microsoft-my.sharepoint-df.com/personal/kevbrown_microsoft_com/_layouts/15/download.aspx?UniqueId=a25d7420%2D6968%2D4ed9%2D8780%2D5b06f9bdc45f";
+    const confettiUrl =
+        "https://microsoft-my.sharepoint-df.com/personal/kevbrown_microsoft_com/_layouts/15/download.aspx?UniqueId=99b9f941%2Db3ee%2D45af%2D8c5a%2D8c16a7a0fa5c";
 
     // Inputs
     const backgroundTexture = createImageTexture(engine, "/assets/teamsBackground1.png");
