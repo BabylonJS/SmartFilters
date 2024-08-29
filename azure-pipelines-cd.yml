@@ -23,3 +23,11 @@ jobs:
                 command: "custom"
                 customCommand: "publish --tag preview --access public -w @babylonjs/smart-filters && publish --tag preview --access public -w @babylonjs/smart-filters-editor"
                 customEndpoint: "NPMWithAccessToken"
+          - script: |
+                # SFE
+                cd packages/demo/www
+                zip -r ../../../dist.zip *
+                cd ../../..
+                curl $(DEPLOYMENT_SERVER)/upload -i -X POST -H "Content-Type: multipart/form-data" -H "Authorization: $(BASIC_AUTH)" -F "path=smartFiltersEditor" -F "storageAccount=babylontools"  -F "zip=@dist.zip"
+                curl "$(DEPLOYMENT_SERVER)/purgeTest?endpoint=smart-filters-editor&profileName=babylonjstools&wait=true" -i -H "Authorization: $(BASIC_AUTH)"
+            displayName: "SFE deployment"
