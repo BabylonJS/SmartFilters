@@ -12,6 +12,7 @@ import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
 import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
+import { StarryPlanesBlock } from "../blocks/effects/starryPlanesBlock";
 import { GlitchBlock } from "../blocks/transitions/glitchBlock";
 import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
@@ -180,5 +181,11 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         },
         category: "Effects",
         tooltip: "Alters the exposure of the input texture",
+    },
+    {
+        name: "StarryPlanesBlock",
+        factory: (smartFilter: SmartFilter) => new StarryPlanesBlock(smartFilter, "StarryPlanes"),
+        category: "Effects",
+        tooltip: "A mind-bending starry background effect",
     },
 ];

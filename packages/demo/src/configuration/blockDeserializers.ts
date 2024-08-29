@@ -102,6 +102,11 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new GlitchBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.starryPlanes, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const { StarryPlanesBlock } = await import(/* webpackChunkName: "glitchBlock" */ "./blocks/effects/starryPlanesBlock");
+        return new StarryPlanesBlock(smartFilter, serializedBlock.name);
+    });
+
     // Non-trivial deserializers begin.
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
