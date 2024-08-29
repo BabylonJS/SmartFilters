@@ -4,18 +4,18 @@ uniform sampler2D input; // main
 uniform float time;
 uniform vec2 resolution;
 
-const float pi = 3.14159265; //acos(.1)
-const float tau = 2.0*3.14159265; // 2.*pi
+const float pi = acos(.1);
+const float tau = 2.*pi;
 const float planeDist = .5;
 const float furthest  = 16.;
-const float fadeFrom  = 8.0;
+const float fadeFrom  = 8.;
 
 const vec2 pathA = vec2(.31, .41);
-const vec2 pathB = vec2(1.0, 0.70710678118); //vec2(1.0, sqrt(0.5))
+const vec2 pathB = vec2(1.0, sqrt(0.5));
 
 const vec2 k1 = vec2(0.809016994375, -0.587785252292);
-const vec2 k2 = vec2(-0.809016994375, -0.587785252292); // vec2(-k1.x, k1.y)
-const float colp = 3.14159265*100.; // pi*100.
+const vec2 k2 = vec2(-k1.x, k1.y);
+const float colp = pi*100.;
 
 const vec4 U = vec4(0, 1, 2, 3);
 
