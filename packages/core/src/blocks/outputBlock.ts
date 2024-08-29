@@ -4,6 +4,8 @@ import { BaseBlock } from "./baseBlock.js";
 import { CopyBlock } from "./copyBlock.js";
 import { ShaderRuntime } from "../runtime/shaderRuntime.js";
 import { createCommand } from "../command/command.js";
+import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * The output block of a smart filter.
@@ -22,6 +24,12 @@ export class OutputBlock extends BaseBlock {
      * This takes a texture as input.
      */
     public readonly input = this._registerInput("input", ConnectionPointType.Texture);
+
+    /**
+     * If supplied, the Smart Filter will render into this texture. Otherwise, it renders
+     * into the the canvas or WebGL context the ThinEngine is using for rendering.
+     */
+    public renderTargetTexture: Nullable<ThinTexture> = null;
 
     private _copyBlock: CopyBlock | null;
 

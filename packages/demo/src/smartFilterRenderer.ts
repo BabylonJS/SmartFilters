@@ -14,6 +14,11 @@ export class SmartFilterRenderer {
     public readonly beforeRenderObservable: Observable<void>;
 
     /**
+     * Callback called after rendering the filter every frame.
+     */
+    public readonly afterRenderObservable: Observable<void>;
+
+    /**
      * The engine used to render the filter.
      */
     public readonly engine: ThinEngine;
@@ -30,6 +35,7 @@ export class SmartFilterRenderer {
     public constructor(engine: ThinEngine) {
         this.engine = engine;
         this.beforeRenderObservable = new Observable<void>();
+        this.afterRenderObservable = new Observable<void>();
 
         this.engine.depthCullingState.depthTest = false;
         this.engine.stencilState.stencilTest = false;
@@ -61,6 +67,8 @@ export class SmartFilterRenderer {
             this.beforeRenderObservable.notifyObservers();
 
             runtime.render();
+
+            this.afterRenderObservable.notifyObservers();
         });
 
         this.runtime = runtime;

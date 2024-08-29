@@ -10,9 +10,12 @@ import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } fro
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
 import { getSnippet } from "./helpers/hashFunctions";
+import { TextureRenderHelper } from "./texureRenderHelper";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
+const renderToTextureInsteadOfCanvas: boolean = false;
+
 // TODO: add UI for toggling between regular and optimized graphs
 const optimize: boolean = false;
 
@@ -30,7 +33,14 @@ const sourceName = document.getElementById("sourceName")!;
 // Create our services
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine);
-const smartFilterLoader = new SmartFilterLoader(engine, renderer, smartFilterManifests, getBlockDeserializers());
+const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
+const smartFilterLoader = new SmartFilterLoader(
+    engine,
+    renderer,
+    smartFilterManifests,
+    getBlockDeserializers(),
+    textureRenderHelper
+);
 
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
