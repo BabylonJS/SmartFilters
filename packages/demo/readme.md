@@ -1,8 +1,14 @@
-# Babylon.js Smart Filters
+# Babylon.js Smart Filters - PREVIEW
+
+# PREVIEW WARNING
+
+This package is currently in preview form, and updates will likely include breaking changes. It is not yet intended to be used by other projects.
 
 ## Demo Project
 
 This is the main demo application of the repository, and is also used as the dev inner loop for working on the core and block library.
+
+It is also deployed to https://sfe.babylonjs.com
 
 ## Customizing
 
