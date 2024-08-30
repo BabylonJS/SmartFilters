@@ -19,10 +19,10 @@ export interface ImageSourcePropertyTabComponentProps extends IPropertyComponent
 }
 
 const CustomImageOption = -1;
-const AssetTypeOptions = [
-    { label: "Image", value: "image" },
-    { label: "Video", value: "video" },
-];
+const AssetTypeOptionArray = ["image", "video"];
+const AssetTypeOptions: IInspectableOptions[] = AssetTypeOptionArray.map((value, index) => {
+    return { label: value, value: index };
+});
 
 export class ImageSourcePropertyTabComponent extends react.Component<ImageSourcePropertyTabComponentProps> {
     private readonly _imageOptions: IInspectableOptions[];
@@ -120,8 +120,8 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                             return editorData.urlTypeHint ?? "image";
                         }}
                         onSelect={(newSelectionValue: string | number) => {
-                            if (newSelectionValue === "image" || newSelectionValue === "video") {
-                                editorData.urlTypeHint = newSelectionValue;
+                            if (typeof newSelectionValue === "number") {
+                                editorData.urlTypeHint = AssetTypeOptionArray[newSelectionValue] as "image" | "video";
                                 this._loadImage();
                             }
                         }}

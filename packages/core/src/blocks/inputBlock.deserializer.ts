@@ -29,6 +29,7 @@ export function inputBlockDeserializer(smartFilter: SmartFilter, serializedBlock
                 anisotropicFilteringLevel: blockData.anisotropicFilteringLevel,
                 flipY: blockData.flipY,
                 forcedExtension: blockData.forcedExtension,
+                dispose: null,
             };
 
             return inputBlock;

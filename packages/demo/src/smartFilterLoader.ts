@@ -6,11 +6,10 @@ import {
     type DeserializeBlockV1,
     type InputBlock,
     ConnectionPointType,
-    createImageTexture,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import { Observable, ReadFile } from "@babylonjs/core";
-import { createVideoTextureAsync } from "./helpers/createVideoTexture";
+import { loadTextureInputBlockAsset } from "@babylonjs/smart-filters-editor";
 
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
@@ -201,41 +200,7 @@ export class SmartFilterLoader {
         for (const block of smartFilter.attachedBlocks) {
             if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Texture) {
                 const inputBlock = block as InputBlock<ConnectionPointType.Texture>;
-                const editorData = inputBlock.editorData;
-                if (editorData && inputBlock.output.runtimeData.value === null) {
-                    if (editorData.url) {
-                        switch (editorData.urlTypeHint) {
-                            case "video":
-                                {
-                                    const { videoTexture, update } = await createVideoTextureAsync(
-                                        this._engine,
-                                        editorData.url
-                                    );
-                                    this._renderer.beforeRenderObservable.add(() => {
-                                        update();
-                                    });
-
-                                    if (videoTexture && editorData.anisotropicFilteringLevel !== null) {
-                                        videoTexture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
-                                    }
-
-                                    inputBlock.output.runtimeData.value = videoTexture;
-                                }
-                                break;
-                            case "image":
-                            default:
-                                {
-                                    const texture = createImageTexture(this._engine, editorData.url, editorData.flipY);
-                                    if (texture && editorData.anisotropicFilteringLevel !== null) {
-                                        texture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
-                                    }
-
-                                    inputBlock.output.runtimeData.value = texture;
-                                }
-                                break;
-                        }
-                    }
-                }
+                await loadTextureInputBlockAsset(inputBlock, this._engine, this._renderer.beforeRenderObservable);
             }
         }
     }

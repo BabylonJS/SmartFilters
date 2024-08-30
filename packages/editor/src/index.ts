@@ -7,3 +7,4 @@ export type { IMonitorConnectionChanges } from "./graphSystem/IMonitorConnection
 export { createDefaultValue } from "./graphSystem/registerDefaultInput.js";
 
 export type { TexturePreset } from "./globalState.js";
+export * from "./serializationTools.js";
