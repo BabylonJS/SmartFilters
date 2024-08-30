@@ -16,4 +16,11 @@ export const BlockNames = {
     glitch: "GlitchBlock",
     tile: "TileBlock",
     wipe: "WipeBlock",
+    starryPlanes: "StarryPlanesBlock",
+    tunnel: "TunnelBlock",
+    fireworks: "FireworksBlock",
+    aurora: "AuroraBlock",
+    vhsGlitch: "vhsGlitchBlock",
+    softThreshold: "SoftThresholdBlock",
+    sketch: "SketchBlock",
 };
