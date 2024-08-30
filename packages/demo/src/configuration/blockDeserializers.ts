@@ -106,26 +106,26 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         BlockNames.starryPlanes,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
             const { StarryPlanesBlock } = await import(
-                /* webpackChunkName: "starryPlanesBlock" */ "./blocks/effects/starryPlanesBlock"
+                /* webpackChunkName: "starryPlanesBlock" */ "./blocks/generators/starryPlanesBlock"
             );
             return new StarryPlanesBlock(smartFilter, serializedBlock.name);
         }
     );
 
     deserializers.set(BlockNames.tunnel, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { TunnelBlock } = await import(/* webpackChunkName: "tunnelBlock" */ "./blocks/effects/tunnelBlock");
+        const { TunnelBlock } = await import(/* webpackChunkName: "tunnelBlock" */ "./blocks/generators/tunnelBlock");
         return new TunnelBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.fireworks, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const { FireworksBlock } = await import(
-            /* webpackChunkName: "fireworksBlock" */ "./blocks/effects/fireworksBlock"
+            /* webpackChunkName: "fireworksBlock" */ "./blocks/generators/fireworksBlock"
         );
         return new FireworksBlock(smartFilter, serializedBlock.name);
     });
 
     deserializers.set(BlockNames.aurora, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { AuroraBlock } = await import(/* webpackChunkName: "auroraBlock" */ "./blocks/effects/auroraBlock");
+        const { AuroraBlock } = await import(/* webpackChunkName: "auroraBlock" */ "./blocks/generators/auroraBlock");
         return new AuroraBlock(smartFilter, serializedBlock.name);
     });
 

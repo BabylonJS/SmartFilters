@@ -1,20 +1,19 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./auroraBlock.shader";
+import { shaderProgram, uniforms } from "../effects/tunnelBlock.shader";
 
 /**
- * The shader bindings for the aurora block.
+ * The shader bindings for the Tunnel block.
  */
-export class AuroraShaderBinding extends ShaderBinding {
+export class TunnelShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the aurora block.
+     * Creates a new shader binding instance for the Tunnel block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
@@ -32,28 +31,28 @@ export class AuroraShaderBinding extends ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * @param effect - defines the effect to bind the data to
-     * @param _width - defines the width of the output. Passed in
-     * @param _height - defines the height of the output
+     * @param _width - defines the width of the output. Passed in by ShaderRuntime.
+     * @param _height - defines the height of the output. Passed in by ShaderRuntime.
      */
     public override bind(effect: Effect, _width: number, _height: number): void {
         super.bind(effect);
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
         effect.setFloat2(this.getRemappedName(uniforms.resolution), _width, _height);
+        effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
     }
 }
 
 /**
- * A shader block that renders a procedural aurora background effect.
+ * A shader block that creates a tunnel-like background effect.
  */
-export class AuroraBlock extends ShaderBlock {
+export class TunnelBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.aurora;
+    public static override ClassName = BlockNames.tunnel;
 
     /**
-     * The fallback texture connection point, in the event that the effect is disabled.
+     * The fallback texture to use if block is disabled.
      */
     public readonly fallback = this._registerInput("fallback", ConnectionPointType.Texture);
 
@@ -84,6 +83,6 @@ export class AuroraBlock extends ShaderBlock {
         const input = this._confirmRuntimeDataSupplied(this.fallback);
         const time = this.time.runtimeData;
 
-        return new AuroraShaderBinding(this, input, time);
+        return new TunnelShaderBinding(this, input, time);
     }
 }

@@ -1,19 +1,19 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
+import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./fireworksBlock.shader";
+import { shaderProgram, uniforms } from "../effects/starryPlanesBlock.shader";
 
 /**
- * The shader bindings for the Fireworks block.
+ * The shader bindings for the StarryPlanes block.
  */
-export class FireworksShaderBinding extends ShaderBinding {
+export class StarryPlanesShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the Fireworks block.
+     * Creates a new shader binding instance for the StarryPlanes block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
@@ -31,33 +31,33 @@ export class FireworksShaderBinding extends ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * @param effect - defines the effect to bind the data to
-     * @param _width - defines the width of the output. Passed in by ShaderRuntime.
-     * @param _height - defines the height of the output. Passed in by ShaderRuntime.
+     * @param _width - defines the width of the output. Passed in
+     * @param _height - defines the height of the output
      */
     public override bind(effect: Effect, _width: number, _height: number): void {
         super.bind(effect);
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setFloat2(this.getRemappedName(uniforms.resolution), _width, _height);
         effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
+        effect.setFloat2(this.getRemappedName(uniforms.resolution), _width, _height);
     }
 }
 
 /**
- * A block that adds a fireworks effect overlayed on the input texture.
+ * A shader block that renders a procedural starry background effect.
  */
-export class FireworksBlock extends ShaderBlock {
+export class StarryPlanesBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.fireworks;
+    public static override ClassName = BlockNames.starryPlanes;
 
     /**
-     * The input texture connection point
+     * The fallback texture connection point, in the event that the effect is disabled.
      */
-    public readonly input = this._registerInput("input", ConnectionPointType.Texture);
+    public readonly fallback = this._registerInput("fallback", ConnectionPointType.Texture);
 
     /**
-     * The time connection point to animate the effect.
+     * The time connection point.
      */
     public readonly time = this._registerOptionalInput("time", ConnectionPointType.Float, createStrongRef(0.3));
 
@@ -80,9 +80,9 @@ export class FireworksBlock extends ShaderBlock {
      * @returns The class instance that binds the data to the effect
      */
     public getShaderBinding(): ShaderBinding {
-        const input = this._confirmRuntimeDataSupplied(this.input);
+        const input = this._confirmRuntimeDataSupplied(this.fallback);
         const time = this.time.runtimeData;
 
-        return new FireworksShaderBinding(this, input, time);
+        return new StarryPlanesShaderBinding(this, input, time);
     }
 }

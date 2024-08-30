@@ -1,19 +1,20 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
+
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./starryPlanesBlock.shader";
+import { shaderProgram, uniforms } from "../effects/auroraBlock.shader";
 
 /**
- * The shader bindings for the StarryPlanes block.
+ * The shader bindings for the aurora block.
  */
-export class StarryPlanesShaderBinding extends ShaderBinding {
+export class AuroraShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the StarryPlanes block.
+     * Creates a new shader binding instance for the aurora block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
@@ -43,13 +44,13 @@ export class StarryPlanesShaderBinding extends ShaderBinding {
 }
 
 /**
- * A shader block that renders a procedural starry background effect.
+ * A shader block that renders a procedural aurora background effect.
  */
-export class StarryPlanesBlock extends ShaderBlock {
+export class AuroraBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.starryPlanes;
+    public static override ClassName = BlockNames.aurora;
 
     /**
      * The fallback texture connection point, in the event that the effect is disabled.
@@ -83,6 +84,6 @@ export class StarryPlanesBlock extends ShaderBlock {
         const input = this._confirmRuntimeDataSupplied(this.fallback);
         const time = this.time.runtimeData;
 
-        return new StarryPlanesShaderBinding(this, input, time);
+        return new AuroraShaderBinding(this, input, time);
     }
 }

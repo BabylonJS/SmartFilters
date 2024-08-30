@@ -1,19 +1,19 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
+import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./tunnelBlock.shader";
+import { shaderProgram, uniforms } from "../effects/fireworksBlock.shader";
 
 /**
- * The shader bindings for the Tunnel block.
+ * The shader bindings for the Fireworks block.
  */
-export class TunnelShaderBinding extends ShaderBinding {
+export class FireworksShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the Tunnel block.
+     * Creates a new shader binding instance for the Fireworks block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
@@ -43,21 +43,21 @@ export class TunnelShaderBinding extends ShaderBinding {
 }
 
 /**
- * A shader block that creates a tunnel-like background effect.
+ * A block that adds a fireworks effect overlayed on the input texture.
  */
-export class TunnelBlock extends ShaderBlock {
+export class FireworksBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.tunnel;
+    public static override ClassName = BlockNames.fireworks;
 
     /**
-     * The fallback texture to use if block is disabled.
+     * The input texture connection point
      */
-    public readonly fallback = this._registerInput("fallback", ConnectionPointType.Texture);
+    public readonly input = this._registerInput("input", ConnectionPointType.Texture);
 
     /**
-     * The time connection point.
+     * The time connection point to animate the effect.
      */
     public readonly time = this._registerOptionalInput("time", ConnectionPointType.Float, createStrongRef(0.3));
 
@@ -80,9 +80,9 @@ export class TunnelBlock extends ShaderBlock {
      * @returns The class instance that binds the data to the effect
      */
     public getShaderBinding(): ShaderBinding {
-        const input = this._confirmRuntimeDataSupplied(this.fallback);
+        const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
 
-        return new TunnelShaderBinding(this, input, time);
+        return new FireworksShaderBinding(this, input, time);
     }
 }
