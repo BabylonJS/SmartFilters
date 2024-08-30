@@ -3,7 +3,7 @@ import { LineContainerComponent } from "../../sharedComponents/lineContainerComp
 import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButtonLineComponent.js";
 import { NumericInput } from "@babylonjs/shared-ui-components/lines/numericInputComponent.js";
 import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
-import { createImageTexture, type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
+import { type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { Tools } from "@babylonjs/core/Misc/tools.js";
 import type { GlobalState, TexturePreset } from "../../globalState.js";
@@ -13,6 +13,8 @@ import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineCompon
 
 import type { Nullable } from "@babylonjs/core/types.js";
 import { getTextureInputBlockEditorData } from "../getEditorData.js";
+import { loadTextureInputBlockAsset } from "../../serializationTools.js";
+import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
 
 export interface ImageSourcePropertyTabComponentProps extends IPropertyComponentProps {
     inputBlock: InputBlock<ConnectionPointType.Texture>;
@@ -78,7 +80,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                 return;
                             }
                             editorData.url = this._texturePresets[newSelectionValue]?.url || "";
-                            this._loadImage();
+                            this._loadTexture();
                         }}
                     />
                     <FileButtonLine
@@ -101,7 +103,9 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
 
                                         editorData.url = base64data;
                                         editorData.forcedExtension = extension;
-                                        this._loadImage();
+                                        editorData.urlTypeHint = this._getUrlTypeHint(file.name);
+
+                                        this._loadTexture();
                                     };
                                 },
                                 undefined,
@@ -122,16 +126,26 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         onSelect={(newSelectionValue: string | number) => {
                             if (typeof newSelectionValue === "number") {
                                 editorData.urlTypeHint = AssetTypeOptionArray[newSelectionValue] as "image" | "video";
-                                this._loadImage();
+                                this._loadTexture();
                             }
                         }}
                     />
+                    <TextInputLineComponent
+                        label="URL"
+                        propertyName="url"
+                        target={{ url: (editorData.url ?? "").indexOf("data:") === 0 ? "" : editorData.url }}
+                        onChange={(newValue: string) => {
+                            editorData.url = newValue;
+                            editorData.urlTypeHint = this._getUrlTypeHint(newValue);
 
+                            this._loadTexture();
+                        }}
+                    />
                     <CheckBoxLineComponent
                         label="FlipY"
                         target={editorData}
                         propertyName="flipY"
-                        onValueChanged={() => this._loadImage()}
+                        onValueChanged={() => this._loadTexture()}
                     />
                     <NumericInput
                         lockObject={(this.props.stateManager.data as GlobalState).lockObject}
@@ -141,7 +155,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         value={editorData.anisotropicFilteringLevel ?? 4}
                         onChange={(value: number) => {
                             editorData.anisotropicFilteringLevel = value;
-                            this._loadImage();
+                            this._loadTexture();
                         }}
                     />
                 </LineContainerComponent>
@@ -149,23 +163,17 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
         );
     }
 
-    private _loadImage() {
-        if (this.props.inputBlock.runtimeValue.value) {
-            this.props.inputBlock.runtimeValue.value.dispose();
-        }
-        const editorData = getTextureInputBlockEditorData(this.props.inputBlock);
-        this.props.inputBlock.runtimeValue.value = createImageTexture(
-            (this.props.stateManager.data as GlobalState).engine,
-            editorData.url ?? "",
-            editorData.flipY,
-            undefined /* samplingMode */,
-            editorData.forcedExtension
-        );
-        if (editorData.anisotropicFilteringLevel !== null) {
-            this.props.inputBlock.runtimeValue.value.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
-        }
+    private _loadTexture() {
+        const globalState = this.props.stateManager.data as GlobalState;
+
+        loadTextureInputBlockAsset(this.props.inputBlock, globalState.engine, globalState.beforeRenderObservable);
 
         this.props.nodeData.refreshCallback?.();
         this.forceUpdate();
+    }
+
+    private _getUrlTypeHint(url: string): "image" | "video" {
+        const extension: Nullable<string> = url.toLowerCase().split(".").pop() ?? null;
+        return extension === "mp4" ? "video" : "image";
     }
 }

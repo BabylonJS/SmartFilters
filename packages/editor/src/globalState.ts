@@ -31,6 +31,8 @@ export class GlobalState {
 
     stateManager: StateManager;
 
+    beforeRenderObservable: Observable<void>;
+
     lockObject = new LockObject();
 
     pointerOverCanvas: boolean = false;
@@ -80,6 +82,7 @@ export class GlobalState {
         hostElement: HTMLElement,
         downloadSmartFilter: () => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
+        beforeRenderObservable: Observable<void>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = []
     ) {
@@ -102,5 +105,6 @@ export class GlobalState {
         this.loadSmartFilter = loadSmartFilter;
         this.saveToSnippetServer = saveToSnippetServer;
         this.texturePresets = texturePresets;
+        this.beforeRenderObservable = beforeRenderObservable;
     }
 }
