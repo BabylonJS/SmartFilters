@@ -3,7 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "../effects/fireworksBlock.shader";
+import { shaderProgram, uniforms } from "../generators/fireworksBlock.shader";
 
 /**
  * The shader bindings for the Fireworks block.

@@ -3,7 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "../effects/starryPlanesBlock.shader";
+import { shaderProgram, uniforms } from "../generators/starryPlanesBlock.shader";
 
 /**
  * The shader bindings for the StarryPlanes block.
