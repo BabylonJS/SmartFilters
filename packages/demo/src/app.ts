@@ -45,6 +45,13 @@ const smartFilterLoader = new SmartFilterLoader(
 // Track the current Smart Filter
 let currentSmartFilter: SmartFilter | undefined;
 
+// Init TextureRenderHelper if we are using one
+if (textureRenderHelper) {
+    textureRenderHelper.startAsync().catch((err: unknown) => {
+        console.error("Could not start TextureRenderHelper", err);
+    });
+}
+
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
 smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEvent) => {
     SmartFilterEditor.Hide();

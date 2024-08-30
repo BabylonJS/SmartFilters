@@ -1,7 +1,7 @@
-import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture.js";
-import type { ThinEngine } from "@babylonjs/core";
+import { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture.js";
 import { ConnectionPointType, InputBlock, RenderTargetGenerator, SmartFilter } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 
 /**
  * Helper class which makes it easy to render a texture to a Canvas, using a trivial Smart Filter graph.
@@ -18,21 +18,35 @@ export class TextureRenderHelper {
      * The texture to be drawn to the Canvas. This can be used as the target output texture of
      * another Smart Filter graph to test the output of that graph.
      */
-    public readonly inputTexture: ThinTexture;
+    public readonly renderTargetTexture: ThinRenderTargetTexture;
 
     public constructor(engine: ThinEngine, renderer: SmartFilterRenderer) {
-        const internalTexture = engine.createTexture(null, true, true, null);
-        this.inputTexture = new ThinTexture(internalTexture);
+        // Create target texture
+        // We are only rendering full screen post process without depth or stencil information
+        const setup = {
+            generateDepthBuffer: false,
+            generateStencilBuffer: false,
+            generateMipMaps: false,
+            samplingMode: 2, // Babylon Constants.TEXTURE_LINEAR_LINEAR,
+        };
+        const width = engine.getRenderWidth(true);
+        const height = engine.getRenderHeight(true);
+        this.renderTargetTexture = new ThinRenderTargetTexture(engine, { width, height }, setup);
+        // Babylon Constants.TEXTURE_CLAMP_ADDRESSMODE; NPOT Friendly
+        this.renderTargetTexture.wrapU = 0;
+        this.renderTargetTexture.wrapV = 0;
 
+        // Create Smart Filter to render the texture to the canvas
         this._smartFilter = new SmartFilter("TextureRenderHelper");
         const inputBlock = new InputBlock(
             this._smartFilter,
             "inputTexture",
             ConnectionPointType.Texture,
-            this.inputTexture
+            this.renderTargetTexture
         );
         inputBlock.output.connectTo(this._smartFilter.output);
 
+        // Save params for later
         this._engine = engine;
         this._renderer = renderer;
     }

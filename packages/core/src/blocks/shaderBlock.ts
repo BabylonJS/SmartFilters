@@ -10,6 +10,8 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createCommand } from "../command/command.js";
 import { DisableableBlock } from "./disableableBlock.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
+import type { RenderTargetWrapper } from "@babylonjs/core/Engines/renderTargetWrapper";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * This is the base class for all shader blocks.
@@ -121,25 +123,38 @@ export abstract class ShaderBlock extends DisableableBlock {
         runtime.registerResource(shaderBlockRuntime);
 
         if (finalOutput) {
-            runtime.registerCommand(
-                createCommand(`${this.getClassName()}.renderToCanvas`, this, () => {
-                    shaderBlockRuntime.renderToCanvas();
-                })
-            );
-        } else {
-            const rtt =
-                this.output.runtimeData && (this.output.runtimeData.value as ThinRenderTargetTexture).renderTarget;
-            if (!rtt) {
-                throw new Error("ShaderBlock does not have a render target texture.");
+            if (initializationData.outputBlock.renderTargetTexture) {
+                const renderTarget = this._getRenderTarget(initializationData.outputBlock.renderTargetTexture);
+                runtime.registerCommand(
+                    createCommand(`${this.getClassName()}.renderToFinalTexture`, this, () => {
+                        shaderBlockRuntime.renderToTexture(renderTarget);
+                    })
+                );
+            } else {
+                runtime.registerCommand(
+                    createCommand(`${this.getClassName()}.renderToCanvas`, this, () => {
+                        shaderBlockRuntime.renderToCanvas();
+                    })
+                );
             }
+        } else {
+            const renderTarget = this._getRenderTarget(this.output.runtimeData?.value as ThinRenderTargetTexture);
 
             runtime.registerCommand(
                 createCommand(`${this.getClassName()}.render`, this, () => {
-                    shaderBlockRuntime.renderToTexture(rtt);
+                    shaderBlockRuntime.renderToTexture(renderTarget);
                 })
             );
         }
 
         super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+    }
+
+    private _getRenderTarget(renderTargetTexture: Nullable<ThinRenderTargetTexture>): RenderTargetWrapper {
+        const renderTarget = renderTargetTexture?.renderTarget;
+        if (!renderTarget) {
+            throw new Error("ShaderBlock could not get a renderTarget it needed.");
+        }
+        return renderTarget;
     }
 }
