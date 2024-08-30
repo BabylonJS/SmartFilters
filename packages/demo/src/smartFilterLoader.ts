@@ -4,9 +4,13 @@ import {
     type SmartFilter,
     SmartFilterDeserializer,
     type DeserializeBlockV1,
+    type InputBlock,
+    ConnectionPointType,
+    createImageTexture,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import { Observable, ReadFile } from "@babylonjs/core";
+import { createVideoTextureAsync } from "./helpers/createVideoTexture";
 
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
@@ -182,7 +186,58 @@ export class SmartFilterLoader {
             source,
         });
 
+        await this._loadAssets(smartFilter);
+
         return smartFilter;
+    }
+
+    /**
+     * If the SmartFilter had any assets, such as images or videos for input texture blocks,
+     * and the necessary information to rehydrate them is present in the editor data, load
+     * those assets now.
+     * @param smartFilter - The SmartFilter to load assets for
+     */
+    private async _loadAssets(smartFilter: SmartFilter): Promise<void> {
+        for (const block of smartFilter.attachedBlocks) {
+            if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Texture) {
+                const inputBlock = block as InputBlock<ConnectionPointType.Texture>;
+                const editorData = inputBlock.editorData;
+                if (editorData && inputBlock.output.runtimeData.value === null) {
+                    if (editorData.url) {
+                        switch (editorData.urlTypeHint) {
+                            case "video":
+                                {
+                                    const { videoTexture, update } = await createVideoTextureAsync(
+                                        this._engine,
+                                        editorData.url
+                                    );
+                                    this._renderer.beforeRenderObservable.add(() => {
+                                        update();
+                                    });
+
+                                    if (videoTexture && editorData.anisotropicFilteringLevel !== null) {
+                                        videoTexture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
+                                    }
+
+                                    inputBlock.output.runtimeData.value = videoTexture;
+                                }
+                                break;
+                            case "image":
+                            default:
+                                {
+                                    const texture = createImageTexture(this._engine, editorData.url, editorData.flipY);
+                                    if (texture && editorData.anisotropicFilteringLevel !== null) {
+                                        texture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
+                                    }
+
+                                    inputBlock.output.runtimeData.value = texture;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private _optimize(smartFilter: SmartFilter): SmartFilter {

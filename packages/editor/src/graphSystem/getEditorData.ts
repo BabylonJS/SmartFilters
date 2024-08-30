@@ -14,6 +14,7 @@ export function getTextureInputBlockEditorData(
         const internalTexture = inputBlock.runtimeValue.value?.getInternalTexture();
         inputBlock.editorData = {
             url: internalTexture?.url ?? null,
+            urlTypeHint: null,
             anisotropicFilteringLevel: internalTexture?.anisotropicFilteringLevel ?? null,
             flipY: internalTexture?.invertY ?? true,
             forcedExtension: internalTexture?._extension ?? null,

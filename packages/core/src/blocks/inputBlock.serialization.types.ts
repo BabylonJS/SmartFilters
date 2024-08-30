@@ -13,6 +13,12 @@ export type TextureInputBlockData = {
     url: Nullable<string>;
 
     /**
+     * If supplied, gives a hint as to which type of texture the URL points to.
+     * Default is assumed to be "image"
+     */
+    urlTypeHint: Nullable<"image" | "video">;
+
+    /**
      * Defines the anisotropic level to use, or default if null
      */
     anisotropicFilteringLevel: Nullable<number>;
