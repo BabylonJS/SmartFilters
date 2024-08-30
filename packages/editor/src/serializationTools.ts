@@ -114,6 +114,7 @@ export function createVideoTextureAsync(engine: ThinEngine, url: string): Promis
     return new Promise((resolve, reject) => {
         const hiddenVideo = document.createElement("video");
         document.body.append(hiddenVideo);
+        hiddenVideo.crossOrigin = "anonymous";
         hiddenVideo.style.display = "none";
         hiddenVideo.setAttribute("playsinline", "");
         hiddenVideo.muted = true;

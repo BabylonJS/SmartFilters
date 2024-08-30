@@ -80,6 +80,8 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                 return;
                             }
                             editorData.url = this._texturePresets[newSelectionValue]?.url || "";
+                            editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
+
                             this._loadTexture();
                         }}
                     />
@@ -121,7 +123,8 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         options={AssetTypeOptions}
                         noDirectUpdate
                         extractValue={() => {
-                            return editorData.urlTypeHint ?? "image";
+                            const value = editorData.urlTypeHint ?? "image";
+                            return AssetTypeOptionArray.indexOf(value);
                         }}
                         onSelect={(newSelectionValue: string | number) => {
                             if (typeof newSelectionValue === "number") {
