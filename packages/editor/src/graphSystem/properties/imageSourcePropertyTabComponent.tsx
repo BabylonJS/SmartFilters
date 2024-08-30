@@ -19,6 +19,10 @@ export interface ImageSourcePropertyTabComponentProps extends IPropertyComponent
 }
 
 const CustomImageOption = -1;
+const AssetTypeOptions = [
+    { label: "Image", value: "image" },
+    { label: "Video", value: "video" },
+];
 
 export class ImageSourcePropertyTabComponent extends react.Component<ImageSourcePropertyTabComponentProps> {
     private readonly _imageOptions: IInspectableOptions[];
@@ -78,7 +82,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         }}
                     />
                     <FileButtonLine
-                        label="Upload Custom"
+                        label="Upload Custom Image"
                         onClick={(file: File) => {
                             Tools.ReadFile(
                                 file,
@@ -106,6 +110,23 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         }}
                         accept=".jpg, .jpeg, .png, .tga, .dds, .env"
                     />
+                    <OptionsLine
+                        label="Asset Type"
+                        target={{}}
+                        propertyName="value"
+                        options={AssetTypeOptions}
+                        noDirectUpdate
+                        extractValue={() => {
+                            return editorData.urlTypeHint ?? "image";
+                        }}
+                        onSelect={(newSelectionValue: string | number) => {
+                            if (newSelectionValue === "image" || newSelectionValue === "video") {
+                                editorData.urlTypeHint = newSelectionValue;
+                                this._loadImage();
+                            }
+                        }}
+                    />
+
                     <CheckBoxLineComponent
                         label="FlipY"
                         target={editorData}
