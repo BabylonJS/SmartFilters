@@ -1,5 +1,8 @@
-// Starry Planes Source: https://www.shadertoy.com/view/MfjyWK
-// Author: mrange
+// Source: https://www.shadertoy.com/view/MfjyWK
+// Author: mrange - 2024
+// License: Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// Modified from original
+
 uniform sampler2D input; // main
 uniform float time;
 uniform vec2 resolution;

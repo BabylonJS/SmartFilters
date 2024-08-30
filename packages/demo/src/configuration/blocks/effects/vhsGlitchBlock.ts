@@ -1,19 +1,18 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
+import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./starryPlanesBlock.shader";
+import { shaderProgram, uniforms } from "./vhsGlitchBlock.shader";
 
 /**
- * The shader bindings for the StarryPlanes block.
+ * The shader bindings for the VhsGlitch block.
  */
-export class StarryPlanesShaderBinding extends ShaderBinding {
+export class VhsGlitchShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the StarryPlanes block.
+     * Creates a new shader binding instance for the VHSGlitch block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
@@ -31,33 +30,33 @@ export class StarryPlanesShaderBinding extends ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * @param effect - defines the effect to bind the data to
-     * @param _width - defines the width of the output. Passed in
-     * @param _height - defines the height of the output
+     * @param _width - defines the width of the output. Passed in by ShaderRuntime.
+     * @param _height - defines the height of the output. Passed in by ShaderRuntime.
      */
     public override bind(effect: Effect, _width: number, _height: number): void {
         super.bind(effect);
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
         effect.setFloat2(this.getRemappedName(uniforms.resolution), _width, _height);
+        effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
     }
 }
 
 /**
- * A shader block that renders a procedural starry background effect.
+ * A block that adds a broken VHS glitch effect to the input texture.
  */
-export class StarryPlanesBlock extends ShaderBlock {
+export class VhsGlitchBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.starryPlanes;
+    public static override ClassName = BlockNames.vhsGlitch;
 
     /**
-     * The fallback texture connection point, in the event that the effect is disabled.
+     * The input texture connection point
      */
-    public readonly fallback = this._registerInput("fallback", ConnectionPointType.Texture);
+    public readonly input = this._registerInput("input", ConnectionPointType.Texture);
 
     /**
-     * The time connection point.
+     * The time connection point to animate the effect.
      */
     public readonly time = this._registerOptionalInput("time", ConnectionPointType.Float, createStrongRef(0.3));
 
@@ -80,9 +79,9 @@ export class StarryPlanesBlock extends ShaderBlock {
      * @returns The class instance that binds the data to the effect
      */
     public getShaderBinding(): ShaderBinding {
-        const input = this._confirmRuntimeDataSupplied(this.fallback);
+        const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
 
-        return new StarryPlanesShaderBinding(this, input, time);
+        return new VhsGlitchShaderBinding(this, input, time);
     }
 }

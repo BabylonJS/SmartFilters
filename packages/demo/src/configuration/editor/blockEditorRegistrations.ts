@@ -13,6 +13,12 @@ import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
 import { StarryPlanesBlock } from "../blocks/effects/starryPlanesBlock";
+import { TunnelBlock } from "../blocks/effects/tunnelBlock";
+import { FireworksBlock } from "../blocks/effects/fireworksBlock";
+import { AuroraBlock } from "../blocks/effects/auroraBlock";
+import { VhsGlitchBlock } from "../blocks/effects/vhsGlitchBlock";
+import { SketchBlock } from "../blocks/effects/sketchBlock";
+import { SoftThresholdBlock } from "../blocks/effects/softThresholdBlock";
 import { GlitchBlock } from "../blocks/transitions/glitchBlock";
 import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
@@ -187,5 +193,41 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         factory: (smartFilter: SmartFilter) => new StarryPlanesBlock(smartFilter, "StarryPlanes"),
         category: "Effects",
         tooltip: "A mind-bending starry background effect",
+    },
+    {
+        name: "TunnelBlock",
+        factory: (smartFilter: SmartFilter) => new TunnelBlock(smartFilter, "Tunnel"),
+        category: "Effects",
+        tooltip: "A hypnotic tunnel background effect",
+    },
+    {
+        name: "VhsGlitchBlock",
+        factory: (smartFilter: SmartFilter) => new VhsGlitchBlock(smartFilter, "VhsGlitch"),
+        category: "Effects",
+        tooltip: "Adds a VHS glitch effect to the input texture",
+    },
+    {
+        name: "FireworksBlock",
+        factory: (smartFilter: SmartFilter) => new FireworksBlock(smartFilter, "Fireworks"),
+        category: "Effects",
+        tooltip: "Adds a fireworks background effect to the input texture",
+    },
+    {
+        name: "AuroraBlock",
+        factory: (smartFilter: SmartFilter) => new AuroraBlock(smartFilter, "Aurora"),
+        category: "Effects",
+        tooltip: "A Northern lights background effect",
+    },
+    {
+        name: "SketchBlock",
+        factory: (smartFilter: SmartFilter) => new SketchBlock(smartFilter, "Sketch"),
+        category: "Effects",
+        tooltip: "Adds a hand-drawn sketch effect to the input texture",
+    },
+    {
+        name: "SoftThresholdBlock",
+        factory: (smartFilter: SmartFilter) => new SoftThresholdBlock(smartFilter, "SoftThreshold"),
+        category: "Effects",
+        tooltip: "Adds a high contrast, softened black-and-white effect to the input texture",
     },
 ];
