@@ -10,7 +10,6 @@ import { FrameBlock } from "../blocks/effects/frameBlock";
 import { GlassBlock } from "../blocks/effects/glassBlock";
 import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
 import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
-import { MaskBlock } from "../blocks/effects/maskBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
 import { GlitchBlock } from "../blocks/transitions/glitchBlock";
@@ -181,11 +180,5 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         },
         category: "Effects",
         tooltip: "Alters the exposure of the input texture",
-    },
-    {
-        name: "MaskBlock",
-        factory: (smartFilter: SmartFilter) => new MaskBlock(smartFilter, "Mask"),
-        category: "Effects",
-        tooltip: "Applies mask in one texture to another texture",
     },
 ];

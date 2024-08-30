@@ -24,7 +24,6 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.frame,
     BlockNames.blackAndWhiteAndBlur,
     BlockNames.glitch,
-    BlockNames.mask,
 ];
 
 /**

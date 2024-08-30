@@ -53,14 +53,4 @@ export const smartFilterManifests: SmartFilterManifest[] = [
             );
         },
     },
-    {
-        type: "HardCoded",
-        name: HardCodedSmartFilterNames.videoReaction,
-        createSmartFilter: async (engine: ThinEngine, renderer: SmartFilterRenderer) => {
-            const module = await import(
-                /* webpackChunkName: "videoReaction" */ "./smartFilters/hardCoded/videoReaction"
-            );
-            return module.createVideoReactionSmartFilter(engine, renderer);
-        },
-    },
 ];
