@@ -8,6 +8,7 @@
 //               https://github.com/ashima/webgl-noise
 //               https://github.com/stegu/webgl-noise
 // Modified from original
+// For demo and non-commerical use only
 
 uniform sampler2D input; // main
 uniform float time;

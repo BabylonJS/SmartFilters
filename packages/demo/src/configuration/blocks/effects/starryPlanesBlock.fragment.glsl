@@ -2,6 +2,7 @@
 // Author: mrange - 2024
 // License: Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 // Modified from original
+// For demo and non-commerical use only
 
 uniform sampler2D input; // main
 uniform float time;

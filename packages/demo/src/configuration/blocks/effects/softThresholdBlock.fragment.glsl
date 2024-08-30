@@ -2,6 +2,7 @@
 // Author: gtoledo3 - 2013
 // Modified from original
 // This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// For demo and non-commerical use only
 
 uniform sampler2D input; // main
 uniform vec2 resolution;

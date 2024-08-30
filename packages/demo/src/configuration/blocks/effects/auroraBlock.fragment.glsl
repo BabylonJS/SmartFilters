@@ -3,6 +3,7 @@
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
 // Contact the author for other licensing options
 // Modified from original
+// For demo and non-commerical use only
 
 uniform sampler2D input; // main
 uniform float time;

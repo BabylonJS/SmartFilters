@@ -2,6 +2,7 @@
 // created by florian berger (flockaroo) - 2016
 // Modified from original
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+// For demo and non-commerical use only
 
 // trying to resemle some hand drawing style
 

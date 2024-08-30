@@ -1,5 +1,5 @@
+// For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
