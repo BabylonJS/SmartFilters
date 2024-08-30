@@ -70,11 +70,15 @@ export class InputDisplayManager implements IDisplayManager {
                 value = inputBlock.runtimeValue.value.toFixed(4);
                 break;
             case ConnectionPointType.Texture: {
-                const style =
-                    getTextureInputBlockEditorData(inputBlock).flipY === false
-                        ? "transform: scaleY(-1); z-index: -1;"
-                        : "";
-                value = `<img src="${inputBlock.runtimeValue.value?.getInternalTexture()?.url}" style="${style}"/>`;
+                if (inputBlock.editorData?.urlTypeHint === "video") {
+                    value = "Video";
+                } else {
+                    const style =
+                        getTextureInputBlockEditorData(inputBlock).flipY === false
+                            ? "transform: scaleY(-1); z-index: -1;"
+                            : "";
+                    value = `<img src="${inputBlock.runtimeValue.value?.getInternalTexture()?.url}" style="${style}"/>`;
+                }
                 break;
             }
         }
