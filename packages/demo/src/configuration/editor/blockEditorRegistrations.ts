@@ -191,13 +191,13 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     {
         name: "StarryPlanesBlock",
         factory: (smartFilter: SmartFilter) => new StarryPlanesBlock(smartFilter, "StarryPlanes"),
-        category: "Effects",
+        category: "Generators",
         tooltip: "A mind-bending starry background effect",
     },
     {
         name: "TunnelBlock",
         factory: (smartFilter: SmartFilter) => new TunnelBlock(smartFilter, "Tunnel"),
-        category: "Effects",
+        category: "Generators",
         tooltip: "A hypnotic tunnel background effect",
     },
     {
@@ -209,13 +209,13 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     {
         name: "FireworksBlock",
         factory: (smartFilter: SmartFilter) => new FireworksBlock(smartFilter, "Fireworks"),
-        category: "Effects",
+        category: "Generators",
         tooltip: "Adds a fireworks background effect to the input texture",
     },
     {
         name: "AuroraBlock",
         factory: (smartFilter: SmartFilter) => new AuroraBlock(smartFilter, "Aurora"),
-        category: "Effects",
+        category: "Generators",
         tooltip: "A Northern lights background effect",
     },
     {
