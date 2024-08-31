@@ -59,7 +59,10 @@ export class SmartFilterDeserializer {
         serializedSmartFilter: SerializedSmartFilterV1
     ): Promise<SmartFilter> {
         const smartFilter = new SmartFilter(serializedSmartFilter.name);
-        const blockMap = new Map<string, BaseBlock>();
+        const blockIdMap = new Map<number, BaseBlock>();
+
+        // Only needed for smart filters saved before we started using uniqueIds for the maps, didn't warrant new version
+        const blockNameMap = new Map<string, BaseBlock>();
 
         // Deserialize the SmartFilter level data
         smartFilter.comments = serializedSmartFilter.comments;
@@ -85,7 +88,8 @@ export class SmartFilterDeserializer {
                     UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
 
                     // Save in the map
-                    blockMap.set(newBlock.name, newBlock);
+                    blockIdMap.set(newBlock.uniqueId, newBlock);
+                    blockNameMap.set(newBlock.name, newBlock);
                 })
             );
         });
@@ -94,7 +98,11 @@ export class SmartFilterDeserializer {
         // Deserialize the connections
         serializedSmartFilter.connections.forEach((connection: ISerializedConnectionV1) => {
             // Find the source block and its connection point's connectTo function
-            const sourceBlock = blockMap.get(connection.outputBlock);
+            const sourceBlock =
+                typeof connection.outputBlock === "string"
+                    ? blockNameMap.get(connection.outputBlock)
+                    : blockIdMap.get(connection.outputBlock);
+
             if (!sourceBlock) {
                 throw new Error(`Source block ${connection.outputBlock} not found`);
             }
@@ -107,7 +115,10 @@ export class SmartFilterDeserializer {
             const sourceConnectToFunction = sourceConnectionPoint.connectTo.bind(sourceConnectionPoint);
 
             // Find the target block and its connection point
-            const targetBlock = blockMap.get(connection.inputBlock);
+            const targetBlock =
+                typeof connection.inputBlock === "string"
+                    ? blockNameMap.get(connection.inputBlock)
+                    : blockIdMap.get(connection.inputBlock);
             if (!targetBlock) {
                 throw new Error(`Target block ${connection.inputBlock} not found`);
             }
