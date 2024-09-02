@@ -25,6 +25,13 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.blackAndWhiteAndBlur,
     BlockNames.glitch,
     BlockNames.mask,
+    BlockNames.starryPlanes,
+    BlockNames.tunnel,
+    BlockNames.vhsGlitch,
+    BlockNames.fireworks,
+    BlockNames.aurora,
+    BlockNames.softThreshold,
+    BlockNames.sketch,
 ];
 
 /**
