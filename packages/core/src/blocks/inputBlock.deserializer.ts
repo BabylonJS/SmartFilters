@@ -16,8 +16,21 @@ export function inputBlockDeserializer(smartFilter: SmartFilter, serializedBlock
     switch (blockData.inputType) {
         case ConnectionPointType.Boolean:
             return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Boolean, blockData.value);
-        case ConnectionPointType.Float:
-            return new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Float, blockData.value);
+        case ConnectionPointType.Float: {
+            const inputBlock = new InputBlock(
+                smartFilter,
+                serializedBlock.name,
+                ConnectionPointType.Float,
+                blockData.value
+            );
+            if (blockData.animationType) {
+                inputBlock.editorData = {
+                    animationType: blockData.animationType,
+                    valueDeltaPerMs: blockData.valueDeltaPerMs,
+                };
+            }
+            return inputBlock;
+        }
         case ConnectionPointType.Texture: {
             // Create the input block
             const inputBlock = new InputBlock(smartFilter, serializedBlock.name, ConnectionPointType.Texture, null);

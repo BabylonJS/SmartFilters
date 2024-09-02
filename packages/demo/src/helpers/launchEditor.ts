@@ -19,6 +19,7 @@ import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 import type { SmartFilterLoader } from "../smartFilterLoader";
 import { getSnippet, setSnippet } from "./hashFunctions";
+import { registerAnimations } from "./registerAnimations";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -70,6 +71,7 @@ export function launchEditor(
             filter: currentSmartFilter,
             onRuntimeCreated: (runtime: SmartFilterRuntime) => {
                 renderer.setRuntime(runtime);
+                registerAnimations(currentSmartFilter, renderer);
             },
             downloadSmartFilter: () => {
                 const serializer = new SmartFilterSerializer(

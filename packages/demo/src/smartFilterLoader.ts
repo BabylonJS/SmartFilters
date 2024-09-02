@@ -10,6 +10,7 @@ import {
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import { Observable, ReadFile } from "@babylonjs/core";
 import { loadTextureInputBlockAsset } from "@babylonjs/smart-filters-editor";
+import { registerAnimations } from "./helpers/registerAnimations";
 
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
@@ -187,6 +188,8 @@ export class SmartFilterLoader {
         });
 
         await this._loadAssets(smartFilter);
+
+        registerAnimations(smartFilter, this._renderer);
 
         return smartFilter;
     }

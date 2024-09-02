@@ -90,7 +90,19 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
            */
           dispose: Nullable<() => void>;
       }
-    : {};
+    : T extends ConnectionPointType.Float
+      ? {
+            /**
+             * If supplied, how this should be animated by the editor.  Will not affect runtime behavior.
+             */
+            animationType: Nullable<"time">;
+
+            /**
+             * If supplied, the amount to change the value per millisecond when animating.
+             */
+            valueDeltaPerMs: Nullable<number>;
+        }
+      : {};
 
 /**
  * This represents any inputs used in the graph.

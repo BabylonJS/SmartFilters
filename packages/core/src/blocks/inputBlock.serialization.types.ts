@@ -54,6 +54,16 @@ export type FloatInputBlockData = {
 
     /** The value of the input block */
     value: number;
+
+    /**
+     * If supplied, how this should be animated by the editor.  Will not affect runtime behavior.
+     */
+    animationType: Nullable<"time">;
+
+    /**
+     * If supplied, the amount to change the value per millisecond when animating.
+     */
+    valueDeltaPerMs: Nullable<number>;
 };
 
 /**
