@@ -1,8 +1,6 @@
 import * as react from "react";
-import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButtonLineComponent.js";
 import { NumericInput } from "@babylonjs/shared-ui-components/lines/numericInputComponent.js";
-import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
 import { type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { Tools } from "@babylonjs/core/Misc/tools.js";
@@ -56,112 +54,106 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
         const editorData = getTextureInputBlockEditorData(this.props.inputBlock);
         return (
             <div>
-                <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
-                <LineContainerComponent title="PROPERTIES">
-                    <OptionsLine
-                        label="Source"
-                        target={{}}
-                        propertyName="value"
-                        options={this._imageOptions}
-                        noDirectUpdate
-                        extractValue={() => {
-                            const url = this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url;
-                            if (
-                                !url ||
-                                this._imageOptions.findIndex((c: IInspectableOptions) => c.value === url) === -1
-                            ) {
-                                return CustomImageOption;
-                            }
-                            return url;
-                        }}
-                        onSelect={(newSelectionValue: string | number) => {
-                            if (newSelectionValue === CustomImageOption || typeof newSelectionValue === "string") {
-                                // Take no action, let the user click the Upload button
-                                return;
-                            }
-                            editorData.url = this._texturePresets[newSelectionValue]?.url || "";
-                            editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
+                <OptionsLine
+                    label="Source"
+                    target={{}}
+                    propertyName="value"
+                    options={this._imageOptions}
+                    noDirectUpdate
+                    extractValue={() => {
+                        const url = this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url;
+                        if (!url || this._imageOptions.findIndex((c: IInspectableOptions) => c.value === url) === -1) {
+                            return CustomImageOption;
+                        }
+                        return url;
+                    }}
+                    onSelect={(newSelectionValue: string | number) => {
+                        if (newSelectionValue === CustomImageOption || typeof newSelectionValue === "string") {
+                            // Take no action, let the user click the Upload button
+                            return;
+                        }
+                        editorData.url = this._texturePresets[newSelectionValue]?.url || "";
+                        editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
 
+                        this._loadTexture();
+                    }}
+                />
+                <FileButtonLine
+                    label="Upload Custom Image"
+                    onClick={(file: File) => {
+                        Tools.ReadFile(
+                            file,
+                            (data) => {
+                                const blob = new Blob([data], { type: "octet/stream" });
+                                const reader = new FileReader();
+                                reader.readAsDataURL(blob);
+                                reader.onloadend = () => {
+                                    const base64data = reader.result as string;
+                                    let extension: Nullable<string> = null;
+                                    if (file.name.toLowerCase().indexOf(".dds") > 0) {
+                                        extension = ".dds";
+                                    } else if (file.name.toLowerCase().indexOf(".env") > 0) {
+                                        extension = ".env";
+                                    }
+
+                                    editorData.url = base64data;
+                                    editorData.forcedExtension = extension;
+                                    editorData.urlTypeHint = this._getUrlTypeHint(file.name);
+
+                                    this._loadTexture();
+                                };
+                            },
+                            undefined,
+                            true
+                        );
+                    }}
+                    accept=".jpg, .jpeg, .png, .tga, .dds, .env"
+                />
+                <OptionsLine
+                    label="Asset Type"
+                    target={{}}
+                    propertyName="value"
+                    options={AssetTypeOptions}
+                    noDirectUpdate
+                    extractValue={() => {
+                        const value = editorData.urlTypeHint ?? "image";
+                        return AssetTypeOptionArray.indexOf(value);
+                    }}
+                    onSelect={(newSelectionValue: string | number) => {
+                        if (typeof newSelectionValue === "number") {
+                            editorData.urlTypeHint = AssetTypeOptionArray[newSelectionValue] as "image" | "video";
                             this._loadTexture();
-                        }}
-                    />
-                    <FileButtonLine
-                        label="Upload Custom Image"
-                        onClick={(file: File) => {
-                            Tools.ReadFile(
-                                file,
-                                (data) => {
-                                    const blob = new Blob([data], { type: "octet/stream" });
-                                    const reader = new FileReader();
-                                    reader.readAsDataURL(blob);
-                                    reader.onloadend = () => {
-                                        const base64data = reader.result as string;
-                                        let extension: Nullable<string> = null;
-                                        if (file.name.toLowerCase().indexOf(".dds") > 0) {
-                                            extension = ".dds";
-                                        } else if (file.name.toLowerCase().indexOf(".env") > 0) {
-                                            extension = ".env";
-                                        }
+                        }
+                    }}
+                />
+                <TextInputLineComponent
+                    label="URL"
+                    propertyName="url"
+                    target={{ url: (editorData.url ?? "").indexOf("data:") === 0 ? "" : editorData.url }}
+                    onChange={(newValue: string) => {
+                        editorData.url = newValue;
+                        editorData.urlTypeHint = this._getUrlTypeHint(newValue);
 
-                                        editorData.url = base64data;
-                                        editorData.forcedExtension = extension;
-                                        editorData.urlTypeHint = this._getUrlTypeHint(file.name);
-
-                                        this._loadTexture();
-                                    };
-                                },
-                                undefined,
-                                true
-                            );
-                        }}
-                        accept=".jpg, .jpeg, .png, .tga, .dds, .env"
-                    />
-                    <OptionsLine
-                        label="Asset Type"
-                        target={{}}
-                        propertyName="value"
-                        options={AssetTypeOptions}
-                        noDirectUpdate
-                        extractValue={() => {
-                            const value = editorData.urlTypeHint ?? "image";
-                            return AssetTypeOptionArray.indexOf(value);
-                        }}
-                        onSelect={(newSelectionValue: string | number) => {
-                            if (typeof newSelectionValue === "number") {
-                                editorData.urlTypeHint = AssetTypeOptionArray[newSelectionValue] as "image" | "video";
-                                this._loadTexture();
-                            }
-                        }}
-                    />
-                    <TextInputLineComponent
-                        label="URL"
-                        propertyName="url"
-                        target={{ url: (editorData.url ?? "").indexOf("data:") === 0 ? "" : editorData.url }}
-                        onChange={(newValue: string) => {
-                            editorData.url = newValue;
-                            editorData.urlTypeHint = this._getUrlTypeHint(newValue);
-
-                            this._loadTexture();
-                        }}
-                    />
-                    <CheckBoxLineComponent
-                        label="FlipY"
-                        target={editorData}
-                        propertyName="flipY"
-                        onValueChanged={() => this._loadTexture()}
-                    />
-                    <NumericInput
-                        lockObject={(this.props.stateManager.data as GlobalState).lockObject}
-                        label="AFL"
-                        labelTooltip="anisotropicFilteringLevel"
-                        precision={0}
-                        value={editorData.anisotropicFilteringLevel ?? 4}
-                        onChange={(value: number) => {
-                            editorData.anisotropicFilteringLevel = value;
-                            this._loadTexture();
-                        }}
-                    />
-                </LineContainerComponent>
+                        this._loadTexture();
+                    }}
+                />
+                <CheckBoxLineComponent
+                    label="FlipY"
+                    target={editorData}
+                    propertyName="flipY"
+                    onValueChanged={() => this._loadTexture()}
+                />
+                <NumericInput
+                    lockObject={(this.props.stateManager.data as GlobalState).lockObject}
+                    label="AFL"
+                    labelTooltip="anisotropicFilteringLevel"
+                    precision={0}
+                    value={editorData.anisotropicFilteringLevel ?? 4}
+                    onChange={(value: number) => {
+                        editorData.anisotropicFilteringLevel = value;
+                        this._loadTexture();
+                    }}
+                />
             </div>
         );
     }
