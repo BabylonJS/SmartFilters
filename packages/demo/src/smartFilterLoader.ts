@@ -143,7 +143,6 @@ export class SmartFilterLoader {
                 const data = await response.json();
                 const snippet = JSON.parse(data.jsonPayload);
                 const serializedSmartFilter = JSON.parse(snippet.smartFilter);
-                console.log("Loaded Snippet:", serializedSmartFilter);
 
                 return this._deserializer.deserialize(this._engine, serializedSmartFilter);
             },
