@@ -56,6 +56,11 @@ export class SmartFilter {
     public readonly output: ConnectionPoint<ConnectionPointType.Texture>;
 
     /**
+     * The output block of the smart filter.
+     */
+    public readonly outputBlock: OutputBlock;
+
+    /**
      * User defined comments to describe the current smart filter.
      */
     public comments: Nullable<string> = null;
@@ -66,8 +71,6 @@ export class SmartFilter {
     public editorData: Nullable<IEditorData> = null;
 
     private readonly _attachedBlocks: Array<BaseBlock>;
-    private readonly _outputBlock: OutputBlock;
-
     /**
      * Creates a new instance of a @see SmartFilter.
      * @param name - The friendly name of the smart filter
@@ -76,8 +79,8 @@ export class SmartFilter {
         this.name = name;
 
         this._attachedBlocks = new Array<BaseBlock>();
-        this._outputBlock = new OutputBlock(this);
-        this.output = this._outputBlock.input;
+        this.outputBlock = new OutputBlock(this);
+        this.output = this.outputBlock.input;
     }
 
     /**
@@ -136,7 +139,7 @@ export class SmartFilter {
     }
 
     private _generateCommandsAndGatherInitPromises(initializationData: InitializationData): void {
-        const outputBlock = this._outputBlock;
+        const outputBlock = this.outputBlock;
 
         outputBlock.visit(initializationData, (block: BaseBlock, initializationData: InitializationData) => {
             // If the block is the output block,
@@ -173,17 +176,17 @@ export class SmartFilter {
 
         const initializationData: InitializationData = {
             runtime,
-            outputBlock: this._outputBlock,
+            outputBlock: this.outputBlock,
             initializationPromises: [],
         };
 
         this._workWithAggregateFreeGraph(() => {
-            this._outputBlock.prepareForRuntime();
+            this.outputBlock.prepareForRuntime();
 
             renderTargetGenerator = renderTargetGenerator ?? new RenderTargetGenerator(false);
             renderTargetGenerator.setOutputTextures(this, initializationData);
 
-            this._outputBlock.propagateRuntimeData();
+            this.outputBlock.propagateRuntimeData();
 
             this._generateCommandsAndGatherInitPromises(initializationData);
         });
@@ -210,7 +213,7 @@ export class SmartFilter {
         const mergedAggregateBlocks: AggregateBlock[] = [];
 
         // Merge all aggregate blocks
-        this._outputBlock.visit({}, (block: BaseBlock, _extraData: Object) => {
+        this.outputBlock.visit({}, (block: BaseBlock, _extraData: Object) => {
             if (block instanceof AggregateBlock) {
                 block._mergeIntoSmartFilter(mergedAggregateBlocks);
             }
