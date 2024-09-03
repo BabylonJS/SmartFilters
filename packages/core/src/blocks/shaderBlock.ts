@@ -10,8 +10,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createCommand } from "../command/command.js";
 import { DisableableBlock } from "./disableableBlock.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
-import type { RenderTargetWrapper } from "@babylonjs/core/Engines/renderTargetWrapper";
-import type { Nullable } from "@babylonjs/core/types";
+import { getRenderTarget, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 
 /**
  * This is the base class for all shader blocks.
@@ -123,22 +122,17 @@ export abstract class ShaderBlock extends DisableableBlock {
         runtime.registerResource(shaderBlockRuntime);
 
         if (finalOutput) {
-            if (initializationData.outputBlock.renderTargetTexture) {
-                const renderTarget = this._getRenderTarget(initializationData.outputBlock.renderTargetTexture);
-                runtime.registerCommand(
-                    createCommand(`${this.getClassName()}.renderToFinalTexture`, this, () => {
-                        shaderBlockRuntime.renderToTexture(renderTarget);
-                    })
-                );
-            } else {
-                runtime.registerCommand(
-                    createCommand(`${this.getClassName()}.renderToCanvas`, this, () => {
-                        shaderBlockRuntime.renderToCanvas();
-                    })
-                );
-            }
+            registerFinalRenderCommand(
+                initializationData.outputBlock.renderTargetTexture,
+                runtime,
+                this,
+                shaderBlockRuntime
+            );
         } else {
-            const renderTarget = this._getRenderTarget(this.output.runtimeData?.value as ThinRenderTargetTexture);
+            const renderTarget = getRenderTarget(
+                this.output.runtimeData?.value as ThinRenderTargetTexture,
+                this.getClassName()
+            );
 
             runtime.registerCommand(
                 createCommand(`${this.getClassName()}.render`, this, () => {
@@ -148,13 +142,5 @@ export abstract class ShaderBlock extends DisableableBlock {
         }
 
         super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
-    }
-
-    private _getRenderTarget(renderTargetTexture: Nullable<ThinRenderTargetTexture>): RenderTargetWrapper {
-        const renderTarget = renderTargetTexture?.renderTarget;
-        if (!renderTarget) {
-            throw new Error("ShaderBlock could not get a renderTarget it needed.");
-        }
-        return renderTarget;
     }
 }

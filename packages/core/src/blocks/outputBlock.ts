@@ -3,9 +3,9 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { BaseBlock } from "./baseBlock.js";
 import { CopyBlock } from "./copyBlock.js";
 import { ShaderRuntime } from "../runtime/shaderRuntime.js";
-import { createCommand } from "../command/command.js";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
+import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 
 /**
  * The output block of a smart filter.
@@ -94,23 +94,7 @@ export class OutputBlock extends BaseBlock {
         initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
         runtime.registerResource(shaderBlockRuntime);
 
-        if (this.renderTargetTexture) {
-            const renderTarget = this.renderTargetTexture.renderTarget;
-            if (!renderTarget) {
-                throw new Error("OutputBlock could not get a renderTarget it needed.");
-            }
-            runtime.registerCommand(
-                createCommand(`${this.getClassName()}.renderToFinalTexture`, this, () => {
-                    shaderBlockRuntime.renderToTexture(renderTarget);
-                })
-            );
-        } else {
-            runtime.registerCommand(
-                createCommand(`${this.getClassName()}.renderToCanvas`, this, () => {
-                    shaderBlockRuntime.renderToCanvas();
-                })
-            );
-        }
+        registerFinalRenderCommand(this.renderTargetTexture, runtime, this, shaderBlockRuntime);
 
         super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
     }
