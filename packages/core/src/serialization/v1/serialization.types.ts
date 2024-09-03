@@ -57,13 +57,13 @@ export interface ISerializedBlockV1 {
  * V1 Serialized Connection
  */
 export interface ISerializedConnectionV1 {
-    /** The name of the block that the connection is to */
+    /** The uniqueId of the block that the connection is to */
     outputBlock: number;
 
     /** The name of the connectionPoint on the outputBlock */
     outputConnectionPoint: string;
 
-    /** The name of the block that the connection is from */
+    /** The uniqueId of the block that the connection is from */
     inputBlock: number;
 
     /** The name of the connectionPoint on the inputBlock */
