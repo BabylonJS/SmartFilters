@@ -72,9 +72,9 @@ export class SmartFilterSerializer {
                 const connectedTo = input.connectedTo;
                 if (connectedTo) {
                     const newConnection: ISerializedConnectionV1 = {
-                        inputBlock: block.name,
+                        inputBlock: block.uniqueId,
                         inputConnectionPoint: input.name,
-                        outputBlock: connectedTo.ownerBlock.name,
+                        outputBlock: connectedTo.ownerBlock.uniqueId,
                         outputConnectionPoint: connectedTo.name,
                     };
                     if (!connections.find((other) => serializedConnectionPointsEqual(newConnection, other))) {
@@ -87,9 +87,9 @@ export class SmartFilterSerializer {
             block.outputs.forEach((output: ConnectionPoint) => {
                 output.endpoints.forEach((input: ConnectionPoint) => {
                     const newConnection: ISerializedConnectionV1 = {
-                        inputBlock: input.ownerBlock.name,
+                        inputBlock: input.ownerBlock.uniqueId,
                         inputConnectionPoint: input.name,
-                        outputBlock: block.name,
+                        outputBlock: block.uniqueId,
                         outputConnectionPoint: output.name,
                     };
                     if (!connections.find((other) => serializedConnectionPointsEqual(newConnection, other))) {
