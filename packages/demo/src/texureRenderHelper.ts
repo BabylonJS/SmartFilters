@@ -31,6 +31,7 @@ export class TextureRenderHelper {
         };
         const width = engine.getRenderWidth(true);
         const height = engine.getRenderHeight(true);
+
         this.renderTargetTexture = new ThinRenderTargetTexture(engine, { width, height }, setup);
         // Babylon Constants.TEXTURE_CLAMP_ADDRESSMODE; NPOT Friendly
         this.renderTargetTexture.wrapU = 0;

@@ -10,7 +10,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createCommand } from "../command/command.js";
 import { DisableableBlock } from "./disableableBlock.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
-import { getRenderTarget, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
+import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 
 /**
  * This is the base class for all shader blocks.
@@ -123,16 +123,16 @@ export abstract class ShaderBlock extends DisableableBlock {
 
         if (finalOutput) {
             registerFinalRenderCommand(
-                initializationData.outputBlock.renderTargetTexture,
+                initializationData.outputBlock.renderTargetWrapper,
                 runtime,
                 this,
                 shaderBlockRuntime
             );
         } else {
-            const renderTarget = getRenderTarget(
-                this.output.runtimeData?.value as ThinRenderTargetTexture,
-                this.getClassName()
-            );
+            const renderTarget = (this.output.runtimeData?.value as ThinRenderTargetTexture).renderTarget;
+            if (!renderTarget) {
+                throw new Error("ShaderBlock could not get a renderTarget it needed.");
+            }
 
             runtime.registerCommand(
                 createCommand(`${this.getClassName()}.render`, this, () => {

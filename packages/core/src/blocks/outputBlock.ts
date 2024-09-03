@@ -4,8 +4,8 @@ import { BaseBlock } from "./baseBlock.js";
 import { CopyBlock } from "./copyBlock.js";
 import { ShaderRuntime } from "../runtime/shaderRuntime.js";
 import type { Nullable } from "@babylonjs/core/types";
-import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
+import type { RenderTargetWrapper } from "@babylonjs/core/Engines/renderTargetWrapper";
 
 /**
  * The output block of a smart filter.
@@ -26,10 +26,10 @@ export class OutputBlock extends BaseBlock {
     public readonly input = this._registerInput("input", ConnectionPointType.Texture);
 
     /**
-     * If supplied, the Smart Filter will render into this texture. Otherwise, it renders
+     * If supplied, the Smart Filter will render into this RenderTargetWrapper. Otherwise, it renders
      * into the the canvas or WebGL context the ThinEngine is using for rendering.
      */
-    public renderTargetTexture: Nullable<ThinRenderTargetTexture> = null;
+    public renderTargetWrapper: Nullable<RenderTargetWrapper> = null;
 
     private _copyBlock: CopyBlock | null;
 
@@ -94,7 +94,7 @@ export class OutputBlock extends BaseBlock {
         initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
         runtime.registerResource(shaderBlockRuntime);
 
-        registerFinalRenderCommand(this.renderTargetTexture, runtime, this, shaderBlockRuntime);
+        registerFinalRenderCommand(this.renderTargetWrapper, runtime, this, shaderBlockRuntime);
 
         super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
     }

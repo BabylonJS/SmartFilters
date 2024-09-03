@@ -181,7 +181,7 @@ export class SmartFilterLoader {
 
         // If the SmartFilter has a texture render helper, assign its input texture as the Smart Filter's output
         if (this._textureRenderHelper) {
-            smartFilter.outputBlock.renderTargetTexture = this._textureRenderHelper.renderTargetTexture;
+            smartFilter.outputBlock.renderTargetWrapper = this._textureRenderHelper.renderTargetTexture.renderTarget;
         }
 
         if (optimize) {
