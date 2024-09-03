@@ -38,8 +38,6 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         name: "TimeBlock",
         category: "Inputs",
         tooltip: "Supplies a float value representing the current time",
-
-        // For some reason, this code isn't called, so we don't get the animationType and we don't animate!
         factory: (smartFilter: SmartFilter) => {
             const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
             inputBlock.editorData = {
