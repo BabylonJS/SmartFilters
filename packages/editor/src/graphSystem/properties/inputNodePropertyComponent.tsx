@@ -91,17 +91,37 @@ export class InputPropertyTabComponent extends react.Component<IPropertyComponen
                 );
             }
             case ConnectionPointType.Float: {
+                const animationStuff =
+                    inputBlock.editorData?.animationType === "time" ? (
+                        <FloatLineComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            key={inputBlock.uniqueId}
+                            label="valueDeltaPerMs"
+                            target={inputBlock.editorData}
+                            propertyName="valueDeltaPerMs"
+                            onChange={() => {
+                                this.forceUpdate();
+                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
+                            }}
+                        ></FloatLineComponent>
+                    ) : (
+                        <></>
+                    );
+
                 return (
-                    <FloatLineComponent
-                        lockObject={this.props.stateManager.lockObject}
-                        label="Value"
-                        target={inputBlock.runtimeValue}
-                        propertyName="value"
-                        onChange={() => {
-                            this.forceUpdate();
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                        }}
-                    ></FloatLineComponent>
+                    <>
+                        <FloatLineComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            label="Value"
+                            target={inputBlock.runtimeValue}
+                            propertyName="value"
+                            onChange={() => {
+                                this.forceUpdate();
+                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
+                            }}
+                        ></FloatLineComponent>
+                        {animationStuff}
+                    </>
                 );
                 // const cantDisplaySlider = isNaN(inputBlock.min) || isNaN(inputBlock.max) || inputBlock.min === inputBlock.max;
                 // return (

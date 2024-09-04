@@ -10,6 +10,7 @@ import { FrameBlock } from "../blocks/effects/frameBlock";
 import { GlassBlock } from "../blocks/effects/glassBlock";
 import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
 import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
+import { MaskBlock } from "../blocks/effects/maskBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
 import { StarryPlanesBlock } from "../blocks/generators/starryPlanesBlock";
@@ -32,6 +33,19 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         name: "WebCam",
         category: "Inputs",
         tooltip: "Supplies a texture from a webcam",
+    },
+    {
+        name: "TimeBlock",
+        category: "Inputs",
+        tooltip: "Supplies a float value representing the current time",
+        factory: (smartFilter: SmartFilter) => {
+            const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
+            inputBlock.editorData = {
+                animationType: "time",
+                valueDeltaPerMs: 0.001,
+            };
+            return inputBlock;
+        },
     },
     {
         name: "CopyBlock",
@@ -187,6 +201,12 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         },
         category: "Effects",
         tooltip: "Alters the exposure of the input texture",
+    },
+    {
+        name: "MaskBlock",
+        factory: (smartFilter: SmartFilter) => new MaskBlock(smartFilter, "Mask"),
+        category: "Effects",
+        tooltip: "Applies mask in one texture to another texture",
     },
     {
         name: "StarryPlanesBlock",

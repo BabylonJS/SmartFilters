@@ -31,8 +31,8 @@ export class SmartFilterDeserializer {
         // Add in the core block deserializers - they are not delay loaded, so they are wrapped in Promise.resolve()
         this._blockDeserializersV1.set(
             InputBlock.ClassName,
-            (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) =>
-                Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock, engine))
+            (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) =>
+                Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock))
         );
 
         this._blockDeserializersV1.set(OutputBlock.ClassName, (smartFilter: SmartFilter) =>

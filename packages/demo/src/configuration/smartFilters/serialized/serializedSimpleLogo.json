@@ -53,7 +53,11 @@
             "comments": null,
             "data": {
                 "inputType": 2,
-                "url": "/assets/logo.png"
+                "url": "/assets/logo.png",
+                "urlTypeHint": null,
+                "flipY": true,
+                "anisotropicFilteringLevel": null,
+                "forcedExtension": null
             }
         },
         {

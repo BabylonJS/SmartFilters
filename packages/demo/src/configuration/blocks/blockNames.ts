@@ -16,6 +16,7 @@ export const BlockNames = {
     glitch: "GlitchBlock",
     tile: "TileBlock",
     wipe: "WipeBlock",
+    mask: "MaskBlock",
     starryPlanes: "StarryPlanesBlock",
     tunnel: "TunnelBlock",
     fireworks: "FireworksBlock",

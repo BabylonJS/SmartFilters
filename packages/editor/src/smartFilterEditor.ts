@@ -9,6 +9,7 @@ import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
 import { Popup } from "./sharedComponents/popup.js";
 import type { AnyInputBlock, BaseBlock, SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
+import type { Observable } from "@babylonjs/core/Misc/observable.js";
 
 /**
  * An object that contains all of the information the Editor needs to display and
@@ -121,6 +122,11 @@ export type SmartFilterEditorOptions = {
      * An optional array of texture presets to display in the editor.
      */
     texturePresets?: TexturePreset[];
+
+    /**
+     * An observable that is called before rendering the filter every frame.
+     */
+    beforeRenderObservable: Observable<void>;
 };
 
 const filterEditorPopupId = "filter-editor";
@@ -157,6 +163,7 @@ export class SmartFilterEditor {
             hostElement,
             options.downloadSmartFilter,
             options.loadSmartFilter,
+            options.beforeRenderObservable,
             options.saveToSnippetServer,
             options.texturePresets
         );
