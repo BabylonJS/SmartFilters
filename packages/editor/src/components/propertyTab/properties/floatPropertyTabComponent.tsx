@@ -10,6 +10,7 @@ export interface FloatPropertyTabComponentProps extends IPropertyComponentProps 
 }
 
 type FloatPropertyTabComponentState = {
+    useTime: boolean;
     useSlider: boolean;
 };
 
@@ -30,13 +31,18 @@ export class FloatPropertyTabComponent extends Component<
         // Initialize editor data and store as reference
         this._editorData = getFloatInputBlockEditorData(props.inputBlock);
 
-        this.state = { useSlider: this.canUseSlider() };
+        const useTime = this._editorData.animationType === "time";
+        const useSlider = !useTime && this.canUseSlider();
+        this.setState({
+            useTime: useTime,
+            useSlider: useSlider,
+        });
     }
 
     override componentDidUpdate(prevProps: FloatPropertyTabComponentProps) {
         if (prevProps.inputBlock !== this.props.inputBlock) {
             this._editorData = getFloatInputBlockEditorData(this.props.inputBlock);
-            this.setState({ useSlider: this.canUseSlider() });
+            this.processEditorDataChange();
         }
     }
 
@@ -44,10 +50,12 @@ export class FloatPropertyTabComponent extends Component<
         return this._editorData.min! < this._editorData.max!;
     }
 
-    processSliderChange() {
-        const useSlider = this.canUseSlider();
+    processEditorDataChange() {
+        // Check whether to show time data. If not, check whether to show slider data.
+        const useTime = this._editorData.animationType === "time";
+        const useSlider = !useTime && this.canUseSlider();
 
-        // Clamp float value to min/max if necessary
+        // If slider will be used, clamp the value to min/max
         if (useSlider) {
             this.props.inputBlock.runtimeValue.value = Math.max(
                 this._editorData.min!,
@@ -55,7 +63,10 @@ export class FloatPropertyTabComponent extends Component<
             );
         }
 
-        this.setState({ useSlider: useSlider });
+        this.setState({
+            useTime: useTime,
+            useSlider: useSlider,
+        });
         this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
     }
 
@@ -64,50 +75,43 @@ export class FloatPropertyTabComponent extends Component<
      * Otherwise, display min, max, and value properties with slider capability.
      */
     override render() {
-        return this.props.inputBlock.editorData?.animationType === "time" ? (
+        return (
             <>
-                <FloatLineComponent
-                    lockObject={this.props.stateManager.lockObject}
-                    label="Value"
-                    target={this.props.inputBlock.runtimeValue}
-                    propertyName="value"
-                    onChange={() => {
-                        this.forceUpdate();
-                        this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
-                    }}
-                ></FloatLineComponent>
-                <FloatLineComponent
-                    lockObject={this.props.stateManager.lockObject}
-                    key={this.props.inputBlock.uniqueId}
-                    label="valueDeltaPerMs"
-                    target={this.props.inputBlock.editorData}
-                    propertyName="valueDeltaPerMs"
-                    onChange={() => {
-                        this.forceUpdate();
-                        this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
-                    }}
-                ></FloatLineComponent>
-            </>
-        ) : (
-            <>
-                <FloatLineComponent
-                    lockObject={this.props.stateManager.lockObject}
-                    label="Min"
-                    target={this._editorData}
-                    propertyName="min"
-                    onChange={() => {
-                        this.processSliderChange();
-                    }}
-                ></FloatLineComponent>
-                <FloatLineComponent
-                    lockObject={this.props.stateManager.lockObject}
-                    label="Max"
-                    target={this._editorData}
-                    propertyName="max"
-                    onChange={() => {
-                        this.processSliderChange();
-                    }}
-                ></FloatLineComponent>
+                {/* Min and max values */}
+                {!this.state.useTime && (
+                    <FloatLineComponent
+                        lockObject={this.props.stateManager.lockObject}
+                        label="Min"
+                        target={this._editorData}
+                        propertyName="min"
+                        onChange={() => {
+                            this.processEditorDataChange();
+                        }}
+                    ></FloatLineComponent>
+                )}
+                {!this.state.useTime && (
+                    <FloatLineComponent
+                        lockObject={this.props.stateManager.lockObject}
+                        label="Max"
+                        target={this._editorData}
+                        propertyName="max"
+                        onChange={() => {
+                            this.processEditorDataChange();
+                        }}
+                    ></FloatLineComponent>
+                )}
+                {/* Value */}
+                {!this.state.useSlider && (
+                    <FloatLineComponent
+                        lockObject={this.props.stateManager.lockObject}
+                        label="Value"
+                        target={this.props.inputBlock.runtimeValue}
+                        propertyName="value"
+                        onChange={() => {
+                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
+                        }}
+                    ></FloatLineComponent>
+                )}
                 {this.state.useSlider && (
                     <SliderLineComponent
                         lockObject={this.props.stateManager.lockObject}
@@ -122,12 +126,14 @@ export class FloatPropertyTabComponent extends Component<
                         }}
                     ></SliderLineComponent>
                 )}
-                {!this.state.useSlider && (
+                {/* Time values */}
+                {this.state.useTime && (
                     <FloatLineComponent
                         lockObject={this.props.stateManager.lockObject}
-                        label="Value"
-                        target={this.props.inputBlock.runtimeValue}
-                        propertyName="value"
+                        key={this.props.inputBlock.uniqueId}
+                        label="valueDeltaPerMs"
+                        target={this.props.inputBlock.editorData}
+                        propertyName="valueDeltaPerMs"
                         onChange={() => {
                             this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
                         }}
