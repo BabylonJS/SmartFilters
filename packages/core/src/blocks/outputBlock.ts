@@ -6,7 +6,6 @@ import { ShaderRuntime } from "../runtime/shaderRuntime.js";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
-import type { ConnectionPoint } from "../connection/connectionPoint";
 
 /**
  * The output block of a smart filter.
@@ -44,17 +43,11 @@ export class OutputBlock extends BaseBlock {
         this._copyBlock = null;
     }
 
-    private _getCopyBlock(currentlyConnectedConnectionPoint: ConnectionPoint<ConnectionPointType.Texture>): CopyBlock {
+    private _getCopyBlock(): CopyBlock {
         if (!this._copyBlock) {
             this._copyBlock = new CopyBlock(this.smartFilter, "CopyToOutputBlock");
         }
-
-        // Wire the CopyBlock in between the input and the OutputBlock.
-        currentlyConnectedConnectionPoint?.disconnectFrom(this.input);
-        currentlyConnectedConnectionPoint?.connectTo(this._copyBlock.input);
-
-        this._copyBlock.output.connectTo(this.input);
-        this._copyBlock.input.runtimeData = currentlyConnectedConnectionPoint.runtimeData;
+        this._copyBlock.input.runtimeData = this.input.connectedTo?.runtimeData ?? null;
 
         return this._copyBlock;
     }
@@ -93,7 +86,7 @@ export class OutputBlock extends BaseBlock {
         // In the case that this OutputBlock is directly connected to a texture InputBlock, we must
         // insert a CopyBlock to copy the texture to the render target texture.
         if (this.input.connectedTo?.ownerBlock.isInput) {
-            const copyBlock = this._getCopyBlock(this.input.connectedTo);
+            const copyBlock = this._getCopyBlock();
             const runtime = initializationData.runtime;
 
             const shaderBlockRuntime = new ShaderRuntime(
@@ -108,11 +101,8 @@ export class OutputBlock extends BaseBlock {
 
             super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
         } else {
-            // We aren't connected to an input block
-            // Check to see if we previously had created a copy block, and if so, if it hasn't been reused,
-            // delete it
-
-            if (this._copyBlock && this._copyBlock.output.endpoints.length === 0) {
+            // We aren't connected to an input block, remove our copy block if we have one.
+            if (this._copyBlock) {
                 this.smartFilter.removeBlock(this._copyBlock);
                 this._copyBlock = null;
             }
