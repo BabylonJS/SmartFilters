@@ -102,14 +102,18 @@ export class SmartFilterRenderer {
         }
         this._assetDisposeWork.length = 0;
 
+        const inputBlocks: InputBlock<ConnectionPointType.Texture>[] = [];
+
+        // Gather all the texture input blocks from the graph
         for (const block of smartFilter.attachedBlocks) {
             if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Texture) {
-                const inputBlock = block as InputBlock<ConnectionPointType.Texture>;
-                const dispose = await loadTextureInputBlockAsset(inputBlock, this.engine, this.beforeRenderObservable);
-                if (dispose) {
-                    this._assetDisposeWork.push(dispose);
-                }
+                inputBlocks.push(block as InputBlock<ConnectionPointType.Texture>);
             }
+        }
+
+        const dispose = await loadTextureInputBlockAsset(inputBlock, this.engine, this.beforeRenderObservable);
+        if (dispose) {
+            this._assetDisposeWork.push(dispose);
         }
     }
 
