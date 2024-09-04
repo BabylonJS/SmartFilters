@@ -8,7 +8,10 @@ import {
     ConnectionPointType,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
-import { Observable, ReadFile } from "@babylonjs/core";
+import type { TextureRenderHelper } from "./texureRenderHelper";
+import { Observable } from "@babylonjs/core/Misc/observable";
+import type { Nullable } from "@babylonjs/core/types";
+import { ReadFile } from "@babylonjs/core/Misc/fileTools";
 import { loadTextureInputBlockAsset } from "@babylonjs/smart-filters-editor";
 import { registerAnimations } from "./helpers/registerAnimations";
 
@@ -43,6 +46,7 @@ export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
     private readonly _deserializer: SmartFilterDeserializer;
     private readonly _renderer: SmartFilterRenderer;
+    private readonly _textureRenderHelper: Nullable<TextureRenderHelper>;
 
     public readonly snippetUrl = "https://snippet.babylonjs.com";
     public readonly onSmartFilterLoadedObservable: Observable<SmartFilterLoadedEvent>;
@@ -57,11 +61,13 @@ export class SmartFilterLoader {
         engine: ThinEngine,
         renderer: SmartFilterRenderer,
         manifests: SmartFilterManifest[],
-        blockDeserializers: Map<string, DeserializeBlockV1>
+        blockDeserializers: Map<string, DeserializeBlockV1>,
+        textureRenderHelper: Nullable<TextureRenderHelper>
     ) {
         this._engine = engine;
         this._renderer = renderer;
         this.manifests = manifests;
+        this._textureRenderHelper = textureRenderHelper;
         this.onSmartFilterLoadedObservable = new Observable<SmartFilterLoadedEvent>();
         if (this.manifests.length === 0) {
             throw new Error(
@@ -175,6 +181,11 @@ export class SmartFilterLoader {
                 throw new Error("Cannot fallback to default SmartFilter - no SmartFilter manifests were registered");
             }
             return this.loadFromManifest(defaultSmartFilterName, optimize);
+        }
+
+        // If the SmartFilter has a texture render helper, assign its input texture as the Smart Filter's output
+        if (this._textureRenderHelper) {
+            smartFilter.outputBlock.renderTargetTexture = this._textureRenderHelper.renderTargetTexture;
         }
 
         if (optimize) {

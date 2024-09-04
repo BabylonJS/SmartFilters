@@ -10,6 +10,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createCommand } from "../command/command.js";
 import { DisableableBlock } from "./disableableBlock.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
+import { getRenderTarget, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 
 /**
  * This is the base class for all shader blocks.
@@ -121,21 +122,21 @@ export abstract class ShaderBlock extends DisableableBlock {
         runtime.registerResource(shaderBlockRuntime);
 
         if (finalOutput) {
-            runtime.registerCommand(
-                createCommand(`${this.getClassName()}.renderToCanvas`, this, () => {
-                    shaderBlockRuntime.renderToCanvas();
-                })
+            registerFinalRenderCommand(
+                initializationData.outputBlock.renderTargetTexture,
+                runtime,
+                this,
+                shaderBlockRuntime
             );
         } else {
-            const rtt =
-                this.output.runtimeData && (this.output.runtimeData.value as ThinRenderTargetTexture).renderTarget;
-            if (!rtt) {
-                throw new Error("ShaderBlock does not have a render target texture.");
-            }
+            const renderTarget = getRenderTarget(
+                this.output.runtimeData?.value as ThinRenderTargetTexture,
+                this.getClassName()
+            );
 
             runtime.registerCommand(
                 createCommand(`${this.getClassName()}.render`, this, () => {
-                    shaderBlockRuntime.renderToTexture(rtt);
+                    shaderBlockRuntime.renderToTexture(renderTarget);
                 })
             );
         }
