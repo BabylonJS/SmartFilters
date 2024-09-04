@@ -32,19 +32,13 @@ export class FloatPropertyTabComponent extends Component<
         // Initialize editor data and store as reference
         this._editorData = getFloatInputBlockEditorData(props.inputBlock);
 
+        // Check whether to show time data. If not, check whether to show slider data.
         const useTime = this._editorData.animationType === "time";
         const showSlider = !useTime && this.isMinMaxValid();
-        this.setState({
+        this.state = {
             useTime: useTime,
             showSlider: showSlider,
-        });
-    }
-
-    override componentDidUpdate(prevProps: FloatPropertyTabComponentProps) {
-        if (prevProps.inputBlock !== this.props.inputBlock) {
-            this._editorData = getFloatInputBlockEditorData(this.props.inputBlock);
-            this.processEditorDataChange();
-        }
+        };
     }
 
     isMinMaxValid() {
@@ -52,9 +46,12 @@ export class FloatPropertyTabComponent extends Component<
     }
 
     processEditorDataChange() {
-        // Check whether to show time data. If not, check whether to show slider data.
         const useTime = this._editorData.animationType === "time";
         const showSlider = !useTime && this.isMinMaxValid();
+        this.setState({
+            useTime: useTime,
+            showSlider: showSlider,
+        });
 
         // If slider will be used, clamp the value to min/max
         if (showSlider) {
@@ -63,12 +60,14 @@ export class FloatPropertyTabComponent extends Component<
                 Math.min(this._editorData.max!, this.props.inputBlock.runtimeValue.value)
             );
         }
-
-        this.setState({
-            useTime: useTime,
-            showSlider: showSlider,
-        });
         this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
+    }
+
+    override componentDidUpdate(prevProps: FloatPropertyTabComponentProps) {
+        if (prevProps.inputBlock !== this.props.inputBlock) {
+            this._editorData = getFloatInputBlockEditorData(this.props.inputBlock);
+            this.processEditorDataChange();
+        }
     }
 
     override render() {
