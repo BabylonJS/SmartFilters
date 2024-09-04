@@ -3,7 +3,7 @@ import type { BaseBlock } from "../blocks/baseBlock";
 import { inputBlockSerializer } from "../blocks/inputBlock.serializer.js";
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import { defaultBlockSerializer } from "./v1/defaultBlockSerializer.js";
-import { CopyBlockForOutputBlockName, OutputBlock } from "../blocks/outputBlock.js";
+import { OutputBlock } from "../blocks/outputBlock.js";
 import type {
     IBlockSerializerV1,
     ISerializedBlockV1,
@@ -11,7 +11,6 @@ import type {
     SerializeBlockV1,
     SerializedSmartFilterV1,
 } from "./v1/serialization.types";
-import { CopyBlock } from "../blocks/copyBlock.js";
 
 /**
  * Determines if two serialized connection points are equivalent to each other
@@ -61,11 +60,6 @@ export class SmartFilterSerializer {
         const connections: ISerializedConnectionV1[] = [];
 
         const blocks = smartFilter.attachedBlocks.map((block: BaseBlock) => {
-            // Special case: do not serialize the special CopyBlock created by the OutputBlock
-            if (block.getClassName() === CopyBlock.ClassName && block.name === CopyBlockForOutputBlockName) {
-                return null;
-            }
-
             // Serialize the block itself
             const serializeFn = this._blockSerializers.get(block.getClassName());
             if (!serializeFn) {
@@ -112,7 +106,7 @@ export class SmartFilterSerializer {
             name: smartFilter.name,
             comments: smartFilter.comments,
             editorData: smartFilter.editorData,
-            blocks: blocks.filter((block: ISerializedBlockV1 | null) => block !== null),
+            blocks,
             connections,
         };
     }

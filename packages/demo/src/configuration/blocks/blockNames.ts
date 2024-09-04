@@ -1,4 +1,5 @@
 export const BlockNames = {
+    copy: "CopyBlock",
     pixelate: "PixelateBlock",
     blackAndWhite: "BlackAndWhiteBlock",
     exposure: "ExposureBlock",

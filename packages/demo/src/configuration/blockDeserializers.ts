@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { type SmartFilter, type DeserializeBlockV1, type ISerializedBlockV1 } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type DeserializeBlockV1,
+    type ISerializedBlockV1,
+    CopyBlock,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 
 /**
@@ -154,6 +159,10 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     deserializers.set(BlockNames.sketch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const { SketchBlock } = await import(/* webpackChunkName: "sketchBlock" */ "./blocks/effects/sketchBlock");
         return new SketchBlock(smartFilter, serializedBlock.name);
+    });
+
+    deserializers.set(BlockNames.copy, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        return new CopyBlock(smartFilter, serializedBlock.name);
     });
 
     // Non-trivial deserializers begin.

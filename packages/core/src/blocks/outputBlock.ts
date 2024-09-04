@@ -6,12 +6,7 @@ import { ShaderRuntime } from "../runtime/shaderRuntime.js";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
-
-/**
- * The special name used for the copy block created for the output block for the
- * special case where the output block is directly connected to a texture input block.
- */
-export const CopyBlockForOutputBlockName = "CopyBlockForOutputBlock";
+import type { ConnectionPoint } from "../connection/connectionPoint";
 
 /**
  * The output block of a smart filter.
@@ -49,11 +44,17 @@ export class OutputBlock extends BaseBlock {
         this._copyBlock = null;
     }
 
-    private _getCopyBlock(): CopyBlock {
+    private _getCopyBlock(currentlyConnectedConnectionPoint: ConnectionPoint<ConnectionPointType.Texture>): CopyBlock {
         if (!this._copyBlock) {
-            this._copyBlock = new CopyBlock(this.smartFilter, CopyBlockForOutputBlockName);
+            this._copyBlock = new CopyBlock(this.smartFilter, "CopyToOutputBlock");
         }
-        this._copyBlock.input.runtimeData = this.input.runtimeData;
+
+        // Wire the CopyBlock in between the input and the OutputBlock.
+        currentlyConnectedConnectionPoint?.disconnectFrom(this.input);
+        currentlyConnectedConnectionPoint?.connectTo(this._copyBlock.input);
+
+        this._copyBlock.output.connectTo(this.input);
+        this._copyBlock.input.runtimeData = currentlyConnectedConnectionPoint.runtimeData;
 
         return this._copyBlock;
     }
@@ -92,7 +93,7 @@ export class OutputBlock extends BaseBlock {
         // In the case that this OutputBlock is directly connected to a texture InputBlock, we must
         // insert a CopyBlock to copy the texture to the render target texture.
         if (this.input.connectedTo?.ownerBlock.isInput) {
-            const copyBlock = this._getCopyBlock();
+            const copyBlock = this._getCopyBlock(this.input.connectedTo);
             const runtime = initializationData.runtime;
 
             const shaderBlockRuntime = new ShaderRuntime(
@@ -107,9 +108,11 @@ export class OutputBlock extends BaseBlock {
 
             super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
         } else {
-            // If not, we need to sure any previous CopyBlock is removed.
-            if (this._copyBlock) {
-                this.input.runtimeData = this._copyBlock.input.runtimeData;
+            // We aren't connected to an input block
+            // Check to see if we previously had created a copy block, and if so, if it hasn't been reused,
+            // delete it
+
+            if (this._copyBlock && this._copyBlock.output.endpoints.length === 0) {
                 this.smartFilter.removeBlock(this._copyBlock);
                 this._copyBlock = null;
             }
