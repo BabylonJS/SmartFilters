@@ -4,16 +4,12 @@ import {
     type SmartFilter,
     SmartFilterDeserializer,
     type DeserializeBlockV1,
-    type InputBlock,
-    ConnectionPointType,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import type { TextureRenderHelper } from "./texureRenderHelper";
 import { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
 import { ReadFile } from "@babylonjs/core/Misc/fileTools";
-import { loadTextureInputBlockAsset } from "@babylonjs/smart-filters-editor";
-import { registerAnimations } from "./helpers/registerAnimations";
 
 export type SerializedSmartFilterManifest = {
     type: "Serialized";
@@ -197,26 +193,7 @@ export class SmartFilterLoader {
             source,
         });
 
-        await this._loadAssets(smartFilter);
-
-        registerAnimations(smartFilter, this._renderer);
-
         return smartFilter;
-    }
-
-    /**
-     * If the SmartFilter had any assets, such as images or videos for input texture blocks,
-     * and the necessary information to rehydrate them is present in the editor data, load
-     * those assets now.
-     * @param smartFilter - The SmartFilter to load assets for
-     */
-    private async _loadAssets(smartFilter: SmartFilter): Promise<void> {
-        for (const block of smartFilter.attachedBlocks) {
-            if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Texture) {
-                const inputBlock = block as InputBlock<ConnectionPointType.Texture>;
-                await loadTextureInputBlockAsset(inputBlock, this._engine, this._renderer.beforeRenderObservable);
-            }
-        }
     }
 
     private _optimize(smartFilter: SmartFilter): SmartFilter {

@@ -1,10 +1,4 @@
-import {
-    type BaseBlock,
-    logCommands,
-    type SmartFilter,
-    type SmartFilterRuntime,
-    SmartFilterSerializer,
-} from "@babylonjs/smart-filters";
+import { type BaseBlock, logCommands, type SmartFilter, SmartFilterSerializer } from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
@@ -19,7 +13,6 @@ import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 import type { SmartFilterLoader } from "../smartFilterLoader";
 import { getSnippet, setSnippet } from "./hashFunctions";
-import { registerAnimations } from "./registerAnimations";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -69,9 +62,10 @@ export function launchEditor(
             engine,
             blockRegistration,
             filter: currentSmartFilter,
-            onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-                renderer.setRuntime(runtime);
-                registerAnimations(currentSmartFilter, renderer);
+            rebuildRuntime: (smartFilter: SmartFilter) => {
+                renderer.startRendering(smartFilter).catch((err: unknown) => {
+                    console.error("Could not start rendering", err);
+                });
             },
             downloadSmartFilter: () => {
                 const serializer = new SmartFilterSerializer(

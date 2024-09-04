@@ -8,6 +8,12 @@ import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures
 import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 
 /**
+ * The special name used for the copy block created for the output block for the
+ * special case where the output block is directly connected to a texture input block.
+ */
+export const CopyBlockForOutputBlockName = "CopyBlockForOutputBlock";
+
+/**
  * The output block of a smart filter.
  *
  * Only the smart filter will internally create and host the output block.
@@ -45,9 +51,9 @@ export class OutputBlock extends BaseBlock {
 
     private _getCopyBlock(): CopyBlock {
         if (!this._copyBlock) {
-            this._copyBlock = new CopyBlock(this.smartFilter, "copy");
-            this._copyBlock.input.runtimeData = this.input.runtimeData;
+            this._copyBlock = new CopyBlock(this.smartFilter, CopyBlockForOutputBlockName);
         }
+        this._copyBlock.input.runtimeData = this.input.runtimeData;
 
         return this._copyBlock;
     }
@@ -83,19 +89,30 @@ export class OutputBlock extends BaseBlock {
         initializationData: InitializationData,
         finalOutput: boolean
     ): void {
-        const copyBlock = this._getCopyBlock();
-        const runtime = initializationData.runtime;
+        // In the case that this OutputBlock is directly connected to a texture InputBlock, we must
+        // insert a CopyBlock to copy the texture to the render target texture.
+        if (this.input.connectedTo?.ownerBlock.isInput) {
+            const copyBlock = this._getCopyBlock();
+            const runtime = initializationData.runtime;
 
-        const shaderBlockRuntime = new ShaderRuntime(
-            runtime.effectRenderer,
-            copyBlock.getShaderProgram(),
-            copyBlock.getShaderBinding()
-        );
-        initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
-        runtime.registerResource(shaderBlockRuntime);
+            const shaderBlockRuntime = new ShaderRuntime(
+                runtime.effectRenderer,
+                copyBlock.getShaderProgram(),
+                copyBlock.getShaderBinding()
+            );
+            initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
+            runtime.registerResource(shaderBlockRuntime);
 
-        registerFinalRenderCommand(this.renderTargetTexture, runtime, this, shaderBlockRuntime);
+            registerFinalRenderCommand(this.renderTargetTexture, runtime, this, shaderBlockRuntime);
 
-        super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+            super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+        } else {
+            // If not, we need to sure any previous CopyBlock is removed.
+            if (this._copyBlock) {
+                this.input.runtimeData = this._copyBlock.input.runtimeData;
+                this.smartFilter.removeBlock(this._copyBlock);
+                this._copyBlock = null;
+            }
+        }
     }
 }

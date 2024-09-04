@@ -163,21 +163,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         );
 
         this.props.globalState.stateManager.onRebuildRequiredObservable.add(async () => {
-            if (this.props.globalState.smartFilter) {
-                // this.buildMaterial(autoConfigure);
-
-                if (this.props.globalState.runtime) {
-                    this.props.globalState.runtime.dispose();
-                }
-
-                try {
-                    this.props.globalState.runtime = await this.props.globalState.smartFilter.createRuntimeAsync(
-                        this.props.globalState.engine
-                    );
-                } catch (err: unknown) {
-                    console.error("Smart Filter could not create a runtime", err);
-                }
-            }
+            this.props.globalState.rebuildRuntime(this.props.globalState.smartFilter);
         });
 
         this.props.globalState.onSaveEditorDataRequiredObservable.add(() => {
