@@ -11,13 +11,14 @@ export interface FloatPropertyTabComponentProps extends IPropertyComponentProps 
 
 type FloatPropertyTabComponentState = {
     useTime: boolean;
-    useSlider: boolean;
+    showSlider: boolean;
 };
 
 /**
  * The property tab component for InputBlock of type ConnectionPointType.Float.
- * If the animation type is time, display the value and valueDeltaPerMs properties w/o slider.
- * Otherwise, display min, max, and value properties with slider capability.
+ * If the animation type is time, display the value and valueDeltaPerMs properties
+ * plainly-- no slider capability. Otherwise, display the value alongside
+ * optional min and max properties that, when set, toggle a slider for the value.
  */
 export class FloatPropertyTabComponent extends Component<
     FloatPropertyTabComponentProps,
@@ -32,10 +33,10 @@ export class FloatPropertyTabComponent extends Component<
         this._editorData = getFloatInputBlockEditorData(props.inputBlock);
 
         const useTime = this._editorData.animationType === "time";
-        const useSlider = !useTime && this.canUseSlider();
+        const showSlider = !useTime && this.isMinMaxValid();
         this.setState({
             useTime: useTime,
-            useSlider: useSlider,
+            showSlider: showSlider,
         });
     }
 
@@ -46,17 +47,17 @@ export class FloatPropertyTabComponent extends Component<
         }
     }
 
-    canUseSlider() {
+    isMinMaxValid() {
         return this._editorData.min! < this._editorData.max!;
     }
 
     processEditorDataChange() {
         // Check whether to show time data. If not, check whether to show slider data.
         const useTime = this._editorData.animationType === "time";
-        const useSlider = !useTime && this.canUseSlider();
+        const showSlider = !useTime && this.isMinMaxValid();
 
         // If slider will be used, clamp the value to min/max
-        if (useSlider) {
+        if (showSlider) {
             this.props.inputBlock.runtimeValue.value = Math.max(
                 this._editorData.min!,
                 Math.min(this._editorData.max!, this.props.inputBlock.runtimeValue.value)
@@ -65,15 +66,11 @@ export class FloatPropertyTabComponent extends Component<
 
         this.setState({
             useTime: useTime,
-            useSlider: useSlider,
+            showSlider: showSlider,
         });
         this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
     }
 
-    /**
-     * If the animation type is time, display the value and valueDeltaPerMs properties w/o slider.
-     * Otherwise, display min, max, and value properties with slider capability.
-     */
     override render() {
         return (
             <>
@@ -101,7 +98,7 @@ export class FloatPropertyTabComponent extends Component<
                     ></FloatLineComponent>
                 )}
                 {/* Value */}
-                {!this.state.useSlider && (
+                {!this.state.showSlider && (
                     <FloatLineComponent
                         lockObject={this.props.stateManager.lockObject}
                         label="Value"
@@ -112,7 +109,7 @@ export class FloatPropertyTabComponent extends Component<
                         }}
                     ></FloatLineComponent>
                 )}
-                {this.state.useSlider && (
+                {this.state.showSlider && (
                     <SliderLineComponent
                         lockObject={this.props.stateManager.lockObject}
                         label="Value"

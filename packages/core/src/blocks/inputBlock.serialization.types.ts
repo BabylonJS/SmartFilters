@@ -65,13 +65,13 @@ export type FloatInputBlockData = {
      */
     valueDeltaPerMs: Nullable<number>;
 
-    /** 
-     * The minimum value of the float, used for slider control. 
+    /**
+     * The minimum value of the float, used for slider control.
      */
     min: Nullable<number>;
 
-    /** 
-     * The maximum value of the float, used for slider control. 
+    /**
+     * The maximum value of the float, used for slider control.
      */
     max: Nullable<number>;
 };
