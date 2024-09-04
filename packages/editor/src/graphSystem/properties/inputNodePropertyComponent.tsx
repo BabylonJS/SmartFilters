@@ -3,7 +3,6 @@ import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps";
-import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type InputBlock, type AnyInputBlock } from "@babylonjs/smart-filters";
@@ -92,32 +91,12 @@ export class InputPropertyTabComponent extends react.Component<IPropertyComponen
                 );
             }
             case ConnectionPointType.Float: {
-                const animationStuff =
-                    inputBlock.editorData?.animationType === "time" ? (
-                        <FloatLineComponent
-                            lockObject={this.props.stateManager.lockObject}
-                            key={inputBlock.uniqueId}
-                            label="valueDeltaPerMs"
-                            target={inputBlock.editorData}
-                            propertyName="valueDeltaPerMs"
-                            onChange={() => {
-                                this.forceUpdate();
-                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            }}
-                        ></FloatLineComponent>
-                    ) : (
-                        <></>
-                    );
-
                 return (
-                    <>
-                        <FloatPropertyTabComponent
-                            inputBlock={inputBlock as InputBlock<ConnectionPointType.Float>}
-                            nodeData={this.props.nodeData}
-                            stateManager={this.props.stateManager}
-                        />
-                        {animationStuff}
-                    </>
+                    <FloatPropertyTabComponent
+                        inputBlock={inputBlock}
+                        nodeData={this.props.nodeData}
+                        stateManager={this.props.stateManager}
+                    />
                 );
             }
             case ConnectionPointType.Texture:
