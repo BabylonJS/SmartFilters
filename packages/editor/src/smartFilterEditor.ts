@@ -7,7 +7,7 @@ import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
 import { Popup } from "./sharedComponents/popup.js";
-import type { AnyInputBlock, BaseBlock, SmartFilter, SmartFilterRuntime } from "@babylonjs/smart-filters";
+import type { AnyInputBlock, BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 
@@ -111,14 +111,6 @@ export type SmartFilterEditorOptions = {
     saveToSnippetServer?: () => void;
 
     /**
-     * An optional callback which is called when a new runtime is created due to the
-     * user editing the Smart Filter (beyond simply changing uniforms).
-     * It is used to allow the application to render the new runtime.
-     * @param runtime - The new runtime that was created
-     */
-    onRuntimeCreated?: (runtime: SmartFilterRuntime) => void;
-
-    /**
      * An optional array of texture presets to display in the editor.
      */
     texturePresets?: TexturePreset[];
@@ -127,6 +119,11 @@ export type SmartFilterEditorOptions = {
      * An observable that is called before rendering the filter every frame.
      */
     beforeRenderObservable: Observable<void>;
+
+    /**
+     * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
+     */
+    rebuildRuntime: (smartFilter: SmartFilter) => void;
 };
 
 const filterEditorPopupId = "filter-editor";
@@ -164,6 +161,7 @@ export class SmartFilterEditor {
             options.downloadSmartFilter,
             options.loadSmartFilter,
             options.beforeRenderObservable,
+            options.rebuildRuntime,
             options.saveToSnippetServer,
             options.texturePresets
         );
@@ -207,10 +205,6 @@ export class SmartFilterEditor {
                     popupWindow.close();
                 }
             };
-        }
-
-        if (options.onRuntimeCreated) {
-            globalState.onRuntimeCreatedObservable.add(options.onRuntimeCreated);
         }
     }
 

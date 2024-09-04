@@ -9,6 +9,7 @@ import {
 import type { GlobalState } from "./globalState";
 import type { GraphCanvasComponent } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphCanvas";
 import type { Observable } from "@babylonjs/core/Misc/observable";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * Sets the SmartFilter's stored editor data (block locations, canvas position, zoom) using the current graph canvas state.
@@ -42,12 +43,13 @@ export function setEditorData(smartFilter: SmartFilter, globalState: GlobalState
  * @param inputBlock - The InputBlock to load the texture for
  * @param engine - The ThinEngine to create the texture with
  * @param beforeRenderObservable - Observable which is notified before rendering each frame
+ * @returns A function to dispose of the textures when they are no longer needed, or null if no textures were loaded
  */
 export async function loadTextureInputBlockAsset(
     inputBlock: InputBlock<ConnectionPointType.Texture>,
     engine: ThinEngine,
     beforeRenderObservable: Observable<void>
-): Promise<void> {
+): Promise<Nullable<() => void>> {
     const editorData = inputBlock.editorData;
 
     // Look at the editor data to determine if we can load a texture
@@ -78,6 +80,8 @@ export async function loadTextureInputBlockAsset(
                         beforeRenderObservable.remove(observer);
                         videoTexture.dispose();
                     };
+
+                    return editorData.dispose;
                 }
                 break;
             case "image":
@@ -92,10 +96,14 @@ export async function loadTextureInputBlockAsset(
                     editorData.dispose = () => {
                         texture.dispose();
                     };
+
+                    return editorData.dispose;
                 }
                 break;
         }
     }
+
+    return null;
 }
 
 export type EditorLoadedVideoTexture = {

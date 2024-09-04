@@ -3,7 +3,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 import { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject.js";
-import { type BaseBlock, SmartFilter, type SmartFilterRuntime } from "@babylonjs/smart-filters";
+import { type BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
@@ -49,8 +49,6 @@ export class GlobalState {
 
     onResetRequiredObservable = new Observable<boolean>();
 
-    onRuntimeCreatedObservable = new Observable<SmartFilterRuntime>();
-
     onSaveEditorDataRequiredObservable = new Observable<void>();
 
     texturePresets: TexturePreset[];
@@ -61,19 +59,7 @@ export class GlobalState {
 
     saveToSnippetServer?: (() => void) | undefined;
 
-    private _runtime: Nullable<SmartFilterRuntime> = null;
-    public get runtime(): Nullable<SmartFilterRuntime> {
-        return this._runtime;
-    }
-    public set runtime(value: Nullable<SmartFilterRuntime>) {
-        if (value === this._runtime) {
-            return;
-        }
-        this._runtime = value;
-        if (value) {
-            this.onRuntimeCreatedObservable.notifyObservers(value);
-        }
-    }
+    rebuildRuntime: (smartFilter: SmartFilter) => void;
 
     public constructor(
         engine: ThinEngine,
@@ -83,6 +69,7 @@ export class GlobalState {
         downloadSmartFilter: () => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
         beforeRenderObservable: Observable<void>,
+        rebuildRuntime: (smartFilter: SmartFilter) => void,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = []
     ) {
@@ -106,5 +93,6 @@ export class GlobalState {
         this.saveToSnippetServer = saveToSnippetServer;
         this.texturePresets = texturePresets;
         this.beforeRenderObservable = beforeRenderObservable;
+        this.rebuildRuntime = rebuildRuntime;
     }
 }
