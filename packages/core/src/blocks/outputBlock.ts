@@ -47,7 +47,7 @@ export class OutputBlock extends BaseBlock {
         if (!this._copyBlock) {
             this._copyBlock = new CopyBlock(this.smartFilter, "CopyToOutputBlock");
         }
-        this._copyBlock.input.runtimeData = this.input.connectedTo?.runtimeData ?? null;
+        this._copyBlock.input.runtimeData = this.input.runtimeData;
 
         return this._copyBlock;
     }
