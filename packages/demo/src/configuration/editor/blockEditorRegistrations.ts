@@ -71,7 +71,7 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
             const block = new CompositionBlock(smartFilter, "Composition");
             const top = new InputBlock(smartFilter, "Top", ConnectionPointType.Float, 0.0);
             const left = new InputBlock(smartFilter, "Left", ConnectionPointType.Float, 0.0);
-            const width = new InputBlock(smartFilter, "With", ConnectionPointType.Float, 1.0);
+            const width = new InputBlock(smartFilter, "Width", ConnectionPointType.Float, 1.0);
             const height = new InputBlock(smartFilter, "Height", ConnectionPointType.Float, 1.0);
 
             top.output.connectTo(block.foregroundTop);
