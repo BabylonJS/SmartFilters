@@ -1,30 +1,14 @@
 // Constants
 const DELIMITER = "#"; // TODO: Pick another delimiter?
 const SAFARI_DELIMITER = "%23";
-const HASH_REGEX = new RegExp(`^${DELIMITER}([A-Za-z\\d]+)(${DELIMITER}|${SAFARI_DELIMITER})?([\\d]+)?$`);
+const DELIMITER_REGEX = new RegExp(`(?:${DELIMITER}|${SAFARI_DELIMITER})`);
 
 /**
- * Extracts the snippet info from the URL hash and cleans it up for consistency.
+ * Extracts the snippet info from the URL hash.
  * @returns The snippet token and version from the URL hash as an array.
  */
 export function getSnippet() {
-    let snippetToken = "";
-    let version = undefined;
-
-    const match = location.hash.match(HASH_REGEX);
-    if (match) {
-        snippetToken = match[1]!; // Should always be defined
-        version = match[3]; // May be undefined-- that's okay
-
-        // Clean up the hash, if necessary
-        const usingSafariDelimiter = match[2] === SAFARI_DELIMITER;
-        const delimiterWithoutVersion = match[2] && !version;
-        const versionIsZero = version === "0";
-        if (usingSafariDelimiter || delimiterWithoutVersion || versionIsZero) {
-            setSnippet(snippetToken, version, false);
-        }
-    }
-
+    const [snippetToken, version] = location.hash.substring(1).split(DELIMITER_REGEX);
     return [snippetToken, version];
 }
 

@@ -9,7 +9,7 @@ import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers } from "./configuration/blockDeserializers";
-import { getSnippet } from "./helpers/hashFunctions";
+import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./texureRenderHelper";
 
 // Hardcoded options there is no UI for
@@ -99,6 +99,8 @@ async function checkHash() {
     const [snippetToken, version] = getSnippet();
 
     if (snippetToken) {
+        // Reset hash with our formatting to keep it looking consistent
+        setSnippet(snippetToken, version, false);
         smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
         const smartFilterName =
