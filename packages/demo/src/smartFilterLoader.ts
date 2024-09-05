@@ -4,6 +4,7 @@ import {
     type SmartFilter,
     SmartFilterDeserializer,
     type DeserializeBlockV1,
+    type OptionalBlockDeserializerV1,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import type { TextureRenderHelper } from "./texureRenderHelper";
@@ -58,6 +59,7 @@ export class SmartFilterLoader {
         renderer: SmartFilterRenderer,
         manifests: SmartFilterManifest[],
         blockDeserializers: Map<string, DeserializeBlockV1>,
+        inputBlockDeserializer: OptionalBlockDeserializerV1,
         textureRenderHelper: Nullable<TextureRenderHelper>
     ) {
         this._engine = engine;
@@ -70,7 +72,7 @@ export class SmartFilterLoader {
                 "No SmartFilterManifests were passed to the SmartFilterLoader - add some manifests to smartFilterManifests.ts"
             );
         }
-        this._deserializer = new SmartFilterDeserializer(blockDeserializers);
+        this._deserializer = new SmartFilterDeserializer(blockDeserializers, inputBlockDeserializer);
     }
 
     /**

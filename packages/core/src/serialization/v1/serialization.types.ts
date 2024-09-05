@@ -106,3 +106,12 @@ export type DeserializeBlockV1 = (
     serializedBlock: ISerializedBlockV1,
     engine: ThinEngine
 ) => Promise<BaseBlock>;
+
+/**
+ * A function that optionally deserializes a block from a V1 serialized block object, returning null if it cannot
+ */
+export type OptionalBlockDeserializerV1 = (
+    smartFilter: SmartFilter,
+    serializedBlock: ISerializedBlockV1,
+    engine: ThinEngine
+) => Promise<Nullable<BaseBlock>>;

@@ -1,7 +1,7 @@
 import type { Nullable } from "@babylonjs/core/types";
 import { ConnectionPointType, type BaseBlock } from "@babylonjs/smart-filters";
 import { createDefaultValue, type GlobalState } from "@babylonjs/smart-filters-editor";
-import { WebCamInputBlock } from "../blocks/inputs/webCamInputBlock";
+import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 
 /**
  * Intercepts the creation of an input block and can return specialized input blocks.
@@ -11,7 +11,7 @@ import { WebCamInputBlock } from "../blocks/inputs/webCamInputBlock";
  */
 export function createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock> {
     switch (type) {
-        case "WebCam":
+        case WebCamInputBlockName:
             return new WebCamInputBlock(
                 globalState.smartFilter,
                 globalState.engine,
