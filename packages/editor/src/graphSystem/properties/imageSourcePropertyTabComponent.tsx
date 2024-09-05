@@ -11,7 +11,6 @@ import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineCompon
 
 import type { Nullable } from "@babylonjs/core/types.js";
 import { getTextureInputBlockEditorData } from "../getEditorData.js";
-import { loadTextureInputBlockAsset } from "../../serializationTools.js";
 import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
 
 export interface ImageSourcePropertyTabComponentProps extends IPropertyComponentProps {
@@ -75,7 +74,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         editorData.url = this._texturePresets[newSelectionValue]?.url || "";
                         editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
 
-                        this._loadTexture();
+                        this._triggerAssetUpdate();
                     }}
                 />
                 <FileButtonLine
@@ -100,7 +99,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                     editorData.forcedExtension = extension;
                                     editorData.urlTypeHint = this._getUrlTypeHint(file.name);
 
-                                    this._loadTexture();
+                                    this._triggerAssetUpdate();
                                 };
                             },
                             undefined,
@@ -122,7 +121,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     onSelect={(newSelectionValue: string | number) => {
                         if (typeof newSelectionValue === "number") {
                             editorData.urlTypeHint = AssetTypeOptionArray[newSelectionValue] as "image" | "video";
-                            this._loadTexture();
+                            this._triggerAssetUpdate();
                         }
                     }}
                 />
@@ -134,14 +133,14 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         editorData.url = newValue;
                         editorData.urlTypeHint = this._getUrlTypeHint(newValue);
 
-                        this._loadTexture();
+                        this._triggerAssetUpdate();
                     }}
                 />
                 <CheckBoxLineComponent
                     label="FlipY"
                     target={editorData}
                     propertyName="flipY"
-                    onValueChanged={() => this._loadTexture()}
+                    onValueChanged={() => this._triggerAssetUpdate()}
                 />
                 <NumericInput
                     lockObject={(this.props.stateManager.data as GlobalState).lockObject}
@@ -151,18 +150,14 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     value={editorData.anisotropicFilteringLevel ?? 4}
                     onChange={(value: number) => {
                         editorData.anisotropicFilteringLevel = value;
-                        this._loadTexture();
+                        this._triggerAssetUpdate();
                     }}
                 />
             </div>
         );
     }
 
-    private _loadTexture() {
-        const globalState = this.props.stateManager.data as GlobalState;
-
-        loadTextureInputBlockAsset(this.props.inputBlock, globalState.engine, globalState.beforeRenderObservable);
-
+    private _triggerAssetUpdate() {
         this.props.nodeData.refreshCallback?.();
         this.forceUpdate();
     }

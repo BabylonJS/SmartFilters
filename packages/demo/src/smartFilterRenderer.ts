@@ -8,15 +8,15 @@ import {
     type SmartFilterRuntime,
 } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
-import { loadTextureInputBlockAsset } from "@babylonjs/smart-filters-editor";
 import { registerAnimations } from "./helpers/registerAnimations";
+import { TextureAssetCache } from "./configuration/textureAssetCache";
 
 /**
  * Simple example of rendering a Smart Filter
  */
 export class SmartFilterRenderer {
-    private _assetDisposeWork: (() => void)[] = [];
     private _animationDisposeWork: Nullable<() => void> = null;
+    private _textureAssetCache: TextureAssetCache;
 
     /**
      * Callback called before rendering the filter every frame.
@@ -49,6 +49,8 @@ export class SmartFilterRenderer {
 
         this.engine.depthCullingState.depthTest = false;
         this.engine.stencilState.stencilTest = false;
+
+        this._textureAssetCache = new TextureAssetCache(engine, this.beforeRenderObservable);
     }
 
     /**
@@ -96,12 +98,6 @@ export class SmartFilterRenderer {
      * @param smartFilter - The SmartFilter to load assets for
      */
     private async _loadAssets(smartFilter: SmartFilter): Promise<void> {
-        // Dispose all previous assets
-        for (const work of this._assetDisposeWork) {
-            work();
-        }
-        this._assetDisposeWork.length = 0;
-
         const inputBlocks: InputBlock<ConnectionPointType.Texture>[] = [];
 
         // Gather all the texture input blocks from the graph
@@ -111,10 +107,8 @@ export class SmartFilterRenderer {
             }
         }
 
-        const dispose = await loadTextureInputBlockAsset(inputBlock, this.engine, this.beforeRenderObservable);
-        if (dispose) {
-            this._assetDisposeWork.push(dispose);
-        }
+        // Load the assets for the input blocks
+        await this._textureAssetCache.loadAssetsForInputBlocks(inputBlocks);
     }
 
     private _loadAnimations(smartFilter: SmartFilter): void {
