@@ -9,6 +9,8 @@ export type WebCamSource = {
     id: string;
 };
 
+export const WebCamInputBlockName = "WebCam";
+
 export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> implements IMonitorConnectionChanges {
     private readonly _engine: ThinEngine;
     private _webCamSession: WebCamSession | undefined;
@@ -23,7 +25,7 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
     >(undefined);
 
     constructor(smartFilter: SmartFilter, engine: ThinEngine, initialValue: RuntimeData<ConnectionPointType.Texture>) {
-        super(smartFilter, "WebCam", ConnectionPointType.Texture, initialValue);
+        super(smartFilter, WebCamInputBlockName, ConnectionPointType.Texture, initialValue);
         this._engine = engine;
 
         this.onWebCamSourceChanged.add(this._onWebCamSourceChanged.bind(this));
