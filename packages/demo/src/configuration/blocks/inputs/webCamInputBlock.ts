@@ -58,7 +58,7 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
     }
 
     private async _loadOrUnloadWebCam(): Promise<void> {
-        const shouldBeLoaded = this._webCamSource !== undefined && this.output.endpoints.length > 0;
+        const shouldBeLoaded = this._webCamSource !== undefined; // && this.output.endpoints.length > 0;
         const currentWebCamSourceId = this._webCamSource?.id;
 
         if (
