@@ -45,9 +45,9 @@ export class OutputBlock extends BaseBlock {
 
     private _getCopyBlock(): CopyBlock {
         if (!this._copyBlock) {
-            this._copyBlock = new CopyBlock(this.smartFilter, "copy");
-            this._copyBlock.input.runtimeData = this.input.runtimeData;
+            this._copyBlock = new CopyBlock(this.smartFilter, "CopyToOutputBlock");
         }
+        this._copyBlock.input.runtimeData = this.input.runtimeData;
 
         return this._copyBlock;
     }
@@ -83,19 +83,29 @@ export class OutputBlock extends BaseBlock {
         initializationData: InitializationData,
         finalOutput: boolean
     ): void {
-        const copyBlock = this._getCopyBlock();
-        const runtime = initializationData.runtime;
+        // In the case that this OutputBlock is directly connected to a texture InputBlock, we must
+        // insert a CopyBlock to copy the texture to the render target texture.
+        if (this.input.connectedTo?.ownerBlock.isInput) {
+            const copyBlock = this._getCopyBlock();
+            const runtime = initializationData.runtime;
 
-        const shaderBlockRuntime = new ShaderRuntime(
-            runtime.effectRenderer,
-            copyBlock.getShaderProgram(),
-            copyBlock.getShaderBinding()
-        );
-        initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
-        runtime.registerResource(shaderBlockRuntime);
+            const shaderBlockRuntime = new ShaderRuntime(
+                runtime.effectRenderer,
+                copyBlock.getShaderProgram(),
+                copyBlock.getShaderBinding()
+            );
+            initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
+            runtime.registerResource(shaderBlockRuntime);
 
-        registerFinalRenderCommand(this.renderTargetTexture, runtime, this, shaderBlockRuntime);
+            registerFinalRenderCommand(this.renderTargetTexture, runtime, this, shaderBlockRuntime);
 
-        super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+            super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+        } else {
+            // We aren't connected to an input block, remove our copy block if we have one.
+            if (this._copyBlock) {
+                this.smartFilter.removeBlock(this._copyBlock);
+                this._copyBlock = null;
+            }
+        }
     }
 }

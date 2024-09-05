@@ -142,19 +142,6 @@ export class SmartFilter {
         const outputBlock = this.outputBlock;
 
         outputBlock.visit(initializationData, (block: BaseBlock, initializationData: InitializationData) => {
-            // If the block is the output block,
-            if (block === outputBlock) {
-                // We only need to do something if the connected block is an input block.
-                // Indeed, any other block linked to the output block would directly render to the canvas
-                // as an optimization.
-                // In case the output block is not linked to an input block, we do not need extra commands
-                // or resources to create a render pass.
-                if (outputBlock.input.connectedTo?.ownerBlock.isInput) {
-                    block.generateCommandsAndGatherInitPromises(initializationData, true);
-                }
-                return;
-            }
-
             block.generateCommandsAndGatherInitPromises(
                 initializationData,
                 outputBlock.input.connectedTo?.ownerBlock === block

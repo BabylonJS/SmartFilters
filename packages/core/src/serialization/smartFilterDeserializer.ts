@@ -9,6 +9,7 @@ import type {
     DeserializeBlockV1,
     ISerializedBlockV1,
     ISerializedConnectionV1,
+    OptionalBlockDeserializerV1,
     SerializedSmartFilterV1,
 } from "./v1/serialization.types";
 import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
@@ -24,15 +25,29 @@ export class SmartFilterDeserializer {
     /**
      * Creates a new SmartFilterDeserializer
      * @param blockDeserializers - The map of block serializers to use, beyond those for the core blocks
+     * @param customInputBlockDeserializer - An optional custom deserializer for InputBlocks - if supplied and it returns null, the default deserializer will be used
      */
-    public constructor(blockDeserializers: Map<string, DeserializeBlockV1>) {
+    public constructor(
+        blockDeserializers: Map<string, DeserializeBlockV1>,
+        customInputBlockDeserializer?: OptionalBlockDeserializerV1
+    ) {
         this._blockDeserializersV1 = blockDeserializers;
 
-        // Add in the core block deserializers - they are not delay loaded, so they are wrapped in Promise.resolve()
         this._blockDeserializersV1.set(
             InputBlock.ClassName,
-            (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) =>
-                Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock))
+            async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) => {
+                if (customInputBlockDeserializer) {
+                    const customDeserializerResult = await customInputBlockDeserializer(
+                        smartFilter,
+                        serializedBlock,
+                        engine
+                    );
+                    if (customDeserializerResult !== null) {
+                        return customDeserializerResult;
+                    }
+                }
+                return inputBlockDeserializer(smartFilter, serializedBlock);
+            }
         );
 
         this._blockDeserializersV1.set(OutputBlock.ClassName, (smartFilter: SmartFilter) =>
