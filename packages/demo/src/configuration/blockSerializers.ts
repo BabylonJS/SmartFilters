@@ -32,7 +32,6 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.aurora,
     BlockNames.softThreshold,
     BlockNames.sketch,
-    BlockNames.copy,
 ];
 
 /**
