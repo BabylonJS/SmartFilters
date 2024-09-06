@@ -212,7 +212,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                 evt,
                 (nodeData) => {
                     if (!nodeData.data.isOutput) {
-                        this.props.globalState.smartFilter!.removeBlock(nodeData.data as BaseBlock);
+                        const block = nodeData.data as BaseBlock;
+                        this.props.globalState.smartFilter!.removeBlock(block);
+                        block.dispose();
                     }
                 },
                 this._mouseLocationX,

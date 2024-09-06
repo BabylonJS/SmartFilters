@@ -2,7 +2,6 @@ import { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { WebCamSession } from "./webCamSession";
 import { ConnectionPointType, type SmartFilter, type RuntimeData, InputBlock } from "@babylonjs/smart-filters";
-import type { IMonitorConnectionChanges } from "@babylonjs/smart-filters-editor";
 
 export type WebCamSource = {
     name: string;
@@ -11,7 +10,7 @@ export type WebCamSource = {
 
 export const WebCamInputBlockName = "WebCam";
 
-export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> implements IMonitorConnectionChanges {
+export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     private readonly _engine: ThinEngine;
     private _webCamSession: WebCamSession | undefined;
     private _webCamSource: WebCamSource | undefined;
@@ -37,8 +36,11 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
         });
     }
 
-    public onConnectionsChanged(): void {
-        this._loadOrUnloadWebCam();
+    public override dispose(): void {
+        if (this._webCamSession) {
+            this._webCamSession.dispose();
+            this._webCamSession = undefined;
+        }
     }
 
     public static async EnumerateWebCamSources(): Promise<WebCamSource[]> {
@@ -52,13 +54,9 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
             }));
     }
 
-    private _onWebCamSourceChanged(webCamSource: WebCamSource | undefined): void {
+    private async _onWebCamSourceChanged(webCamSource: WebCamSource | undefined): Promise<void> {
         this._webCamSource = webCamSource;
-        this._loadOrUnloadWebCam();
-    }
-
-    private async _loadOrUnloadWebCam(): Promise<void> {
-        const shouldBeLoaded = this._webCamSource !== undefined; // && this.output.endpoints.length > 0;
+        const shouldBeLoaded = this._webCamSource !== undefined;
         const currentWebCamSourceId = this._webCamSource?.id;
 
         if (
