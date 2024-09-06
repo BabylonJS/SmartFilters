@@ -43,9 +43,16 @@ function serializeInputBlockData(inputBlock: InputBlockBase): SerializedInputBlo
 function serializeTextureInputBlock(inputBlock: InputBlock<ConnectionPointType.Texture>): TextureInputBlockData {
     const internalTexture = inputBlock.runtimeValue.value?.getInternalTexture();
     const forcedExtension = internalTexture?._extension ?? null;
+
+    let url = internalTexture?.url ?? null;
+    if (url === "" || !url) {
+        url = inputBlock.editorData?.url ?? null;
+    }
+
     return {
         inputType: ConnectionPointType.Texture,
-        url: internalTexture?.url ?? null,
+        url,
+        urlTypeHint: inputBlock.editorData?.urlTypeHint ?? null,
         flipY: internalTexture?.invertY ?? null,
         anisotropicFilteringLevel: internalTexture?.anisotropicFilteringLevel ?? null,
         forcedExtension: forcedExtension !== "" ? forcedExtension : null,
@@ -73,6 +80,8 @@ function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Flo
     return {
         inputType: ConnectionPointType.Float,
         value: inputBlock.runtimeValue.value,
+        animationType: inputBlock.editorData?.animationType ?? null,
+        valueDeltaPerMs: inputBlock.editorData?.valueDeltaPerMs ?? null,
     };
 }
 

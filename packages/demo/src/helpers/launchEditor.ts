@@ -1,10 +1,4 @@
-import {
-    type BaseBlock,
-    logCommands,
-    type SmartFilter,
-    type SmartFilterRuntime,
-    SmartFilterSerializer,
-} from "@babylonjs/smart-filters";
+import { type BaseBlock, logCommands, type SmartFilter, SmartFilterSerializer } from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
@@ -68,8 +62,10 @@ export function launchEditor(
             engine,
             blockRegistration,
             filter: currentSmartFilter,
-            onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-                renderer.setRuntime(runtime);
+            rebuildRuntime: (smartFilter: SmartFilter) => {
+                renderer.startRendering(smartFilter).catch((err: unknown) => {
+                    console.error("Could not start rendering", err);
+                });
             },
             downloadSmartFilter: () => {
                 const serializer = new SmartFilterSerializer(
@@ -124,6 +120,7 @@ export function launchEditor(
                 setSnippet(snippet.id, snippet.version);
             },
             texturePresets,
+            beforeRenderObservable: renderer.beforeRenderObservable,
         });
     }
     if (renderer.runtime) {

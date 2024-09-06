@@ -57,14 +57,14 @@ export interface ISerializedBlockV1 {
  * V1 Serialized Connection
  */
 export interface ISerializedConnectionV1 {
-    /** The name of the block that the connection is to */
-    outputBlock: string;
+    /** The uniqueId of the block that the connection is to */
+    outputBlock: number;
 
     /** The name of the connectionPoint on the outputBlock */
     outputConnectionPoint: string;
 
-    /** The name of the block that the connection is from */
-    inputBlock: string;
+    /** The uniqueId of the block that the connection is from */
+    inputBlock: number;
 
     /** The name of the connectionPoint on the inputBlock */
     inputConnectionPoint: string;
@@ -106,3 +106,12 @@ export type DeserializeBlockV1 = (
     serializedBlock: ISerializedBlockV1,
     engine: ThinEngine
 ) => Promise<BaseBlock>;
+
+/**
+ * A function that optionally deserializes a block from a V1 serialized block object, returning null if it cannot
+ */
+export type OptionalBlockDeserializerV1 = (
+    smartFilter: SmartFilter,
+    serializedBlock: ISerializedBlockV1,
+    engine: ThinEngine
+) => Promise<Nullable<BaseBlock>>;

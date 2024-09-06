@@ -10,27 +10,43 @@ import { FrameBlock } from "../blocks/effects/frameBlock";
 import { GlassBlock } from "../blocks/effects/glassBlock";
 import { GreenScreenBlock } from "../blocks/effects/greenScreenBlock";
 import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
+import { MaskBlock } from "../blocks/effects/maskBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
+import { StarryPlanesBlock } from "../blocks/generators/starryPlanesBlock";
+import { TunnelBlock } from "../blocks/generators/tunnelBlock";
+import { FireworksBlock } from "../blocks/generators/fireworksBlock";
+import { AuroraBlock } from "../blocks/generators/auroraBlock";
+import { VhsGlitchBlock } from "../blocks/effects/vhsGlitchBlock";
+import { SketchBlock } from "../blocks/effects/sketchBlock";
+import { SoftThresholdBlock } from "../blocks/effects/softThresholdBlock";
 import { GlitchBlock } from "../blocks/transitions/glitchBlock";
 import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
 
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
-import { ConnectionPointType, CopyBlock, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
     {
-        name: "WebCam",
+        name: WebCamInputBlockName,
         category: "Inputs",
         tooltip: "Supplies a texture from a webcam",
     },
     {
-        name: "CopyBlock",
-        factory: (smartFilter: SmartFilter) => new CopyBlock(smartFilter, "Copy"),
-        category: "Effects",
-        tooltip: "Copy the input texture to the output texture",
+        name: "TimeBlock",
+        category: "Inputs",
+        tooltip: "Supplies a float value representing the current time",
+        factory: (smartFilter: SmartFilter) => {
+            const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
+            inputBlock.editorData = {
+                animationType: "time",
+                valueDeltaPerMs: 0.001,
+            };
+            return inputBlock;
+        },
     },
     {
         name: "BlackAndWhiteBlock",
@@ -180,5 +196,53 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         },
         category: "Effects",
         tooltip: "Alters the exposure of the input texture",
+    },
+    {
+        name: "MaskBlock",
+        factory: (smartFilter: SmartFilter) => new MaskBlock(smartFilter, "Mask"),
+        category: "Effects",
+        tooltip: "Applies mask in one texture to another texture",
+    },
+    {
+        name: "StarryPlanesBlock",
+        factory: (smartFilter: SmartFilter) => new StarryPlanesBlock(smartFilter, "StarryPlanes"),
+        category: "Generators",
+        tooltip: "A mind-bending starry background effect",
+    },
+    {
+        name: "TunnelBlock",
+        factory: (smartFilter: SmartFilter) => new TunnelBlock(smartFilter, "Tunnel"),
+        category: "Generators",
+        tooltip: "A hypnotic tunnel background effect",
+    },
+    {
+        name: "VhsGlitchBlock",
+        factory: (smartFilter: SmartFilter) => new VhsGlitchBlock(smartFilter, "VhsGlitch"),
+        category: "Effects",
+        tooltip: "Adds a VHS glitch effect to the input texture",
+    },
+    {
+        name: "FireworksBlock",
+        factory: (smartFilter: SmartFilter) => new FireworksBlock(smartFilter, "Fireworks"),
+        category: "Generators",
+        tooltip: "Adds a fireworks background effect to the input texture",
+    },
+    {
+        name: "AuroraBlock",
+        factory: (smartFilter: SmartFilter) => new AuroraBlock(smartFilter, "Aurora"),
+        category: "Generators",
+        tooltip: "A Northern lights background effect",
+    },
+    {
+        name: "SketchBlock",
+        factory: (smartFilter: SmartFilter) => new SketchBlock(smartFilter, "Sketch"),
+        category: "Effects",
+        tooltip: "Adds a hand-drawn sketch effect to the input texture",
+    },
+    {
+        name: "SoftThresholdBlock",
+        factory: (smartFilter: SmartFilter) => new SoftThresholdBlock(smartFilter, "SoftThreshold"),
+        category: "Effects",
+        tooltip: "Adds a high contrast, softened black-and-white effect to the input texture",
     },
 ];

@@ -13,6 +13,12 @@ export type TextureInputBlockData = {
     url: Nullable<string>;
 
     /**
+     * If supplied, gives a hint as to which type of texture the URL points to.
+     * Default is assumed to be "image"
+     */
+    urlTypeHint: Nullable<"image" | "video">;
+
+    /**
      * Defines the anisotropic level to use, or default if null
      */
     anisotropicFilteringLevel: Nullable<number>;
@@ -48,6 +54,16 @@ export type FloatInputBlockData = {
 
     /** The value of the input block */
     value: number;
+
+    /**
+     * If supplied, how this should be animated by the editor.  Will not affect runtime behavior.
+     */
+    animationType: Nullable<"time">;
+
+    /**
+     * If supplied, the amount to change the value per millisecond when animating.
+     */
+    valueDeltaPerMs: Nullable<number>;
 };
 
 /**

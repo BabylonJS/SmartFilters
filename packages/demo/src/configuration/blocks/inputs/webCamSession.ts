@@ -1,12 +1,12 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { InternalTexture } from "@babylonjs/core/Materials/Textures/internalTexture.js";
 import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture.js";
-import type { ConnectionPointType, RuntimeData } from "@babylonjs/smart-filters";
+import type { ConnectionPointType, IDisposable, RuntimeData } from "@babylonjs/smart-filters";
 
 /**
- * Manages the lifecycle of a WebCam session, hooking it up to a texture, and disposing of it when done.
+ * Manages a single web cam session for a given source.
  */
-export class WebCamSession {
+export class WebCamSession implements IDisposable {
     private readonly _engine: ThinEngine;
     private readonly _textureOutput: RuntimeData<ConnectionPointType.Texture>;
 
@@ -15,22 +15,18 @@ export class WebCamSession {
     private _internalVideoTexture: InternalTexture | undefined;
     private _videoTexture: ThinTexture | undefined;
     private _mediaStream: MediaStream | undefined;
-    public _deviceId: string | undefined;
+    public _deviceId: string;
 
-    public get deviceId(): string | undefined {
-        return this._deviceId;
-    }
-
-    constructor(engine: ThinEngine, textureOutput: RuntimeData<ConnectionPointType.Texture>) {
+    constructor(engine: ThinEngine, textureOutput: RuntimeData<ConnectionPointType.Texture>, deviceId: string) {
         this._engine = engine;
         this._textureOutput = textureOutput;
+        this._deviceId = deviceId;
     }
 
     /**
      * Loads the WebCam, creates a ThinTexture from it, and sets that texture in textureOutput provided to the constructor.
-     * @param deviceId - the id of the WebCam device to use, or undefined to use the default WebCam.
      */
-    public async loadWebCam(deviceId: string | undefined): Promise<void> {
+    public async load(): Promise<void> {
         const width = 640;
         const height = 480;
 
@@ -38,10 +34,8 @@ export class WebCamSession {
             width,
             height,
         };
-        this._deviceId = deviceId;
-        if (deviceId) {
-            mediaTrackConstraints.deviceId = deviceId;
-        }
+        mediaTrackConstraints.deviceId = this._deviceId;
+
         const stream = await navigator.mediaDevices.getUserMedia({
             video: mediaTrackConstraints,
             audio: false,

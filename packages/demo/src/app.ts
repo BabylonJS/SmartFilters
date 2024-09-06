@@ -8,8 +8,8 @@ import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
-import { getBlockDeserializers } from "./configuration/blockDeserializers";
-import { getSnippet } from "./helpers/hashFunctions";
+import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/blockDeserializers";
+import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./texureRenderHelper";
 
 // Hardcoded options there is no UI for
@@ -36,8 +36,11 @@ const renderer = new SmartFilterRenderer(engine);
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
 const smartFilterLoader = new SmartFilterLoader(
     engine,
+
     renderer,
+
     smartFilterManifests,
+
     getBlockDeserializers(),
     textureRenderHelper
 );
@@ -99,6 +102,8 @@ async function checkHash() {
     const [snippetToken, version] = getSnippet();
 
     if (snippetToken) {
+        // Reset hash with our formatting to keep it looking consistent
+        setSnippet(snippetToken, version, false);
         smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
         const smartFilterName =

@@ -9,6 +9,7 @@ import type {
     DeserializeBlockV1,
     ISerializedBlockV1,
     ISerializedConnectionV1,
+    OptionalBlockDeserializerV1,
     SerializedSmartFilterV1,
 } from "./v1/serialization.types";
 import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
@@ -24,15 +25,29 @@ export class SmartFilterDeserializer {
     /**
      * Creates a new SmartFilterDeserializer
      * @param blockDeserializers - The map of block serializers to use, beyond those for the core blocks
+     * @param customInputBlockDeserializer - An optional custom deserializer for InputBlocks - if supplied and it returns null, the default deserializer will be used
      */
-    public constructor(blockDeserializers: Map<string, DeserializeBlockV1>) {
+    public constructor(
+        blockDeserializers: Map<string, DeserializeBlockV1>,
+        customInputBlockDeserializer?: OptionalBlockDeserializerV1
+    ) {
         this._blockDeserializersV1 = blockDeserializers;
 
-        // Add in the core block deserializers - they are not delay loaded, so they are wrapped in Promise.resolve()
         this._blockDeserializersV1.set(
             InputBlock.ClassName,
-            (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) =>
-                Promise.resolve(inputBlockDeserializer(smartFilter, serializedBlock, engine))
+            async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) => {
+                if (customInputBlockDeserializer) {
+                    const customDeserializerResult = await customInputBlockDeserializer(
+                        smartFilter,
+                        serializedBlock,
+                        engine
+                    );
+                    if (customDeserializerResult !== null) {
+                        return customDeserializerResult;
+                    }
+                }
+                return inputBlockDeserializer(smartFilter, serializedBlock);
+            }
         );
 
         this._blockDeserializersV1.set(OutputBlock.ClassName, (smartFilter: SmartFilter) =>
@@ -59,7 +74,10 @@ export class SmartFilterDeserializer {
         serializedSmartFilter: SerializedSmartFilterV1
     ): Promise<SmartFilter> {
         const smartFilter = new SmartFilter(serializedSmartFilter.name);
-        const blockMap = new Map<string, BaseBlock>();
+        const blockIdMap = new Map<number, BaseBlock>();
+
+        // Only needed for smart filters saved before we started using uniqueIds for the maps, didn't warrant new version
+        const blockNameMap = new Map<string, BaseBlock>();
 
         // Deserialize the SmartFilter level data
         smartFilter.comments = serializedSmartFilter.comments;
@@ -85,7 +103,8 @@ export class SmartFilterDeserializer {
                     UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
 
                     // Save in the map
-                    blockMap.set(newBlock.name, newBlock);
+                    blockIdMap.set(newBlock.uniqueId, newBlock);
+                    blockNameMap.set(newBlock.name, newBlock);
                 })
             );
         });
@@ -94,7 +113,11 @@ export class SmartFilterDeserializer {
         // Deserialize the connections
         serializedSmartFilter.connections.forEach((connection: ISerializedConnectionV1) => {
             // Find the source block and its connection point's connectTo function
-            const sourceBlock = blockMap.get(connection.outputBlock);
+            const sourceBlock =
+                typeof connection.outputBlock === "string"
+                    ? blockNameMap.get(connection.outputBlock)
+                    : blockIdMap.get(connection.outputBlock);
+
             if (!sourceBlock) {
                 throw new Error(`Source block ${connection.outputBlock} not found`);
             }
@@ -107,7 +130,10 @@ export class SmartFilterDeserializer {
             const sourceConnectToFunction = sourceConnectionPoint.connectTo.bind(sourceConnectionPoint);
 
             // Find the target block and its connection point
-            const targetBlock = blockMap.get(connection.inputBlock);
+            const targetBlock =
+                typeof connection.inputBlock === "string"
+                    ? blockNameMap.get(connection.inputBlock)
+                    : blockIdMap.get(connection.inputBlock);
             if (!targetBlock) {
                 throw new Error(`Target block ${connection.inputBlock} not found`);
             }

@@ -1,17 +1,19 @@
 import { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
-import { WebCamSession } from "./webCamSession";
-import { ConnectionPointType, type SmartFilter, type RuntimeData, InputBlock } from "@babylonjs/smart-filters";
-import type { IMonitorConnectionChanges } from "@babylonjs/smart-filters-editor";
+import { WebCamRuntime } from "./webCamRuntime";
+import { ConnectionPointType, type SmartFilter, InputBlock, createStrongRef } from "@babylonjs/smart-filters";
+import type { InitializationData } from "core/src/smartFilter";
 
 export type WebCamSource = {
     name: string;
     id: string;
 };
 
-export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> implements IMonitorConnectionChanges {
+export const WebCamInputBlockName = "WebCam";
+
+export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     private readonly _engine: ThinEngine;
-    private _webCamSession: WebCamSession | undefined;
+    private _webCamRuntime: WebCamRuntime | undefined;
     private _webCamSource: WebCamSource | undefined;
 
     public get webcamSource(): WebCamSource | undefined {
@@ -22,8 +24,8 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
         WebCamSource | undefined
     >(undefined);
 
-    constructor(smartFilter: SmartFilter, engine: ThinEngine, initialValue: RuntimeData<ConnectionPointType.Texture>) {
-        super(smartFilter, "WebCam", ConnectionPointType.Texture, initialValue);
+    constructor(smartFilter: SmartFilter, engine: ThinEngine) {
+        super(smartFilter, WebCamInputBlockName, ConnectionPointType.Texture, createStrongRef(null));
         this._engine = engine;
 
         this.onWebCamSourceChanged.add(this._onWebCamSourceChanged.bind(this));
@@ -33,10 +35,6 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
                 this.onWebCamSourceChanged.notifyObservers(sources[0]);
             }
         });
-    }
-
-    public onConnectionsChanged(): void {
-        this._loadOrUnloadWebCam();
     }
 
     public static async EnumerateWebCamSources(): Promise<WebCamSource[]> {
@@ -50,30 +48,19 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> im
             }));
     }
 
-    private _onWebCamSourceChanged(webCamSource: WebCamSource | undefined): void {
-        this._webCamSource = webCamSource;
-        this._loadOrUnloadWebCam();
+    public override generateCommandsAndGatherInitPromises(
+        initializationData: InitializationData,
+        _finalOutput: boolean
+    ): void {
+        this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
+        this._webCamRuntime.deviceId = this._webCamSource?.id || undefined;
+        initializationData.disposableResources.push(this._webCamRuntime);
     }
 
-    private async _loadOrUnloadWebCam(): Promise<void> {
-        const shouldBeLoaded = this._webCamSource !== undefined && this.output.endpoints.length > 0;
-        const currentWebCamSourceId = this._webCamSource?.id;
-
-        if (
-            this._webCamSession &&
-            (!shouldBeLoaded || (shouldBeLoaded && this._webCamSession.deviceId !== currentWebCamSourceId))
-        ) {
-            this._webCamSession.dispose();
-            this._webCamSession = undefined;
+    private async _onWebCamSourceChanged(webCamSource: WebCamSource | undefined): Promise<void> {
+        if (this._webCamRuntime) {
+            this._webCamRuntime.deviceId = webCamSource?.id || undefined;
         }
-
-        if (shouldBeLoaded) {
-            this._webCamSession = new WebCamSession(this._engine, this.runtimeValue);
-            try {
-                await this._webCamSession.loadWebCam(currentWebCamSourceId);
-            } catch (e) {
-                console.error("Failed to load WebCam", e);
-            }
-        }
+        this._webCamSource = webCamSource;
     }
 }

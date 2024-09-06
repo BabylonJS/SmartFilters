@@ -53,7 +53,11 @@
             "comments": null,
             "data": {
                 "inputType": 2,
-                "url": "/assets/logo.png"
+                "url": "/assets/logo.png",
+                "urlTypeHint": null,
+                "flipY": true,
+                "anisotropicFilteringLevel": null,
+                "forcedExtension": null
             }
         },
         {
@@ -91,33 +95,33 @@
     ],
     "connections": [
         {
-            "inputBlock": "output",
+            "inputBlock": 1,
             "inputConnectionPoint": "input",
-            "outputBlock": "pixelate",
+            "outputBlock": 16,
             "outputConnectionPoint": "output"
         },
         {
-            "inputBlock": "blackAndWhite",
+            "inputBlock": 15,
             "inputConnectionPoint": "input",
-            "outputBlock": "logo",
+            "outputBlock": 13,
             "outputConnectionPoint": "output"
         },
         {
-            "inputBlock": "pixelate",
+            "inputBlock": 16,
             "inputConnectionPoint": "intensity",
-            "outputBlock": "intensity",
+            "outputBlock": 14,
             "outputConnectionPoint": "output"
         },
         {
-            "inputBlock": "pixelate",
+            "inputBlock": 16,
             "inputConnectionPoint": "disabled",
-            "outputBlock": "disabled",
+            "outputBlock": 6,
             "outputConnectionPoint": "output"
         },
         {
-            "inputBlock": "pixelate",
+            "inputBlock": 16,
             "inputConnectionPoint": "input",
-            "outputBlock": "blackAndWhite",
+            "outputBlock": 15,
             "outputConnectionPoint": "output"
         }
     ]
