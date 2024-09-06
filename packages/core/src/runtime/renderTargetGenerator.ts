@@ -199,10 +199,9 @@ export class RenderTargetGenerator {
         // Get the smartFilter output size - either from the output block's renderTargetTexture or the engine's render size
         let outputWidth: number;
         let outputHeight: number;
-        const renderTargetTextureSize = smartFilter.outputBlock.renderTargetTexture?.getSize();
-        if (renderTargetTextureSize) {
-            outputWidth = renderTargetTextureSize.width;
-            outputHeight = renderTargetTextureSize.height;
+        if (smartFilter.outputBlock.renderTargetWrapper) {
+            outputWidth = smartFilter.outputBlock.renderTargetWrapper.width;
+            outputHeight = smartFilter.outputBlock.renderTargetWrapper.height;
         } else {
             outputWidth = engine.getRenderWidth(true);
             outputHeight = engine.getRenderHeight(true);
