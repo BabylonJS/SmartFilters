@@ -36,6 +36,13 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
         });
     }
 
+    public override dispose(): void {
+        if (this._webCamSession) {
+            this._webCamSession.dispose();
+            this._webCamSession = undefined;
+        }
+    }
+
     public static async EnumerateWebCamSources(): Promise<WebCamSource[]> {
         const devices = await navigator.mediaDevices.enumerateDevices();
 
