@@ -11,10 +11,6 @@ import type { TextureRenderHelper } from "./texureRenderHelper";
 import { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
 import { ReadFile } from "@babylonjs/core/Misc/fileTools";
-import type { TextureRenderHelper } from "./texureRenderHelper";
-import { Observable } from "@babylonjs/core/Misc/observable";
-import type { Nullable } from "@babylonjs/core/types";
-import { ReadFile } from "@babylonjs/core/Misc/fileTools";
 
 export type SerializedSmartFilterManifest = {
     type: "Serialized";

@@ -36,12 +36,10 @@ const renderer = new SmartFilterRenderer(engine);
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
 const smartFilterLoader = new SmartFilterLoader(
     engine,
-
     renderer,
-
     smartFilterManifests,
-
     getBlockDeserializers(),
+    inputBlockDeserializer,
     textureRenderHelper
 );
 

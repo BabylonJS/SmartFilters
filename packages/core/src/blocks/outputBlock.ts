@@ -8,6 +8,7 @@ import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import type { RuntimeData } from "../connection/connectionPoint";
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import { shaderProgram, uniforms } from "./outputBlock.shader.js";
+import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 
 /**
  * The output block of a smart filter.
