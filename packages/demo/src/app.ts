@@ -11,6 +11,7 @@ import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/blockDeserializers";
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./texureRenderHelper";
+import versionData from "../www/version.json";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -29,6 +30,7 @@ const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 const inRepoFooter = document.getElementById("inRepoFooter")!;
 const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
+const version = document.getElementById("version")!;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -136,3 +138,6 @@ editActionLink.onclick = async () => {
         module.launchEditor(currentSmartFilter, engine, renderer, smartFilterLoader);
     }
 };
+
+// Display the current version
+version.textContent = versionData.versionToDisplay;
