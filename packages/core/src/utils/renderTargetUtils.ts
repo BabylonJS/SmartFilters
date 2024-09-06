@@ -7,10 +7,10 @@ import type { InternalSmartFilterRuntime } from "../runtime/smartFilterRuntime";
 import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture.js";
 
 /**
- * Tries to get a renderTargetWrapper from a ThinRenderTargetTexture, throws an error if it fails.
+ * Tries to get a renderTargetWrapper from a ThinRenderTargetTexture, and throws an error if it fails.
  * @param renderTargetTexture - The ThinRenderTargetTexture to get the renderTarget from.
  * @param callerName - The name of the component calling this one, used for a more descriptive error message.
- * @returns - The renderTarget or throws an Error if it fails.
+ * @returns - The renderTarget or it throws an Error if it fails.
  */
 export function getRenderTargetWrapper(
     renderTargetTexture: Nullable<ThinRenderTargetTexture>,
