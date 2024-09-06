@@ -6,7 +6,6 @@ import { PortDataDirection } from "@babylonjs/shared-ui-components/nodeGraphSyst
 import { TypeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/typeLedger.js";
 import type { ConnectionPoint } from "@babylonjs/smart-filters";
 import { getCompatibilityIssueMessage, ConnectionPointDirection } from "@babylonjs/smart-filters";
-import { asIMonitorConnectionChanges } from "./IMonitorConnectionChanges.js";
 
 export class ConnectionPointPortData implements IPortData {
     private _connectedPort: Nullable<IPortData> = null;
@@ -120,7 +119,6 @@ export class ConnectionPointPortData implements IPortData {
     public connectTo(port: IPortData) {
         this.data.connectTo(port.data);
         this._connectedPort = port;
-        asIMonitorConnectionChanges(this.data.ownerBlock)?.onConnectionsChanged();
     }
 
     public canConnectTo(port: IPortData): boolean {
@@ -131,7 +129,6 @@ export class ConnectionPointPortData implements IPortData {
         this.data.disconnectFrom(port.data);
         port.data.runtimeData = port.data.defaultRuntimeData;
         port.connectedPort = null;
-        asIMonitorConnectionChanges(this.data.ownerBlock)?.onConnectionsChanged();
     }
 
     public checkCompatibilityState(port: IPortData) {

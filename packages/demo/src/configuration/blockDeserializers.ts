@@ -4,7 +4,6 @@ import {
     type DeserializeBlockV1,
     type ISerializedBlockV1,
     type BaseBlock,
-    createStrongRef,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
@@ -214,7 +213,7 @@ export async function inputBlockDeserializer(
     engine: ThinEngine
 ): Promise<Nullable<BaseBlock>> {
     if (serializedBlock.name === WebCamInputBlockName) {
-        return new WebCamInputBlock(smartFilter, engine, createStrongRef(null));
+        return new WebCamInputBlock(smartFilter, engine);
     }
     return null;
 }
