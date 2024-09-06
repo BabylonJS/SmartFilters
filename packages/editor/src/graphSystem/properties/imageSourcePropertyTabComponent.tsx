@@ -128,6 +128,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                 <TextInputLineComponent
                     label="URL"
                     propertyName="url"
+                    lockObject={this.props.stateManager.lockObject}
                     target={{ url: (editorData.url ?? "").indexOf("data:") === 0 ? "" : editorData.url }}
                     onChange={(newValue: string) => {
                         editorData.url = newValue;
