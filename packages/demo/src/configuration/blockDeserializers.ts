@@ -3,7 +3,6 @@ import {
     type SmartFilter,
     type DeserializeBlockV1,
     type ISerializedBlockV1,
-    CopyBlock,
     type BaseBlock,
     createStrongRef,
 } from "@babylonjs/smart-filters";
@@ -164,10 +163,6 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     deserializers.set(BlockNames.sketch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const { SketchBlock } = await import(/* webpackChunkName: "sketchBlock" */ "./blocks/effects/sketchBlock");
         return new SketchBlock(smartFilter, serializedBlock.name);
-    });
-
-    deserializers.set(BlockNames.copy, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        return new CopyBlock(smartFilter, serializedBlock.name);
     });
 
     // Non-trivial deserializers begin.
