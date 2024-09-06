@@ -1,5 +1,5 @@
 import { Component } from "react";
-import type { ConnectionPointType, InputBlock, InputBlockEditorData } from "@babylonjs/smart-filters";
+import type { ConnectionPointType, InputBlock } from "@babylonjs/smart-filters";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { SliderLineComponent } from "@babylonjs/shared-ui-components/lines/sliderLineComponent.js";
@@ -24,16 +24,14 @@ export class FloatPropertyTabComponent extends Component<
     FloatPropertyTabComponentProps,
     FloatPropertyTabComponentState
 > {
-    private _editorData: InputBlockEditorData<ConnectionPointType.Float>;
-
     constructor(props: FloatPropertyTabComponentProps) {
         super(props);
 
-        // Initialize editor data and store as reference
-        this._editorData = getFloatInputBlockEditorData(props.inputBlock);
+        // Initialize editor data
+        getFloatInputBlockEditorData(props.inputBlock);
 
         // Check whether to show time data. If not, check whether to show slider data.
-        const useTime = this._editorData.animationType === "time";
+        const useTime = props.inputBlock.editorData!.animationType === "time";
         const showSlider = !useTime && this.isMinMaxValid();
         this.state = {
             useTime: useTime,
@@ -42,11 +40,11 @@ export class FloatPropertyTabComponent extends Component<
     }
 
     isMinMaxValid() {
-        return this._editorData.min! < this._editorData.max!;
+        return this.props.inputBlock.editorData!.min! < this.props.inputBlock.editorData!.max!;
     }
 
     processEditorDataChange() {
-        const useTime = this._editorData.animationType === "time";
+        const useTime = this.props.inputBlock.editorData!.animationType === "time";
         const showSlider = !useTime && this.isMinMaxValid();
         this.setState({
             useTime: useTime,
@@ -56,8 +54,8 @@ export class FloatPropertyTabComponent extends Component<
         // If slider will be used, clamp the value to min/max
         if (showSlider) {
             this.props.inputBlock.runtimeValue.value = Math.max(
-                this._editorData.min!,
-                Math.min(this._editorData.max!, this.props.inputBlock.runtimeValue.value)
+                this.props.inputBlock.editorData!.min!,
+                Math.min(this.props.inputBlock.editorData!.max!, this.props.inputBlock.runtimeValue.value)
             );
         }
         this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
@@ -65,7 +63,7 @@ export class FloatPropertyTabComponent extends Component<
 
     override componentDidUpdate(prevProps: FloatPropertyTabComponentProps) {
         if (prevProps.inputBlock !== this.props.inputBlock) {
-            this._editorData = getFloatInputBlockEditorData(this.props.inputBlock);
+            getFloatInputBlockEditorData(this.props.inputBlock);
             this.processEditorDataChange();
         }
     }
@@ -78,7 +76,7 @@ export class FloatPropertyTabComponent extends Component<
                     <FloatLineComponent
                         lockObject={this.props.stateManager.lockObject}
                         label="Min"
-                        target={this._editorData}
+                        target={this.props.inputBlock.editorData}
                         propertyName="min"
                         onChange={() => {
                             this.processEditorDataChange();
@@ -89,7 +87,7 @@ export class FloatPropertyTabComponent extends Component<
                     <FloatLineComponent
                         lockObject={this.props.stateManager.lockObject}
                         label="Max"
-                        target={this._editorData}
+                        target={this.props.inputBlock.editorData}
                         propertyName="max"
                         onChange={() => {
                             this.processEditorDataChange();
@@ -114,9 +112,12 @@ export class FloatPropertyTabComponent extends Component<
                         label="Value"
                         target={this.props.inputBlock.runtimeValue}
                         propertyName="value"
-                        step={Math.abs(this._editorData.max! - this._editorData.min!) / 100.0}
-                        minimum={this._editorData.min!}
-                        maximum={this._editorData.max!}
+                        step={
+                            Math.abs(this.props.inputBlock.editorData!.max! - this.props.inputBlock.editorData!.min!) /
+                            100.0
+                        }
+                        minimum={this.props.inputBlock.editorData!.min!}
+                        maximum={this.props.inputBlock.editorData!.max!}
                         onChange={() => {
                             this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
                         }}
