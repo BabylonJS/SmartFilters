@@ -5,15 +5,9 @@
         "rootDir": "../",
         "outDir": "./.temp",
         "composite": true,
-        "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true
+        "resolveJsonModule": true
     },
 
-    "include": [
-        "../**/*.ts",
-        "../**/*.tsx",
-        "./src/configuration/smartFilters/serialized/*.json",
-        "./www/version.json"
-    ],
+    "include": ["../**/*.ts", "../**/*.tsx", "./src/configuration/smartFilters/serialized/*.json"],
     "exclude": ["**/node_modules", "**/.temp"]
 }
