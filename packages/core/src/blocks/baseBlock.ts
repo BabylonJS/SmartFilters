@@ -6,7 +6,6 @@ import { ConnectionPoint, type RuntimeData } from "../connection/connectionPoint
 import { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault.js";
 import { ConnectionPointDirection } from "../connection/connectionPointDirection.js";
 import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
-import type { IDisposable } from "../IDisposable.js";
 
 /**
  * Defines a callback function that is triggered when visiting a block,
@@ -22,7 +21,7 @@ export type BlockVisitor<T extends object> = (block: BaseBlock, extraData: T) =>
  *
  * It enforces common behavior for all smart filter blocks.
  */
-export abstract class BaseBlock implements ICommandOwner, IDisposable {
+export abstract class BaseBlock implements ICommandOwner {
     protected static _alreadyVisitedBlocks = new Set<BaseBlock>();
 
     /**
@@ -320,11 +319,6 @@ export abstract class BaseBlock implements ICommandOwner, IDisposable {
         this._outputs.push(output);
         return output;
     }
-
-    /**
-     * Must be called when the object is no longer needed in case it has resources to release
-     */
-    public dispose(): void {}
 
     /**
      * Gets the required RuntimeData for the given input, throwing with a clear message if it is null

@@ -1,4 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import type { InternalTexture } from "@babylonjs/core/Materials/Textures/internalTexture";
 import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
@@ -43,9 +44,12 @@ export async function loadTextureInputBlockAsset(
 
                     inputBlock.output.runtimeData.value = videoTexture;
 
-                    return () => {
-                        beforeRenderObservable.remove(observer);
-                        disposeVideoElementAndTextures();
+                    return {
+                        texture: videoTexture,
+                        dispose: () => {
+                            beforeRenderObservable.remove(observer);
+                            disposeVideoElementAndTextures();
+                        },
                     };
                 }
                 break;
@@ -58,11 +62,11 @@ export async function loadTextureInputBlockAsset(
                     }
 
                     inputBlock.output.runtimeData.value = texture;
-                    editorData.dispose = () => {
-                        texture.dispose();
-                    };
 
-                    return editorData.dispose;
+                    return {
+                        texture,
+                        dispose: texture.dispose,
+                    };
                 }
                 break;
         }
@@ -74,6 +78,7 @@ export async function loadTextureInputBlockAsset(
 export type EditorLoadedVideoTexture = {
     videoTexture: ThinTexture;
     update: () => void;
+    disposeVideoElementAndTextures: () => void;
 };
 
 /**
@@ -85,8 +90,8 @@ export type EditorLoadedVideoTexture = {
  */
 export function createVideoTextureAsync(engine: ThinEngine, url: string): Promise<EditorLoadedVideoTexture> {
     return new Promise((resolve, reject) => {
-        const hiddenVideo = document.createElement("video");
-        document.body.append(hiddenVideo);
+        let hiddenVideo: Nullable<HTMLVideoElement> = document.createElement("video");
+        document.body.appendChild(hiddenVideo);
         hiddenVideo.crossOrigin = "anonymous";
         hiddenVideo.style.display = "none";
         hiddenVideo.setAttribute("playsinline", "");
@@ -95,7 +100,11 @@ export function createVideoTextureAsync(engine: ThinEngine, url: string): Promis
         hiddenVideo.loop = true;
 
         hiddenVideo.onloadeddata = () => {
-            const internalVideoTexture = engine.createDynamicTexture(
+            if (!hiddenVideo) {
+                return;
+            }
+
+            let internalVideoTexture: Nullable<InternalTexture> = engine.createDynamicTexture(
                 hiddenVideo.videoWidth,
                 hiddenVideo.videoHeight,
                 false,
@@ -103,7 +112,7 @@ export function createVideoTextureAsync(engine: ThinEngine, url: string): Promis
             );
 
             const update = () => {
-                if (hiddenVideo.readyState < hiddenVideo.HAVE_CURRENT_DATA) {
+                if (!hiddenVideo || hiddenVideo.readyState < hiddenVideo.HAVE_CURRENT_DATA) {
                     return;
                 }
 
@@ -112,8 +121,29 @@ export function createVideoTextureAsync(engine: ThinEngine, url: string): Promis
 
             update();
 
-            const videoTexture = new ThinTexture(internalVideoTexture);
-            resolve({ videoTexture, update });
+            let videoTexture: Nullable<ThinTexture> = new ThinTexture(internalVideoTexture);
+            resolve({
+                videoTexture,
+                update,
+                disposeVideoElementAndTextures: () => {
+                    if (hiddenVideo) {
+                        hiddenVideo.onloadeddata = null;
+                        hiddenVideo.pause();
+                        hiddenVideo.srcObject = null;
+                        document.body.removeChild(hiddenVideo);
+                        hiddenVideo = null;
+                    }
+
+                    if (videoTexture) {
+                        videoTexture.dispose();
+                        videoTexture = null;
+                    }
+                    if (internalVideoTexture) {
+                        internalVideoTexture.dispose();
+                        internalVideoTexture = null;
+                    }
+                },
+            });
         };
 
         hiddenVideo.src = url;
