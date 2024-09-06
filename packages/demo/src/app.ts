@@ -10,8 +10,7 @@ import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } fro
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/blockDeserializers";
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
-import { TextureRenderHelper } from "./texureRenderHelper";
-import versionData from "../www/version.json";
+import { TextureRenderHelper } from "./textureRenderHelper";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -139,5 +138,10 @@ editActionLink.onclick = async () => {
     }
 };
 
-// Display the current version
-version.textContent = versionData.versionToDisplay;
+// Display the current version by loading the version.json file
+fetch("./version.json").then((response: Response) => {
+    response.text().then((text: string) => {
+        const versionInfo = JSON.parse(text);
+        version.textContent = versionInfo.versionToDisplay;
+    });
+});

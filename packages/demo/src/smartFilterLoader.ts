@@ -7,7 +7,7 @@ import {
     type OptionalBlockDeserializerV1,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
-import type { TextureRenderHelper } from "./texureRenderHelper";
+import type { TextureRenderHelper } from "./textureRenderHelper";
 import { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
 import { ReadFile } from "@babylonjs/core/Misc/fileTools";
