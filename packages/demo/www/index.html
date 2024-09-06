@@ -37,7 +37,7 @@
             .container {
                 display: grid;
                 grid-template-columns: auto 230px 494px 300px auto;
-                grid-template-rows: 80px 700px 80px;
+                grid-template-rows: 80px 700px 80px 30px;
             }
 
             .headerLogo {
@@ -89,6 +89,14 @@
                 grid-column-end: 5;
                 grid-row-start: 3;
                 grid-row-end: 3;
+            }
+
+            .versionLine {
+                grid-column-start: 2;
+                grid-column-end: 5;
+                grid-row-start: 4;
+                grid-row-end: 4;
+                text-align: right;
             }
 
             a {
@@ -163,6 +171,9 @@
                     The source for this preview tool can be found
                     <a href="https://github.com/BabylonJS/SmartFilters/tree/main/packages/demo">here</a>.
                 </p>
+            </div>
+            <div class="versionLine">
+                <div class="version" id="version"></div>
             </div>
         </div>
 
