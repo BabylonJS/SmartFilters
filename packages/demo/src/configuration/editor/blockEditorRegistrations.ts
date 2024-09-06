@@ -25,7 +25,7 @@ import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
 
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
-import { ConnectionPointType, CopyBlock, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
@@ -47,12 +47,6 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
             };
             return inputBlock;
         },
-    },
-    {
-        name: "CopyBlock",
-        factory: (smartFilter: SmartFilter) => new CopyBlock(smartFilter, "Copy"),
-        category: "Effects",
-        tooltip: "Copy the input texture to the output texture",
     },
     {
         name: "BlackAndWhiteBlock",

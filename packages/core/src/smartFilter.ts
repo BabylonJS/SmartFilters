@@ -9,6 +9,7 @@ import { InternalSmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 import { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
 import { AggregateBlock } from "./blocks/aggregateBlock.js";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
+import type { IDisposable } from "./IDisposable";
 
 /**
  * How long to wait for shader compilation and texture loading to complete before erroring out.
@@ -23,16 +24,23 @@ export type InitializationData = {
      * The current smart filter runtime the block is being initialized for.
      */
     readonly runtime: InternalSmartFilterRuntime;
+
     /**
      * The output block of the smart filter.
      * This is used to determine if a block is linked to the output block so that we can prevent an
      * extra render pass.
      */
     readonly outputBlock: OutputBlock;
+
     /**
      * The list of promises to wait for during the initialization step.
      */
     readonly initializationPromises: Promise<void>[];
+
+    /**
+     * Resources that need to be disposed when the runtime is disposed.
+     */
+    readonly disposableResources: IDisposable[];
 };
 
 /**
@@ -165,6 +173,7 @@ export class SmartFilter {
             runtime,
             outputBlock: this.outputBlock,
             initializationPromises: [],
+            disposableResources: [],
         };
 
         this._workWithAggregateFreeGraph(() => {
@@ -187,6 +196,9 @@ export class SmartFilter {
                 throw new Error("Initialization promises timed out");
             }
         }
+
+        // Register the resources to dispose when the runtime is disposed
+        initializationData.disposableResources.forEach((resource) => runtime.registerResource(resource));
 
         return runtime;
     }

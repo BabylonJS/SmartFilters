@@ -3,9 +3,7 @@ import {
     type SmartFilter,
     type DeserializeBlockV1,
     type ISerializedBlockV1,
-    CopyBlock,
     type BaseBlock,
-    createStrongRef,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
@@ -166,10 +164,6 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new SketchBlock(smartFilter, serializedBlock.name);
     });
 
-    deserializers.set(BlockNames.copy, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        return new CopyBlock(smartFilter, serializedBlock.name);
-    });
-
     // Non-trivial deserializers begin.
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
@@ -219,7 +213,7 @@ export async function inputBlockDeserializer(
     engine: ThinEngine
 ): Promise<Nullable<BaseBlock>> {
     if (serializedBlock.name === WebCamInputBlockName) {
-        return new WebCamInputBlock(smartFilter, engine, createStrongRef(null));
+        return new WebCamInputBlock(smartFilter, engine);
     }
     return null;
 }

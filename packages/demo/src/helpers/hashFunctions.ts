@@ -1,12 +1,14 @@
 // Constants
 const DELIMITER = "#"; // TODO: Pick another delimiter?
+const SAFARI_DELIMITER = "%23";
+const DELIMITER_REGEX = new RegExp(`(?:${DELIMITER}|${SAFARI_DELIMITER})`);
 
 /**
  * Extracts the snippet info from the URL hash.
  * @returns The snippet token and version from the URL hash as an array.
  */
 export function getSnippet() {
-    const [snippetToken, version] = location.hash.substring(1).split(DELIMITER);
+    const [snippetToken, version] = location.hash.substring(1).split(DELIMITER_REGEX);
     return [snippetToken, version];
 }
 
@@ -14,11 +16,17 @@ export function getSnippet() {
  * Set the snippet info in the URL hash.
  * @param snippetToken - Snippet token to set
  * @param version - Version of the snippet to set
+ * @param allowHashChange - Whether to trigger a hash change event
  */
-export function setSnippet(snippetToken: string, version: string | undefined) {
+export function setSnippet(snippetToken: string, version: string | undefined, allowHashChange: boolean = true) {
     let newHash = snippetToken;
     if (version && version != "0") {
         newHash += DELIMITER + version;
     }
-    location.hash = newHash;
+
+    if (allowHashChange) {
+        location.hash = newHash;
+    } else {
+        history.replaceState(null, "", window.location.pathname + DELIMITER + newHash);
+    }
 }

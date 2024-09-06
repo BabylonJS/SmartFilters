@@ -1,5 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types";
-import { createStrongRef, type BaseBlock } from "@babylonjs/smart-filters";
+import { type BaseBlock } from "@babylonjs/smart-filters";
 import { type GlobalState } from "@babylonjs/smart-filters-editor";
 import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 
@@ -12,7 +12,7 @@ import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/inputs/webCamI
 export function createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock> {
     switch (type) {
         case WebCamInputBlockName:
-            return new WebCamInputBlock(globalState.smartFilter, globalState.engine, createStrongRef(null));
+            return new WebCamInputBlock(globalState.smartFilter, globalState.engine);
     }
     return null;
 }

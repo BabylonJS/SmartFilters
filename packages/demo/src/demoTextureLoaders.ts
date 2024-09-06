@@ -27,41 +27,44 @@ export async function loadTextureInputBlockAsset(
     // Look at the editor data to determine if we can load a texture
     if (editorData && editorData.url) {
         switch (editorData.urlTypeHint) {
-            case "video": {
-                const { videoTexture, update } = await createVideoTextureAsync(engine, editorData.url);
-                const observer = beforeRenderObservable.add(() => {
-                    update();
-                });
+            case "video":
+                {
+                    const { videoTexture, update, disposeVideoElementAndTextures } = await createVideoTextureAsync(
+                        engine,
+                        editorData.url
+                    );
+                    const observer = beforeRenderObservable.add(() => {
+                        update();
+                    });
 
-                if (videoTexture && editorData.anisotropicFilteringLevel !== null) {
-                    videoTexture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
-                }
+                    if (videoTexture && editorData.anisotropicFilteringLevel !== null) {
+                        videoTexture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
+                    }
 
-                inputBlock.output.runtimeData.value = videoTexture;
+                    inputBlock.output.runtimeData.value = videoTexture;
 
-                return {
-                    texture: videoTexture,
-                    dispose: () => {
+                    return () => {
                         beforeRenderObservable.remove(observer);
-                        videoTexture.dispose();
-                    },
-                };
-            }
-            case "image":
-            default: {
-                const texture = createImageTexture(engine, editorData.url, editorData.flipY);
-                if (texture && editorData.anisotropicFilteringLevel !== null) {
-                    texture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
+                        disposeVideoElementAndTextures();
+                    };
                 }
+                break;
+            case "image":
+            default:
+                {
+                    const texture = createImageTexture(engine, editorData.url, editorData.flipY);
+                    if (texture && editorData.anisotropicFilteringLevel !== null) {
+                        texture.anisotropicFilteringLevel = editorData.anisotropicFilteringLevel;
+                    }
 
-                inputBlock.output.runtimeData.value = texture;
-                return {
-                    texture: texture,
-                    dispose: () => {
+                    inputBlock.output.runtimeData.value = texture;
+                    editorData.dispose = () => {
                         texture.dispose();
-                    },
-                };
-            }
+                    };
+
+                    return editorData.dispose;
+                }
+                break;
         }
     }
 

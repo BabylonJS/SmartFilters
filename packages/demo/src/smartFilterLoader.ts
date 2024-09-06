@@ -7,7 +7,7 @@ import {
     type OptionalBlockDeserializerV1,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
-import type { TextureRenderHelper } from "./texureRenderHelper";
+import type { TextureRenderHelper } from "./textureRenderHelper";
 import { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
 import { ReadFile } from "@babylonjs/core/Misc/fileTools";
@@ -183,7 +183,7 @@ export class SmartFilterLoader {
 
         // If the SmartFilter has a texture render helper, assign its input texture as the Smart Filter's output
         if (this._textureRenderHelper) {
-            smartFilter.outputBlock.renderTargetTexture = this._textureRenderHelper.renderTargetTexture;
+            smartFilter.outputBlock.renderTargetWrapper = this._textureRenderHelper.renderTargetTexture.renderTarget;
         }
 
         if (optimize) {

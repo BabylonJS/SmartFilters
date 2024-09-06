@@ -9,8 +9,8 @@ import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/blockDeserializers";
-import { getSnippet } from "./helpers/hashFunctions";
-import { TextureRenderHelper } from "./texureRenderHelper";
+import { getSnippet, setSnippet } from "./helpers/hashFunctions";
+import { TextureRenderHelper } from "./textureRenderHelper";
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -29,6 +29,7 @@ const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
 const inRepoFooter = document.getElementById("inRepoFooter")!;
 const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
+const version = document.getElementById("version")!;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -100,6 +101,8 @@ async function checkHash() {
     const [snippetToken, version] = getSnippet();
 
     if (snippetToken) {
+        // Reset hash with our formatting to keep it looking consistent
+        setSnippet(snippetToken, version, false);
         smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
     } else {
         const smartFilterName =
@@ -134,3 +137,11 @@ editActionLink.onclick = async () => {
         module.launchEditor(currentSmartFilter, engine, renderer, smartFilterLoader);
     }
 };
+
+// Display the current version by loading the version.json file
+fetch("./version.json").then((response: Response) => {
+    response.text().then((text: string) => {
+        const versionInfo = JSON.parse(text);
+        version.textContent = versionInfo.versionToDisplay;
+    });
+});
