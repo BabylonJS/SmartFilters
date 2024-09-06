@@ -6,6 +6,7 @@
     "author": {
         "name": "Sebastien VANDENBERGHE"
     },
+    "type": "module",
     "keywords": [
         "video",
         "composition",
