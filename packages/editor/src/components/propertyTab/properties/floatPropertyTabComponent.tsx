@@ -26,49 +26,45 @@ export class FloatPropertyTabComponent extends Component<
 > {
     constructor(props: FloatPropertyTabComponentProps) {
         super(props);
+        this.processEditorData(true);
+    }
 
-        // Initialize editor data
-        getFloatInputBlockEditorData(props.inputBlock);
-
-        // Check whether to show time data. If not, check whether to show slider data.
-        const useTime = props.inputBlock.editorData!.animationType === "time";
-        const showSlider = !useTime && this.isMinMaxValid();
-        this.state = {
-            useTime: useTime,
-            showSlider: showSlider,
+    processEditorData(initializeState: boolean = false) {
+        // Initialize state data
+        const editorData = getFloatInputBlockEditorData(this.props.inputBlock);
+        const state = {
+            useTime: editorData.animationType === "time",
+            showSlider: false,
         };
-    }
 
-    isMinMaxValid() {
-        return this.props.inputBlock.editorData!.min! < this.props.inputBlock.editorData!.max!;
-    }
+        // Use the slider if min/max exist, make up a range, and we are not using time
+        if (!state.useTime && editorData.min !== null && editorData.max !== null && editorData.min < editorData.max) {
+            state.showSlider = true;
 
-    processEditorDataChange() {
-        const useTime = this.props.inputBlock.editorData!.animationType === "time";
-        const showSlider = !useTime && this.isMinMaxValid();
-        this.setState({
-            useTime: useTime,
-            showSlider: showSlider,
-        });
-
-        // If slider will be used, clamp the value to min/max
-        if (showSlider) {
+            // Also clamp the value to be within range
             this.props.inputBlock.runtimeValue.value = Math.max(
-                this.props.inputBlock.editorData!.min!,
-                Math.min(this.props.inputBlock.editorData!.max!, this.props.inputBlock.runtimeValue.value)
+                editorData.min,
+                Math.min(editorData.max, this.props.inputBlock.runtimeValue.value)
             );
         }
+
+        if (initializeState) {
+            this.state = state;
+            return;
+        }
+
+        this.setState(state);
         this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
     }
 
     override componentDidUpdate(prevProps: FloatPropertyTabComponentProps) {
         if (prevProps.inputBlock !== this.props.inputBlock) {
-            getFloatInputBlockEditorData(this.props.inputBlock);
-            this.processEditorDataChange();
+            this.processEditorData();
         }
     }
 
     override render() {
+        const editorData = getFloatInputBlockEditorData(this.props.inputBlock);
         return (
             <>
                 {/* Min and max values */}
@@ -76,10 +72,12 @@ export class FloatPropertyTabComponent extends Component<
                     <FloatLineComponent
                         lockObject={this.props.stateManager.lockObject}
                         label="Min"
-                        target={this.props.inputBlock.editorData}
+                        target={editorData}
                         propertyName="min"
                         onChange={() => {
-                            this.processEditorDataChange();
+                            // Ensure other value gets set
+                            editorData.max = editorData.max ?? 0;
+                            this.processEditorData();
                         }}
                     ></FloatLineComponent>
                 )}
@@ -87,10 +85,12 @@ export class FloatPropertyTabComponent extends Component<
                     <FloatLineComponent
                         lockObject={this.props.stateManager.lockObject}
                         label="Max"
-                        target={this.props.inputBlock.editorData}
+                        target={editorData}
                         propertyName="max"
                         onChange={() => {
-                            this.processEditorDataChange();
+                            // Ensure other value gets set
+                            editorData.min = editorData.min ?? 0;
+                            this.processEditorData();
                         }}
                     ></FloatLineComponent>
                 )}
@@ -112,12 +112,9 @@ export class FloatPropertyTabComponent extends Component<
                         label="Value"
                         target={this.props.inputBlock.runtimeValue}
                         propertyName="value"
-                        step={
-                            Math.abs(this.props.inputBlock.editorData!.max! - this.props.inputBlock.editorData!.min!) /
-                            100.0
-                        }
-                        minimum={this.props.inputBlock.editorData!.min!}
-                        maximum={this.props.inputBlock.editorData!.max!}
+                        step={Math.abs(editorData.max! - editorData.min!) / 100.0}
+                        minimum={editorData.min!}
+                        maximum={editorData.max!}
                         onChange={() => {
                             this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
                         }}
@@ -129,7 +126,7 @@ export class FloatPropertyTabComponent extends Component<
                         lockObject={this.props.stateManager.lockObject}
                         key={this.props.inputBlock.uniqueId}
                         label="valueDeltaPerMs"
-                        target={this.props.inputBlock.editorData}
+                        target={editorData}
                         propertyName="valueDeltaPerMs"
                         onChange={() => {
                             this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);

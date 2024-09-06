@@ -46,9 +46,5 @@ export function getFloatInputBlockEditorData(
         };
     }
 
-    // Apply defaults
-    inputBlock.editorData.min = inputBlock.editorData.min ?? 0;
-    inputBlock.editorData.max = inputBlock.editorData.max ?? 0;
-
     return inputBlock.editorData;
 }
