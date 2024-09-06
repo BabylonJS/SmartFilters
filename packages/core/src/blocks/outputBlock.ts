@@ -8,7 +8,6 @@ import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import type { RuntimeData } from "../connection/connectionPoint";
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import { shaderProgram, uniforms } from "./outputBlock.shader.js";
-import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 
 /**
  * The output block of a smart filter.
@@ -33,12 +32,6 @@ export class OutputBlock extends BaseBlock {
      * into the the canvas or WebGL context the ThinEngine is using for rendering.
      */
     public renderTargetWrapper: Nullable<RenderTargetWrapper> = null;
-
-    /**
-     * If supplied, the Smart Filter will render into this texture. Otherwise, it renders
-     * into the the canvas or WebGL context the ThinEngine is using for rendering.
-     */
-    public renderTargetTexture: Nullable<ThinRenderTargetTexture> = null;
 
     /**
      * Create a new output block.
