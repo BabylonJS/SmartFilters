@@ -67,6 +67,11 @@ export function launchEditor(
                     console.error("Could not start rendering", err);
                 });
             },
+            reloadAssets: (smartFilter: SmartFilter) => {
+                renderer.loadAssets(smartFilter).catch((err: unknown) => {
+                    console.error("Could not reload assets", err);
+                });
+            },
             downloadSmartFilter: () => {
                 const serializer = new SmartFilterSerializer(
                     blocksUsingDefaultSerialization,

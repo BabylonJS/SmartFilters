@@ -61,6 +61,8 @@ export class GlobalState {
 
     rebuildRuntime: (smartFilter: SmartFilter) => void;
 
+    reloadAssets: (smartFilter: SmartFilter) => void;
+
     public constructor(
         engine: ThinEngine,
         smartFilter: Nullable<SmartFilter>,
@@ -70,6 +72,7 @@ export class GlobalState {
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
         beforeRenderObservable: Observable<void>,
         rebuildRuntime: (smartFilter: SmartFilter) => void,
+        reloadAssets: (smartFilter: SmartFilter) => void,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = []
     ) {
@@ -94,5 +97,6 @@ export class GlobalState {
         this.texturePresets = texturePresets;
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
+        this.reloadAssets = reloadAssets;
     }
 }

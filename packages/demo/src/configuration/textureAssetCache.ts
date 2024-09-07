@@ -61,7 +61,9 @@ export class TextureAssetCache {
                 // If the asset was loaded, add it to the cache
                 if (result) {
                     this._cache.push({
-                        key: editorData,
+                        key: {
+                            ...editorData,
+                        },
                         texture: result.texture,
                         dispose: result.dispose,
                         stillUsed: true,

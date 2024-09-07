@@ -60,13 +60,33 @@ export class SmartFilterRenderer {
         const rtg = new RenderTargetGenerator(optimizeTextures);
         const runtime = await filter.createRuntimeAsync(this.engine, rtg);
 
-        await this._loadAssets(filter);
+        await this.loadAssets(filter);
         this._loadAnimations(filter);
 
         console.log("Number of render targets created: " + rtg.numTargetsCreated);
 
         this._setRuntime(runtime);
         return this.runtime;
+    }
+
+    /**
+     * If the SmartFilter had any assets, such as images or videos for input texture blocks,
+     * and the necessary information to rehydrate them is present in the editor data, load
+     * those assets now.
+     * @param smartFilter - The SmartFilter to load assets for
+     */
+    public async loadAssets(smartFilter: SmartFilter): Promise<void> {
+        const inputBlocks: InputBlock<ConnectionPointType.Texture>[] = [];
+
+        // Gather all the texture input blocks from the graph
+        for (const block of smartFilter.attachedBlocks) {
+            if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Texture) {
+                inputBlocks.push(block as InputBlock<ConnectionPointType.Texture>);
+            }
+        }
+
+        // Load the assets for the input blocks
+        await this._textureAssetCache.loadAssetsForInputBlocks(inputBlocks);
     }
 
     /**
@@ -89,26 +109,6 @@ export class SmartFilterRenderer {
         });
 
         this.runtime = runtime;
-    }
-
-    /**
-     * If the SmartFilter had any assets, such as images or videos for input texture blocks,
-     * and the necessary information to rehydrate them is present in the editor data, load
-     * those assets now.
-     * @param smartFilter - The SmartFilter to load assets for
-     */
-    private async _loadAssets(smartFilter: SmartFilter): Promise<void> {
-        const inputBlocks: InputBlock<ConnectionPointType.Texture>[] = [];
-
-        // Gather all the texture input blocks from the graph
-        for (const block of smartFilter.attachedBlocks) {
-            if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Texture) {
-                inputBlocks.push(block as InputBlock<ConnectionPointType.Texture>);
-            }
-        }
-
-        // Load the assets for the input blocks
-        await this._textureAssetCache.loadAssetsForInputBlocks(inputBlocks);
     }
 
     private _loadAnimations(smartFilter: SmartFilter): void {

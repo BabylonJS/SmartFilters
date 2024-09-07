@@ -22,7 +22,7 @@ import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
 import { BaseBlock } from "@babylonjs/smart-filters";
-import { setEditorData } from "./serializationTools.js";
+import { setEditorData } from "./helpers/serializationTools.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
