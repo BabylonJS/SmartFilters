@@ -53,13 +53,13 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
         _finalOutput: boolean
     ): void {
         this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
-        this._webCamRuntime.deviceId = this._webCamSource?.id || undefined;
+        this._webCamRuntime.deviceId = this._webCamSource?.id || "";
         initializationData.disposableResources.push(this._webCamRuntime);
     }
 
     private async _onWebCamSourceChanged(webCamSource: WebCamSource | undefined): Promise<void> {
         if (this._webCamRuntime) {
-            this._webCamRuntime.deviceId = webCamSource?.id || undefined;
+            this._webCamRuntime.deviceId = webCamSource?.id || "";
         }
         this._webCamSource = webCamSource;
     }

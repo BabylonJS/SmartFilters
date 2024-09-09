@@ -15,7 +15,7 @@ export class WebCamSession implements IDisposable {
     private _internalVideoTexture: InternalTexture | undefined;
     private _videoTexture: ThinTexture | undefined;
     private _mediaStream: MediaStream | undefined;
-    public _deviceId: string;
+    private _deviceId: string;
 
     constructor(engine: ThinEngine, textureOutput: RuntimeData<ConnectionPointType.Texture>, deviceId: string) {
         this._engine = engine;
@@ -34,7 +34,9 @@ export class WebCamSession implements IDisposable {
             width,
             height,
         };
-        mediaTrackConstraints.deviceId = this._deviceId;
+        if (this._deviceId !== "") {
+            mediaTrackConstraints.deviceId = this._deviceId;
+        }
 
         const stream = await navigator.mediaDevices.getUserMedia({
             video: mediaTrackConstraints,
