@@ -16,7 +16,7 @@ export class WebCamRuntime implements IDisposable {
      * The device ID of the webcam to use. An empty string means default webcam.
      * Null means it hasn't been set yet.
      */
-    public _deviceId: Nullable<string> = null;
+    private _deviceId: Nullable<string> = null;
 
     /**
      * The device ID of the webcam to use. An empty string means default webcam.
