@@ -68,7 +68,7 @@ export class WebCamInputPropertyComponent extends react.Component<
                     propertyName="deviceId"
                     options={this.state.webCamSourceOptions}
                     extractValue={() => {
-                        return webCamInputBlock.webcamSource?.id || "";
+                        return webCamInputBlock.webcamSource.id;
                     }}
                     valuesAreStrings
                     noDirectUpdate
