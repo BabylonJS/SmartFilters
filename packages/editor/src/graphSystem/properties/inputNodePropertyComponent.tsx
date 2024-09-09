@@ -3,12 +3,12 @@ import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps";
-import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type InputBlock, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
 import { ImageSourcePropertyTabComponent } from "./imageSourcePropertyTabComponent.js";
+import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
 
 const booleanOptions: IInspectableOptions[] = [
     {
@@ -91,111 +91,13 @@ export class InputPropertyTabComponent extends react.Component<IPropertyComponen
                 );
             }
             case ConnectionPointType.Float: {
-                const animationStuff =
-                    inputBlock.editorData?.animationType === "time" ? (
-                        <FloatLineComponent
-                            lockObject={this.props.stateManager.lockObject}
-                            key={inputBlock.uniqueId}
-                            label="valueDeltaPerMs"
-                            target={inputBlock.editorData}
-                            propertyName="valueDeltaPerMs"
-                            onChange={() => {
-                                this.forceUpdate();
-                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            }}
-                        ></FloatLineComponent>
-                    ) : (
-                        <></>
-                    );
-
                 return (
-                    <>
-                        <FloatLineComponent
-                            lockObject={this.props.stateManager.lockObject}
-                            label="Value"
-                            target={inputBlock.runtimeValue}
-                            propertyName="value"
-                            onChange={() => {
-                                this.forceUpdate();
-                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            }}
-                        ></FloatLineComponent>
-                        {animationStuff}
-                    </>
+                    <FloatPropertyTabComponent
+                        inputBlock={inputBlock}
+                        nodeData={this.props.nodeData}
+                        stateManager={this.props.stateManager}
+                    />
                 );
-                // const cantDisplaySlider = isNaN(inputBlock.min) || isNaN(inputBlock.max) || inputBlock.min === inputBlock.max;
-                // return (
-                //     <>
-                //         <CheckBoxLineComponent label="Is boolean" target={inputBlock} propertyName="isBoolean" />
-                //         {inputBlock.isBoolean && (
-                //             <CheckBoxLineComponent
-                //                 label="Value"
-                //                 isSelected={() => {
-                //                     return inputBlock.value === 1;
-                //                 }}
-                //                 onSelect={(value) => {
-                //                     inputBlock.value = value ? 1 : 0;
-                //                     if (inputBlock.isConstant) {
-                //                         this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                     }
-                //                     this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                //                 }}
-                //             />
-                //         )}
-                //         {!inputBlock.isBoolean && (
-                //             <FloatLineComponent
-                //                 lockObject={this.props.stateManager.lockObject}
-                //                 label="Min"
-                //                 target={inputBlock}
-                //                 propertyName="min"
-                //                 onChange={() => {
-                //                     if (inputBlock.value < inputBlock.min) {
-                //                         inputBlock.value = inputBlock.min;
-                //                         if (inputBlock.isConstant) {
-                //                             this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                         }
-                //                     }
-                //                     this.forceUpdate();
-                //                 }}
-                //             ></FloatLineComponent>
-                //         )}
-                //         {!inputBlock.isBoolean && (
-                //             <FloatLineComponent
-                //                 lockObject={this.props.stateManager.lockObject}
-                //                 label="Max"
-                //                 target={inputBlock}
-                //                 propertyName="max"
-                //                 onChange={() => {
-                //                     if (inputBlock.value > inputBlock.max) {
-                //                         inputBlock.value = inputBlock.max;
-                //                         if (inputBlock.isConstant) {
-                //                             this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                         }
-                //                     }
-                //                     this.forceUpdate();
-                //                 }}
-                //             ></FloatLineComponent>
-                //         )}
-                //         {!inputBlock.isBoolean && cantDisplaySlider && <FloatPropertyTabComponent globalState={globalState} inputBlock={inputBlock} />}
-                //         {!inputBlock.isBoolean && !cantDisplaySlider && (
-                //             <SliderLineComponent
-                //                 lockObject={this.props.stateManager.lockObject}
-                //                 label="Value"
-                //                 target={inputBlock}
-                //                 propertyName="value"
-                //                 step={Math.abs(inputBlock.max - inputBlock.min) / 100.0}
-                //                 minimum={Math.min(inputBlock.min, inputBlock.max)}
-                //                 maximum={inputBlock.max}
-                //                 onChange={() => {
-                //                     if (inputBlock.isConstant) {
-                //                         this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                     }
-                //                     this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                //                 }}
-                //             />
-                //         )}
-                //     </>
-                // );
             }
             case ConnectionPointType.Texture:
                 {

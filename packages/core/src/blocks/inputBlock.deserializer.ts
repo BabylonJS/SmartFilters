@@ -23,12 +23,12 @@ export function inputBlockDeserializer(smartFilter: SmartFilter, serializedBlock
                 ConnectionPointType.Float,
                 blockData.value
             );
-            if (blockData.animationType) {
-                inputBlock.editorData = {
-                    animationType: blockData.animationType,
-                    valueDeltaPerMs: blockData.valueDeltaPerMs,
-                };
-            }
+            inputBlock.editorData = {
+                animationType: blockData.animationType,
+                valueDeltaPerMs: blockData.valueDeltaPerMs,
+                min: blockData.min,
+                max: blockData.max,
+            };
             return inputBlock;
         }
         case ConnectionPointType.Texture: {

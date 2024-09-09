@@ -27,3 +27,24 @@ export function getTextureInputBlockEditorData(
 
     return inputBlock.editorData;
 }
+
+/**
+ * Gets the InputBlockEditorData for a Float InputBlock, and if it's missing
+ * anything, falls back to defaults.
+ * @param inputBlock - The input block to get the editor data for
+ * @returns The editor data for the input block
+ */
+export function getFloatInputBlockEditorData(
+    inputBlock: InputBlock<ConnectionPointType.Float>
+): InputBlockEditorData<ConnectionPointType.Float> {
+    if (inputBlock.editorData === null) {
+        inputBlock.editorData = {
+            animationType: null,
+            valueDeltaPerMs: null,
+            min: null,
+            max: null,
+        };
+    }
+
+    return inputBlock.editorData;
+}
