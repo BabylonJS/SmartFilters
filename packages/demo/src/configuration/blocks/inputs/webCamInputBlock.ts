@@ -11,30 +11,40 @@ export type WebCamSource = {
 
 export const WebCamInputBlockName = "WebCam";
 
+const LocalStorageWebcamIdKey = "webCamDeviceId";
+const LocalStorageNameKey = "webCamName";
+
 export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     private readonly _engine: ThinEngine;
     private _webCamRuntime: WebCamRuntime | undefined;
-    private _webCamSource: WebCamSource | undefined;
+    private _webCamSource: WebCamSource;
 
-    public get webcamSource(): WebCamSource | undefined {
+    public get webcamSource(): WebCamSource {
         return this._webCamSource;
     }
 
-    public readonly onWebCamSourceChanged: Observable<WebCamSource | undefined> = new Observable<
-        WebCamSource | undefined
-    >(undefined);
+    public readonly onWebCamSourceChanged: Observable<WebCamSource> = new Observable<WebCamSource>(undefined);
 
     constructor(smartFilter: SmartFilter, engine: ThinEngine) {
         super(smartFilter, WebCamInputBlockName, ConnectionPointType.Texture, createStrongRef(null));
         this._engine = engine;
 
-        this.onWebCamSourceChanged.add(this._onWebCamSourceChanged.bind(this));
+        // Load the last used webcam source
+        const lastWebCamId = localStorage.getItem(LocalStorageWebcamIdKey);
+        const lastWebCamName = localStorage.getItem(LocalStorageNameKey);
+        if (lastWebCamId && lastWebCamName) {
+            this._webCamSource = {
+                id: lastWebCamId,
+                name: lastWebCamName,
+            };
+        } else {
+            this._webCamSource = {
+                id: "",
+                name: "Default",
+            };
+        }
 
-        WebCamInputBlock.EnumerateWebCamSources().then((sources) => {
-            if (sources.length > 0) {
-                this.onWebCamSourceChanged.notifyObservers(sources[0]);
-            }
-        });
+        this.onWebCamSourceChanged.add(this._onWebCamSourceChanged.bind(this));
     }
 
     public static async EnumerateWebCamSources(): Promise<WebCamSource[]> {
@@ -53,14 +63,18 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
         _finalOutput: boolean
     ): void {
         this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
-        this._webCamRuntime.deviceId = this._webCamSource?.id || "";
+        this._webCamRuntime.deviceId = this._webCamSource.id;
         initializationData.disposableResources.push(this._webCamRuntime);
     }
 
-    private async _onWebCamSourceChanged(webCamSource: WebCamSource | undefined): Promise<void> {
+    private async _onWebCamSourceChanged(webCamSource: WebCamSource): Promise<void> {
         if (this._webCamRuntime) {
-            this._webCamRuntime.deviceId = webCamSource?.id || "";
+            this._webCamRuntime.deviceId = webCamSource.id;
         }
         this._webCamSource = webCamSource;
+
+        // Save the last used webcam source
+        localStorage.setItem(LocalStorageWebcamIdKey, webCamSource.id);
+        localStorage.setItem(LocalStorageNameKey, webCamSource.name);
     }
 }
