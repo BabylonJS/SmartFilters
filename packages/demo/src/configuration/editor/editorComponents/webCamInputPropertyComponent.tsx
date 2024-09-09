@@ -35,10 +35,23 @@ export class WebCamInputPropertyComponent extends react.Component<
             // Kick off lazy load of the WebCam sources
             this._loadWebCamSourcesPromise = WebCamInputBlock.EnumerateWebCamSources().then(
                 (sources: WebCamSource[]) => {
-                    const options = sources.map((source: WebCamSource) => ({
-                        label: source.name,
-                        value: source.id,
-                    }));
+                    let foundDefault = false;
+                    const options = sources.map((source: WebCamSource) => {
+                        if (source.id === "") {
+                            foundDefault = true;
+                            return {
+                                label: "Default",
+                                value: "",
+                            };
+                        }
+                        return {
+                            label: source.name,
+                            value: source.id,
+                        };
+                    });
+                    if (!foundDefault) {
+                        options.unshift({ label: "Default", value: "" });
+                    }
                     this.setState({ webCamSourceOptions: options });
                 }
             );
@@ -55,7 +68,7 @@ export class WebCamInputPropertyComponent extends react.Component<
                     propertyName="deviceId"
                     options={this.state.webCamSourceOptions}
                     extractValue={() => {
-                        return webCamInputBlock.webcamSource?.id || "";
+                        return webCamInputBlock.webcamSource.id;
                     }}
                     valuesAreStrings
                     noDirectUpdate
