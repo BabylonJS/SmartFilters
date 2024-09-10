@@ -82,6 +82,8 @@ function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Flo
         value: inputBlock.runtimeValue.value,
         animationType: inputBlock.editorData?.animationType ?? null,
         valueDeltaPerMs: inputBlock.editorData?.valueDeltaPerMs ?? null,
+        min: inputBlock.editorData?.min ?? null,
+        max: inputBlock.editorData?.max ?? null,
     };
 }
 

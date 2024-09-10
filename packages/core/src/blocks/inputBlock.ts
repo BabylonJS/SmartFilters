@@ -95,6 +95,16 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
              * If supplied, the amount to change the value per millisecond when animating.
              */
             valueDeltaPerMs: Nullable<number>;
+
+            /**
+             * The minimum value of the float, used for slider control.
+             */
+            min: Nullable<number>;
+
+            /**
+             * The maximum value of the float, used for slider control.
+             */
+            max: Nullable<number>;
         }
       : {};
 

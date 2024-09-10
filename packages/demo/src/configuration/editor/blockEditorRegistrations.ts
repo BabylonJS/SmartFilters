@@ -44,6 +44,8 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
             inputBlock.editorData = {
                 animationType: "time",
                 valueDeltaPerMs: 0.001,
+                min: null,
+                max: null,
             };
             return inputBlock;
         },
