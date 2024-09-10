@@ -49,12 +49,10 @@ export class TextureAssetCache {
             );
 
             if (cacheEntry) {
-                console.log("TextureAssetCache", inputBlock.name, "Cache hit");
                 // Cache hit: mark as still used and set the texture
                 cacheEntry.stillUsed = true;
                 inputBlock.output.runtimeData.value = cacheEntry.texture;
             } else {
-                console.log("TextureAssetCache", inputBlock.name, "Cache miss");
                 // Cache miss: try to load the asset
                 const result = await loadTextureInputBlockAsset(inputBlock, this._engine, this._beforeRenderObservable);
 
@@ -77,7 +75,6 @@ export class TextureAssetCache {
         for (let index = this._cache.length - 1; index >= 0; index--) {
             cacheEntry = this._cache[index];
             if (cacheEntry?.stillUsed === false) {
-                console.log("TextureAssetCache", "Disposing", cacheEntry.key.url);
                 cacheEntry.dispose();
                 this._cache.splice(index, 1);
             }
