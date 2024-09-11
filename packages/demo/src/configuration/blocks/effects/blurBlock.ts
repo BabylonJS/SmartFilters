@@ -63,13 +63,7 @@ export class BlurBlock extends AggregateBlock {
 
         this.input = this._registerSubfilterInput("input", this._intermediateBlurV.input);
         this.output = this._registerSubfilterOutput("output", this._finalBlurH.output);
-    }
 
-    /**
-     * Prepares the block for runtime.
-     * This is called by the smart filter just before creating the smart filter runtime.
-     */
-    public override prepareForRuntime(): void {
         this._intermediateBlurV.blurTextureRatio = this.blurTextureRatioPerPass;
         this._intermediateBlurV.blurHorizontalWidth = this.blurSize;
         this._intermediateBlurV.blurVerticalWidth = 0;
@@ -85,7 +79,5 @@ export class BlurBlock extends AggregateBlock {
         this._finalBlurH.blurTextureRatio = this.blurTextureRatioPerPass * this.blurTextureRatioPerPass;
         this._finalBlurH.blurHorizontalWidth = 0;
         this._finalBlurH.blurVerticalWidth = this.blurSize;
-
-        super.prepareForRuntime();
     }
 }
