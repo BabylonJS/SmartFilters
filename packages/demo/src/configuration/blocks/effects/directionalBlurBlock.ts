@@ -2,7 +2,6 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -77,8 +76,10 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * @param effect - defines the effect to bind the data to
+     * @param width - defines the width of the output
+     * @param height - defines the height of the output
      */
-    public override bind(effect: Effect): void {
+    public override bind(effect: Effect, width: number, height: number): void {
         super.bind(effect);
 
         // Global pass Setup
@@ -88,9 +89,8 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName("input"), this._inputTexture.value);
 
         // Texel size
-        const inputTextureSize = this._inputTexture.value!.getSize();
-        const texelWidth = this._blurHorizontalWidth / inputTextureSize.width;
-        const texelHeight = this._blurVerticalWidth / inputTextureSize.height;
+        const texelWidth = this._blurHorizontalWidth / width;
+        const texelHeight = this._blurVerticalWidth / height;
         effect.setFloat2(this.getRemappedName("texelStep"), texelWidth, texelHeight);
     }
 }
@@ -104,7 +104,7 @@ export class DirectionalBlurBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.directionalBlur;
+    public static override ClassName = "DirectionalBlurBlock";
 
     /**
      * The input texture connection point.

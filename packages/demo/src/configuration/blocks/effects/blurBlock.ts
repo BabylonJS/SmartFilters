@@ -37,14 +37,14 @@ export class BlurBlock extends AggregateBlock {
     private readonly _finalBlurH: DirectionalBlurBlock;
 
     /**
-     * Gets how smaller we should make the texture between the 2 consecutive bi lateral passes.
+     * Gets much how smaller we should make the texture between the 2 consecutive bi lateral passes.
      */
     public get blurTextureRatioPerPass(): number {
         return this._blurTextureRatioPerPass;
     }
 
     /**
-     * Sets how smaller we should make the texture between the 2 consecutive bi lateral passes.
+     * Sets much how smaller we should make the texture between the 2 consecutive bi lateral passes.
      */
     public set blurTextureRatioPerPass(value: number) {
         this._blurTextureRatioPerPass = value;
@@ -93,20 +93,11 @@ export class BlurBlock extends AggregateBlock {
         this.input = this._registerSubfilterInput("input", this._intermediateBlurV.input);
         this.output = this._registerSubfilterOutput("output", this._finalBlurH.output);
 
-        this._intermediateBlurV.blurTextureRatio = this.blurTextureRatioPerPass;
-        this._intermediateBlurV.blurHorizontalWidth = this.blurSize;
+        this.blurSize = defaultBlurSize;
+        this.blurTextureRatioPerPass = defaultBlurTextureRatioPerPass;
         this._intermediateBlurV.blurVerticalWidth = 0;
-
-        this._intermediateBlurH.blurTextureRatio = this.blurTextureRatioPerPass;
         this._intermediateBlurH.blurHorizontalWidth = 0;
-        this._intermediateBlurH.blurVerticalWidth = this.blurSize;
-
-        this._finalBlurV.blurTextureRatio = this.blurTextureRatioPerPass * this.blurTextureRatioPerPass;
-        this._finalBlurV.blurHorizontalWidth = this.blurSize;
         this._finalBlurV.blurVerticalWidth = 0;
-
-        this._finalBlurH.blurTextureRatio = this.blurTextureRatioPerPass * this.blurTextureRatioPerPass;
         this._finalBlurH.blurHorizontalWidth = 0;
-        this._finalBlurH.blurVerticalWidth = this.blurSize;
     }
 }
