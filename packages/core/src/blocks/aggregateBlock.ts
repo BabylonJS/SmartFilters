@@ -28,6 +28,13 @@ export abstract class AggregateBlock extends BaseBlock {
     private readonly _aggregatedInputs: [ConnectionPoint, ConnectionPoint][] = [];
 
     /**
+     * Do not override prepareForRuntime for aggregate blocks. It is not supported.
+     */
+    public override prepareForRuntime(): never {
+        throw new Error("Aggregate blocks should not be prepared for runtime.");
+    }
+
+    /**
      * @internal
      * Merges the internal graph into the SmartFilter
      */

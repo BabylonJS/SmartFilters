@@ -28,20 +28,49 @@ export class BlurBlock extends AggregateBlock {
      */
     public readonly output: ConnectionPoint<ConnectionPointType.Texture>;
 
-    /**
-     * Defines how smaller we should make the texture between the 2 consecutive bi lateral passes.
-     */
-    public blurTextureRatioPerPass = defaultBlurTextureRatioPerPass;
-
-    /**
-     * Defines how far the kernel might fetch the data from.
-     */
-    public blurSize = defaultBlurSize;
+    private _blurTextureRatioPerPass = defaultBlurTextureRatioPerPass;
+    private _blurSize = defaultBlurSize;
 
     private readonly _intermediateBlurV: DirectionalBlurBlock;
     private readonly _intermediateBlurH: DirectionalBlurBlock;
     private readonly _finalBlurV: DirectionalBlurBlock;
     private readonly _finalBlurH: DirectionalBlurBlock;
+
+    /**
+     * Gets how much smaller we should make the texture between the 2 consecutive bi lateral passes.
+     */
+    public get blurTextureRatioPerPass(): number {
+        return this._blurTextureRatioPerPass;
+    }
+
+    /**
+     * Sets how much smaller we should make the texture between the 2 consecutive bi lateral passes.
+     */
+    public set blurTextureRatioPerPass(value: number) {
+        this._blurTextureRatioPerPass = value;
+        this._intermediateBlurV.blurTextureRatio = value;
+        this._intermediateBlurH.blurTextureRatio = value;
+        this._finalBlurV.blurTextureRatio = value * value;
+        this._finalBlurH.blurTextureRatio = value * value;
+    }
+
+    /**
+     * Gets how far the kernel might fetch the data from.
+     */
+    public get blurSize(): number {
+        return this._blurSize;
+    }
+
+    /**
+     * Sets how far the kernel might fetch the data from.
+     */
+    public set blurSize(value: number) {
+        this._blurSize = value;
+        this._intermediateBlurV.blurHorizontalWidth = value;
+        this._intermediateBlurH.blurVerticalWidth = value;
+        this._finalBlurV.blurHorizontalWidth = value;
+        this._finalBlurH.blurVerticalWidth = value;
+    }
 
     /**
      * Instantiates a new Block.
@@ -63,29 +92,12 @@ export class BlurBlock extends AggregateBlock {
 
         this.input = this._registerSubfilterInput("input", this._intermediateBlurV.input);
         this.output = this._registerSubfilterOutput("output", this._finalBlurH.output);
-    }
 
-    /**
-     * Prepares the block for runtime.
-     * This is called by the smart filter just before creating the smart filter runtime.
-     */
-    public override prepareForRuntime(): void {
-        this._intermediateBlurV.blurTextureRatio = this.blurTextureRatioPerPass;
-        this._intermediateBlurV.blurHorizontalWidth = this.blurSize;
+        this.blurSize = defaultBlurSize;
+        this.blurTextureRatioPerPass = defaultBlurTextureRatioPerPass;
         this._intermediateBlurV.blurVerticalWidth = 0;
-
-        this._intermediateBlurH.blurTextureRatio = this.blurTextureRatioPerPass;
         this._intermediateBlurH.blurHorizontalWidth = 0;
-        this._intermediateBlurH.blurVerticalWidth = this.blurSize;
-
-        this._finalBlurV.blurTextureRatio = this.blurTextureRatioPerPass * this.blurTextureRatioPerPass;
-        this._finalBlurV.blurHorizontalWidth = this.blurSize;
         this._finalBlurV.blurVerticalWidth = 0;
-
-        this._finalBlurH.blurTextureRatio = this.blurTextureRatioPerPass * this.blurTextureRatioPerPass;
         this._finalBlurH.blurHorizontalWidth = 0;
-        this._finalBlurH.blurVerticalWidth = this.blurSize;
-
-        super.prepareForRuntime();
     }
 }
