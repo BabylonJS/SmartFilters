@@ -18,7 +18,6 @@ export function getTextureInputBlockEditorData(
             anisotropicFilteringLevel: internalTexture?.anisotropicFilteringLevel ?? null,
             flipY: internalTexture?.invertY ?? true,
             forcedExtension: internalTexture?._extension ?? null,
-            dispose: null,
         };
     }
 

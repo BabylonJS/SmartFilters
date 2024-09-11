@@ -6,4 +6,4 @@ export * from "./graphSystem/display/inputDisplayManager.js";
 export { createDefaultValue } from "./graphSystem/registerDefaultInput.js";
 
 export type { TexturePreset } from "./globalState.js";
-export * from "./serializationTools.js";
+export * from "./helpers/serializationTools.js";

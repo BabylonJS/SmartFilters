@@ -83,12 +83,6 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
            * The file extension to use, or default if null.
            */
           forcedExtension: Nullable<string>;
-
-          /**
-           * Method to call to dispose of the texture - used in Editor scenarios when changing the texture.
-           * Not to be represented in serialized smart filters.
-           */
-          dispose: Nullable<() => void>;
       }
     : T extends ConnectionPointType.Float
       ? {

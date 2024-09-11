@@ -124,6 +124,11 @@ export type SmartFilterEditorOptions = {
      * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
      */
     rebuildRuntime: (smartFilter: SmartFilter) => void;
+
+    /**
+     * Called when the editor determines that the assets (images or videos) need to be reloaded
+     */
+    reloadAssets: (smartFilter: SmartFilter) => void;
 };
 
 const filterEditorPopupId = "filter-editor";
@@ -162,6 +167,7 @@ export class SmartFilterEditor {
             options.loadSmartFilter,
             options.beforeRenderObservable,
             options.rebuildRuntime,
+            options.reloadAssets,
             options.saveToSnippetServer,
             options.texturePresets
         );

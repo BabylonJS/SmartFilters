@@ -1,69 +1,32 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture.js";
-import {
-    createImageTexture,
-    type ConnectionPointType,
-    type InputBlock,
-    type SmartFilter,
-} from "@babylonjs/smart-filters";
-import type { GlobalState } from "./globalState";
-import type { GraphCanvasComponent } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphCanvas";
+import type { InternalTexture } from "@babylonjs/core/Materials/Textures/internalTexture";
+import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
-import type { InternalTexture } from "@babylonjs/core/Materials/Textures/internalTexture";
+import { createImageTexture, type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
+
+export type LoadResult = {
+    texture: ThinTexture;
+    dispose: () => void;
+};
 
 /**
- * Sets the SmartFilter's stored editor data (block locations, canvas position, zoom) using the current graph canvas state.
- * @param smartFilter - Target SmartFilter to update
- * @param globalState - State of the editor
- * @param graphCanvas - Graph canvas to pull data from
- */
-export function setEditorData(smartFilter: SmartFilter, globalState: GlobalState, graphCanvas: GraphCanvasComponent) {
-    smartFilter.editorData = {
-        locations: [],
-        x: graphCanvas.x,
-        y: graphCanvas.y,
-        zoom: graphCanvas.zoom,
-    };
-
-    for (const block of smartFilter.attachedBlocks) {
-        const node = globalState.onGetNodeFromBlock(block);
-        if (node) {
-            smartFilter.editorData.locations.push({
-                blockId: block.uniqueId,
-                x: node.x,
-                y: node.y,
-            });
-        }
-    }
-}
-
-/**
- * Loads the texture for a texture InputBlock for use in the Editor.
- * Note: this must not be used in production code, it is intended only for the editor.
+ * Loads the texture for a texture InputBlock for use in the demo app.
+ * Note: this must not be used in production code, it is intended only for the demo app.
  * @param inputBlock - The InputBlock to load the texture for
  * @param engine - The ThinEngine to create the texture with
  * @param beforeRenderObservable - Observable which is notified before rendering each frame
- * @returns A function to dispose of the textures when they are no longer needed, or null if no textures were loaded
+ * @returns The texture and dispose function for it, or null if the texture could not be loaded
  */
 export async function loadTextureInputBlockAsset(
     inputBlock: InputBlock<ConnectionPointType.Texture>,
     engine: ThinEngine,
     beforeRenderObservable: Observable<void>
-): Promise<Nullable<() => void>> {
+): Promise<Nullable<LoadResult>> {
     const editorData = inputBlock.editorData;
 
     // Look at the editor data to determine if we can load a texture
     if (editorData && editorData.url) {
-        // Unload the texture if it already has a value
-        if (inputBlock.output.runtimeData.value !== null) {
-            inputBlock.output.runtimeData.value = null;
-            if (editorData && editorData.dispose) {
-                editorData.dispose();
-                editorData.dispose = null;
-            }
-        }
-
         switch (editorData.urlTypeHint) {
             case "video":
                 {
@@ -80,12 +43,14 @@ export async function loadTextureInputBlockAsset(
                     }
 
                     inputBlock.output.runtimeData.value = videoTexture;
-                    editorData.dispose = () => {
-                        beforeRenderObservable.remove(observer);
-                        disposeVideoElementAndTextures();
-                    };
 
-                    return editorData.dispose;
+                    return {
+                        texture: videoTexture,
+                        dispose: () => {
+                            beforeRenderObservable.remove(observer);
+                            disposeVideoElementAndTextures();
+                        },
+                    };
                 }
                 break;
             case "image":
@@ -97,11 +62,11 @@ export async function loadTextureInputBlockAsset(
                     }
 
                     inputBlock.output.runtimeData.value = texture;
-                    editorData.dispose = () => {
-                        texture.dispose();
-                    };
 
-                    return editorData.dispose;
+                    return {
+                        texture,
+                        dispose: texture.dispose,
+                    };
                 }
                 break;
         }

@@ -11,8 +11,8 @@ import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineCompon
 
 import type { Nullable } from "@babylonjs/core/types.js";
 import { getTextureInputBlockEditorData } from "../getEditorData.js";
-import { loadTextureInputBlockAsset } from "../../serializationTools.js";
 import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
+import { debounce } from "../../helpers/debounce.js";
 
 export interface ImageSourcePropertyTabComponentProps extends IPropertyComponentProps {
     inputBlock: InputBlock<ConnectionPointType.Texture>;
@@ -75,7 +75,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         editorData.url = this._texturePresets[newSelectionValue]?.url || "";
                         editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
 
-                        this._loadTexture();
+                        this._triggerAssetUpdate(true);
                     }}
                 />
                 <FileButtonLine
@@ -100,7 +100,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                     editorData.forcedExtension = extension;
                                     editorData.urlTypeHint = this._getUrlTypeHint(file.name);
 
-                                    this._loadTexture();
+                                    this._triggerAssetUpdate(true);
                                 };
                             },
                             undefined,
@@ -122,7 +122,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     onSelect={(newSelectionValue: string | number) => {
                         if (typeof newSelectionValue === "number") {
                             editorData.urlTypeHint = AssetTypeOptionArray[newSelectionValue] as "image" | "video";
-                            this._loadTexture();
+                            this._triggerAssetUpdate(true);
                         }
                     }}
                 />
@@ -135,14 +135,14 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         editorData.url = newValue;
                         editorData.urlTypeHint = this._getUrlTypeHint(newValue);
 
-                        this._loadTexture();
+                        this._triggerAssetUpdate();
                     }}
                 />
                 <CheckBoxLineComponent
                     label="FlipY"
                     target={editorData}
                     propertyName="flipY"
-                    onValueChanged={() => this._loadTexture()}
+                    onValueChanged={() => this._triggerAssetUpdate(true)}
                 />
                 <NumericInput
                     lockObject={(this.props.stateManager.data as GlobalState).lockObject}
@@ -152,20 +152,27 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     value={editorData.anisotropicFilteringLevel ?? 4}
                     onChange={(value: number) => {
                         editorData.anisotropicFilteringLevel = value;
-                        this._loadTexture();
+                        this._triggerAssetUpdate(true);
                     }}
                 />
             </div>
         );
     }
 
-    private _loadTexture() {
-        const globalState = this.props.stateManager.data as GlobalState;
-
-        loadTextureInputBlockAsset(this.props.inputBlock, globalState.engine, globalState.beforeRenderObservable);
-
+    private _triggerAssetUpdate(instant: boolean = false) {
         this.props.nodeData.refreshCallback?.();
         this.forceUpdate();
+
+        const update = () => {
+            const globalState = this.props.stateManager.data as GlobalState;
+            globalState.reloadAssets(globalState.smartFilter);
+        };
+
+        if (instant) {
+            update();
+        } else {
+            debounce(update, 1000)();
+        }
     }
 
     private _getUrlTypeHint(url: string): "image" | "video" {

@@ -5,7 +5,7 @@ import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
 import { BlurBlock } from "../../blocks/effects/blurBlock";
 import { FrameBlock } from "../../blocks/effects/frameBlock";
 import type { SmartFilterRenderer } from "../../../smartFilterRenderer";
-import { createVideoTextureAsync } from "@babylonjs/smart-filters-editor";
+import { createVideoTextureAsync } from "../../../demoTextureLoaders";
 
 export async function createVideoWithFrameSmartFilter(
     engine: ThinEngine,
