@@ -37,14 +37,14 @@ export class BlurBlock extends AggregateBlock {
     private readonly _finalBlurH: DirectionalBlurBlock;
 
     /**
-     * Gets much how smaller we should make the texture between the 2 consecutive bi lateral passes.
+     * Gets how much smaller we should make the texture between the 2 consecutive bi lateral passes.
      */
     public get blurTextureRatioPerPass(): number {
         return this._blurTextureRatioPerPass;
     }
 
     /**
-     * Sets much how smaller we should make the texture between the 2 consecutive bi lateral passes.
+     * Sets how much smaller we should make the texture between the 2 consecutive bi lateral passes.
      */
     public set blurTextureRatioPerPass(value: number) {
         this._blurTextureRatioPerPass = value;
