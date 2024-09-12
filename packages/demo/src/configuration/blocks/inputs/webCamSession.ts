@@ -64,20 +64,21 @@ export class WebCamSession implements IDisposable {
         hiddenVideo.width = width;
         hiddenVideo.height = height;
 
-        const internalVideoTexture = this._engine.createDynamicTexture(
-            hiddenVideo.videoWidth,
-            hiddenVideo.videoHeight,
-            false,
-            2
-        );
-        this._internalVideoTexture = internalVideoTexture;
-        this._videoTexture = new ThinTexture(internalVideoTexture);
-
         hiddenVideo.onerror = () => {
             throw "Failed to load WebCam";
         };
 
         hiddenVideo.onloadeddata = () => {
+            const internalVideoTexture = this._engine.createDynamicTexture(
+                hiddenVideo.videoWidth,
+                hiddenVideo.videoHeight,
+                false,
+                2
+            );
+            this._internalVideoTexture = internalVideoTexture;
+            this._videoTexture = new ThinTexture(internalVideoTexture);
+            this._textureOutput.value = this._videoTexture;
+
             const update = () => {
                 if (this._isDisposed) {
                     return;
@@ -94,7 +95,6 @@ export class WebCamSession implements IDisposable {
         };
 
         hiddenVideo.srcObject = stream;
-        this._textureOutput.value = this._videoTexture;
     }
 
     public dispose(): void {
