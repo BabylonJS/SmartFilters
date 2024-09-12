@@ -75,7 +75,6 @@ export class WebCamSession implements IDisposable {
                 false,
                 2
             );
-
             this._internalVideoTexture = internalVideoTexture;
             this._videoTexture = new ThinTexture(internalVideoTexture);
             this._textureOutput.value = this._videoTexture;
