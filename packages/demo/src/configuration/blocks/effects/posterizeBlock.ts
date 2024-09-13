@@ -39,11 +39,11 @@ const shaderProgram = injectDisableUniform({
 
                     vec3 posterize = vec3(posterizeStrength);
                 
-                    vec3 color = texture2D(_input_, vUV).rgb;
+                    vec4 color = texture2D(_input_, vUV);
                 
-                    color = floor(color / (1.0 / posterize)) * (1.0 / posterize);
+                    color.rgb = floor(color.rgb / (1.0 / posterize)) * (1.0 / posterize);
 
-                    return vec4(color, 1.0);
+                    return color;
                 }
             `,
             },
