@@ -9,8 +9,6 @@ import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
 import type { IDisableableBlock } from "../blocks/disableableBlock";
 import { decorateSymbol, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
-import { Constants } from "@babylonjs/core/Engines/constants.js";
-import "@babylonjs/core/Engines/Extensions/engine.alpha.js";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
@@ -108,7 +106,7 @@ export class ShaderRuntime implements IDisposable {
         });
 
         // Set the alpha mode to combine to allow for transparency
-        this._engine.setAlphaMode(Constants.ALPHA_COMBINE);
+        this._engine.alphaState.alphaBlend = true;
 
         // Wraps the effect readiness in a promise to expose it as a public property.
         this.onReadyAsync = new Promise<void>((resolve, reject) => {
