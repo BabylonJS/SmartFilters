@@ -26,18 +26,21 @@ const shaderProgram = injectDisableUniform({
                 vec4 _directionalBlur_(vec2 vUV) {
                     vec2 start = vUV - 3.0 * _texelStep_;
     
-                    vec3 finalWeightedColor = vec3(0., 0., 0.);
+                    vec4 finalWeightedColor = vec4(0., 0., 0., 0.);
                 
-                    float totalWeight = 0.;
                     for (int i = 0; i < 7; i++)
                     {
                         vec2 fetchUV = start + _texelStep_ * float(i);
                         fetchUV = clamp(fetchUV, 0., 1.);
+                        vec4 colorSample = texture2D(_input_, fetchUV);
+
+                        // Ignore samples from fully transparent pixels
+                        if (colorSample.a == 0.) continue;
                 
-                        finalWeightedColor += texture2D(_input_, fetchUV).rgb * _weights_[i];
+                        finalWeightedColor += colorSample * _weights_[i];                    
                     }
                 
-                    return vec4(finalWeightedColor, 1.);
+                    return finalWeightedColor;
                 }
             `,
             },
