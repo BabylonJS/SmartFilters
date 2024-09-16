@@ -43,7 +43,7 @@ const shaderProgram = injectDisableUniform({
                 vec4 _composition_(vec2 vUV) {
                     vec4 result = texture2D(_background_, vUV);
 
-                    vec2 transformedUV = vUV * _scaleUV_ + _translateUV_;
+                    vec2 transformedUV = vUV * (1.0 / _scaleUV_) + _translateUV_;
                     if (transformedUV.x < 0.0 || transformedUV.x > 1.0 || transformedUV.y < 0.0 || transformedUV.y > 1.0) {
                         return result;
                     }
@@ -241,7 +241,7 @@ export class CompositionBlock extends ShaderBlock {
         const foreground = this._confirmRuntimeDataSupplied(this.foreground);
         const foregroundWidth = this.foregroundWidth.runtimeData;
         const foregroundLeft = this.foregroundLeft.runtimeData;
-        const foregroundHeight = this.foregroundWidth.runtimeData;
+        const foregroundHeight = this.foregroundHeight.runtimeData;
         const foregroundTop = this.foregroundTop.runtimeData;
         const alphaMode = this.alphaMode;
 
