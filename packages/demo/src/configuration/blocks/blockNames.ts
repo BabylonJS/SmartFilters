@@ -25,4 +25,5 @@ export const BlockNames = {
     softThreshold: "SoftThresholdBlock",
     sketch: "SketchBlock",
     particle: "ParticleBlock",
+    hearts: "HeartsBlock",
 };

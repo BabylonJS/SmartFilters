@@ -171,6 +171,11 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new ParticleBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.hearts, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const { HeartsBlock } = await import(/* webpackChunkName: "heartsBlock" */ "./blocks/generators/heartsBlock");
+        return new HeartsBlock(smartFilter, serializedBlock.name);
+    });
+
     // Non-trivial deserializers begin.
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {

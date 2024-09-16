@@ -28,6 +28,7 @@ import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
 import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 import { ParticleBlock } from "../blocks/generators/particleBlock";
+import { HeartsBlock } from "../blocks/generators/heartsBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
@@ -253,5 +254,11 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         factory: (smartFilter: SmartFilter) => new ParticleBlock(smartFilter, "Particle"),
         category: "Generators",
         tooltip: "Animates a single particle texture.",
+    },
+    {
+        name: "HeartsBlock",
+        factory: (smartFilter: SmartFilter) => new HeartsBlock(smartFilter, "Hearts"),
+        category: "Generators",
+        tooltip: "A tunnel of hearts background effect",
     },
 ];
