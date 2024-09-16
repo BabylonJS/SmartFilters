@@ -12,16 +12,19 @@ vec4 mainImage(vec2 vUV) { // main
 
     float delta = time - delay;
     float oscillationX = amplitude * sin(frequency * (delta) * PI); 
-    float translationY = 1. - delta; // Move particle upwards over time
+    float translationY = -delta; // Move particle upwards over time
 
-    vec2 particleUV = vUV * (1. / size) + vec2(oscillationX, translationY);
+    vec2 invertedSize = 1. / size;
+    vUV = ((vUV - 0.5) * invertedSize) + 0.5; // Scale UV from center to avoid clipping on edges when oscillating
+
+    vUV = vUV + vec2(oscillationX, translationY); // Apply transformations
 
     // Check for out of bounds
-    if (clamp(particleUV, 0.0, 1.0) != particleUV) {
+    if (clamp(vUV, 0.0, 1.0) != vUV) {
         return backgroundColor;
     }
 
-    vec4 particleColor = texture2D(particle, particleUV);
+    vec4 particleColor = texture2D(particle, vUV);
 
     return mix(backgroundColor, particleColor, particleColor.a);
 }
