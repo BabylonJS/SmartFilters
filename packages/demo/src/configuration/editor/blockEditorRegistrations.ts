@@ -27,7 +27,7 @@ import { WipeBlock } from "../blocks/transitions/wipeBlock";
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
 import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
-import { ParticleBlock } from "../blocks/effects/particleBlock";
+import { ParticleBlock } from "../blocks/generators/particleBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
