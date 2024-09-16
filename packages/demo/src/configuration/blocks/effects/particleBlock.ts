@@ -17,7 +17,7 @@ export class ParticleShaderBinding extends ShaderBinding {
     private readonly _frequency: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the Mask block.
+     * Creates a new shader binding instance for the Particle block.
      * @param parentBlock - The parent block
      * @param particleTexture - the Particle texture
      * @param time - the time
@@ -63,7 +63,7 @@ export class ParticleShaderBinding extends ShaderBinding {
 }
 
 /**
- * A simple block to apply a Particle from one texture to the color of another texture
+ * A simple procedural block to render one particle.
  */
 export class ParticleBlock extends ShaderBlock {
     /**
