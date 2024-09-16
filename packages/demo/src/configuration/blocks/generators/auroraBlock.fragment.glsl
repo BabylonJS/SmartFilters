@@ -133,7 +133,7 @@ vec4 mainImage(vec2 vUV) { // main
     mo = (mo==vec2(-.5))?mo=vec2(-0.1,0.1):mo;
 	mo.x *= resolution.x/resolution.y;
     rd.yz *= mm2(mo.y);
-    rd.xz *= mm2(mo.x + sin(time*0.05)*0.2);
+    rd.xz *= mm2(mo.x);
     
     vec3 col = vec3(0.);
     vec3 brd = rd;
