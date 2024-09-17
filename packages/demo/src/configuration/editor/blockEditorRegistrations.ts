@@ -27,6 +27,7 @@ import { WipeBlock } from "../blocks/transitions/wipeBlock";
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
 import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
+import { ParticleBlock } from "../blocks/generators/particleBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
@@ -246,5 +247,11 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         factory: (smartFilter: SmartFilter) => new SoftThresholdBlock(smartFilter, "SoftThreshold"),
         category: "Effects",
         tooltip: "Adds a high contrast, softened black-and-white effect to the input texture",
+    },
+    {
+        name: "ParticleBlock",
+        factory: (smartFilter: SmartFilter) => new ParticleBlock(smartFilter, "Particle"),
+        category: "Generators",
+        tooltip: "Animates a single particle texture.",
     },
 ];

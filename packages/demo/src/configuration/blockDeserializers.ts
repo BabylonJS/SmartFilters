@@ -164,6 +164,13 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new SketchBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.particle, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const { ParticleBlock } = await import(
+            /* webpackChunkName: "particleBlock" */ "./blocks/generators/particleBlock"
+        );
+        return new ParticleBlock(smartFilter, serializedBlock.name);
+    });
+
     // Non-trivial deserializers begin.
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {

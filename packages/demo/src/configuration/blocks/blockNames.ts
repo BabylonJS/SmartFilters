@@ -24,4 +24,5 @@ export const BlockNames = {
     vhsGlitch: "vhsGlitchBlock",
     softThreshold: "SoftThresholdBlock",
     sketch: "SketchBlock",
+    particle: "ParticleBlock",
 };
