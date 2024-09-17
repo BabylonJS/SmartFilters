@@ -37,7 +37,7 @@ export class FireworksShaderBinding extends ShaderBinding {
     public override bind(effect: Effect, _width: number, _height: number): void {
         super.bind(effect);
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setFloat2(this.getRemappedName(uniforms.resolution), _width, _height);
+        effect.setFloat(this.getRemappedName(uniforms.aspectRatio), _width / _height);
         effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
     }
 }
