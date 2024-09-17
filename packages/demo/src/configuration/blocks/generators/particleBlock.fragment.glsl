@@ -16,7 +16,7 @@ vec4 mainImage(vec2 vUV) { // main
     float oscillationX = position.x + amplitude * sin(frequency * (delta) * PI); 
     float translationY = position.y - delta; // Move particle upwards over time
 
-    vUV = vUV * (1. / size) + vec2(oscillationX, translationY); // Apply transformations
+    vUV = vUV * size + vec2(oscillationX, translationY); // Apply transformations
 
     // Check for out of bounds
     if (clamp(vUV, 0.0, 1.0) != vUV) {

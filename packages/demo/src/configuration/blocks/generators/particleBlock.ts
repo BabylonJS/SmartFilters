@@ -65,7 +65,7 @@ export class ParticleShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName(uniforms.particle), this._particleTexture.value);
         effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
         effect.setFloat2(this.getRemappedName(uniforms.position), this._left.value, this._top.value);
-        effect.setFloat2(this.getRemappedName(uniforms.size), this._width.value, this._height.value);
+        effect.setFloat2(this.getRemappedName(uniforms.size), 1.0 / this._width.value, 1.0 / this._height.value);
         effect.setFloat(this.getRemappedName(uniforms.amplitude), this._amplitude.value);
         effect.setFloat(this.getRemappedName(uniforms.frequency), this._frequency.value);
     }
