@@ -2,35 +2,39 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
-import { shaderProgram, uniforms } from "../generators/heartsBlock.shader";
+import { shaderProgram, uniforms } from "../generators/neonHeartBlock.shader";
 import { BlockNames } from "../blockNames";
 import { Color3 } from "@babylonjs/core/Maths/math.color";
 
 /**
- * The shader bindings for the Hearts block.
+ * The shader bindings for the Neon Heart block.
  */
-export class HeartsShaderBinding extends ShaderBinding {
+export class NeonHeartShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
-    private readonly _tint: RuntimeData<ConnectionPointType.Color3>;
+    private readonly _color1: RuntimeData<ConnectionPointType.Color3>;
+    private readonly _color2: RuntimeData<ConnectionPointType.Color3>;
 
     /**
-     * Creates a new shader binding instance for the hearts block.
+     * Creates a new shader binding instance for the Neon Heart block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
-     * @param tint - The color tint of the hearts and vignette
+     * @param color1 - The first color of the heart
+     * @param color2 - The second color of the heart
      */
     constructor(
         parentBlock: IDisableableBlock,
         inputTexture: RuntimeData<ConnectionPointType.Texture>,
         time: RuntimeData<ConnectionPointType.Float>,
-        tint: RuntimeData<ConnectionPointType.Color3>
+        color1: RuntimeData<ConnectionPointType.Color3>,
+        color2: RuntimeData<ConnectionPointType.Color3>
     ) {
         super(parentBlock);
         this._inputTexture = inputTexture;
         this._time = time;
-        this._tint = tint;
+        this._color1 = color1;
+        this._color2 = color2;
     }
 
     /**
@@ -44,18 +48,19 @@ export class HeartsShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
         effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
         effect.setFloat(this.getRemappedName(uniforms.aspectRatio), _width / _height);
-        effect.setColor3(this.getRemappedName(uniforms.tint), this._tint.value);
+        effect.setColor3(this.getRemappedName(uniforms.color1), this._color1.value);
+        effect.setColor3(this.getRemappedName(uniforms.color2), this._color2.value);
     }
 }
 
 /**
- * A procedural block that renders a heart-emitting tunnel on the input texture.
+ * A procedural block that draws an animated neon heart around the center of the input texture.
  */
-export class HeartsBlock extends ShaderBlock {
+export class NeonHeartBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.hearts;
+    public static override ClassName = BlockNames.neonHeart;
 
     /**
      * The texture connection point.
@@ -68,12 +73,21 @@ export class HeartsBlock extends ShaderBlock {
     public readonly time = this._registerOptionalInput("time", ConnectionPointType.Float, createStrongRef(0.3));
 
     /**
-     * The tint connection point, controlling the color of the hearts and vignette.
+     * The color1 connection point, controlling the first color of the heart.
      */
-    public readonly tint = this._registerOptionalInput(
-        "tint",
+    public readonly color1 = this._registerOptionalInput(
+        "color1",
         ConnectionPointType.Color3,
-        createStrongRef(new Color3(0.9, 0.5, 0.7))
+        createStrongRef(new Color3(1.0, 0.05, 0.3))
+    );
+
+    /**
+     * The color2 connection point, controlling the second color of the heart.
+     */
+    public readonly color2 = this._registerOptionalInput(
+        "color2",
+        ConnectionPointType.Color3,
+        createStrongRef(new Color3(0.1, 0.4, 1.0))
     );
 
     /**
@@ -97,8 +111,9 @@ export class HeartsBlock extends ShaderBlock {
     public getShaderBinding(): ShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
-        const tint = this.tint.runtimeData;
+        const color1 = this.color1.runtimeData;
+        const color2 = this.color2.runtimeData;
 
-        return new HeartsShaderBinding(this, input, time, tint);
+        return new NeonHeartShaderBinding(this, input, time, color1, color2);
     }
 }

@@ -26,4 +26,5 @@ export const BlockNames = {
     sketch: "SketchBlock",
     particle: "ParticleBlock",
     hearts: "HeartsBlock",
+    neonHeart: "NeonHeartBlock",
 };

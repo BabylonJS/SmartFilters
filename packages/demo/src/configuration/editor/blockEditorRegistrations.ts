@@ -29,6 +29,7 @@ import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/sm
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 import { ParticleBlock } from "../blocks/generators/particleBlock";
 import { HeartsBlock } from "../blocks/generators/heartsBlock";
+import { NeonHeartBlock } from "../blocks/generators/neonHeartBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
@@ -260,5 +261,11 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         factory: (smartFilter: SmartFilter) => new HeartsBlock(smartFilter, "Hearts"),
         category: "Generators",
         tooltip: "A tunnel of hearts background effect",
+    },
+    {
+        name: "NeonHeartBlock",
+        factory: (smartFilter: SmartFilter) => new NeonHeartBlock(smartFilter, "NeonHeart"),
+        category: "Generators",
+        tooltip: "A drawn, neon heart at the center of the input texture",
     },
 ];
