@@ -31,7 +31,8 @@
         "VANDENBERGHE",
         "webgl",
         "webgpu",
-        "glsl"
+        "glsl",
+        "SAMPLINGMODE"
     ],
     "files.exclude": {
         "**/node_modules": true,
