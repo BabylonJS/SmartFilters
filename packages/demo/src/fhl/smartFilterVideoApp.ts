@@ -10,13 +10,18 @@ import { ReactionsSmartFilter } from "./reactionsSmartFilter";
 import type { IEffect } from "./effects/IEffect";
 import { LikeEffect } from "./effects/likeEffect";
 import type { Observable } from "@babylonjs/core/Misc/observable";
+import { PerfCounter } from "@babylonjs/core/Misc/perfCounter";
 
 export const SMART_FILTER_EFFECT_ID = "f71bd30b-c5e9-48ff-b039-42bc19df95a8";
 export const LOCAL_SMART_FILTER_EFFECT_ID = "fb9f0fab-9eb9-4756-8588-8dc3c6ad04d0";
 
 export class SmartFilterVideoApp {
-    private _outputCanvas: HTMLCanvasElement;
-    private _onLikeClickedObservable: Observable<void>;
+    private readonly _outputCanvas: HTMLCanvasElement;
+    private readonly _onLikeClickedObservable: Observable<void>;
+    private _frameProcessingTimePerfCounter: PerfCounter = new PerfCounter();
+    private _frameCount: number = 0;
+
+    private _timeOfLastDebugUpdate: number = 0;
 
     private _engine: ThinEngine;
     private _internalInputTexture: InternalTexture;
@@ -25,9 +30,19 @@ export class SmartFilterVideoApp {
     private _currentEffect: Nullable<IEffect> = null;
     private _smartFilterRuntime: Nullable<SmartFilterRuntime> = null;
 
-    constructor(outputCanvas: HTMLCanvasElement, onLikeClickedObservable: Observable<void>) {
+    private readonly _onNewAverageFrameProcessingValue: Observable<number>;
+    private readonly _onNewFpsValue: Observable<number>;
+
+    constructor(
+        outputCanvas: HTMLCanvasElement,
+        onLikeClickedObservable: Observable<void>,
+        onNewAverageFrameProcessingValue: Observable<number>,
+        onNewFpsValue: Observable<number>
+    ) {
         this._outputCanvas = outputCanvas;
         this._onLikeClickedObservable = onLikeClickedObservable;
+        this._onNewAverageFrameProcessingValue = onNewAverageFrameProcessingValue;
+        this._onNewFpsValue = onNewFpsValue;
 
         this._engine = new ThinEngine(this._outputCanvas);
 
@@ -72,9 +87,13 @@ export class SmartFilterVideoApp {
             }
         });
         this._currentEffect.start();
+
+        this._frameProcessingTimePerfCounter = new PerfCounter();
     }
 
     async videoFrameHandler(frame: videoEffects.VideoFrameData): Promise<VideoFrame> {
+        this._frameProcessingTimePerfCounter.beginMonitoring();
+        this._frameCount++;
         try {
             const videoFrame = frame.videoFrame as VideoFrame;
 
@@ -98,6 +117,20 @@ export class SmartFilterVideoApp {
         } catch (e) {
             console.error(e);
             throw e;
+        } finally {
+            this._frameProcessingTimePerfCounter.endMonitoring();
+
+            const currentTime = performance.now();
+            const timeSinceLastDebugUpdate = currentTime - this._timeOfLastDebugUpdate;
+
+            if (timeSinceLastDebugUpdate >= 1000) {
+                this._timeOfLastDebugUpdate = currentTime;
+                this._onNewAverageFrameProcessingValue.notifyObservers(
+                    this._frameProcessingTimePerfCounter.lastSecAverage
+                );
+                this._onNewFpsValue.notifyObservers(this._frameCount / (timeSinceLastDebugUpdate / 1000));
+                this._frameCount = 0;
+            }
         }
     }
 

@@ -5,6 +5,9 @@ import { Observable } from "@babylonjs/core/Misc/observable";
 // Read page elements
 const likeButton = document.getElementById("likeButton") as HTMLButtonElement;
 const outputCanvas = document.getElementById("outputCanvas") as HTMLCanvasElement;
+const debugUi = document.getElementById("debugUi") as HTMLDivElement;
+const avgProcessingTimeDiv = document.getElementById("avgProcessingTime") as HTMLDivElement;
+const fpsDiv = document.getElementById("fps") as HTMLDivElement;
 
 // Register button click handlers
 const onLikeClickedObservable = new Observable<void>();
@@ -12,9 +15,37 @@ likeButton.addEventListener("click", () => {
     onLikeClickedObservable.notifyObservers();
 });
 
+// Debug UI update code
+const onNewAverageFrameProcessingValue: Observable<number> = new Observable<number>();
+onNewAverageFrameProcessingValue.add((value) => {
+    avgProcessingTimeDiv.innerText = `${value.toFixed(2)}ms`;
+});
+const onNewFpsValue: Observable<number> = new Observable<number>();
+onNewFpsValue.add((value) => {
+    fpsDiv.innerText = value.toFixed(2);
+});
+
 // Initialize the SmartFilter Video App
 console.log("Initializing SmartFilter Video App...");
-const videoApp = new SmartFilterVideoApp(outputCanvas, onLikeClickedObservable);
+const videoApp = new SmartFilterVideoApp(
+    outputCanvas,
+    onLikeClickedObservable,
+    onNewAverageFrameProcessingValue,
+    onNewFpsValue
+);
+
+// Set up hidden keystroke approach to showing the debug UI
+document.addEventListener("keydown", (e) => {
+    if (debugUi.style.display === "none") {
+        if (e.key === "d") {
+            debugUi.style.display = "block";
+        }
+    } else {
+        if (e.key === "Escape") {
+            debugUi.style.display = "none";
+        }
+    }
+});
 
 /**
  * Main function to initialize the app.
