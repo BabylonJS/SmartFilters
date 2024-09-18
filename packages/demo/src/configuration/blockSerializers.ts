@@ -33,6 +33,8 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.softThreshold,
     BlockNames.sketch,
     BlockNames.particle,
+    BlockNames.hearts,
+    BlockNames.neonHeart,
 ];
 
 /**
