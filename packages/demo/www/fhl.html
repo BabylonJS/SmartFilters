@@ -10,17 +10,23 @@
             body {
                 background-color: #f5f5f5;
                 text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 10pt;
             }
+
             .topContainer {
                 display: flex;
-                flex-direction: row;
-                justify-content: center;
+                flex-direction: column;
+                align-items: center;
             }
+
             .dialog {
                 border-radius: 4px;
                 background-color: white;
                 filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.12)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.14));
                 padding: 14px 16px;
+                display: flex;
+                margin-bottom: 50px;
             }
 
             .reactionCollection {
@@ -62,8 +68,25 @@
                 width: 32px;
                 transform: scale(0.75);
             }
+
             .buttonContainer:hover {
                 transform: unset;
+            }
+
+            .debugData {
+                display: grid;
+                width: 150px;
+                grid-template-columns: auto auto;
+            }
+
+            .debugLabel {
+                text-align: right;
+            }
+
+            .debugValue {
+                text-align: left;
+                min-width: 40px;
+                margin-left: 3px;
             }
         </style>
     </head>
@@ -110,6 +133,16 @@
                                 alt="Surprised"
                             />
                         </button>
+                    </div>
+                </div>
+            </div>
+            <div id="debugUi" style="display: none">
+                <div class="dialog">
+                    <div class="debugData">
+                        <div class="debugLabel" style="grid-column: 1; grid-row: 1">FPS:</div>
+                        <div class="debugValue" style="grid-column: 2; grid-row: 1" id="fps"></div>
+                        <div class="debugLabel" style="grid-column: 1; grid-row: 2">Avg proc time:</div>
+                        <div class="debugValue" style="grid-column: 2; grid-row: 2" id="avgProcessingTime"></div>
                     </div>
                 </div>
             </div>
