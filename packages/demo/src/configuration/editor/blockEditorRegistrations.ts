@@ -30,6 +30,7 @@ import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 import { ParticleBlock } from "../blocks/generators/particleBlock";
 import { HeartsBlock } from "../blocks/generators/heartsBlock";
 import { NeonHeartBlock } from "../blocks/generators/neonHeartBlock";
+import { SpritesheetBlock } from "../blocks/effects/spritesheetBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
@@ -267,5 +268,11 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         factory: (smartFilter: SmartFilter) => new NeonHeartBlock(smartFilter, "NeonHeart"),
         category: "Generators",
         tooltip: "A drawn, neon heart at the center of the input texture",
+    },
+    {
+        name: "SpritesheetBlock",
+        factory: (smartFilter: SmartFilter) => new SpritesheetBlock(smartFilter, "Spritesheet"),
+        category: "Effects",
+        tooltip: "Animates a sprite sheet texture",
     },
 ];
