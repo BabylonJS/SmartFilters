@@ -48,7 +48,7 @@ const shaderProgram = injectDisableUniform({
                 code: `
                 vec4 _kaleidoscope_(vec2 vUV) {
                     float distanceToCircle = abs(length(vUV) - _radius_);
-                    vec4 result = vec4(0., 0., 0., 1.);
+                    vec4 result = vec4(0., 0., 0., 0.);
                 
                     if (distanceToCircle < _halfDiag_ * 10000.) {
                         float pointTheta = atan(vUV.y, vUV.x);
@@ -64,6 +64,9 @@ const shaderProgram = injectDisableUniform({
                 
                             if (chunkStartPoint.x > 0. && chunkStartPoint.x < 1. && chunkStartPoint.y > 0. && chunkStartPoint.y < 1.) {
                                 result = texture2D(_input_, chunkStartPoint);
+                                if (result.a <= 0.001) {
+                                    result = vec4(0., 0., 0., 0.);
+                                }
                             }
                         }
                 
@@ -77,6 +80,9 @@ const shaderProgram = injectDisableUniform({
                             chunkStartPoint += vec2(0.5, 0.5);
                 
                             if (chunkStartPoint.x > 0. && chunkStartPoint.x < 1. && chunkStartPoint.y > 0. && chunkStartPoint.y < 1.) {
+                                if (result.a <= 0.001) {
+                                    result = vec4(0., 0., 0., 0.);
+                                }
                                 result = texture2D(_input_, chunkStartPoint);
                             }
                         }
