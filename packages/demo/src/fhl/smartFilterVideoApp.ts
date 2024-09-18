@@ -12,6 +12,7 @@ import { LikeEffect } from "./effects/likeEffect";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 
 export const SMART_FILTER_EFFECT_ID = "f71bd30b-c5e9-48ff-b039-42bc19df95a8";
+export const LOCAL_SMART_FILTER_EFFECT_ID = "fb9f0fab-9eb9-4756-8588-8dc3c6ad04d0";
 
 export class SmartFilterVideoApp {
     private _outputCanvas: HTMLCanvasElement;

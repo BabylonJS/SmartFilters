@@ -1,5 +1,5 @@
 import { app, videoEffects } from "@microsoft/teams-js";
-import { SMART_FILTER_EFFECT_ID, SmartFilterVideoApp } from "./fhl/smartFilterVideoApp";
+import { LOCAL_SMART_FILTER_EFFECT_ID, SMART_FILTER_EFFECT_ID, SmartFilterVideoApp } from "./fhl/smartFilterVideoApp";
 import { Observable } from "@babylonjs/core/Misc/observable";
 
 // Read page elements
@@ -48,7 +48,9 @@ async function main(): Promise<void> {
         // Tell Teams we want to show our effect
         videoEffects.notifySelectedVideoEffectChanged(
             videoEffects.EffectChangeType.EffectChanged,
-            SMART_FILTER_EFFECT_ID
+            document.location.hostname.indexOf("localhost") !== -1
+                ? LOCAL_SMART_FILTER_EFFECT_ID
+                : SMART_FILTER_EFFECT_ID
         );
     } catch (e) {
         console.log("Initialize failed - not in Teams - running in debug mode:", e);
