@@ -1,9 +1,9 @@
-import { Observable } from "@babylonjs/core/Misc/observable";
+import type { Observable } from "@babylonjs/core/Misc/observable";
 
 export interface IEffect {
-  readonly isStarted: boolean;
-  start(): void;
-  stop(notifyEffectCompleted: boolean): void;
+    readonly isStarted: boolean;
+    start(): void;
+    stop(notifyEffectCompleted: boolean): void;
 
-  readonly onEffectCompleted: Observable<void>;
+    readonly onEffectCompleted: Observable<void>;
 }
