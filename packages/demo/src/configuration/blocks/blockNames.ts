@@ -28,4 +28,5 @@ export const BlockNames = {
     hearts: "HeartsBlock",
     neonHeart: "NeonHeartBlock",
     spritesheet: "SpritesheetBlock",
+    tint: "TintBlock",
 };

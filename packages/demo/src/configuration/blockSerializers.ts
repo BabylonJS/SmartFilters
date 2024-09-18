@@ -36,6 +36,7 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.hearts,
     BlockNames.neonHeart,
     BlockNames.spritesheet,
+    BlockNames.tint,
 ];
 
 /**
