@@ -36,6 +36,7 @@
         "@fortawesome/fontawesome-svg-core": "^6.1.0",
         "@fortawesome/free-solid-svg-icons": "^6.1.0",
         "@fortawesome/react-fontawesome": "^0.1.18",
+        "@microsoft/teams-js": "^2.19.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "css-loader": "^6.4.0",
