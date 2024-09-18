@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Babylon.js Smart Filters in Teams - FHL September 2024</title>
+        <style>
+            body {
+                background-color: #f5f5f5;
+                text-align: center;
+            }
+            .topContainer {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+            .dialog {
+                border-radius: 4px;
+                background-color: white;
+                filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.12)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.14));
+                padding: 14px 16px;
+            }
+
+            .reactionCollection {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .reactionCollection:hover button:not(:hover) {
+                opacity: 0.5;
+            }
+
+            .reactionCollection button {
+                padding: 0px;
+                border: 0px;
+                background-color: transparent;
+                cursor: pointer;
+            }
+
+            .reactionCollection button:hover {
+                animation-name: likeAnimation;
+                animation-timing-function: steps(51);
+                animation-duration: 2.125s;
+                animation-play-state: running;
+                animation-iteration-count: 5;
+            }
+            @keyframes likeAnimation {
+                from {
+                    transform: translateY(0);
+                }
+
+                to {
+                    transform: translateY(-1632px);
+                }
+            }
+
+            .buttonContainer {
+                overflow: clip;
+                height: 32px;
+                width: 32px;
+                transform: scale(0.75);
+            }
+            .buttonContainer:hover {
+                transform: unset;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="topContainer">
+            <div class="dialog">
+                <div class="reactionCollection">
+                    <div class="buttonContainer">
+                        <button id="likeButton" title="Like">
+                            <img src="./assets/fhl/like.32a.png" alt="Like" />
+                        </button>
+                    </div>
+                    <div class="buttonContainer">
+                        <button id="loveButton" title="Love">
+                            <img src="./assets/fhl/love.32a.png" alt="Love" />
+                        </button>
+                    </div>
+                    <div class="buttonContainer">
+                        <button id="clapButton" title="Applause">
+                            <img src="./assets/fhl/clap.32a.png" alt="Applause" />
+                        </button>
+                    </div>
+                    <div class="buttonContainer">
+                        <button id="laughButton" title="Laugh">
+                            <img src="./assets/fhl/laugh.32a.png" alt="Laugh" />
+                        </button>
+                    </div>
+                    <div class="buttonContainer">
+                        <button id="surprisedButton" title="Surprised">
+                            <img src="./assets/fhl/surprised.32a.png" alt="Surprised" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <canvas height="1080" width="1920" id="inputCanvas" style="display: none"></canvas>
+        <canvas height="1080" width="1920" id="outputCanvas" style="display: none"></canvas>
+        <script type="module" src="../scripts/fhl.js"></script>
+    </body>
+</html>
