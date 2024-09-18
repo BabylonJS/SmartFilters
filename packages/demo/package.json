@@ -27,6 +27,8 @@
         "watch:shaders": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/watchShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
         "clean": "rimraf .temp && rimraf www/scripts",
         "start": "npm run watch",
+        "start:https": "concurrently \"npm run watch:https\" \"npm run watch:shaders\" \"npm run watch:shaders -w @babylonjs/smart-filters\"",
+        "watch:https": "npx webpack-dev-server --server-type https --server-options-key ./cert/smartFilters.test.key --server-options-cert ./cert/smartFilters.test.crt",
         "analyze": "webpack --profile --json > www/scripts/stats.json && npx webpack-bundle-analyzer www/scripts/stats.json",
         "preparePublish": "node build/preparePublish.js"
     },
@@ -36,6 +38,7 @@
         "@fortawesome/fontawesome-svg-core": "^6.1.0",
         "@fortawesome/free-solid-svg-icons": "^6.1.0",
         "@fortawesome/react-fontawesome": "^0.1.18",
+        "@microsoft/teams-js": "^2.19.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "css-loader": "^6.4.0",
