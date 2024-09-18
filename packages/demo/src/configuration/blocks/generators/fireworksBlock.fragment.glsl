@@ -7,10 +7,10 @@
 uniform sampler2D input; // main
 uniform float time;
 uniform float aspectRatio;
+uniform float fireworks;
+uniform float fireworkSparks;
 
 const float PI = 3.141592653589793;
-const float EXPLOSION_COUNT = 8.;
-const float SPARKS_PER_EXPLOSION = 128.;
 const float EXPLOSION_DURATION = 20.;
 const float EXPLOSION_SPEED = 5.;
 const float EXPLOSION_RADIUS_THESHOLD = .06;
@@ -29,14 +29,14 @@ vec4 mainImage(vec2 vUV) { // main
     vec2 origin = vec2(0.);
 	vUV.x *= aspectRatio;
     
-    for (float j = 0.; j < EXPLOSION_COUNT; ++j)
+    for (float j = 0.; j < fireworks; ++j)
     {
-        vec3 oh = hash31((j + 1234.1939) * 641.6974);
+        vec3 oh = hash31((j + 800.) * 641.6974);
         origin = vec2(oh.x, oh.y) * .6 + .2; // .2 - .8 to avoid boundaries
         origin.x *= aspectRatio;
         // Change t value to randomize the spawning of explosions
         t += (j + 1.) * 9.6491 * oh.z;
-        for (float i = 0.; i < SPARKS_PER_EXPLOSION; ++i)
+        for (float i = 0.; i < fireworkSparks; ++i)
     	{
             vec3 h = hash31(j * 963.31 + i + 497.8943);
             // random angle (0 - 2*PI)

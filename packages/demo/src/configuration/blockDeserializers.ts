@@ -183,6 +183,18 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new NeonHeartBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(BlockNames.spritesheet, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const { SpritesheetBlock } = await import(
+            /* webpackChunkName: "spritesheetBlock" */ "./blocks/effects/spritesheetBlock"
+        );
+        return new SpritesheetBlock(smartFilter, serializedBlock.name);
+    });
+
+    deserializers.set(BlockNames.tint, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+        const { TintBlock } = await import(/* webpackChunkName: "tintBlock" */ "./blocks/effects/tintBlock");
+        return new TintBlock(smartFilter, serializedBlock.name);
+    });
+
     // Non-trivial deserializers begin.
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
