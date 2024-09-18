@@ -26,15 +26,7 @@ var buildConfig = function (env) {
         },
         devtool: isProd ? false : "eval-cheap-module-source-map",
         devServer: {
-            static: ["www"],
-            // Uncomment to run over https
-            server: {
-                type: 'https',
-                options: {
-                  key: './cert/smartFilters.test.key',
-                  cert: './cert/smartFilters.test.crt',
-                },
-              },
+            static: ["www"]
         },
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss", ".svg"],
