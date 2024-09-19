@@ -30,6 +30,7 @@ const shaderProgram = injectDisableUniform({
             uniform vec2 _scaleUV_;
             uniform vec2 _translateUV_;
             uniform int _alphaMode_;
+            uniform float _foregroundAlphaScale_;
             `,
 
         mainFunctionName: "_composition_",
@@ -49,6 +50,7 @@ const shaderProgram = injectDisableUniform({
                     }
                 
                     vec4 foreground = texture2D(_foreground_, transformedUV);
+                    foreground.a *= _foregroundAlphaScale_;
                 
                     if (_alphaMode_ == 0) {
                         result = foreground;
@@ -86,6 +88,7 @@ export class CompositionShaderBinding extends ShaderBinding {
     private readonly _foregroundLeft: RuntimeData<ConnectionPointType.Float>;
     private readonly _foregroundWidth: RuntimeData<ConnectionPointType.Float>;
     private readonly _foregroundHeight: RuntimeData<ConnectionPointType.Float>;
+    private readonly _foregroundAlphaScale: RuntimeData<ConnectionPointType.Float>;
     private readonly _alphaMode: number;
 
     /**
@@ -97,6 +100,7 @@ export class CompositionShaderBinding extends ShaderBinding {
      * @param foregroundLeft - the left position of the foreground texture
      * @param foregroundWidth - the width of the foreground texture
      * @param foregroundHeight - the height of the foreground texture
+     * @param foregroundAlphaScale - the alpha scale of the foreground texture
      * @param alphaMode - the alpha mode to use
      */
     constructor(
@@ -107,6 +111,7 @@ export class CompositionShaderBinding extends ShaderBinding {
         foregroundLeft: RuntimeData<ConnectionPointType.Float>,
         foregroundWidth: RuntimeData<ConnectionPointType.Float>,
         foregroundHeight: RuntimeData<ConnectionPointType.Float>,
+        foregroundAlphaScale: RuntimeData<ConnectionPointType.Float>,
         alphaMode: number
     ) {
         super(parentBlock);
@@ -116,6 +121,7 @@ export class CompositionShaderBinding extends ShaderBinding {
         this._foregroundLeft = foregroundLeft;
         this._foregroundWidth = foregroundWidth;
         this._foregroundHeight = foregroundHeight;
+        this._foregroundAlphaScale = foregroundAlphaScale;
         this._alphaMode = alphaMode;
     }
 
@@ -134,6 +140,7 @@ export class CompositionShaderBinding extends ShaderBinding {
         const foregroundLeft = this._foregroundLeft.value;
         const foregroundWidth = this._foregroundWidth.value;
         const foregroundHeight = this._foregroundHeight.value;
+        const foregroundAlphaScale = this._foregroundAlphaScale.value;
         const alphaMode = this._alphaMode;
 
         effect.setInt(this.getRemappedName("alphaMode"), alphaMode);
@@ -143,6 +150,7 @@ export class CompositionShaderBinding extends ShaderBinding {
         if (foreground) {
             effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
             effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
+            effect.setFloat(this.getRemappedName("foregroundAlphaScale"), foregroundAlphaScale);
         }
     }
 }
@@ -214,6 +222,15 @@ export class CompositionBlock extends ShaderBlock {
     );
 
     /**
+     * Defines a multiplier applied to the foreground's alpha channel.
+     */
+    public readonly foregroundAlphaScale = this._registerOptionalInput(
+        "foregroundAlphaScale",
+        ConnectionPointType.Float,
+        createStrongRef(1.0)
+    );
+
+    /**
      * Defines blend mode of the composition.
      */
     public alphaMode: number = ALPHA_COMBINE;
@@ -243,6 +260,7 @@ export class CompositionBlock extends ShaderBlock {
         const foregroundLeft = this.foregroundLeft.runtimeData;
         const foregroundHeight = this.foregroundHeight.runtimeData;
         const foregroundTop = this.foregroundTop.runtimeData;
+        const foregroundAlphaScale = this.foregroundAlphaScale.runtimeData;
         const alphaMode = this.alphaMode;
 
         return new CompositionShaderBinding(
@@ -253,6 +271,7 @@ export class CompositionBlock extends ShaderBlock {
             foregroundLeft,
             foregroundWidth,
             foregroundHeight,
+            foregroundAlphaScale,
             alphaMode
         );
     }
