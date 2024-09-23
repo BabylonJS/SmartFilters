@@ -4,7 +4,6 @@ import { WipeBlock } from "./wipeBlock";
 export interface ISerializedWipeBlockV1 extends ISerializedBlockV1 {
     data: {
         angle: number;
-        size: number;
     };
 }
 
@@ -19,6 +18,5 @@ export function wipeDeserializer(smartFilter: SmartFilter, serializedBlock: ISer
 
     // If data is missing, use the default value set by the block
     block.angle = serializedBlock.data.angle ?? block.angle;
-    block.size = serializedBlock.data.size ?? block.size;
     return block;
 }
