@@ -17,7 +17,7 @@ const useTextureAnalyzer: boolean = false;
 const renderToTextureInsteadOfCanvas: boolean = false;
 
 // TODO: add UI for toggling between regular and optimized graphs
-const optimize: boolean = false;
+const optimize: boolean = true;
 
 // Constants
 const LocalStorageSmartFilterName = "SmartFilterName";
@@ -58,7 +58,7 @@ if (textureRenderHelper) {
 smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEvent) => {
     SmartFilterEditor.Hide();
     currentSmartFilter = event.smartFilter;
-    renderer.startRendering(currentSmartFilter, useTextureAnalyzer).catch((err: unknown) => {
+    renderer.startRendering(currentSmartFilter, optimize, useTextureAnalyzer).catch((err: unknown) => {
         console.error("Could not start rendering", err);
     });
 
@@ -103,11 +103,11 @@ async function checkHash() {
     if (snippetToken) {
         // Reset hash with our formatting to keep it looking consistent
         setSnippet(snippetToken, version, false);
-        smartFilterLoader.loadFromSnippet(snippetToken, version, optimize);
+        smartFilterLoader.loadFromSnippet(snippetToken, version);
     } else {
         const smartFilterName =
             localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-        smartFilterLoader.loadFromManifest(smartFilterName, optimize);
+        smartFilterLoader.loadFromManifest(smartFilterName);
     }
 }
 
@@ -127,7 +127,7 @@ smartFilterLoader.manifests.forEach((manifest) => {
 // Set up SmartFilter <select> handler
 smartFilterSelect.addEventListener("change", () => {
     localStorage.setItem(LocalStorageSmartFilterName, smartFilterSelect.value);
-    smartFilterLoader.loadFromManifest(smartFilterSelect.value, optimize);
+    smartFilterLoader.loadFromManifest(smartFilterSelect.value);
 });
 
 // Set up editor button

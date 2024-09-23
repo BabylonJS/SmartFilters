@@ -3,6 +3,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import {
     ConnectionPointType,
+    SmartFilterOptimizer,
     type InputBlock,
     type SmartFilter,
     type SmartFilterRuntime,
@@ -56,10 +57,14 @@ export class SmartFilterRenderer {
     /**
      * Starts rendering the filter. (won't stop until dispose is called)
      */
-    public async startRendering(filter: SmartFilter, optimizeTextures = false) {
-        const rtg = new RenderTargetGenerator(optimizeTextures);
-        const runtime = await filter.createRuntimeAsync(this.engine, rtg);
+    public async startRendering(filter: SmartFilter, optimizerFilter = false, optimizeTextures = false) {
+        const filterToRender = optimizerFilter ? this._optimize(filter) : filter;
 
+        const rtg = new RenderTargetGenerator(optimizeTextures);
+        const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
+
+        // NOTE: Always load assets and animations from the unoptimized filter because it has all the metadata needed to load assets and
+        //       shares runtime data with the optimized filter so loading assets for it will work for the optimized filter as well
         await this.loadAssets(filter);
         this._loadAnimations(filter);
 
@@ -117,5 +122,22 @@ export class SmartFilterRenderer {
         }
 
         this._animationDisposeWork = registerAnimations(smartFilter, this);
+    }
+
+    private _optimize(smartFilter: SmartFilter): SmartFilter {
+        const forceMaxSamplersInFragmentShader = 0;
+
+        const optimizer = new SmartFilterOptimizer(smartFilter, {
+            maxSamplersInFragmentShader:
+                forceMaxSamplersInFragmentShader || this.engine.getCaps().maxTexturesImageUnits,
+            removeDisabledBlocks: true,
+        });
+
+        const optimizedSmartFilter = optimizer.optimize();
+
+        if (optimizedSmartFilter === null) {
+            throw new Error("Failed to optimize SmartFilter");
+        }
+        return optimizedSmartFilter;
     }
 }
