@@ -147,11 +147,12 @@ export class CompositionShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName("background"), background);
         effect.setTexture(this.getRemappedName("foreground"), foreground);
 
-        if (foreground) {
-            effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
-            effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
-            effect.setFloat(this.getRemappedName("foregroundAlphaScale"), foregroundAlphaScale);
-        }
+        // NOTE: textures may always be undefined if connected to another shader block when the graph is optimized
+        // TODO: consider ways to make the mistake of assuming it'll be defined less likely
+
+        effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
+        effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
+        effect.setFloat(this.getRemappedName("foregroundAlphaScale"), foregroundAlphaScale);
     }
 }
 
