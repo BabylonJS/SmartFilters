@@ -6,6 +6,9 @@ import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
+        const: `
+            const float _epsilon_ = 0.01;
+            `,
         uniform: `
                 uniform vec2 _texelStep_;
                 uniform sampler2D _input_;
@@ -34,8 +37,8 @@ const shaderProgram = injectDisableUniform({
                         fetchUV = clamp(fetchUV, 0., 1.);
                         vec4 colorSample = texture2D(_input_, fetchUV);
 
-                        // Ignore samples from fully transparent pixels
-                        if (colorSample.a == 0.) continue;
+                        // Ignore samples from mostly transparent pixels
+                        if (colorSample.a < _epsilon_) continue;
                 
                         finalWeightedColor += colorSample * _weights_[i];                    
                     }
