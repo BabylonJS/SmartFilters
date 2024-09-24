@@ -107,12 +107,9 @@ export class ShaderRuntime implements IDisposable {
             ...getShaderCreateOptions(shaderProgram),
         });
 
-        // Set the alpha mode to combine to allow for transparency
-        Constants;
-        //this._engine._alphaMode;
-        //this._engine._alphaState;
+        // Set the alpha mode to combine
         this._engine.setAlphaMode(Constants.ALPHA_COMBINE);
-        //this._engine.alphaState.alphaBlend = true;
+        this._engine.alphaState.alphaBlend = false;
 
         // Wraps the effect readiness in a promise to expose it as a public property.
         this.onReadyAsync = new Promise<void>((resolve, reject) => {
@@ -141,7 +138,9 @@ export class ShaderRuntime implements IDisposable {
      */
     public renderToCanvas(): void {
         this._effectRenderer.setViewport();
+        this._engine.alphaState.alphaBlend = true; // Turn on alpha blending for the final render
         this._draw(this._engine.getRenderWidth(), this._engine.getRenderHeight());
+        this._engine.alphaState.alphaBlend = false;
     }
 
     /**
