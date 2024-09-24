@@ -17,7 +17,10 @@ const useTextureAnalyzer: boolean = false;
 const renderToTextureInsteadOfCanvas: boolean = false;
 
 // TODO: add UI for toggling between regular and optimized graphs
-const optimize: boolean = true;
+const optimize: boolean = false;
+
+// Repro of different results: http://localhost:8080/#UDAV8T#53
+// Repro of hang: http://localhost:8080/#UDAV8T#45
 
 // Constants
 const LocalStorageSmartFilterName = "SmartFilterName";
