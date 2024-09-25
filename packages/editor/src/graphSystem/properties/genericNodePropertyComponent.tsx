@@ -4,9 +4,18 @@ import { LineContainerComponent } from "../../sharedComponents/lineContainerComp
 import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
 import { TextLineComponent } from "@babylonjs/shared-ui-components/lines/textLineComponent.js";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps";
-import type { GlobalState } from "../../globalState";
 import type { BaseBlock } from "@babylonjs/smart-filters";
-import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import {
+    PropertyTypeForEdition,
+    type IEditablePropertyListOption,
+    type IEditablePropertyOption,
+    type IPropertyDescriptionForEdition,
+} from "@babylonjs/core/Decorators/nodeDecorator.js";
+import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
+import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponent.js";
+import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
+import { Vector2LineComponent } from "@babylonjs/shared-ui-components/lines/Vector2LineComponent.js";
+import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 
 export class GenericPropertyComponent extends react.Component<IPropertyComponentProps> {
     constructor(props: IPropertyComponentProps) {
@@ -69,12 +78,7 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
         super(props);
     }
 
-    forceRebuild(notifiers?: {
-        rebuild?: boolean;
-        update?: boolean;
-        activatePreviewCommand?: boolean;
-        callback?: (scene: ThinEngine) => void;
-    }) {
+    forceRebuild(notifiers?: IEditablePropertyOption["notifiers"]) {
         if (!notifiers || notifiers.update) {
             this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.nodeData.data as BaseBlock);
         }
@@ -87,106 +91,96 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
         //     (this.props.stateManager.data as GlobalState).onPreviewCommandActivated.notifyObservers(true);
         // }
 
-        notifiers?.callback?.((this.props.stateManager.data as GlobalState).engine);
+        // notifiers?.callback?.((this.props.stateManager.data as GlobalState).engine);
     }
 
     override render() {
-        const block = this.props.nodeData.data as BaseBlock,
-            //propStore: IPropertyDescriptionForEdition[] = (block as any)._propStore;
-            propStore: any[] = (block as any)._propStore;
+        const block = this.props.nodeData.data as BaseBlock;
+        const propStore: IPropertyDescriptionForEdition[] = (block as any)._propStore;
 
         if (!propStore) {
             return <></>;
         }
 
-        const componentList: { [groupName: string]: JSX.Element[] } = {},
-            groups: string[] = [];
+        const componentList: { [groupName: string]: JSX.Element[] } = {};
+        const groups: string[] = [];
 
-        // for (const { propertyName, displayName, type, groupName, options } of propStore) {
-        //     let components = componentList[groupName];
+        for (const { propertyName, displayName, type, groupName, options } of propStore) {
+            let components = componentList[groupName];
 
-        //     if (!components) {
-        //         components = [];
-        //         componentList[groupName] = components;
-        //         groups.push(groupName);
-        //     }
+            if (!components) {
+                components = [];
+                componentList[groupName] = components;
+                groups.push(groupName);
+            }
 
-        //     switch (type) {
-        //         case PropertyTypeForEdition.Boolean: {
-        //             components.push(
-        //                 <CheckBoxLineComponent label={displayName} target={block} propertyName={propertyName} onValueChanged={() => this.forceRebuild(options.notifiers)} />
-        //             );
-        //             break;
-        //         }
-        //         case PropertyTypeForEdition.Float: {
-        //             const cantDisplaySlider = isNaN(options.min as number) || isNaN(options.max as number) || options.min === options.max;
-        //             if (cantDisplaySlider) {
-        //                 components.push(
-        //                     <FloatLineComponent
-        //                         lockObject={this.props.stateManager.lockObject}
-        //                         label={displayName}
-        //                         propertyName={propertyName}
-        //                         target={block}
-        //                         onChange={() => this.forceRebuild(options.notifiers)}
-        //                     />
-        //                 );
-        //             } else {
-        //                 components.push(
-        //                     <SliderLineComponent
-        //                         lockObject={this.props.stateManager.lockObject}
-        //                         label={displayName}
-        //                         target={block}
-        //                         propertyName={propertyName}
-        //                         step={Math.abs((options.max as number) - (options.min as number)) / 100.0}
-        //                         minimum={Math.min(options.min as number, options.max as number)}
-        //                         maximum={options.max as number}
-        //                         onChange={() => this.forceRebuild(options.notifiers)}
-        //                     />
-        //                 );
-        //             }
-        //             break;
-        //         }
-        //         case PropertyTypeForEdition.Int: {
-        //             components.push(
-        //                 <FloatLineComponent
-        //                     lockObject={this.props.stateManager.lockObject}
-        //                     digits={0}
-        //                     step={"1"}
-        //                     isInteger={true}
-        //                     label={displayName}
-        //                     propertyName={propertyName}
-        //                     target={block}
-        //                     onChange={() => this.forceRebuild(options.notifiers)}
-        //                 />
-        //             );
-        //             break;
-        //         }
-        //         case PropertyTypeForEdition.Vector2: {
-        //             components.push(
-        //                 <Vector2LineComponent
-        //                     lockObject={this.props.stateManager.lockObject}
-        //                     label={displayName}
-        //                     propertyName={propertyName}
-        //                     target={block}
-        //                     onChange={() => this.forceRebuild(options.notifiers)}
-        //                 />
-        //             );
-        //             break;
-        //         }
-        //         case PropertyTypeForEdition.List: {
-        //             components.push(
-        //                 <OptionsLineComponent
-        //                     label={displayName}
-        //                     options={options.options as IEditablePropertyListOption[]}
-        //                     target={block}
-        //                     propertyName={propertyName}
-        //                     onSelect={() => this.forceRebuild(options.notifiers)}
-        //                 />
-        //             );
-        //             break;
-        //         }
-        //     }
-        // }
+            switch (type) {
+                case PropertyTypeForEdition.Boolean: {
+                    components.push(
+                        <CheckBoxLineComponent
+                            label={displayName}
+                            target={block}
+                            propertyName={propertyName}
+                            onValueChanged={() => this.forceRebuild(options.notifiers)}
+                        />
+                    );
+                    break;
+                }
+                case PropertyTypeForEdition.Float: {
+                    components.push(
+                        <FloatSliderComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            label={displayName}
+                            propertyName={propertyName}
+                            target={block}
+                            min={options.min ?? null}
+                            max={options.max ?? null}
+                            onChange={() => this.forceRebuild(options.notifiers)}
+                        />
+                    );
+                    break;
+                }
+                case PropertyTypeForEdition.Int: {
+                    components.push(
+                        <FloatLineComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            digits={0}
+                            step={"1"}
+                            isInteger={true}
+                            label={displayName}
+                            propertyName={propertyName}
+                            target={block}
+                            onChange={() => this.forceRebuild(options.notifiers)}
+                        />
+                    );
+                    break;
+                }
+                case PropertyTypeForEdition.Vector2: {
+                    components.push(
+                        <Vector2LineComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            label={displayName}
+                            propertyName={propertyName}
+                            target={block}
+                            onChange={() => this.forceRebuild(options.notifiers)}
+                        />
+                    );
+                    break;
+                }
+                case PropertyTypeForEdition.List: {
+                    components.push(
+                        <OptionsLine
+                            label={displayName}
+                            options={options.options as IEditablePropertyListOption[]}
+                            target={block}
+                            propertyName={propertyName}
+                            onSelect={() => this.forceRebuild(options.notifiers)}
+                        />
+                    );
+                    break;
+                }
+            }
+        }
 
         return (
             <>
