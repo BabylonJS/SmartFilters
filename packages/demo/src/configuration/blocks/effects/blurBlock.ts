@@ -3,6 +3,7 @@ import { AggregateBlock, SmartFilter } from "@babylonjs/smart-filters";
 
 import { DirectionalBlurBlock } from "./directionalBlurBlock";
 import { BlockNames } from "../blockNames";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core/Decorators/nodeDecorator";
 
 const defaultBlurTextureRatioPerPass = 0.5;
 const defaultBlurSize = 2;
@@ -46,6 +47,11 @@ export class BlurBlock extends AggregateBlock {
     /**
      * Sets how much smaller we should make the texture between the 2 consecutive bi lateral passes.
      */
+    @editableInPropertyPage("Pass Texture Ratio", PropertyTypeForEdition.Float, "PROPERTIES", {
+        min: 0,
+        max: 1,
+        notifiers: { rebuild: true },
+    })
     public set blurTextureRatioPerPass(value: number) {
         this._blurTextureRatioPerPass = value;
         this._intermediateBlurV.blurTextureRatio = value;
@@ -64,6 +70,9 @@ export class BlurBlock extends AggregateBlock {
     /**
      * Sets how far the kernel might fetch the data from.
      */
+    @editableInPropertyPage("Size", PropertyTypeForEdition.Float, "PROPERTIES", {
+        notifiers: { rebuild: true },
+    })
     public set blurSize(value: number) {
         this._blurSize = value;
         this._intermediateBlurV.blurHorizontalWidth = value;
