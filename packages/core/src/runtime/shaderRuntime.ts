@@ -9,8 +9,6 @@ import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
 import type { IDisableableBlock } from "../blocks/disableableBlock";
 import { decorateSymbol, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
-import { Constants } from "@babylonjs/core/Engines/constants.js";
-import "@babylonjs/core/Engines/Extensions/engine.alpha.js";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
@@ -107,10 +105,6 @@ export class ShaderRuntime implements IDisposable {
             ...getShaderCreateOptions(shaderProgram),
         });
 
-        // Set the alpha mode to combine
-        this._engine.setAlphaMode(Constants.ALPHA_COMBINE);
-        this._engine.alphaState.alphaBlend = false;
-
         // Wraps the effect readiness in a promise to expose it as a public property.
         this.onReadyAsync = new Promise<void>((resolve, reject) => {
             this._effectWrapper.effect.executeWhenCompiled(() => {
@@ -138,9 +132,7 @@ export class ShaderRuntime implements IDisposable {
      */
     public renderToCanvas(): void {
         this._effectRenderer.setViewport();
-        this._engine.alphaState.alphaBlend = true; // Turn on alpha blending for the final render
         this._draw(this._engine.getRenderWidth(), this._engine.getRenderHeight());
-        this._engine.alphaState.alphaBlend = false;
     }
 
     /**
