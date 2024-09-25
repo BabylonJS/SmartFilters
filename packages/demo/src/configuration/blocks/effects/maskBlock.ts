@@ -35,7 +35,7 @@ export class MaskShaderBinding extends ShaderBinding {
     public override bind(effect: Effect): void {
         super.bind(effect);
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setTexture(this.getRemappedName(uniforms.maskTexture), this._maskTexture.value);
+        effect.setTexture(this.getRemappedName(uniforms.mask), this._maskTexture.value);
     }
 }
 
