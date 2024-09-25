@@ -29,14 +29,14 @@ const shaderProgram = injectDisableUniform({
                 code: `
                 vec4 _greenScreen_(vec2 vUV)
                 {
-                    vec3 color = texture2D(_input_, vUV).rgb;
-                    vec3 background = texture2D(_background_, vUV).rgb;
+                    vec4 color = texture2D(_input_, vUV);
+                    vec4 background = texture2D(_background_, vUV);
                 
-                    if (length(color - _reference_) < _distance_) {
-                        color = background;
+                    if (length(color.rgb - _reference_) < _distance_) {
+                        return background;
                     }
 
-                    return vec4(color, 1.0);
+                    return color;
                 }
             `,
             },
