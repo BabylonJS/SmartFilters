@@ -3,7 +3,7 @@ import { Constants } from "@babylonjs/core/Engines/constants";
 import "@babylonjs/core/Engines/Extensions/engine.alpha.js";
 
 export function createThinEngine(canvas: HTMLCanvasElement) {
-    const antialias = true;
+    const antialias = false;
     const engine = new ThinEngine(
         canvas,
         antialias,
@@ -20,6 +20,5 @@ export function createThinEngine(canvas: HTMLCanvasElement) {
         },
         false
     );
-    engine.setAlphaMode(Constants.ALPHA_COMBINE); // ThinEngine default isn't ALPHA_COMBINE
     return engine;
 }

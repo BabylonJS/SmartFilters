@@ -122,12 +122,6 @@ export abstract class ShaderBlock extends DisableableBlock {
         runtime.registerResource(shaderBlockRuntime);
 
         if (finalOutput) {
-            runtime.registerCommand(
-                createCommand(`${this.getClassName()}.enableAlphaBlend`, this, () => {
-                    runtime.engine.alphaState.alphaBlend = true;
-                })
-            );
-
             registerFinalRenderCommand(
                 initializationData.outputBlock.renderTargetWrapper,
                 runtime,
@@ -135,12 +129,6 @@ export abstract class ShaderBlock extends DisableableBlock {
                 shaderBlockRuntime
             );
         } else {
-            runtime.registerCommand(
-                createCommand(`${this.getClassName()}.disableAlphaBlend`, this, () => {
-                    runtime.engine.alphaState.alphaBlend = false;
-                })
-            );
-
             const renderTarget = getRenderTargetWrapper(
                 this.output.runtimeData?.value as ThinRenderTargetTexture,
                 this.getClassName()
