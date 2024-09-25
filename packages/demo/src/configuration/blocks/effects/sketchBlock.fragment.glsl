@@ -145,7 +145,7 @@ vec4 mainImage(vec2 vUV) { // main
 
     float r=length(pos-resolution.xy*.5)/resolution.x;
     float vign=1.-r*r*r;
-	fragColor = vec4(vec3(col.x*col2*vign),1);
+	  fragColor = vec4(vec3(col.x*col2*vign),texture(input,vUV).a);
 
     return fragColor;
 }
