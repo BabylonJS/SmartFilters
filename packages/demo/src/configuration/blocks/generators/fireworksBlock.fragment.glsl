@@ -66,6 +66,7 @@ vec4 mainImage(vec2 vUV) { // main
                 // mix it all together
                 vec3 sparkColor = spark * mix(1., shimmer, smoothstep(shimmerThreshold * rScale,
 					(shimmerThreshold + 1.) * rScale , r)) * fade * oh;
+				sparkColor.rgb = 1.0 - (1.0 - col.rgb) * (1.0 - sparkColor); // Screen blending for better result
 				col = mix(col, vec4(sparkColor, 1.), length(sparkColor));
             }
     	}
