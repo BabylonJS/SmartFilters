@@ -3,6 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core/Decorators/nodeDecorator";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -122,16 +123,31 @@ export class DirectionalBlurBlock extends ShaderBlock {
     /**
      * Defines how smaller we should make the target compared to the screen size.
      */
+    @editableInPropertyPage("Texture Ratio", PropertyTypeForEdition.Float, "PROPERTIES", {
+        min: 0,
+        max: 1,
+        notifiers: { rebuild: true },
+    })
     public blurTextureRatio = 0.5;
 
     /**
      * Defines the horizontal strength of the blur.
      */
+    @editableInPropertyPage("Horizontal strength", PropertyTypeForEdition.Float, "PROPERTIES", {
+        min: 0,
+        max: 1,
+        notifiers: { rebuild: true },
+    })
     public blurHorizontalWidth = 0;
 
     /**
      * Defines the vertical strength of the blur.
      */
+    @editableInPropertyPage("Vertical strength", PropertyTypeForEdition.Float, "PROPERTIES", {
+        min: 0,
+        max: 1,
+        notifiers: { rebuild: true },
+    })
     public blurVerticalWidth = 1;
 
     /**
