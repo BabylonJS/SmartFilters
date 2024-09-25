@@ -33,13 +33,13 @@ const shaderProgram = injectDisableUniform({
                 {
                     float saturationStrength = 1. - _intensity_;
 
-                    vec3 color = texture2D(_input_, vUV).rgb;
+                    vec4 color = texture2D(_input_, vUV);
                 
                     float tempMin = min(min(color.x, color.y), color.z);
                     float tempMax = max(max(color.x, color.y), color.z);
                     float tempMerge = 0.5 * (tempMin + tempMax);
                 
-                    return vec4(mix(color, vec3(tempMerge, tempMerge, tempMerge), saturationStrength), 1.0);
+                    return vec4(mix(color.rgb, vec3(tempMerge, tempMerge, tempMerge), saturationStrength), color.a);
                 }
             `,
             },
