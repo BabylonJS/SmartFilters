@@ -53,7 +53,7 @@ export class FireworksShaderBinding extends ShaderBinding {
 }
 
 /**
- * A block that adds a fireworks effect overlayed on the input texture.
+ * A block that adds a fireworks effect overlaid on the input texture.
  */
 export class FireworksBlock extends ShaderBlock {
     /**
@@ -100,7 +100,7 @@ export class FireworksBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, true);
     }
 
     /**
