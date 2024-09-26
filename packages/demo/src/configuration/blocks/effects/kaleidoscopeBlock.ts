@@ -77,7 +77,8 @@ const shaderProgram = injectDisableUniform({
                             chunkStartPoint += vec2(0.5, 0.5);
                 
                             if (chunkStartPoint.x > 0. && chunkStartPoint.x < 1. && chunkStartPoint.y > 0. && chunkStartPoint.y < 1.) {
-                                result = mix(texture2D(_input_, chunkStartPoint), result, result.a);
+                                vec4 top = texture2D(_input_, chunkStartPoint);
+                                result = mix(result, top, (result.a <= 0.) ? 1. : top.a);
                             }
                         }
                     }
