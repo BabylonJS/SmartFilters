@@ -23,7 +23,7 @@ import { SoftThresholdBlock } from "../blocks/effects/softThresholdBlock";
 import { GlitchBlock } from "../blocks/transitions/glitchBlock";
 import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
-
+import { PremultiplyAlphaBlock } from "../blocks/utility/premultiplyAlphaBlock";
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
 import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
@@ -281,5 +281,11 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         factory: (smartFilter: SmartFilter) => new TintBlock(smartFilter, "Tint"),
         category: "Effects",
         tooltip: "Adds colored tint to the input texture",
+    },
+    {
+        name: "PremultiplyAlphaBlock",
+        factory: (smartFilter: SmartFilter) => new PremultiplyAlphaBlock(smartFilter, "PremultiplyAlpha"),
+        category: "Utility",
+        tooltip: "Premultiplies the input texture's color against its alpha",
     },
 ];
