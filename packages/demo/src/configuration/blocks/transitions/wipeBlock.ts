@@ -6,12 +6,15 @@ import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
+        const: `
+            const float HALF_PI = 1.57079632679;
+            const float LARGE = 10000.0;
+            `,
         uniform: `
             uniform sampler2D _textureA_;
             uniform sampler2D _textureB_;
             uniform float _mix_;
             uniform float _angle_;
-            uniform float _size_;
             `,
 
         mainFunctionName: "_wipe_",
@@ -27,15 +30,28 @@ const shaderProgram = injectDisableUniform({
                     vec4 colorA = texture2D(_textureA_, vUV);
                     vec4 colorB = texture2D(_textureB_, vUV);
                 
-                    // rotate around the center to get a remapped point
-                    vec2 centerPos = vec2(0.5);
-                    vec2 deltaP = vUV - centerPos;
-                    vec2 rotatedP = vec2(
-                        centerPos.x + deltaP.x * cos(_angle_) - deltaP.y * sin(_angle_),
-                        centerPos.y + deltaP.x * sin(_angle_) + deltaP.y * cos(_angle_)
-                    );
-                
-                    return mix(colorA, colorB, clamp((rotatedP.y - _mix_) / (_size_ + 0.001) + 0.5, 0., 1.));
+                    float a = acos(cos(_angle_)); // Bring angle into range of 0-pi for ease
+                    float isHalfPi = step(abs(a - HALF_PI), 0.0);
+                    float isGreaterThanHalfPi = 1. - step(a, HALF_PI);
+                    float isLessThanHalfPi = 1. - step(HALF_PI, a);
+
+                    // Build a line equation, D = Ax + By + C
+                    // There are 3 possible line equations based on the angle of the wipe
+                    float m = tan(a); // Convert angle into line slope
+                    float A = mix(-m, -LARGE, isHalfPi);
+                    float C = isLessThanHalfPi * -(1. - _mix_ - (_mix_ * m));
+                    C += isGreaterThanHalfPi * -(_mix_ - (_mix_ * m));
+                    C += isHalfPi * (LARGE * _mix_);
+                    
+                    // Solve for D using UV coordinates
+                    float D = A * vUV.x + vUV.y + C;
+                    
+                    // The color above the line is flipped if the angle is greater than 90 degrees
+                    vec4 colorAbove = mix(colorB, colorA, isGreaterThanHalfPi);
+                    vec4 colorBelow = mix(colorA, colorB, isGreaterThanHalfPi);
+
+                    // If D>0, our coord is above the line
+                    return mix(colorBelow, colorAbove, step(0.0, D));
                 }
             `,
             },
@@ -51,7 +67,6 @@ export class WipeShaderBinding extends ShaderBinding {
     private readonly _textureB: RuntimeData<ConnectionPointType.Texture>;
     private readonly _mix: RuntimeData<ConnectionPointType.Float>;
     private readonly _angle: number;
-    private readonly _size: number;
 
     /**
      * Creates a new shader binding instance for the Wipe block.
@@ -60,22 +75,19 @@ export class WipeShaderBinding extends ShaderBinding {
      * @param textureB - The second texture
      * @param mix - The mix value between the two textures
      * @param angle - The angle of the wipe
-     * @param size - The size of the wipe
      */
     constructor(
         parentBlock: IDisableableBlock,
         textureA: RuntimeData<ConnectionPointType.Texture>,
         textureB: RuntimeData<ConnectionPointType.Texture>,
         mix: RuntimeData<ConnectionPointType.Float>,
-        angle: number,
-        size: number
+        angle: number
     ) {
         super(parentBlock);
         this._textureA = textureA;
         this._textureB = textureB;
         this._mix = mix;
         this._angle = angle;
-        this._size = size;
     }
 
     /**
@@ -88,7 +100,6 @@ export class WipeShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName("textureB"), this._textureB.value);
         effect.setFloat(this.getRemappedName("mix"), this._mix.value);
         effect.setFloat(this.getRemappedName("angle"), this._angle);
-        effect.setFloat(this.getRemappedName("size"), this._size);
     }
 }
 
@@ -122,11 +133,6 @@ export class WipeBlock extends ShaderBlock {
     public angle = Math.PI;
 
     /**
-     * Defines the size of the wipe effect.
-     */
-    public size = 10;
-
-    /**
      * The shader program (vertex and fragment code) to use to render the block
      */
     public static override ShaderCode = shaderProgram;
@@ -149,6 +155,6 @@ export class WipeBlock extends ShaderBlock {
         const textureB = this._confirmRuntimeDataSupplied(this.textureB);
         const mix = this._confirmRuntimeDataSupplied(this.mix);
 
-        return new WipeShaderBinding(this, textureA, textureB, mix, this.angle, this.size);
+        return new WipeShaderBinding(this, textureA, textureB, mix, this.angle);
     }
 }

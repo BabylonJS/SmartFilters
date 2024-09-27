@@ -20,7 +20,6 @@ export const wipeBlockSerializer: IBlockSerializerV1 = {
             comments: block.comments,
             data: {
                 angle: wipeBlock.angle,
-                size: wipeBlock.size,
             },
         };
     },
