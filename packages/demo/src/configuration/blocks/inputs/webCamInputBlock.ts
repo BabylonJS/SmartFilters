@@ -1,8 +1,8 @@
-import { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { WebCamRuntime } from "./webCamRuntime";
 import { ConnectionPointType, type SmartFilter, InputBlock, createStrongRef } from "@babylonjs/smart-filters";
 import type { InitializationData } from "core/src/smartFilter";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core/Decorators/nodeDecorator";
 
 export type WebCamSource = {
     name: string;
@@ -15,6 +15,8 @@ const LocalStorageWebcamIdKey = "webCamDeviceId";
 const LocalStorageNameKey = "webCamName";
 
 export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
+    public static override ClassName = "WebCamInputBlock";
+
     private readonly _engine: ThinEngine;
     private _webCamRuntime: WebCamRuntime | undefined;
     private _webCamSource: WebCamSource;
@@ -22,8 +24,16 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     public get webcamSource(): WebCamSource {
         return this._webCamSource;
     }
+    public set webcamSource(webCamSource: WebCamSource) {
+        if (this._webCamRuntime) {
+            this._webCamRuntime.deviceId = webCamSource.id;
+        }
+        this._webCamSource = webCamSource;
 
-    public readonly onWebCamSourceChanged: Observable<WebCamSource> = new Observable<WebCamSource>(undefined);
+        // Save the last used webcam source
+        localStorage.setItem(LocalStorageWebcamIdKey, webCamSource.id);
+        localStorage.setItem(LocalStorageNameKey, webCamSource.name);
+    }
 
     constructor(smartFilter: SmartFilter, engine: ThinEngine) {
         super(smartFilter, WebCamInputBlockName, ConnectionPointType.Texture, createStrongRef(null));
@@ -44,7 +54,36 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
             };
         }
 
-        this.onWebCamSourceChanged.add(this._onWebCamSourceChanged.bind(this));
+        // Create dynamically a property to store the webcam options
+        WebCamInputBlock.EnumerateWebCamSources().then((sources: WebCamSource[]) => {
+            let foundDefault = false;
+            const options = sources.map((source: WebCamSource, index: number) => {
+                if (source.id === "") {
+                    foundDefault = true;
+                    return {
+                        label: "Default",
+                        value: index,
+                        id: "",
+                    };
+                }
+                return {
+                    label: source.name,
+                    value: index,
+                    id: source.id,
+                };
+            });
+
+            if (!foundDefault) {
+                options.unshift({ label: "Default", value: -1, id: "" });
+            }
+
+            editableInPropertyPage("Webcam Source", PropertyTypeForEdition.List, "TESTING", {
+                notifiers: {
+                    update: true,
+                },
+                options: options,
+            })(this, "webcamSource");
+        });
     }
 
     public static async EnumerateWebCamSources(): Promise<WebCamSource[]> {
@@ -69,16 +108,5 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
         _finalOutput: boolean
     ): void {
         initializationData.disposableResources.push(this.initializeWebCamRuntime());
-    }
-
-    private async _onWebCamSourceChanged(webCamSource: WebCamSource): Promise<void> {
-        if (this._webCamRuntime) {
-            this._webCamRuntime.deviceId = webCamSource.id;
-        }
-        this._webCamSource = webCamSource;
-
-        // Save the last used webcam source
-        localStorage.setItem(LocalStorageWebcamIdKey, webCamSource.id);
-        localStorage.setItem(LocalStorageNameKey, webCamSource.name);
     }
 }
