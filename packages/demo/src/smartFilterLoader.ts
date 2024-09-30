@@ -80,7 +80,9 @@ export class SmartFilterLoader {
      */
     public async loadFromManifest(name: string): Promise<SmartFilter> {
         return this._loadSmartFilter(async () => {
-            const manifest = this.manifests.find((manifest) => manifest.name === name);
+            const manifest = this.manifests.find(
+                (manifest) => manifest.name === name || manifest.name + " - optimized" === name
+            );
             switch (manifest?.type) {
                 case "HardCoded": {
                     return manifest.createSmartFilter(this._engine, this._renderer);
