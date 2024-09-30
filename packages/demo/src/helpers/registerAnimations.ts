@@ -1,6 +1,6 @@
 import { ConnectionPointType, type SmartFilter, type InputBlock } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
-import type { Observer } from "@babylonjs/core/Misc/observable";
+import { WebCamInputBlock } from "../configuration/blocks/inputs/webCamInputBlock";
 
 /**
  * Registers animations for the Smart Filter.
@@ -9,7 +9,7 @@ import type { Observer } from "@babylonjs/core/Misc/observable";
  * @returns A function to unregister the animations
  */
 export function registerAnimations(smartFilter: SmartFilter, renderer: SmartFilterRenderer): () => void {
-    const observers: Observer<void>[] = [];
+    const disposeWork: (() => void)[] = [];
 
     for (const block of smartFilter.attachedBlocks) {
         if (block.getClassName() === "InputBlock" && (block as any).type === ConnectionPointType.Float) {
@@ -26,14 +26,21 @@ export function registerAnimations(smartFilter: SmartFilter, renderer: SmartFilt
                     lastTime = currentTime;
                 });
 
-                observers.push(observer);
+                disposeWork.push(() => {
+                    renderer.beforeRenderObservable.remove(observer);
+                });
             }
+        } else if (block instanceof WebCamInputBlock) {
+            const webCamRuntime = block.initializeWebCamRuntime();
+            disposeWork.push(() => {
+                webCamRuntime.dispose();
+            });
         }
     }
 
     return () => {
-        for (const observer of observers) {
-            renderer.beforeRenderObservable.remove(observer);
+        for (const disposeWorkToDo of disposeWork) {
+            disposeWorkToDo();
         }
     };
 }
