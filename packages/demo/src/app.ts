@@ -2,7 +2,6 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
-import { type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./helpers/createThinEngine";
@@ -16,23 +15,22 @@ import { TextureRenderHelper } from "./textureRenderHelper";
 const useTextureAnalyzer: boolean = false;
 const renderToTextureInsteadOfCanvas: boolean = false;
 
-// TODO: add UI for toggling between regular and optimized graphs
-const optimize: boolean = false;
-
-// Repro of different results: http://localhost:8080/#UDAV8T#53
-// Repro of hang: http://localhost:8080/#UDAV8T#45
-
 // Constants
 const LocalStorageSmartFilterName = "SmartFilterName";
+const LocalStorageOptimizeName = "OptimizeSmartFilter";
+
+// Load settings from localStorage
+let optimize: boolean = localStorage.getItem(LocalStorageOptimizeName) === "true";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
 const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
-const inRepoFooter = document.getElementById("inRepoFooter")!;
+const inRepoSelection = document.getElementById("inRepoSelection")!;
 const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
 const version = document.getElementById("version")!;
+const optimizeCheckbox = document.getElementById("optimize") as HTMLInputElement;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -48,7 +46,7 @@ const smartFilterLoader = new SmartFilterLoader(
 );
 
 // Track the current Smart Filter
-let currentSmartFilter: SmartFilter | undefined;
+let currentSmartFilterLoadResult: SmartFilterLoadedEvent | undefined;
 
 // Init TextureRenderHelper if we are using one
 if (textureRenderHelper) {
@@ -57,43 +55,61 @@ if (textureRenderHelper) {
     });
 }
 
-// Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
-smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEvent) => {
+function renderCurrentSmartFilter() {
     SmartFilterEditor.Hide();
-    currentSmartFilter = event.smartFilter;
-    renderer.startRendering(currentSmartFilter, optimize, useTextureAnalyzer).catch((err: unknown) => {
-        console.error("Could not start rendering", err);
-    });
+
+    if (!currentSmartFilterLoadResult) {
+        return;
+    }
+
+    console.log(
+        `Rendering SmartFilter "${currentSmartFilterLoadResult.smartFilter.name}"`,
+        optimize ? "[optimized]" : ""
+    );
+
+    renderer
+        .startRendering(currentSmartFilterLoadResult.smartFilter, optimize, useTextureAnalyzer)
+        .catch((err: unknown) => {
+            console.error("Could not start rendering", err);
+        });
 
     // Ensure hash is empty if we're not loading from a snippet
-    if (event.source !== SmartFilterSource.Snippet) {
+    if (currentSmartFilterLoadResult.source !== SmartFilterSource.Snippet) {
         history.replaceState(null, "", window.location.pathname);
     }
 
     // In case we fell back to the default (in-repo) SmartFilter, update the <select>
-    if (event.source === SmartFilterSource.InRepo && smartFilterSelect.value !== currentSmartFilter.name) {
-        localStorage.setItem(LocalStorageSmartFilterName, currentSmartFilter.name);
-        smartFilterSelect.value = currentSmartFilter.name;
+    if (
+        currentSmartFilterLoadResult.source === SmartFilterSource.InRepo &&
+        smartFilterSelect.value !== currentSmartFilterLoadResult.smartFilter.name
+    ) {
+        localStorage.setItem(LocalStorageSmartFilterName, currentSmartFilterLoadResult.smartFilter.name);
+        smartFilterSelect.value = currentSmartFilterLoadResult.smartFilter.name;
     }
 
     // Set appropriate footer elements based on source
-    switch (event.source) {
+    switch (currentSmartFilterLoadResult.source) {
         case SmartFilterSource.InRepo:
             sourceName.textContent = "";
-            inRepoFooter.style.display = "block";
+            inRepoSelection.style.display = "block";
             snippetAndFileFooter.style.display = "none";
             break;
         case SmartFilterSource.Snippet:
             sourceName.textContent = "snippet server";
-            inRepoFooter.style.display = "none";
+            inRepoSelection.style.display = "none";
             snippetAndFileFooter.style.display = "block";
             break;
         case SmartFilterSource.File:
             sourceName.textContent = "local file";
-            inRepoFooter.style.display = "none";
+            inRepoSelection.style.display = "none";
             snippetAndFileFooter.style.display = "block";
             break;
     }
+}
+// Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
+smartFilterLoader.onSmartFilterLoadedObservable.add((loadResult: SmartFilterLoadedEvent) => {
+    currentSmartFilterLoadResult = loadResult;
+    renderCurrentSmartFilter();
 });
 
 /**
@@ -143,10 +159,18 @@ smartFilterSelect.addEventListener("change", () => {
 
 // Set up editor button
 editActionLink.onclick = async () => {
-    if (currentSmartFilter) {
+    if (currentSmartFilterLoadResult) {
         const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
-        module.launchEditor(currentSmartFilter, engine, renderer, smartFilterLoader);
+        module.launchEditor(currentSmartFilterLoadResult.smartFilter, engine, renderer, smartFilterLoader);
     }
+};
+
+// Set up the optimize checkbox
+optimizeCheckbox.checked = optimize;
+optimizeCheckbox.onchange = () => {
+    localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
+    optimize = optimizeCheckbox.checked;
+    renderCurrentSmartFilter();
 };
 
 // Display the current version by loading the version.json file

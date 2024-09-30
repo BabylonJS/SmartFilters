@@ -28,18 +28,17 @@
                 margin: auto;
                 border: none !important;
                 outline: none !important;
-                background: conic-gradient(
-                    #cccccc 90deg,
-                    #ffffff 90deg 180deg,
-                    #cccccc 180deg 270deg,
-                    #ffffff 270deg
-                );
+                background: conic-gradient(#cccccc 90deg, #ffffff 90deg 180deg, #cccccc 180deg 270deg, #ffffff 270deg);
                 background-repeat: repeat;
                 background-size: 100px 100px;
                 background-position: top left;
             }
 
-            .footer div {
+            .footer .center {
+                grid-column: 2;
+            }
+
+            .footer .center div {
                 display: none;
             }
 
@@ -98,6 +97,8 @@
                 grid-column-end: 5;
                 grid-row-start: 3;
                 grid-row-end: 3;
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
             }
 
             .versionLine {
@@ -145,6 +146,17 @@
                 margin-block: 0;
                 line-height: normal;
             }
+
+            .footer #options {
+                text-align: right;
+                margin-right: 10px;
+                vertical-align: top;
+                line-height: normal;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                align-items: flex-start;
+            }
         </style>
     </head>
 
@@ -165,21 +177,28 @@
                 <canvas id="renderCanvas" width="1024" height="700"></canvas>
             </div>
             <div class="footer">
-                <div id="inRepoFooter">
+                <div class="center">
+                    <div id="inRepoSelection">
+                        <p>
+                            SmartFilter:
+                            <select id="smartFilterSelect" title="SmartFilter"></select>
+                        </p>
+                        <p>To modify this list, see smartFilters.ts</p>
+                    </div>
+                    <div id="snippetAndFileFooter">
+                        <p>Viewing SmartFilter from <b id="sourceName">snippet server or local file</b>.</p>
+                        <p>To browse in-repo SmartFilters, reload the page with an empty hash.</p>
+                    </div>
                     <p>
-                        SmartFilter:
-                        <select id="smartFilterSelect" title="SmartFilter"></select>
+                        The source for this preview tool can be found
+                        <a href="https://github.com/BabylonJS/SmartFilters/tree/main/packages/demo">here</a>.
                     </p>
-                    <p>To modify this list, see smartFilters.ts</p>
                 </div>
-                <div id="snippetAndFileFooter">
-                    <p>Viewing SmartFilter from <b id="sourceName">snippet server or local file</b>.</p>
-                    <p>To browse in-repo SmartFilters, reload the page with an empty hash.</p>
+                <div id="options">
+                    <div>
+                        <input type="checkbox" id="optimize" title="Optimize">Optimize</input>
+                    </div>
                 </div>
-                <p>
-                    The source for this preview tool can be found
-                    <a href="https://github.com/BabylonJS/SmartFilters/tree/main/packages/demo">here</a>.
-                </p>
             </div>
             <div class="versionLine">
                 <div class="version" id="version"></div>
