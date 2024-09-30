@@ -100,23 +100,27 @@ smartFilterLoader.onSmartFilterLoadedObservable.add((event: SmartFilterLoadedEve
  * Checks the hash for a snippet token and loads the SmartFilter if one is found.
  * Otherwise, loads the last in-repo SmartFilter or the default.
  */
-async function checkHash() {
+async function loadFromHash() {
     const [snippetToken, version] = getSnippet();
 
-    if (snippetToken) {
-        // Reset hash with our formatting to keep it looking consistent
-        setSnippet(snippetToken, version, false);
-        smartFilterLoader.loadFromSnippet(snippetToken, version);
-    } else {
-        const smartFilterName =
-            localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-        smartFilterLoader.loadFromManifest(smartFilterName);
+    try {
+        if (snippetToken) {
+            // Reset hash with our formatting to keep it looking consistent
+            setSnippet(snippetToken, version, false);
+            smartFilterLoader.loadFromSnippet(snippetToken, version);
+        } else {
+            const smartFilterName =
+                localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
+            smartFilterLoader.loadFromManifest(smartFilterName);
+        }
+    } catch (e) {
+        smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName);
     }
 }
 
 // Initial load and hashchange listener
-checkHash();
-window.addEventListener("hashchange", checkHash);
+loadFromHash();
+window.addEventListener("hashchange", loadFromHash);
 
 // Populate the smart filter <select> list
 smartFilterLoader.manifests.forEach((manifest) => {
@@ -130,7 +134,11 @@ smartFilterLoader.manifests.forEach((manifest) => {
 // Set up SmartFilter <select> handler
 smartFilterSelect.addEventListener("change", () => {
     localStorage.setItem(LocalStorageSmartFilterName, smartFilterSelect.value);
-    smartFilterLoader.loadFromManifest(smartFilterSelect.value);
+    try {
+        smartFilterLoader.loadFromManifest(smartFilterSelect.value);
+    } catch (e) {
+        smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName);
+    }
 });
 
 // Set up editor button
