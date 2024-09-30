@@ -30,20 +30,20 @@ const shaderProgram = injectDisableUniform({
                 name: "_contrast_",
                 code: `
                 vec4 _contrast_(vec2 vUV) {
-                    vec3 color = texture2D(_input_, vUV).rgb;
+                    vec4 color = texture2D(_input_, vUV);
 
                     float contrastLMin = mix(-2., 0., _intensity_ * 2.0);
                     float contrastLMax = mix(3., 1., _intensity_ * 2.0);
                 
-                    vec3 contrastMin = _remap_(color, contrastLMin, contrastLMax, 0., 1.);
+                    vec3 contrastMin = _remap_(color.rgb, contrastLMin, contrastLMax, 0., 1.);
                 
                     float intensityMapped = _remap_(_intensity_, 0.5, 1., 0., 1.0);
                     float contrastHMin = mix(0., 0.45, intensityMapped);
                     float contrastHMax = mix(1., 0.5, intensityMapped);
                 
-                    vec3 contrastMax = _remap_(color, contrastHMin, contrastHMax, 0., 1.);
+                    vec3 contrastMax = _remap_(color.rgb, contrastHMin, contrastHMax, 0., 1.);
                 
-                    return vec4(mix(contrastMin, contrastMax, step(_intensity_, 0.5)), 1.0);
+                    return vec4(mix(contrastMin, contrastMax, step(_intensity_, 0.5)), color.a);
                 }
             `,
             },

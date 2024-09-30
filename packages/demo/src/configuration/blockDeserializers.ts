@@ -195,6 +195,16 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
         return new TintBlock(smartFilter, serializedBlock.name);
     });
 
+    deserializers.set(
+        BlockNames.premultiplyAlpha,
+        async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+            const { PremultiplyAlphaBlock } = await import(
+                /* webpackChunkName: "premultiplyAlphaBlock" */ "./blocks/utility/premultiplyAlphaBlock"
+            );
+            return new PremultiplyAlphaBlock(smartFilter, serializedBlock.name);
+        }
+    );
+
     // Non-trivial deserializers begin.
 
     deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {

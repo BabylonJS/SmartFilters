@@ -26,6 +26,7 @@ vec3 hash31(float p) {
 vec4 mainImage(vec2 vUV) { // main
     float t = mod(time + 10., 7200.);
 	vec4 col = texture2D(input, vUV); 
+    vec4 sparkColor = vec4(0.);
     vec2 origin = vec2(0.);
 	vUV.x *= aspectRatio;
     
@@ -64,11 +65,13 @@ vec4 mainImage(vec2 vUV) { // main
                 // fade the particles towards the end of explosion
                 float fade = max(0., (EXPLOSION_DURATION - 5.) * rScale - r);
                 // mix it all together
-                vec3 sparkColor = spark * mix(1., shimmer, smoothstep(shimmerThreshold * rScale,
+                vec3 contribution = spark * mix(1., shimmer, smoothstep(shimmerThreshold * rScale,
 					(shimmerThreshold + 1.) * rScale , r)) * fade * oh;
-				col.rgb = 1.0 - (1.0 - col.rgb) * (1.0 - sparkColor); // Screen blending for better result
+                contribution = clamp(contribution, 0., 1.);
+                sparkColor.rgb += contribution;
+                sparkColor.a += length(contribution) * 0.57735; // Base alpha off of "colorfulness"
             }
     	}
     }
-    return col;
+    return mix(col, sparkColor, sparkColor.a);
 } 

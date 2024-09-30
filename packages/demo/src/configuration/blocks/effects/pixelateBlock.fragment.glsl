@@ -14,5 +14,5 @@ vec4 pixelate(vec2 vUV) { // main
 
     vec2 pixelateStep = floor(pixelate * vUV) / pixelate;
 
-    return vec4(texture2D(input, pixelateStep).rgb, 1.);
+    return texture2D(input, pixelateStep);
 }
