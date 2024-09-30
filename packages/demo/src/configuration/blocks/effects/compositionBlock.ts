@@ -35,42 +35,41 @@ const shaderProgram = injectDisableUniform({
 
         mainFunctionName: "_composition_",
 
-        mainInputTexture: "_foreground_",
+        mainInputTexture: "_background_",
 
         functions: [
             {
                 name: "_composition_",
                 code: `
                 vec4 _composition_(vec2 vUV) {
-                    vec4 result = texture2D(_background_, vUV);
+                    vec4 background = texture2D(_background_, vUV);
 
                     vec2 transformedUV = vUV * (1.0 / _scaleUV_) + _translateUV_;
                     if (transformedUV.x < 0.0 || transformedUV.x > 1.0 || transformedUV.y < 0.0 || transformedUV.y > 1.0) {
-                        return result;
+                        return background;
                     }
-                
+            
                     vec4 foreground = texture2D(_foreground_, transformedUV);
                     foreground.a *= _foregroundAlphaScale_;
                 
+                    // SRC is foreground, DEST is background
                     if (_alphaMode_ == 0) {
-                        result = foreground;
+                        return foreground;
                     }
                     else if (_alphaMode_ == 1) {
-                        result = result.a * result;
-                        result += foreground;
+                        return foreground.a * foreground + background;
                     }
                     else if (_alphaMode_ == 2) {
-                        result = mix(result, foreground, foreground.a);
+                        return mix(background, foreground, foreground.a);
                     }
                     else if (_alphaMode_ == 3) {
-                        float srcAlpha = result.a;
-                        result = srcAlpha * result - (1. - srcAlpha) * foreground;
+                        return background - foreground * background;
                     }
                     else if (_alphaMode_ == 4) {
-                        result *= foreground;
+                        return foreground * background;
                     }
                 
-                    return result;
+                    return background;
                 }
             `,
             },

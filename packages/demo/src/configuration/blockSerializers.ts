@@ -37,6 +37,7 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.neonHeart,
     BlockNames.spritesheet,
     BlockNames.tint,
+    BlockNames.premultiplyAlpha,
 ];
 
 /**

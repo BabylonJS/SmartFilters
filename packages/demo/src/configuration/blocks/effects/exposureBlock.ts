@@ -20,8 +20,8 @@ const shaderProgram = injectDisableUniform({
                 name: "_exposure_",
                 code: `
                 vec4 _exposure_(vec2 vUV) {
-                    vec3 color = texture2D(_input_, vUV).rgb;
-                    return vec4(color * _amount_, 1.0);
+                    vec4 color = texture2D(_input_, vUV);
+                    return vec4(color.rgb * _amount_, color.a);
                 }
             `,
             },
