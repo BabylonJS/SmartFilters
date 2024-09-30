@@ -71,7 +71,8 @@ export class SmartFilterRenderer {
         console.log("Number of render targets created: " + rtg.numTargetsCreated);
 
         this._setRuntime(runtime);
-        return this.runtime;
+
+        return filterToRender;
     }
 
     /**

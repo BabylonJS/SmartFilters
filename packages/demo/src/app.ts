@@ -10,6 +10,13 @@ import { smartFilterManifests } from "./configuration/smartFilters";
 import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/blockDeserializers";
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
+import type { SmartFilter } from "@babylonjs/smart-filters";
+
+type CurrentSmartFilterState = {
+    smartFilter: SmartFilter;
+    optimizedSmartFilter?: SmartFilter;
+    source: SmartFilterSource;
+};
 
 // Hardcoded options there is no UI for
 const useTextureAnalyzer: boolean = false;
@@ -18,9 +25,11 @@ const renderToTextureInsteadOfCanvas: boolean = false;
 // Constants
 const LocalStorageSmartFilterName = "SmartFilterName";
 const LocalStorageOptimizeName = "OptimizeSmartFilter";
+const LocalStorageEditOptimizedName = "EditOptimizedSmartFilter";
 
 // Load settings from localStorage
 let optimize: boolean = localStorage.getItem(LocalStorageOptimizeName) === "true";
+let editOptimized: boolean = localStorage.getItem(LocalStorageEditOptimizedName) === "true";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
@@ -31,6 +40,7 @@ const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
 const version = document.getElementById("version")!;
 const optimizeCheckbox = document.getElementById("optimize") as HTMLInputElement;
+const editOptimizedCheckbox = document.getElementById("editOptimized") as HTMLInputElement;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -46,7 +56,7 @@ const smartFilterLoader = new SmartFilterLoader(
 );
 
 // Track the current Smart Filter
-let currentSmartFilterLoadResult: SmartFilterLoadedEvent | undefined;
+let currentSmartFilterState: CurrentSmartFilterState | undefined;
 
 // Init TextureRenderHelper if we are using one
 if (textureRenderHelper) {
@@ -58,37 +68,40 @@ if (textureRenderHelper) {
 function renderCurrentSmartFilter() {
     SmartFilterEditor.Hide();
 
-    if (!currentSmartFilterLoadResult) {
+    const smartFilterState = currentSmartFilterState;
+    if (!smartFilterState) {
         return;
     }
 
-    console.log(
-        `Rendering SmartFilter "${currentSmartFilterLoadResult.smartFilter.name}"`,
-        optimize ? "[optimized]" : ""
-    );
+    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, optimize ? "[optimized]" : "");
 
     renderer
-        .startRendering(currentSmartFilterLoadResult.smartFilter, optimize, useTextureAnalyzer)
+        .startRendering(smartFilterState.smartFilter, optimize, useTextureAnalyzer)
+        .then((smartFilterRendered: SmartFilter) => {
+            if (optimize) {
+                smartFilterState.optimizedSmartFilter = smartFilterRendered;
+            }
+        })
         .catch((err: unknown) => {
             console.error("Could not start rendering", err);
         });
 
     // Ensure hash is empty if we're not loading from a snippet
-    if (currentSmartFilterLoadResult.source !== SmartFilterSource.Snippet) {
+    if (smartFilterState.source !== SmartFilterSource.Snippet) {
         history.replaceState(null, "", window.location.pathname);
     }
 
     // In case we fell back to the default (in-repo) SmartFilter, update the <select>
     if (
-        currentSmartFilterLoadResult.source === SmartFilterSource.InRepo &&
-        smartFilterSelect.value !== currentSmartFilterLoadResult.smartFilter.name
+        smartFilterState.source === SmartFilterSource.InRepo &&
+        smartFilterSelect.value !== smartFilterState.smartFilter.name
     ) {
-        localStorage.setItem(LocalStorageSmartFilterName, currentSmartFilterLoadResult.smartFilter.name);
-        smartFilterSelect.value = currentSmartFilterLoadResult.smartFilter.name;
+        localStorage.setItem(LocalStorageSmartFilterName, smartFilterState.smartFilter.name);
+        smartFilterSelect.value = smartFilterState.smartFilter.name;
     }
 
     // Set appropriate footer elements based on source
-    switch (currentSmartFilterLoadResult.source) {
+    switch (smartFilterState.source) {
         case SmartFilterSource.InRepo:
             sourceName.textContent = "";
             inRepoSelection.style.display = "block";
@@ -108,7 +121,7 @@ function renderCurrentSmartFilter() {
 }
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
 smartFilterLoader.onSmartFilterLoadedObservable.add((loadResult: SmartFilterLoadedEvent) => {
-    currentSmartFilterLoadResult = loadResult;
+    currentSmartFilterState = loadResult;
     renderCurrentSmartFilter();
 });
 
@@ -159,9 +172,16 @@ smartFilterSelect.addEventListener("change", () => {
 
 // Set up editor button
 editActionLink.onclick = async () => {
-    if (currentSmartFilterLoadResult) {
+    if (currentSmartFilterState) {
         const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
-        module.launchEditor(currentSmartFilterLoadResult.smartFilter, engine, renderer, smartFilterLoader);
+        module.launchEditor(
+            editOptimized && currentSmartFilterState.optimizedSmartFilter
+                ? currentSmartFilterState.optimizedSmartFilter
+                : currentSmartFilterState.smartFilter,
+            engine,
+            renderer,
+            smartFilterLoader
+        );
     }
 };
 
@@ -171,6 +191,13 @@ optimizeCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
     optimize = optimizeCheckbox.checked;
     renderCurrentSmartFilter();
+};
+
+// Set up the edit optimized checkbox
+editOptimizedCheckbox.checked = editOptimized;
+editOptimizedCheckbox.onchange = () => {
+    localStorage.setItem(LocalStorageEditOptimizedName, editOptimizedCheckbox.checked.toString());
+    editOptimized = editOptimizedCheckbox.checked;
 };
 
 // Display the current version by loading the version.json file
