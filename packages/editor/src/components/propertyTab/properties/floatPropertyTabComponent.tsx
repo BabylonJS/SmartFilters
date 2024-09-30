@@ -1,11 +1,12 @@
 import { Component } from "react";
 import type { ConnectionPointType, InputBlock } from "@babylonjs/smart-filters";
-import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { getFloatInputBlockEditorData } from "../../../graphSystem/getEditorData.js";
 import { FloatSliderComponent } from "../../../sharedComponents/floatSliderComponent.js";
+import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 
-export interface FloatPropertyTabComponentProps extends IPropertyComponentProps {
+export interface FloatPropertyTabComponentProps {
+    stateManager: StateManager;
     inputBlock: InputBlock<ConnectionPointType.Float>;
 }
 

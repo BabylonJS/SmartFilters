@@ -2,7 +2,6 @@ import * as react from "react";
 import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButtonLineComponent.js";
 import { NumericInput } from "@babylonjs/shared-ui-components/lines/numericInputComponent.js";
 import { type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
-import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { Tools } from "@babylonjs/core/Misc/tools.js";
 import type { GlobalState, TexturePreset } from "../../globalState.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
@@ -13,8 +12,10 @@ import type { Nullable } from "@babylonjs/core/types.js";
 import { getTextureInputBlockEditorData } from "../getEditorData.js";
 import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
 import { debounce } from "../../helpers/debounce.js";
+import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 
-export interface ImageSourcePropertyTabComponentProps extends IPropertyComponentProps {
+export interface ImageSourcePropertyTabComponentProps {
+    stateManager: StateManager;
     inputBlock: InputBlock<ConnectionPointType.Texture>;
 }
 
@@ -160,7 +161,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
     }
 
     private _triggerAssetUpdate(instant: boolean = false) {
-        this.props.nodeData.refreshCallback?.();
+        this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
         this.forceUpdate();
 
         const update = () => {
