@@ -19,7 +19,6 @@ type CurrentSmartFilterState = {
 };
 
 // Hardcoded options there is no UI for
-const useTextureAnalyzer: boolean = false;
 const renderToTextureInsteadOfCanvas: boolean = false;
 
 // Constants
@@ -73,7 +72,7 @@ function renderCurrentSmartFilter() {
     console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, optimize ? "[optimized]" : "");
 
     renderer
-        .startRendering(smartFilterState.smartFilter, optimize, useTextureAnalyzer)
+        .startRendering(smartFilterState.smartFilter, optimize, optimize)
         .then((smartFilterRendered: SmartFilter) => {
             if (optimize) {
                 smartFilterState.optimizedSmartFilter = smartFilterRendered;
