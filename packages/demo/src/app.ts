@@ -25,11 +25,9 @@ const renderToTextureInsteadOfCanvas: boolean = false;
 // Constants
 const LocalStorageSmartFilterName = "SmartFilterName";
 const LocalStorageOptimizeName = "OptimizeSmartFilter";
-const LocalStorageEditOptimizedName = "EditOptimizedSmartFilter";
 
 // Load settings from localStorage
 let optimize: boolean = localStorage.getItem(LocalStorageOptimizeName) === "true";
-let editOptimized: boolean = localStorage.getItem(LocalStorageEditOptimizedName) === "true";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
@@ -40,8 +38,6 @@ const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
 const version = document.getElementById("version")!;
 const optimizeCheckbox = document.getElementById("optimize") as HTMLInputElement;
-const editOptimizedCheckbox = document.getElementById("editOptimized") as HTMLInputElement;
-const editOptimizedCheckboxLabel = document.getElementById("editOptimizedLabel") as HTMLLabelElement;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -175,14 +171,7 @@ smartFilterSelect.addEventListener("change", () => {
 editActionLink.onclick = async () => {
     if (currentSmartFilterState) {
         const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
-        module.launchEditor(
-            editOptimized && currentSmartFilterState.optimizedSmartFilter
-                ? currentSmartFilterState.optimizedSmartFilter
-                : currentSmartFilterState.smartFilter,
-            engine,
-            renderer,
-            smartFilterLoader
-        );
+        module.launchEditor(currentSmartFilterState.smartFilter, engine, renderer, smartFilterLoader);
     }
 };
 
@@ -191,22 +180,8 @@ optimizeCheckbox.checked = optimize;
 optimizeCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
     optimize = optimizeCheckbox.checked;
-    updateEditOptimizedCheckboxVisibility();
     renderCurrentSmartFilter();
 };
-
-// Set up the edit optimized checkbox
-editOptimizedCheckbox.checked = editOptimized;
-editOptimizedCheckbox.onchange = () => {
-    localStorage.setItem(LocalStorageEditOptimizedName, editOptimizedCheckbox.checked.toString());
-    editOptimized = editOptimizedCheckbox.checked;
-    SmartFilterEditor.Hide();
-};
-function updateEditOptimizedCheckboxVisibility() {
-    editOptimizedCheckboxLabel.style.display = optimize ? "" : "none";
-    editOptimizedCheckbox.style.display = optimize ? "" : "none";
-}
-updateEditOptimizedCheckboxVisibility();
 
 // Display the current version by loading the version.json file
 fetch("./version.json").then((response: Response) => {
