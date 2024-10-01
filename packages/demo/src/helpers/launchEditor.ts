@@ -85,7 +85,7 @@ export function launchEditor(
                 );
             },
             loadSmartFilter: async (file: File) => {
-                return smartFilterLoader.loadFromFile(file, false); // TODO: update optimize
+                return smartFilterLoader.loadFromFile(file);
             },
             saveToSnippetServer: async () => {
                 const serializer = new SmartFilterSerializer(

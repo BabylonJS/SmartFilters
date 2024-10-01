@@ -58,13 +58,17 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
             }));
     }
 
+    public initializeWebCamRuntime(): WebCamRuntime {
+        this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
+        this._webCamRuntime.deviceId = this._webCamSource.id;
+        return this._webCamRuntime;
+    }
+
     public override generateCommandsAndGatherInitPromises(
         initializationData: InitializationData,
         _finalOutput: boolean
     ): void {
-        this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
-        this._webCamRuntime.deviceId = this._webCamSource.id;
-        initializationData.disposableResources.push(this._webCamRuntime);
+        initializationData.disposableResources.push(this.initializeWebCamRuntime());
     }
 
     private async _onWebCamSourceChanged(webCamSource: WebCamSource): Promise<void> {

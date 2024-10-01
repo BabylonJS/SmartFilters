@@ -73,7 +73,7 @@ export class AuroraBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, true);
     }
 
     /**

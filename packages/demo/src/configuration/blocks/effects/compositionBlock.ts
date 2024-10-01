@@ -146,11 +146,11 @@ export class CompositionShaderBinding extends ShaderBinding {
         effect.setTexture(this.getRemappedName("background"), background);
         effect.setTexture(this.getRemappedName("foreground"), foreground);
 
-        if (foreground) {
-            effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
-            effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
-            effect.setFloat(this.getRemappedName("foregroundAlphaScale"), foregroundAlphaScale);
-        }
+        // NOTE: textures may always be undefined if connected to another shader block when the graph is optimized
+
+        effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
+        effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
+        effect.setFloat(this.getRemappedName("foregroundAlphaScale"), foregroundAlphaScale);
     }
 }
 
@@ -245,7 +245,7 @@ export class CompositionBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, true);
     }
 
     /**
