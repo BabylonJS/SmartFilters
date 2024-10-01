@@ -41,6 +41,7 @@ const sourceName = document.getElementById("sourceName")!;
 const version = document.getElementById("version")!;
 const optimizeCheckbox = document.getElementById("optimize") as HTMLInputElement;
 const editOptimizedCheckbox = document.getElementById("editOptimized") as HTMLInputElement;
+const editOptimizedCheckboxLabel = document.getElementById("editOptimizedLabel") as HTMLLabelElement;
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -190,6 +191,7 @@ optimizeCheckbox.checked = optimize;
 optimizeCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
     optimize = optimizeCheckbox.checked;
+    updateEditOptimizedCheckboxVisibility();
     renderCurrentSmartFilter();
 };
 
@@ -198,7 +200,13 @@ editOptimizedCheckbox.checked = editOptimized;
 editOptimizedCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageEditOptimizedName, editOptimizedCheckbox.checked.toString());
     editOptimized = editOptimizedCheckbox.checked;
+    SmartFilterEditor.Hide();
 };
+function updateEditOptimizedCheckboxVisibility() {
+    editOptimizedCheckboxLabel.style.display = optimize ? "" : "none";
+    editOptimizedCheckbox.style.display = optimize ? "" : "none";
+}
+updateEditOptimizedCheckboxVisibility();
 
 // Display the current version by loading the version.json file
 fetch("./version.json").then((response: Response) => {

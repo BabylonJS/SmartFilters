@@ -155,6 +155,11 @@
                 display: flex;
                 flex-direction: column;
             }
+            #options label {
+                cursor: pointer;
+                -webkit-user-select: none;
+                user-select: none;
+            }
         </style>
     </head>
 
@@ -194,10 +199,12 @@
                 </div>
                 <div id="options">
                     <div>
-                        <input type="checkbox" id="optimize" title="Optimize">Optimize</input>
+                        <label><input type="checkbox" id="optimize" title="Optimize" />Optimize</label>
                     </div>
                     <div>
-                        <input type="checkbox" id="editOptimized" title="Edit Optimized">Edit Optimized</input>
+                        <label id="editOptimizedLabel"
+                            ><input type="checkbox" id="editOptimized" title="Edit Optimized" />Edit Optimized</label
+                        >
                     </div>
                 </div>
             </div>
