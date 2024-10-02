@@ -3,7 +3,7 @@ import { AggregateBlock, SmartFilter } from "@babylonjs/smart-filters";
 
 import { DirectionalBlurBlock } from "./directionalBlurBlock";
 import { BlockNames } from "../blockNames";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core/Decorators/nodeDecorator";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 const defaultBlurTextureRatioPerPass = 0.5;
 const defaultBlurSize = 2;

@@ -9,7 +9,7 @@ import {
     createStrongRef,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core/Decorators/nodeDecorator";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
