@@ -1,7 +1,6 @@
 import * as react from "react";
-import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
-import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
+import { GeneralPropertyTabComponent, GenericPropertyComponent } from "./genericNodePropertyComponent.js";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
@@ -28,6 +27,12 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
     }
 
     override render() {
+        // If this InputBlock has our reserved _propStore, it means it uses @editableProperty to define its properties
+        // So we will assume that the developer of that InputBlock intends to use the GenericPropertyComponent
+        if (this.props.nodeData.data._propStore) {
+            return <GenericPropertyComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />;
+        }
+
         return (
             <div>
                 <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
@@ -78,17 +83,7 @@ export class InputPropertyTabComponent extends react.Component<InputPropertyComp
     }
 
     override render() {
-        const globalState = this.props.stateManager.data as GlobalState;
         const inputBlock = this.props.inputBlock;
-
-        // See if the app provided a custom property component for this block
-        const customPropertyComponent = globalState.blockRegistration.getInputNodePropertyComponent(
-            this.props.inputBlock,
-            globalState
-        );
-        if (customPropertyComponent) {
-            return customPropertyComponent;
-        }
 
         // Use the default property component
         switch (inputBlock.type) {
