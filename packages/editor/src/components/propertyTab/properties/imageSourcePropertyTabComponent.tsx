@@ -3,15 +3,15 @@ import { FileButtonLine } from "@babylonjs/shared-ui-components/lines/fileButton
 import { NumericInput } from "@babylonjs/shared-ui-components/lines/numericInputComponent.js";
 import { type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
 import { Tools } from "@babylonjs/core/Misc/tools.js";
-import type { GlobalState, TexturePreset } from "../../globalState.js";
+import type { GlobalState, TexturePreset } from "../../../globalState.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
-import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
+import { CheckBoxLineComponent } from "../../../sharedComponents/checkBoxLineComponent.js";
 
 import type { Nullable } from "@babylonjs/core/types.js";
-import { getTextureInputBlockEditorData } from "../getEditorData.js";
+import { getTextureInputBlockEditorData } from "../../../graphSystem/getEditorData.js";
 import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
-import { debounce } from "../../helpers/debounce.js";
+import { debounce } from "../../../helpers/debounce.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 
 export interface ImageSourcePropertyTabComponentProps {

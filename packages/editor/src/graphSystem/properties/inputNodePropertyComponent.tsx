@@ -6,7 +6,7 @@ import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineCo
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
-import { ImageSourcePropertyTabComponent } from "./imageSourcePropertyTabComponent.js";
+import { ImageSourcePropertyTabComponent } from "../../components/propertyTab/properties/imageSourcePropertyTabComponent.js";
 import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
 
