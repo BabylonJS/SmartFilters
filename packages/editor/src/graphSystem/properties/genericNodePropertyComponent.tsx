@@ -14,7 +14,7 @@ import {
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponent.js";
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
-import { Vector2LineComponent } from "@babylonjs/shared-ui-components/lines/Vector2LineComponent.js";
+import { Vector2LineComponent } from "@babylonjs/shared-ui-components/lines/vector2LineComponent.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 
 export class GenericPropertyComponent extends react.Component<IPropertyComponentProps> {
