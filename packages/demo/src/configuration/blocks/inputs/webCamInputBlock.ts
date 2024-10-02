@@ -2,21 +2,63 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { WebCamRuntime } from "./webCamRuntime";
 import { ConnectionPointType, type SmartFilter, InputBlock, createStrongRef } from "@babylonjs/smart-filters";
 import type { InitializationData } from "core/src/smartFilter";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core/Decorators/nodeDecorator";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 export type WebCamSource = {
-    name: string;
-    id: string;
+    /** The friendly name of the device */
+    label: string;
+    /** The deviceId */
+    value: string;
 };
 
 export const WebCamInputBlockName = "WebCam";
 
 const LocalStorageWebcamIdKey = "webCamDeviceId";
 const LocalStorageNameKey = "webCamName";
+const DefaultWebCamSource: WebCamSource = {
+    label: "Default",
+    value: "",
+};
 
+/**
+ * A utility class to manage the webcam sources for the WebCamInputBlock
+ */
+class WebcamSourceManager {
+    public sources: WebCamSource[] = [];
+
+    constructor() {
+        this._updateWebcamSources();
+        navigator.mediaDevices.ondevicechange = () => {
+            this._updateWebcamSources();
+        };
+    }
+
+    private async _updateWebcamSources(): Promise<void> {
+        let foundDefault = false;
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        this.sources = devices
+            .filter((device: MediaDeviceInfo) => device.kind === "videoinput")
+            .map((device: MediaDeviceInfo) => {
+                if (device.deviceId === "") {
+                    foundDefault = true;
+                    return DefaultWebCamSource;
+                }
+                return {
+                    label: device.label,
+                    value: device.deviceId,
+                };
+            });
+        if (!foundDefault) {
+            this.sources.unshift(DefaultWebCamSource);
+        }
+    }
+}
+
+/**
+ * A custom InputBlock that exposes webcam feed as a texture
+ */
 export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
-    public static override ClassName = "WebCamInputBlock";
-
+    private static _WebCamSourceManager: WebcamSourceManager = new WebcamSourceManager();
     private readonly _engine: ThinEngine;
     private _webCamRuntime: WebCamRuntime | undefined;
     private _webCamSource: WebCamSource;
@@ -24,15 +66,27 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     public get webcamSource(): WebCamSource {
         return this._webCamSource;
     }
-    public set webcamSource(webCamSource: WebCamSource) {
+    public set webcamSource(webcamSource: WebCamSource) {
         if (this._webCamRuntime) {
-            this._webCamRuntime.deviceId = webCamSource.id;
+            this._webCamRuntime.deviceId = webcamSource.value;
         }
-        this._webCamSource = webCamSource;
+        this._webCamSource = webcamSource;
 
         // Save the last used webcam source
-        localStorage.setItem(LocalStorageWebcamIdKey, webCamSource.id);
-        localStorage.setItem(LocalStorageNameKey, webCamSource.name);
+        localStorage.setItem(LocalStorageWebcamIdKey, webcamSource.value);
+        localStorage.setItem(LocalStorageNameKey, webcamSource.label);
+    }
+
+    @editableInPropertyPage("Source", PropertyTypeForEdition.List, "PROPERTIES", {
+        notifiers: { update: true },
+        options: () => WebCamInputBlock._WebCamSourceManager.sources,
+    })
+    public set webcamSourceId(id: string) {
+        const source = WebCamInputBlock._WebCamSourceManager.sources.find((source) => source.value === id);
+        this.webcamSource = source ?? this.webcamSource;
+    }
+    public get webcamSourceId(): string {
+        return this._webCamSource.value;
     }
 
     constructor(smartFilter: SmartFilter, engine: ThinEngine) {
@@ -44,62 +98,17 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
         const lastWebCamName = localStorage.getItem(LocalStorageNameKey);
         if (lastWebCamId && lastWebCamName) {
             this._webCamSource = {
-                id: lastWebCamId,
-                name: lastWebCamName,
+                label: lastWebCamName,
+                value: lastWebCamId,
             };
         } else {
-            this._webCamSource = {
-                id: "",
-                name: "Default",
-            };
+            this._webCamSource = DefaultWebCamSource;
         }
-
-        // Create dynamically a property to store the webcam options
-        WebCamInputBlock.EnumerateWebCamSources().then((sources: WebCamSource[]) => {
-            let foundDefault = false;
-            const options = sources.map((source: WebCamSource, index: number) => {
-                if (source.id === "") {
-                    foundDefault = true;
-                    return {
-                        label: "Default",
-                        value: index,
-                        id: "",
-                    };
-                }
-                return {
-                    label: source.name,
-                    value: index,
-                    id: source.id,
-                };
-            });
-
-            if (!foundDefault) {
-                options.unshift({ label: "Default", value: -1, id: "" });
-            }
-
-            editableInPropertyPage("Webcam Source", PropertyTypeForEdition.List, "TESTING", {
-                notifiers: {
-                    update: true,
-                },
-                options: options,
-            })(this, "webcamSource");
-        });
-    }
-
-    public static async EnumerateWebCamSources(): Promise<WebCamSource[]> {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-
-        return devices
-            .filter((device: MediaDeviceInfo) => device.kind === "videoinput")
-            .map((device: MediaDeviceInfo) => ({
-                name: device.label,
-                id: device.deviceId,
-            }));
     }
 
     public initializeWebCamRuntime(): WebCamRuntime {
         this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
-        this._webCamRuntime.deviceId = this._webCamSource.id;
+        this._webCamRuntime.deviceId = this._webCamSource.value;
         return this._webCamRuntime;
     }
 

@@ -7,10 +7,10 @@ import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/no
 import type { BaseBlock } from "@babylonjs/smart-filters";
 import {
     PropertyTypeForEdition,
-    type IEditablePropertyListOption,
     type IEditablePropertyOption,
+    type IEditablePropertyListOption,
     type IPropertyDescriptionForEdition,
-} from "@babylonjs/core/Decorators/nodeDecorator.js";
+} from "../../nodeDecorators/editableInPropertyPage.js";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponent.js";
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
@@ -94,6 +94,20 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
         // notifiers?.callback?.((this.props.stateManager.data as GlobalState).engine);
     }
 
+    override componentDidUpdate(prevProps: IPropertyComponentProps) {
+        // if (prevProps.nodeData.data !== this.props.nodeData.data) {
+        //     this.forceUpdate();
+        // }
+
+        // Check if options for a specific block changed
+        const currentOptions = (this.props.nodeData.data as any)?._propStore;
+        const prevOptions = (prevProps.nodeData.data as any)?._propStore;
+
+        if (JSON.stringify(currentOptions) !== JSON.stringify(prevOptions)) {
+            this.forceUpdate();
+        }
+    }
+
     override render() {
         const block = this.props.nodeData.data as BaseBlock;
         const propStore: IPropertyDescriptionForEdition[] = (block as any)._propStore;
@@ -168,12 +182,15 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                     break;
                 }
                 case PropertyTypeForEdition.List: {
+                    const optionsList = typeof options.options == "function" ? options.options() : options.options;
+                    const valuesAreStrings = typeof optionsList?.at(0)?.value === "string";
                     components.push(
                         <OptionsLine
                             label={displayName}
-                            options={options.options as IEditablePropertyListOption[]}
+                            options={optionsList as IEditablePropertyListOption[]}
                             target={block}
                             propertyName={propertyName}
+                            valuesAreStrings={valuesAreStrings}
                             onSelect={() => this.forceRebuild(options.notifiers)}
                         />
                     );
