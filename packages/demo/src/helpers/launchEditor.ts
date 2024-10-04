@@ -3,7 +3,6 @@ import { blockEditorRegistrations } from "../configuration/editor/blockEditorReg
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
 import { CustomInputDisplayManager } from "../configuration/editor/customInputDisplayManager";
-import { getInputNodePropertyComponent } from "../configuration/editor/getInputNodePropertyComponent";
 import { getIsUniqueBlock } from "../configuration/editor/getIsUniqueBlock";
 import type { IBlockEditorRegistration } from "../configuration/editor/IBlockEditorRegistration";
 import { texturePresets } from "../configuration/texturePresets";
@@ -49,7 +48,6 @@ export function launchEditor(
     const blockRegistration: BlockRegistration = {
         getIsUniqueBlock,
         getBlockFromString,
-        getInputNodePropertyComponent,
         createInputBlock,
         allBlockNames,
         blockTooltips,

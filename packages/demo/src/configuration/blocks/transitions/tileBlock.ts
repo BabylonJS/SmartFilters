@@ -3,6 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 const shaderProgram = injectDisableUniform({
     fragment: {
@@ -122,6 +123,7 @@ export class TileBlock extends ShaderBlock {
     /**
      * Defines the number of tiles to use for the transition.
      */
+    @editableInPropertyPage("Tile Count", PropertyTypeForEdition.Int, "PROPERTIES", { notifiers: { rebuild: true } })
     public tileCount = 10;
 
     /**

@@ -5,7 +5,7 @@ import { LineContainerComponent } from "../../sharedComponents/lineContainerComp
 
 import "../../assets/styles/components/propertyTab.scss";
 import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
-import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
+import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponent.js";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { Color3LineComponent } from "@babylonjs/shared-ui-components/lines/color3LineComponent.js";
 import { Color3 } from "@babylonjs/core/Maths/math.color.js";
@@ -54,52 +54,16 @@ export class InputsPropertyTabComponent extends react.Component<IInputsPropertyT
                 );
             }
             case ConnectionPointType.Float: {
-                // const cantDisplaySlider = isNaN(block.min) || isNaN(block.max) || block.min === block.max;
                 return (
-                    <FloatLineComponent
+                    <FloatSliderComponent
                         lockObject={this.props.lockObject}
-                        key={block.uniqueId}
                         label={block.name}
                         target={block.runtimeValue}
                         propertyName="value"
+                        min={block.editorData?.min ?? null}
+                        max={block.editorData?.max ?? null}
                         onChange={() => this.processInputBlockUpdate(block)}
-                    />
-                    // <div key={block.uniqueId}>
-                    //     {block.isBoolean && (
-                    //         <CheckBoxLineComponent
-                    //             key={block.uniqueId}
-                    //             label={block.name}
-                    //             target={block}
-                    //             propertyName="value"
-                    //             onValueChanged={() => {
-                    //                 this.processInputBlockUpdate(block);
-                    //             }}
-                    //         />
-                    //     )}
-                    //     {!block.isBoolean && cantDisplaySlider && (
-                    //         <FloatLineComponent
-                    //             lockObject={this.props.lockObject}
-                    //             key={block.uniqueId}
-                    //             label={block.name}
-                    //             target={block}
-                    //             propertyName="value"
-                    //             onChange={() => this.processInputBlockUpdate(block)}
-                    //         />
-                    //     )}
-                    //     {!block.isBoolean && !cantDisplaySlider && (
-                    //         <SliderLineComponent
-                    //             lockObject={this.props.lockObject}
-                    //             key={block.uniqueId}
-                    //             label={block.name}
-                    //             target={block}
-                    //             propertyName="value"
-                    //             step={(block.max - block.min) / 100.0}
-                    //             minimum={block.min}
-                    //             maximum={block.max}
-                    //             onChange={() => this.processInputBlockUpdate(block)}
-                    //         />
-                    //     )}
-                    // </div>
+                    ></FloatSliderComponent>
                 );
             }
         }

@@ -7,7 +7,7 @@ import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
 import { Popup } from "./sharedComponents/popup.js";
-import type { AnyInputBlock, BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
+import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 
@@ -32,14 +32,6 @@ export type BlockRegistration = {
      * @returns A new instance of the block, or null if the block name is not recognized
      */
     getBlockFromString(blockType: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
-
-    /**
-     * If there is an InputBlock that needs special property setting UI, this function should return that UI, otherwise null.
-     * @param inputBlock - The selected InputBlock
-     * @param globalState - The global state
-     * @returns The UI for the input block, or null if the input block does not need special UI
-     */
-    getInputNodePropertyComponent(inputBlock: AnyInputBlock, globalState: GlobalState): Nullable<JSX.Element>;
 
     /**
      * Intercepts the creation of an input block and can return specialized input blocks.

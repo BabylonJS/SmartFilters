@@ -1,17 +1,17 @@
 import { Component } from "react";
 import type { ConnectionPointType, InputBlock } from "@babylonjs/smart-filters";
-import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps.js";
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
-import { SliderLineComponent } from "@babylonjs/shared-ui-components/lines/sliderLineComponent.js";
 import { getFloatInputBlockEditorData } from "../../../graphSystem/getEditorData.js";
+import { FloatSliderComponent } from "../../../sharedComponents/floatSliderComponent.js";
+import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 
-export interface FloatPropertyTabComponentProps extends IPropertyComponentProps {
+export interface FloatPropertyTabComponentProps {
+    stateManager: StateManager;
     inputBlock: InputBlock<ConnectionPointType.Float>;
 }
 
 type FloatPropertyTabComponentState = {
     useTime: boolean;
-    showSlider: boolean;
 };
 
 /**
@@ -34,19 +34,7 @@ export class FloatPropertyTabComponent extends Component<
         const editorData = getFloatInputBlockEditorData(this.props.inputBlock);
         const state = {
             useTime: editorData.animationType === "time",
-            showSlider: false,
         };
-
-        // Use the slider if min/max exist, make up a range, and we are not using time
-        if (!state.useTime && editorData.min !== null && editorData.max !== null && editorData.min < editorData.max) {
-            state.showSlider = true;
-
-            // Also clamp the value to be within range
-            this.props.inputBlock.runtimeValue.value = Math.max(
-                editorData.min,
-                Math.min(editorData.max, this.props.inputBlock.runtimeValue.value)
-            );
-        }
 
         if (initializeState) {
             this.state = state;
@@ -95,31 +83,18 @@ export class FloatPropertyTabComponent extends Component<
                     ></FloatLineComponent>
                 )}
                 {/* Value */}
-                {!this.state.showSlider && (
-                    <FloatLineComponent
-                        lockObject={this.props.stateManager.lockObject}
-                        label="Value"
-                        target={this.props.inputBlock.runtimeValue}
-                        propertyName="value"
-                        onChange={() => {
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
-                        }}
-                    ></FloatLineComponent>
-                )}
-                {this.state.showSlider && (
-                    <SliderLineComponent
-                        lockObject={this.props.stateManager.lockObject}
-                        label="Value"
-                        target={this.props.inputBlock.runtimeValue}
-                        propertyName="value"
-                        step={Math.abs(editorData.max! - editorData.min!) / 100.0}
-                        minimum={editorData.min!}
-                        maximum={editorData.max!}
-                        onChange={() => {
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
-                        }}
-                    ></SliderLineComponent>
-                )}
+                <FloatSliderComponent
+                    lockObject={this.props.stateManager.lockObject}
+                    label={this.props.inputBlock.name}
+                    target={this.props.inputBlock.runtimeValue}
+                    propertyName="value"
+                    min={editorData.min}
+                    max={editorData.max}
+                    onChange={() => {
+                        this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
+                    }}
+                    forceSliderOff={this.state.useTime}
+                ></FloatSliderComponent>
                 {/* Time values */}
                 {this.state.useTime && (
                     <FloatLineComponent
