@@ -9,9 +9,15 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBlock } from "../blocks/shaderBlock.js";
 import { isTextureInputBlock } from "../blocks/inputBlock.js";
 import { OptimizedShaderBlock } from "./optimizedShaderBlock.js";
-import { decorateChar, decorateSymbol, getShaderFragmentCode, undecorateSymbol } from "../utils/shaderCodeUtils.js";
+import {
+    AutoDisableMainInputColorName,
+    decorateChar,
+    decorateSymbol,
+    getShaderFragmentCode,
+    undecorateSymbol,
+} from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
-import { DisableableShaderBlock } from "../blocks/disableableShaderBlock.js";
+import { DisableableShaderBlock, DisableStrategy } from "../blocks/disableableShaderBlock.js";
 
 const showDebugData = false;
 
@@ -514,6 +520,10 @@ export class SmartFilterOptimizer {
                 const parentBlock = input.connectedTo.ownerBlock;
 
                 if (isTextureInputBlock(parentBlock)) {
+                    // If we are using the AutoSample strategy, we must replace all but the first sampleTexture call with the
+                    // local variable created by the DisableStrategy.AutoSample code
+                    code = this._applyAutoSampleStrategy(block, code, sampler);
+
                     // input is connected to an InputBlock of type "Texture": we must directly sample a texture
                     code = this._processSampleTexture(block, code, samplerName, samplers, parentBlock);
                 } else if (this._forceUnoptimized || !this._canBeOptimized(parentBlock)) {
@@ -542,6 +552,10 @@ export class SmartFilterOptimizer {
                         parentFuncName = this._optimizeBlock(optimizedBlock, input.connectedTo, samplers);
                         this._dependencyGraph.addDependency(newShaderFuncName, parentFuncName);
                     }
+
+                    // If we are using the AutoSample strategy, we must replace all but the first sampleTexture call with the
+                    // local variable created by the DisableStrategy.AutoSample code
+                    code = this._applyAutoSampleStrategy(block, code, sampler);
 
                     // The texture samplerName is not used anymore by the block, as it is replaced by a call to the main function of the parent block
                     // We remap it to an non existent sampler name, because the code that binds the texture still exists in the ShaderBinding.bind function.
@@ -705,5 +719,24 @@ export class SmartFilterOptimizer {
         optimizedBlock.setShaderBindings(Array.from(blockOwnerToShaderBinding.values()));
 
         return optimizedBlock;
+    }
+
+    private _applyAutoSampleStrategy(block: ShaderBlock, code: string, sampler: string): string {
+        // If this block used DisableStrategy.AutoSample, replace all sampleTexture calls which just pass the vUV
+        // along (except the first one) with the local variable created by the DisableStrategy.AutoSample code in
+        // DisableableShaderBlock._applyAutoSampleStrategy()
+        if (block instanceof DisableableShaderBlock && block.disableStrategy === DisableStrategy.AutoSample) {
+            let isFirstMatch = true;
+            const rx = new RegExp(`sampleTexture\\s*\\(\\s*${sampler}\\s*,\\s*vUV\\s*\\)`, "g");
+            code = code.replace(rx, (match) => {
+                if (isFirstMatch) {
+                    isFirstMatch = false;
+                    return match;
+                }
+                return AutoDisableMainInputColorName;
+            });
+        }
+
+        return code;
     }
 }
