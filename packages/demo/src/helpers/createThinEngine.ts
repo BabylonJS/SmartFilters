@@ -1,5 +1,4 @@
 import { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import "@babylonjs/core/Engines/Extensions/engine.alpha.js";
 
 export function createThinEngine(canvas: HTMLCanvasElement) {
     const antialias = false;
