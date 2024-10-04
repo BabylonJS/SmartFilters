@@ -1,17 +1,12 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import {
-    ConnectionPointType,
-    injectDisableUniform,
-    DisableableShaderBinding,
-    DisableableShaderBlock,
-} from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
+import { ConnectionPointType, DisableableShaderBinding, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
 // Based on https://github.com/akella/webGLImageTransitions/blob/master/js/demo5.js
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _textureA_;
@@ -51,7 +46,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Glitch block.

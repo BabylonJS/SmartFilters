@@ -1,16 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import {
     ConnectionPointType,
-    injectDisableUniform,
     DisableableShaderBlock,
     DisableableShaderBinding,
     DisableStrategy,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     vertex: `
         // Attributes
         attribute vec2 position;
@@ -98,7 +97,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Kaleidoscope block.

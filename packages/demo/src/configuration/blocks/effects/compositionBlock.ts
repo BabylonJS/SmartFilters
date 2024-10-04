@@ -1,9 +1,8 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import {
     ConnectionPointType,
-    injectDisableUniform,
     createStrongRef,
     DisableableShaderBinding,
     DisableableShaderBlock,
@@ -21,7 +20,7 @@ export const ALPHA_SUBTRACT = 3;
 /** Defines that alpha blending is SRC * DEST */
 export const ALPHA_MULTIPLY = 4;
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _background_;
@@ -75,7 +74,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Composition block.

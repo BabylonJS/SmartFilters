@@ -23,7 +23,7 @@ export { ShaderBlock } from "./blocks/shaderBlock.js";
 export { DisableableShaderBlock, DisableStrategy } from "./blocks/disableableShaderBlock.js";
 export { AggregateBlock } from "./blocks/aggregateBlock.js";
 export { DisableableShaderBinding, ShaderBinding, ShaderRuntime } from "./runtime/shaderRuntime.js";
-export { type ShaderProgram, injectDisableUniform } from "./utils/shaderCodeUtils.js";
+export { type ShaderProgram } from "./utils/shaderCodeUtils.js";
 export { type IDisableableBlock } from "./blocks/disableableShaderBlock.js";
 
 export { type SmartFilterRuntime } from "./runtime/smartFilterRuntime.js";

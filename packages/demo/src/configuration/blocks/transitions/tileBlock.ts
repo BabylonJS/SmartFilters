@@ -5,11 +5,12 @@ import {
     type IDisableableBlock,
     type RuntimeData,
     DisableableShaderBinding,
+    type ShaderProgram,
 } from "@babylonjs/smart-filters";
-import { ConnectionPointType, injectDisableUniform, DisableableShaderBlock } from "@babylonjs/smart-filters";
+import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _textureA_;
@@ -54,7 +55,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Tile block.

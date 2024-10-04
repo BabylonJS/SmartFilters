@@ -1,10 +1,10 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, RuntimeData } from "@babylonjs/smart-filters";
-import { ConnectionPointType, ShaderBinding, ShaderBlock, injectDisableUniform } from "@babylonjs/smart-filters";
+import type { SmartFilter, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
+import { ConnectionPointType, ShaderBinding, ShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         const: `
             const float _epsilon_ = 0.01;
@@ -52,7 +52,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 const wideWeights = Float32Array.from([0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05]);
 

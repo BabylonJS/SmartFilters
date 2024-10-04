@@ -36,8 +36,7 @@ const ShaderTemplate = `import type { ShaderProgram } from "${TYPE_IMPORT_PATH}"
 export const shaderProgram: ShaderProgram = {
     vertex: ${VERTEX_SHADER},
     fragment: {
-        uniform: \`${UNIFORMS}
-            uniform bool _disabled_;\`,${CONSTS_PROPERTY}
+        uniform: \`${UNIFORMS}\`,${CONSTS_PROPERTY}
         mainInputTexture: "${MAIN_INPUT_NAME}",
         mainFunctionName: "${MAIN_FUNCTION_NAME}",
         functions: [${FUNCTIONS}
@@ -206,7 +205,7 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
     const mainInputName = mainInputs[0];
 
     // Extract all the functions
-    const { extractedFunctions, mainFunctionName } = extractFunctions(fragmentShaderWithRenamedSymbols, mainInputName);
+    const { extractedFunctions, mainFunctionName } = extractFunctions(fragmentShaderWithRenamedSymbols);
 
     return {
         finalUniforms,
@@ -234,13 +233,9 @@ function addLinePrefixes(input: string, prefix: string): string {
 /**
  * Extracts all the functions from the shader
  * @param fragment - The shader code to process
- * @param mainInputName - The name of the main input
  * @returns A list of functions
  */
-function extractFunctions(
-    fragment: string,
-    mainInputName: string
-): {
+function extractFunctions(fragment: string): {
     /**
      * The extracted functions
      */
@@ -276,15 +271,10 @@ function extractFunctions(
             inFunction = false;
             const { functionBody, functionName, isMainFunction } = processFunctionBody(currentFunction);
 
-            let body = functionBody;
-            if (isMainFunction) {
-                body = functionBody.replace("{", `{\n    if (_disabled_) return texture2D(${mainInputName}, vUV);\n`);
-            }
-
             extractedFunctions.push(
                 FunctionTemplate.replace(FUNCTION_NAME, functionName).replace(
                     FUNCTION_CODE,
-                    addLinePrefixes(body, CodeLinePrefix)
+                    addLinePrefixes(functionBody, CodeLinePrefix)
                 )
             );
             if (isMainFunction) {

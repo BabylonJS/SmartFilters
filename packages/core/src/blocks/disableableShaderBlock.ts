@@ -4,6 +4,7 @@ import type { ConnectionPoint } from "../connection/connectionPoint.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import { ShaderBlock } from "./shaderBlock.js";
+import { injectDisableUniform } from "../utils/shaderCodeUtils.js";
 
 /**
  * The interface that describes the disableable block.
@@ -68,5 +69,20 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
     ) {
         super(smartFilter, name, optimizable);
         this.disableStrategy = disableStrategy;
+        this._applyDisableStrategy();
+    }
+
+    private _applyDisableStrategy(): void {
+        switch (this.disableStrategy) {
+            case DisableStrategy.AutoSample:
+                this._applyAutoSampleStrategy();
+                break;
+            case DisableStrategy.Manual:
+        }
+    }
+
+    private _applyAutoSampleStrategy(): void {
+        const shaderProgram = this.getShaderProgram();
+        injectDisableUniform(shaderProgram);
     }
 }

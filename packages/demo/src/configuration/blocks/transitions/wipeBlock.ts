@@ -6,11 +6,12 @@ import {
     type RuntimeData,
     DisableableShaderBinding,
     DisableableShaderBlock,
+    type ShaderProgram,
 } from "@babylonjs/smart-filters";
-import { ConnectionPointType, injectDisableUniform } from "@babylonjs/smart-filters";
+import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         const: `
             const float HALF_PI = 1.57079632679;
@@ -63,7 +64,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Wipe block.
