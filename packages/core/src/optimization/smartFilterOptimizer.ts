@@ -520,13 +520,13 @@ export class SmartFilterOptimizer {
                     throw `The connection point corresponding to the input named "${samplerName}" in block named "${block.name}" is not connected!`;
                 }
 
+                // If we are using the AutoSample strategy, we must preprocess the code that samples the texture
+                if (block instanceof DisableableShaderBlock && block.disableStrategy === DisableStrategy.AutoSample) {
+                    code = this._applyAutoSampleStrategy(code, sampler);
+                }
+
                 const parentBlock = input.connectedTo.ownerBlock;
-
                 if (isTextureInputBlock(parentBlock)) {
-                    // If we are using the AutoSample strategy, we must replace all but the first sampleTexture call with the
-                    // local variable created by the DisableStrategy.AutoSample code
-                    code = this._applyAutoSampleStrategy(block, code, sampler);
-
                     // input is connected to an InputBlock of type "Texture": we must directly sample a texture
                     code = this._processSampleTexture(block, code, samplerName, samplers, parentBlock);
                 } else if (this._forceUnoptimized || !this._canBeOptimized(parentBlock)) {
@@ -555,10 +555,6 @@ export class SmartFilterOptimizer {
                         parentFuncName = this._optimizeBlock(optimizedBlock, input.connectedTo, samplers);
                         this._dependencyGraph.addDependency(newShaderFuncName, parentFuncName);
                     }
-
-                    // If we are using the AutoSample strategy, we must replace all but the first sampleTexture call with the
-                    // local variable created by the DisableStrategy.AutoSample code
-                    code = this._applyAutoSampleStrategy(block, code, sampler);
 
                     // The texture samplerName is not used anymore by the block, as it is replaced by a call to the main function of the parent block
                     // We remap it to an non existent sampler name, because the code that binds the texture still exists in the ShaderBinding.bind function.
@@ -724,22 +720,25 @@ export class SmartFilterOptimizer {
         return optimizedBlock;
     }
 
-    private _applyAutoSampleStrategy(block: ShaderBlock, code: string, sampler: string): string {
-        // If this block used DisableStrategy.AutoSample, replace all sampleTexture calls which just pass the vUV
-        // along (except the first one) with the local variable created by the DisableStrategy.AutoSample code in
-        // DisableableShaderBlock._applyAutoSampleStrategy()
-        if (block instanceof DisableableShaderBlock && block.disableStrategy === DisableStrategy.AutoSample) {
-            let isFirstMatch = true;
-            const rx = new RegExp(`sampleTexture\\s*\\(\\s*${sampler}\\s*,\\s*vUV\\s*\\)`, "g");
-            code = code.replace(rx, (match) => {
-                if (isFirstMatch) {
-                    isFirstMatch = false;
-                    return match;
-                }
-                return AutoDisableMainInputColorName;
-            });
-        }
-
-        return code;
+    /**
+     * If this block used DisableStrategy.AutoSample, find all the sampleTexture calls which just pass the vUV,
+     * skip the first one, and for all others replace with the local variable created by the DisableStrategy.AutoSample
+     * code in DisableableShaderBlock._applyAutoSampleStrategy()
+     *
+     * @param code - The shader code to process
+     * @param sampler - The name of the sampler
+     *
+     * @returns The processed code
+     */
+    private _applyAutoSampleStrategy(code: string, sampler: string): string {
+        let isFirstMatch = true;
+        const rx = new RegExp(`sampleTexture\\s*\\(\\s*${sampler}\\s*,\\s*vUV\\s*\\)`, "g");
+        return code.replace(rx, (match) => {
+            if (isFirstMatch) {
+                isFirstMatch = false;
+                return match;
+            }
+            return AutoDisableMainInputColorName;
+        });
     }
 }
