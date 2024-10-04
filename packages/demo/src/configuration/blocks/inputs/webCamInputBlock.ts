@@ -2,7 +2,12 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { WebCamRuntime } from "./webCamRuntime";
 import { ConnectionPointType, type SmartFilter, InputBlock, createStrongRef } from "@babylonjs/smart-filters";
 import type { InitializationData } from "core/src/smartFilter";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
+import {
+    editableInPropertyPage,
+    PropertyTypeForEdition,
+    type IEditablePropertyListOption,
+} from "@babylonjs/smart-filters-editor";
+import { Observable } from "@babylonjs/core/Misc/observable";
 
 export type WebCamSource = {
     /** The friendly name of the device */
@@ -25,6 +30,7 @@ const DefaultWebCamSource: WebCamSource = {
  */
 class WebcamSourceManager {
     public sources: WebCamSource[] = [];
+    public onSourcesLoaded: Observable<WebCamSource[]> = new Observable(undefined, true);
 
     constructor() {
         this._updateWebcamSources();
@@ -36,7 +42,7 @@ class WebcamSourceManager {
     private async _updateWebcamSources(): Promise<void> {
         let foundDefault = false;
         const devices = await navigator.mediaDevices.enumerateDevices();
-        this.sources = devices
+        const sources = devices
             .filter((device: MediaDeviceInfo) => device.kind === "videoinput")
             .map((device: MediaDeviceInfo) => {
                 if (device.deviceId === "") {
@@ -49,7 +55,13 @@ class WebcamSourceManager {
                 };
             });
         if (!foundDefault) {
-            this.sources.unshift(DefaultWebCamSource);
+            sources.unshift(DefaultWebCamSource);
+        }
+
+        // Only update if the sources have changed (sometimes, they don't)
+        if (JSON.stringify(this.sources) !== JSON.stringify(sources)) {
+            this.sources = sources;
+            this.onSourcesLoaded.notifyObservers(this.sources);
         }
     }
 }
@@ -79,7 +91,8 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
 
     @editableInPropertyPage("Source", PropertyTypeForEdition.List, "PROPERTIES", {
         notifiers: { update: true },
-        options: () => WebCamInputBlock._WebCamSourceManager.sources,
+        options: WebCamInputBlock._WebCamSourceManager.onSourcesLoaded as Observable<IEditablePropertyListOption[]>,
+        valuesAreStrings: true,
     })
     public set webcamSourceId(id: string) {
         const source = WebCamInputBlock._WebCamSourceManager.sources.find((source) => source.value === id);

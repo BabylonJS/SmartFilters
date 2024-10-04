@@ -1,3 +1,5 @@
+import type { Observable } from "@babylonjs/core";
+
 /**
  * Enum defining the type of properties that can be edited in the property pages in the node editor
  */
@@ -45,8 +47,10 @@ export interface IEditablePropertyOption {
         /** a callback to validate the property. Returns true if the property is ok, else false. If false, the rebuild/update/callback events won't be called */
         onValidation?: (block: any, propertyName: string) => boolean;
     };
-    /** list of the options for a variable of type list, or a factory function to produce it */
-    options?: IEditablePropertyListOption[] | (() => IEditablePropertyListOption[]);
+    /** a list of the options for a property of type list */
+    options?: IEditablePropertyListOption[] | Observable<IEditablePropertyListOption[]>;
+    /** whether the options' values should be treated as strings */
+    valuesAreStrings?: boolean;
 }
 
 /**

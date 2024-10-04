@@ -8,7 +8,6 @@ import type { BaseBlock } from "@babylonjs/smart-filters";
 import {
     PropertyTypeForEdition,
     type IEditablePropertyOption,
-    type IEditablePropertyListOption,
     type IPropertyDescriptionForEdition,
 } from "../../nodeDecorators/editableInPropertyPage.js";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
@@ -16,6 +15,8 @@ import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponen
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { Vector2LineComponent } from "@babylonjs/shared-ui-components/lines/vector2LineComponent.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
+import { Observable } from "@babylonjs/core/Misc/observable.js";
+import { DynamicOptionsLine } from "../../sharedComponents/dynamicOptionsLineComponent.js";
 
 export class GenericPropertyComponent extends react.Component<IPropertyComponentProps> {
     constructor(props: IPropertyComponentProps) {
@@ -182,18 +183,21 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                     break;
                 }
                 case PropertyTypeForEdition.List: {
-                    const optionsList = typeof options.options == "function" ? options.options() : options.options;
-                    const valuesAreStrings = typeof optionsList?.at(0)?.value === "string";
-                    components.push(
-                        <OptionsLine
-                            label={displayName}
-                            options={optionsList as IEditablePropertyListOption[]}
-                            target={block}
-                            propertyName={propertyName}
-                            valuesAreStrings={valuesAreStrings}
-                            onSelect={() => this.forceRebuild(options.notifiers)}
-                        />
-                    );
+                    const props = {
+                        label: displayName,
+                        target: block,
+                        propertyName: propertyName,
+                        valuesAreStrings: options.valuesAreStrings ?? false,
+                        onSelect: () => this.forceRebuild(options.notifiers),
+                    };
+
+                    // Observable options use a different, self-managing component
+                    // so that several instances of it can be created
+                    if (options.options instanceof Observable) {
+                        components.push(<DynamicOptionsLine {...props} optionsObservable={options.options} />);
+                    } else {
+                        components.push(<OptionsLine {...props} options={options.options ?? []} />);
+                    }
                     break;
                 }
             }
