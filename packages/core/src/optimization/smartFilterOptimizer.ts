@@ -1,7 +1,7 @@
 import type { Nullable } from "@babylonjs/core/types";
 
 import type { ConnectionPoint } from "../connection/connectionPoint";
-import type { Binding } from "../runtime/shaderRuntime";
+import type { ShaderBinding } from "../runtime/shaderRuntime";
 import type { InputBlock } from "../blocks/inputBlock";
 import type { BaseBlock } from "../blocks/baseBlock";
 import { SmartFilter } from "../smartFilter.js";
@@ -11,9 +11,12 @@ import { isTextureInputBlock } from "../blocks/inputBlock.js";
 import { OptimizedShaderBlock } from "./optimizedShaderBlock.js";
 import { decorateChar, decorateSymbol, getShaderFragmentCode, undecorateSymbol } from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
-import { DisableableBlock } from "../blocks/disableableBlock.js";
+import { DisableableShaderBlock } from "../blocks/disableableShaderBlock.js";
 
 const showDebugData = false;
+
+// TODO: ensure that the main function takes in a vec2 vUV so we can search for texture samples that use it exactly
+// TODO: should we need to declare the _disabled_ uniform in the manual disableable shaders?
 
 /**
  * @internal
@@ -203,7 +206,7 @@ export class SmartFilterOptimizer {
             this._disconnectDisabledBlocks(input.connectedTo.ownerBlock, alreadyVisitedBlocks, inputsToReconnect);
         }
 
-        if (block instanceof DisableableBlock && block.disabled.runtimeData.value) {
+        if (block instanceof DisableableShaderBlock && block.disabled.runtimeData.value) {
             block.disconnectFromGraph(inputsToReconnect);
         }
     }
@@ -406,7 +409,7 @@ export class SmartFilterOptimizer {
     }
 
     private _canBeOptimized(block: BaseBlock): boolean {
-        if (block.disableOptimization) {
+        if (!block.optimizable) {
             return false;
         }
 
@@ -629,7 +632,7 @@ export class SmartFilterOptimizer {
         });
 
         // Sets the remapping of the shader variables
-        const blockOwnerToShaderBinding = new Map<ShaderBlock, Binding>();
+        const blockOwnerToShaderBinding = new Map<ShaderBlock, ShaderBinding>();
 
         let codeUniforms = "";
         let codeConsts = "";

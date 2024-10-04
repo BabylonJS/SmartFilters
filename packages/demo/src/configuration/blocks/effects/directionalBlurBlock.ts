@@ -1,7 +1,7 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import type { SmartFilter, RuntimeData } from "@babylonjs/smart-filters";
+import { ConnectionPointType, ShaderBinding, ShaderBlock, injectDisableUniform } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
@@ -12,6 +12,7 @@ const shaderProgram = injectDisableUniform({
         uniform: `
                 uniform vec2 _texelStep_;
                 uniform sampler2D _input_;
+                uniform bool _disabled_;
             `,
 
         uniformSingle: `
@@ -27,6 +28,8 @@ const shaderProgram = injectDisableUniform({
                 name: "_directionalBlur_",
                 code: `
                 vec4 _directionalBlur_(vec2 vUV) {
+                    if (_disabled_) return texture2D(_input_, vUV);
+
                     vec2 start = vUV - 3.0 * _texelStep_;
     
                     vec4 finalWeightedColor = vec4(0., 0., 0., 0.);
@@ -63,18 +66,16 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
 
     /**
      * Creates a new shader binding instance for the DirectionalBlur block.
-     * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param blurHorizontalWidth - The horizontal blur width
      * @param blurVerticalWidth - The vertical blur width
      */
     constructor(
-        parentBlock: IDisableableBlock,
         inputTexture: RuntimeData<ConnectionPointType.Texture>,
         blurHorizontalWidth: number,
         blurVerticalWidth: number
     ) {
-        super(parentBlock);
+        super();
         this._inputTexture = inputTexture;
         this._blurHorizontalWidth = blurHorizontalWidth;
         this._blurVerticalWidth = blurVerticalWidth;
@@ -145,7 +146,7 @@ export class DirectionalBlurBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, true);
+        super(smartFilter, name, false);
     }
 
     /**
@@ -165,6 +166,6 @@ export class DirectionalBlurBlock extends ShaderBlock {
     public getShaderBinding(): ShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
 
-        return new DirectionalBlurShaderBinding(this, input, this.blurHorizontalWidth, this.blurVerticalWidth);
+        return new DirectionalBlurShaderBinding(input, this.blurHorizontalWidth, this.blurVerticalWidth);
     }
 }

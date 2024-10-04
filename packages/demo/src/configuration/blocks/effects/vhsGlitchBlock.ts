@@ -1,14 +1,21 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    createStrongRef,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "./vhsGlitchBlock.shader";
 
 /**
  * The shader bindings for the VhsGlitch block.
  */
-export class VhsGlitchShaderBinding extends ShaderBinding {
+export class VhsGlitchShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
@@ -45,7 +52,7 @@ export class VhsGlitchShaderBinding extends ShaderBinding {
 /**
  * A block that adds a broken VHS glitch effect to the input texture.
  */
-export class VhsGlitchBlock extends ShaderBlock {
+export class VhsGlitchBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -72,14 +79,14 @@ export class VhsGlitchBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, false);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
 

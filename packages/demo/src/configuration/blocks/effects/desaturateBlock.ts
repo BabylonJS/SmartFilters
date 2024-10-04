@@ -2,11 +2,11 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
-    ShaderBlock,
     ConnectionPointType,
-    ShaderBinding,
     injectDisableUniform,
     createStrongRef,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
@@ -50,7 +50,7 @@ const shaderProgram = injectDisableUniform({
 /**
  * The shader bindings for the Desaturate block.
  */
-export class DesaturateShaderBinding extends ShaderBinding {
+export class DesaturateShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _intensity: RuntimeData<ConnectionPointType.Float>;
 
@@ -84,7 +84,7 @@ export class DesaturateShaderBinding extends ShaderBinding {
 /**
  * A simple block to desaturate the input texture.
  */
-export class DesaturateBlock extends ShaderBlock {
+export class DesaturateBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -122,7 +122,7 @@ export class DesaturateBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const intensity = this.intensity.runtimeData;
 

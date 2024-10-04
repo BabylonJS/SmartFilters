@@ -7,20 +7,21 @@ import { EffectWrapper } from "@babylonjs/core/Materials/effectRenderer.js";
 import type { IDisposable } from "../IDisposable";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
-import type { IDisableableBlock } from "../blocks/disableableBlock";
+import type { IDisableableBlock } from "../blocks/disableableShaderBlock";
 import { decorateSymbol, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
  */
-export abstract class Binding {
+export abstract class ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
-     * @param effect - defines the effect to bind the data to
-     * @param width - defines the width of the output
-     * @param height - defines the height of the output
+     * Overridden by derived classes.
+     * @param _effect - defines the effect to bind the data to
+     * @param _width - defines the width of the output
+     * @param _height - defines the height of the output
      */
-    public abstract bind(effect: Effect, width?: number, height?: number): void;
+    public bind(_effect: Effect, _width?: number, _height?: number): void {}
 
     private _remappedShaderVariables: { [key: string]: string } = {};
 
@@ -47,7 +48,7 @@ export abstract class Binding {
 /**
  * The shader bindings for a disableable ShaderBlock.
  */
-export abstract class ShaderBinding extends Binding {
+export abstract class DisableableShaderBinding extends ShaderBinding {
     private _disabled: StrongRef<boolean>;
 
     /**
@@ -65,7 +66,7 @@ export abstract class ShaderBinding extends Binding {
      * @param _width - defines the width of the output
      * @param _height - defines the height of the output
      */
-    public bind(effect: Effect, _width?: number, _height?: number): void {
+    public override bind(effect: Effect, _width?: number, _height?: number): void {
         effect.setBool(this.getRemappedName("disabled"), this._disabled.value);
     }
 }
@@ -88,7 +89,7 @@ export class ShaderRuntime implements IDisposable {
     private readonly _engine: AbstractEngine;
     private readonly _effectRenderer: EffectRenderer;
     private readonly _effectWrapper: EffectWrapper;
-    private readonly _shaderBinding: Binding;
+    private readonly _shaderBinding: ShaderBinding;
 
     /**
      * Creates a new @see ShaderRuntime.
@@ -96,7 +97,7 @@ export class ShaderRuntime implements IDisposable {
      * @param shaderProgram - defines the shader code associated with this runtime
      * @param shaderBinding - defines the shader bindings associated with this runtime
      */
-    constructor(effectRenderer: EffectRenderer, shaderProgram: ShaderProgram, shaderBinding: Binding) {
+    constructor(effectRenderer: EffectRenderer, shaderProgram: ShaderProgram, shaderBinding: ShaderBinding) {
         this._engine = effectRenderer.engine;
         this._effectRenderer = effectRenderer;
         this._shaderBinding = shaderBinding;

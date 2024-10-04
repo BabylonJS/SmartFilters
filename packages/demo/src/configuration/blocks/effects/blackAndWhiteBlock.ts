@@ -1,13 +1,13 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import { type SmartFilter, type RuntimeData } from "@babylonjs/smart-filters";
+import { DisableableShaderBlock, ConnectionPointType, DisableableShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader";
 
 /**
  * The shader bindings for the BlackAndWhite block.
  */
-export class BlackAndWhiteShaderBinding extends ShaderBinding {
+export class BlackAndWhiteShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**
@@ -15,7 +15,7 @@ export class BlackAndWhiteShaderBinding extends ShaderBinding {
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      */
-    constructor(parentBlock: IDisableableBlock, inputTexture: RuntimeData<ConnectionPointType.Texture>) {
+    constructor(parentBlock: DisableableShaderBlock, inputTexture: RuntimeData<ConnectionPointType.Texture>) {
         super(parentBlock);
         this._inputTexture = inputTexture;
     }
@@ -33,7 +33,7 @@ export class BlackAndWhiteShaderBinding extends ShaderBinding {
 /**
  * A simple block converting the input texture to black and white.
  */
-export class BlackAndWhiteBlock extends ShaderBlock {
+export class BlackAndWhiteBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -62,7 +62,7 @@ export class BlackAndWhiteBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
 
         return new BlackAndWhiteShaderBinding(this, input);

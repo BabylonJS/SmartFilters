@@ -2,11 +2,11 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
-    ShaderBlock,
     ConnectionPointType,
-    ShaderBinding,
     injectDisableUniform,
     createStrongRef,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
@@ -35,12 +35,10 @@ const shaderProgram = injectDisableUniform({
                 code: `
                 vec4 _posterize_(vec2 vUV)
                 {
-                    float posterizeStrength = mix(_minLevel_, _maxLevel_, pow(1. - _intensity_, _posterizePower_));
-
-                    vec3 posterize = vec3(posterizeStrength);
-                
                     vec4 color = texture2D(_input_, vUV);
-                
+
+                    float posterizeStrength = mix(_minLevel_, _maxLevel_, pow(1. - _intensity_, _posterizePower_));
+                    vec3 posterize = vec3(posterizeStrength);
                     color.rgb = floor(color.rgb / (1.0 / posterize)) * (1.0 / posterize);
 
                     return color;
@@ -54,7 +52,7 @@ const shaderProgram = injectDisableUniform({
 /**
  * The shader bindings for the Posterize block.
  */
-export class PosterizeShaderBinding extends ShaderBinding {
+export class PosterizeShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _intensity: RuntimeData<ConnectionPointType.Float>;
 
@@ -88,7 +86,7 @@ export class PosterizeShaderBinding extends ShaderBinding {
 /**
  * A simple block posterizing the input texture.
  */
-export class PosterizeBlock extends ShaderBlock {
+export class PosterizeBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -126,7 +124,7 @@ export class PosterizeBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const intensity = this.intensity.runtimeData;
 

@@ -1,14 +1,20 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { type SmartFilter, type IDisableableBlock, type RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "./sketchBlock.shader";
 
 /**
  * The shader bindings for the Sketch block.
  */
-export class SketchShaderBinding extends ShaderBinding {
+export class SketchShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**
@@ -37,7 +43,7 @@ export class SketchShaderBinding extends ShaderBinding {
 /**
  * A block that adds a hand-drawn effect to the input texture.
  */
-export class SketchBlock extends ShaderBlock {
+export class SketchBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -59,14 +65,14 @@ export class SketchBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, false);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
 
         return new SketchShaderBinding(this, input);

@@ -2,7 +2,7 @@ import type { SmartFilter } from "../smartFilter";
 import type { ConnectionPointValue } from "../connection/connectionPointType";
 import type { RuntimeData } from "../connection/connectionPoint";
 import type { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault";
-import type { DisableableBlock } from "./disableableBlock";
+import type { DisableableShaderBlock } from "./disableableShaderBlock";
 import { BaseBlock } from "../blocks/baseBlock.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
@@ -33,8 +33,8 @@ export function isTextureInputBlock(block: BaseBlock): block is InputBlock<Conne
  * @param block - The block to check
  * @returns true if the block is a disableable block, otherwise false
  */
-export function isDisableableBlock(block: BaseBlock): block is DisableableBlock {
-    return (block as DisableableBlock).disabled !== undefined;
+export function isDisableableShaderBlock(block: BaseBlock): block is DisableableShaderBlock {
+    return (block as DisableableShaderBlock).disabled !== undefined;
 }
 
 /**

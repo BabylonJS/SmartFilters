@@ -1,13 +1,21 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    createStrongRef,
+    DisableableShaderBinding,
+    DisableableShaderBlock,
+    DisableStrategy,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "./spritesheetBlock.shader";
 
 /**
  * The shader bindings for the Spritesheet block.
  */
-export class SpritesheetShaderBinding extends ShaderBinding {
+export class SpritesheetShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
     private readonly _rows: RuntimeData<ConnectionPointType.Float>;
@@ -61,7 +69,7 @@ export class SpritesheetShaderBinding extends ShaderBinding {
 /**
  * A block that animates a sprite sheet texture.
  */
-export class SpritesheetBlock extends ShaderBlock {
+export class SpritesheetBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -104,14 +112,14 @@ export class SpritesheetBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, true, DisableStrategy.Manual);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const rows = this.rows.runtimeData;
         const columns = this.columns.runtimeData;

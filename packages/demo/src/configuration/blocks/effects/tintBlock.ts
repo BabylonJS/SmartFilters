@@ -1,6 +1,11 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { uniforms, shaderProgram } from "./tintBlock.shader";
 import { Color3 } from "@babylonjs/core/Maths/math.color";
@@ -8,7 +13,7 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
 /**
  * The shader bindings for the Tint block.
  */
-export class TintShaderBinding extends ShaderBinding {
+export class TintShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _tint: RuntimeData<ConnectionPointType.Color3>;
     private readonly _amount: RuntimeData<ConnectionPointType.Float>;
@@ -47,7 +52,7 @@ export class TintShaderBinding extends ShaderBinding {
 /**
  * A simple block to apply a tint to a texture
  */
-export class TintBlock extends ShaderBlock {
+export class TintBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -90,7 +95,7 @@ export class TintBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const tint = this.tint.runtimeData;
         const amount = this.amount.runtimeData;

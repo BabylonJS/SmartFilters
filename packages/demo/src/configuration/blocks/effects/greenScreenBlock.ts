@@ -2,11 +2,11 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
-    ShaderBlock,
     ConnectionPointType,
-    ShaderBinding,
     injectDisableUniform,
     createStrongRef,
+    DisableableShaderBinding,
+    DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
@@ -47,7 +47,7 @@ const shaderProgram = injectDisableUniform({
 /**
  * The shader bindings for the Green block.
  */
-export class GreenShaderBinding extends ShaderBinding {
+export class GreenShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _reference: RuntimeData<ConnectionPointType.Color3>;
@@ -91,7 +91,7 @@ export class GreenShaderBinding extends ShaderBinding {
 /**
  * A simple block to insert a background in place of a green screen.
  */
-export class GreenScreenBlock extends ShaderBlock {
+export class GreenScreenBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -135,7 +135,7 @@ export class GreenScreenBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const background = this._confirmRuntimeDataSupplied(this.background);
         const reference = this._confirmRuntimeDataSupplied(this.reference);

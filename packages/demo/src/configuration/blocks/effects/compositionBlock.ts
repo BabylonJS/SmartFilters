@@ -2,11 +2,11 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
-    ShaderBlock,
     ConnectionPointType,
-    ShaderBinding,
     injectDisableUniform,
     createStrongRef,
+    DisableableShaderBinding,
+    DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
@@ -80,7 +80,7 @@ const shaderProgram = injectDisableUniform({
 /**
  * The shader bindings for the Composition block.
  */
-export class CompositionShaderBinding extends ShaderBinding {
+export class CompositionShaderBinding extends DisableableShaderBinding {
     private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _foregroundTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _foregroundTop: RuntimeData<ConnectionPointType.Float>;
@@ -164,7 +164,7 @@ export class CompositionShaderBinding extends ShaderBinding {
  * - ALPHA_SUBTRACT: alpha blending is DEST - SRC * DEST
  * - ALPHA_MULTIPLY: alpha blending is SRC * DEST
  */
-export class CompositionBlock extends ShaderBlock {
+export class CompositionBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -245,14 +245,14 @@ export class CompositionBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, true);
+        super(smartFilter, name, false);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const background = this._confirmRuntimeDataSupplied(this.background);
         const foreground = this._confirmRuntimeDataSupplied(this.foreground);
         const foregroundWidth = this.foregroundWidth.runtimeData;

@@ -56,12 +56,12 @@ export abstract class BaseBlock implements ICommandOwner {
      * Instantiates a new block.
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
-     * @param disableOptimization - Defines if the block is optimizable or not
+     * @param optimizable - Defines if the block should be processed by the optimizer (default: true)
      */
     constructor(
         smartFilter: SmartFilter,
         name: string,
-        public readonly disableOptimization = false
+        public readonly optimizable = true
     ) {
         this.uniqueId = UniqueIdGenerator.UniqueId;
         this.name = name;

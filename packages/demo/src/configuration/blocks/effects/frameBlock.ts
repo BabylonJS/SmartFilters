@@ -1,7 +1,12 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    injectDisableUniform,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
 const shaderProgram = injectDisableUniform({
@@ -50,7 +55,7 @@ const shaderProgram = injectDisableUniform({
 /**
  * The shader bindings for the Frame block.
  */
-export class FrameShaderBinding extends ShaderBinding {
+export class FrameShaderBinding extends DisableableShaderBinding {
     private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _frameTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _foregroundTexture: RuntimeData<ConnectionPointType.Texture>;
@@ -99,7 +104,7 @@ export class FrameShaderBinding extends ShaderBinding {
  *
  * It also supports an overlay texture that is applied on top of the result.
  */
-export class FrameBlock extends ShaderBlock {
+export class FrameBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -143,7 +148,7 @@ export class FrameBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const background = this._confirmRuntimeDataSupplied(this.background);
         const frame = this._confirmRuntimeDataSupplied(this.frame);
         const foreground = this._confirmRuntimeDataSupplied(this.foreground);

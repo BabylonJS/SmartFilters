@@ -1,13 +1,18 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    createStrongRef,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { uniforms, shaderProgram } from "./particleBlock.shader";
 
 /**
  * The shader bindings for the Particle block.
  */
-export class ParticleShaderBinding extends ShaderBinding {
+export class ParticleShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _particleTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
@@ -74,7 +79,7 @@ export class ParticleShaderBinding extends ShaderBinding {
 /**
  * A simple procedural block to render one particle.
  */
-export class ParticleBlock extends ShaderBlock {
+export class ParticleBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -144,14 +149,14 @@ export class ParticleBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, true);
+        super(smartFilter, name, false);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const particle = this._confirmRuntimeDataSupplied(this.particle);
         const time = this._confirmRuntimeDataSupplied(this.time);

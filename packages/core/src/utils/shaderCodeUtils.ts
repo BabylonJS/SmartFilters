@@ -46,7 +46,7 @@ export type ShaderCode = {
     mainFunctionName: string;
 
     /**
-     * The name of the main input texture.
+     * The name of the input texture which is passed through if the block is disabled.
      */
     mainInputTexture?: string;
 
