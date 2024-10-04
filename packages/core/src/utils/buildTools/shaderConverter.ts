@@ -324,6 +324,10 @@ function processFunctionBody(functionBody: string): {
 
     const isMainFunction = functionBody.includes("// main");
 
+    if (isMainFunction) {
+        functionBody = functionBody.replace("// main", "");
+    }
+
     return { functionBody, functionName, isMainFunction };
 }
 
