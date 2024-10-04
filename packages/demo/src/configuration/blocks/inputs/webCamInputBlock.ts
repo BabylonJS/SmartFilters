@@ -34,9 +34,9 @@ class WebcamSourceManager {
 
     constructor() {
         this._updateWebcamSources();
-        navigator.mediaDevices.ondevicechange = () => {
+        navigator.mediaDevices.addEventListener("devicechange", () => {
             this._updateWebcamSources();
-        };
+        });
     }
 
     private async _updateWebcamSources(): Promise<void> {
