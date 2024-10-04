@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Component, createRef } from "react";
 import type { Observable, Observer } from "@babylonjs/core/Misc/observable";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable";
@@ -63,6 +62,6 @@ export class DynamicOptionsLine extends Component<IDynamicOptionsLineProps, IDyn
         // Exclude optionsObservable from the props passed to OptionsLine
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { optionsObservable, ...rest } = this.props;
-        return <OptionsLine {...rest} options={this.state.options} ref={this._optionsLineRef}/>;
+        return <OptionsLine {...rest} options={this.state.options} ref={this._optionsLineRef} />;
     }
 }
