@@ -141,6 +141,9 @@ export class SmartFilterOptimizer {
                 const connectionsToReconnect: [ConnectionPoint, ConnectionPoint][] = [];
 
                 if (this._options.removeDisabledBlocks) {
+                    // Need to propagate runtime data to ensure we can tell if a block is disabled
+                    this._sourceSmartFilter.output.ownerBlock.propagateRuntimeData();
+
                     const alreadyVisitedBlocks = new Set<BaseBlock>();
                     this._disconnectDisabledBlocks(
                         this._sourceSmartFilter.output.connectedTo.ownerBlock,

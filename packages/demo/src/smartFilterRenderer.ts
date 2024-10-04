@@ -131,7 +131,7 @@ export class SmartFilterRenderer {
         const optimizer = new SmartFilterOptimizer(smartFilter, {
             maxSamplersInFragmentShader:
                 forceMaxSamplersInFragmentShader || this.engine.getCaps().maxTexturesImageUnits,
-            removeDisabledBlocks: true,
+            removeDisabledBlocks: false, // False so that we don't have to rerender the graph if uniforms change in the editor
         });
 
         const optimizedSmartFilter = optimizer.optimize();
