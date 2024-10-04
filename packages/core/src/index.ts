@@ -34,3 +34,4 @@ export { SmartFilter } from "./smartFilter.js";
 export { SmartFilterOptimizer } from "./optimization/smartFilterOptimizer.js";
 export * from "./utils/textureLoaders.js";
 export * from "./serialization/index.js";
+export * from "./editorUtils/editableInPropertyPage.js";

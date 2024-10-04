@@ -7,4 +7,3 @@ export { createDefaultValue } from "./graphSystem/registerDefaultInput.js";
 
 export type { TexturePreset } from "./globalState.js";
 export * from "./helpers/serializationTools.js";
-export * from "./nodeDecorators/editableInPropertyPage.js";

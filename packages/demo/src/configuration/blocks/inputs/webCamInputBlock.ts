@@ -1,12 +1,15 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { WebCamRuntime } from "./webCamRuntime";
-import { ConnectionPointType, type SmartFilter, InputBlock, createStrongRef } from "@babylonjs/smart-filters";
-import type { InitializationData } from "core/src/smartFilter";
 import {
+    ConnectionPointType,
+    type SmartFilter,
+    InputBlock,
+    createStrongRef,
     editableInPropertyPage,
     PropertyTypeForEdition,
     type IEditablePropertyListOption,
-} from "@babylonjs/smart-filters-editor";
+} from "@babylonjs/smart-filters";
+import type { InitializationData } from "core/src/smartFilter";
 import { Observable } from "@babylonjs/core/Misc/observable";
 
 export type WebCamSource = {

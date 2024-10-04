@@ -1,5 +1,4 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
     ShaderBlock,
@@ -7,9 +6,10 @@ import {
     ShaderBinding,
     injectDisableUniform,
     createStrongRef,
+    editableInPropertyPage,
+    PropertyTypeForEdition,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
