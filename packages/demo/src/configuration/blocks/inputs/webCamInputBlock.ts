@@ -3,13 +3,13 @@ import { WebCamRuntime } from "./webCamRuntime";
 import {
     ConnectionPointType,
     type SmartFilter,
+    type InitializationData,
     InputBlock,
     createStrongRef,
     editableInPropertyPage,
     PropertyTypeForEdition,
     type IEditablePropertyListOption,
 } from "@babylonjs/smart-filters";
-import type { InitializationData } from "core/src/smartFilter";
 import { Observable } from "@babylonjs/core/Misc/observable";
 
 export type WebCamSource = {
