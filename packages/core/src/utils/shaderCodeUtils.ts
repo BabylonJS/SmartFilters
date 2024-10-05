@@ -131,6 +131,13 @@ export function injectAutoDisable(shaderProgram: ShaderProgram) {
         );
     }
 
+    // Ensure the shader has a main input texture
+    if (!shaderFragment.mainInputTexture) {
+        throw new Error(
+            `Main input texture not found when trying to inject auto disable into ${shaderFragment.mainFunctionName}`
+        );
+    }
+
     // Inject the code
     mainFunction.code = mainFunction.code.replace(
         "{",
