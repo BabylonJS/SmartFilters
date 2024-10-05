@@ -40,6 +40,7 @@ export enum DisableStrategy {
  * mainInputTexture through to the output connection point.
  */
 export abstract class DisableableShaderBlock extends ShaderBlock implements IDisableableBlock {
+    private static _HasModifiedShaderCode = false;
     /**
      * The disabled connection point of the block.
      */
@@ -53,6 +54,14 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
      * The strategy to use for making this block disableable.
      */
     public readonly disableStrategy: DisableStrategy;
+
+    private get _hasModifiedShaderCode() {
+        return (this.constructor as typeof DisableableShaderBlock)._HasModifiedShaderCode;
+    }
+
+    private set _hasModifiedShaderCode(value: boolean) {
+        (this.constructor as typeof DisableableShaderBlock)._HasModifiedShaderCode = value;
+    }
 
     /**
      * Instantiates a new block.
@@ -70,15 +79,20 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
         super(smartFilter, name, optimizable);
         this.disableStrategy = disableStrategy;
 
-        // Apply the disable strategy
-        const shaderProgram = this.getShaderProgram();
-        switch (this.disableStrategy) {
-            case DisableStrategy.AutoSample:
-                injectAutoDisable(shaderProgram);
-                break;
-            case DisableStrategy.Manual:
-                injectDisableUniform(shaderProgram.fragment);
-                break;
+        // If we haven't already modified the shader code for this block type, do so now
+        if (!this._hasModifiedShaderCode) {
+            this._hasModifiedShaderCode = true;
+
+            // Apply the disable strategy
+            const shaderProgram = this.getShaderProgram();
+            switch (this.disableStrategy) {
+                case DisableStrategy.AutoSample:
+                    injectAutoDisable(shaderProgram);
+                    break;
+                case DisableStrategy.Manual:
+                    injectDisableUniform(shaderProgram.fragment);
+                    break;
+            }
         }
     }
 }
