@@ -3,10 +3,9 @@ uniform float time;
 uniform float rows;
 uniform float cols;
 uniform float frames;
-uniform bool disabled;
 
 vec4 mainImage(vec2 vUV) { // main
-    if (!disabled) {
+    if (!_disabled_) {
         float invRows = 1.0 / rows;
         float invCols = 1.0 / cols;
 

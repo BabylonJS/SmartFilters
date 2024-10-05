@@ -523,6 +523,7 @@ export class SmartFilterOptimizer {
                 }
 
                 const parentBlock = input.connectedTo.ownerBlock;
+
                 if (isTextureInputBlock(parentBlock)) {
                     // input is connected to an InputBlock of type "Texture": we must directly sample a texture
                     code = this._processSampleTexture(block, code, samplerName, samplers, parentBlock);

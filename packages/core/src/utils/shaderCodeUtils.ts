@@ -111,6 +111,8 @@ export type ShaderCreationOptions = {
 };
 
 export const AutoDisableMainInputColorName = "_autoMainInputColor_";
+export const DisableUniform = "disabled";
+
 /**
  * Injects the disable uniform and adds a check for it at the beginning of the main function
  * @param shaderProgram - The shader program to inject the disable feature into
@@ -118,8 +120,8 @@ export const AutoDisableMainInputColorName = "_autoMainInputColor_";
 export function injectAutoDisable(shaderProgram: ShaderProgram) {
     const shaderFragment = shaderProgram.fragment;
 
-    // Inject the uniform
-    shaderFragment.uniform += "\nuniform bool _disabled_;";
+    // Inject the disable uniform
+    injectDisableUniform(shaderFragment);
 
     // Find the main function
     const mainFunction = shaderFragment.functions.find((f) => f.name === shaderFragment.mainFunctionName);
@@ -135,6 +137,14 @@ export function injectAutoDisable(shaderProgram: ShaderProgram) {
         `{\n    vec4 ${AutoDisableMainInputColorName} = texture2D(${shaderFragment.mainInputTexture}, vUV);\n
                 if (_disabled_) return ${AutoDisableMainInputColorName};\n`
     );
+}
+
+/**
+ * Injects the disable uniform into the fragment shader.
+ * @param shaderFragment - The shader fragment to inject the disable uniform into.
+ */
+export function injectDisableUniform(shaderFragment: ShaderCode) {
+    shaderFragment.uniform += `\nuniform bool ${decorateSymbol(DisableUniform)};`;
 }
 
 /**
