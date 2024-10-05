@@ -69,10 +69,8 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
     ) {
         super(smartFilter, name, optimizable);
         this.disableStrategy = disableStrategy;
-        this._applyDisableStrategy();
-    }
 
-    private _applyDisableStrategy(): void {
+        // Apply the disable strategy
         switch (this.disableStrategy) {
             case DisableStrategy.AutoSample:
                 this._applyAutoSampleStrategy();

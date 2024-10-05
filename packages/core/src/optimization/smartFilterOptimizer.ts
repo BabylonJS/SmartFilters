@@ -21,9 +21,6 @@ import { DisableableShaderBlock, DisableStrategy } from "../blocks/disableableSh
 
 const showDebugData = false;
 
-// TODO: ensure that the main function takes in a vec2 vUV so we can search for texture samples that use it exactly
-// TODO: should we need to declare the _disabled_ uniform in the manual disableable shaders?
-
 /**
  * @internal
  */
