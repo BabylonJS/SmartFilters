@@ -4,7 +4,7 @@ import type { ConnectionPoint } from "../connection/connectionPoint.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import { ShaderBlock } from "./shaderBlock.js";
-import { injectAutoDisable, injectDisableUniform } from "../utils/shaderCodeUtils.js";
+import { injectAutoDisable } from "../utils/shaderCodeUtils.js";
 
 /**
  * The interface that describes the disableable block.
@@ -21,7 +21,7 @@ export interface IDisableableBlock {
  */
 export enum BlockDisableStrategy {
     /**
-     * The shader code is responsible for consulting a uniform named disabled
+     * The shader code is responsible for defining and consulting a uniform named disabled
      * and no-oping (returning texture2D(mainInputTexture, vUV)) if the value is true.
      */
     Manual = 0,
@@ -88,9 +88,6 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
             switch (this.blockDisableStrategy) {
                 case BlockDisableStrategy.AutoSample:
                     injectAutoDisable(shaderProgram);
-                    break;
-                case BlockDisableStrategy.Manual:
-                    injectDisableUniform(shaderProgram.fragment);
                     break;
             }
         }

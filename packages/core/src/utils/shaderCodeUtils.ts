@@ -121,7 +121,7 @@ export function injectAutoDisable(shaderProgram: ShaderProgram) {
     const shaderFragment = shaderProgram.fragment;
 
     // Inject the disable uniform
-    injectDisableUniform(shaderFragment);
+    shaderFragment.uniform += `\nuniform bool ${decorateSymbol(DisableUniform)};`;
 
     // Find the main function
     const mainFunction = shaderFragment.functions.find((f) => f.name === shaderFragment.mainFunctionName);
@@ -145,14 +145,6 @@ export function injectAutoDisable(shaderProgram: ShaderProgram) {
         `{\n    vec4 ${autoDisableVariableName} = texture2D(${shaderFragment.mainInputTexture}, vUV);\n
                 if (${decorateSymbol(DisableUniform)}) return ${autoDisableVariableName};\n`
     );
-}
-
-/**
- * Injects the disable uniform into the fragment shader.
- * @param shaderFragment - The shader fragment to inject the disable uniform into.
- */
-export function injectDisableUniform(shaderFragment: ShaderCode) {
-    shaderFragment.uniform += `\nuniform bool ${decorateSymbol(DisableUniform)};`;
 }
 
 /**

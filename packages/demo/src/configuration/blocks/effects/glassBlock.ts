@@ -16,6 +16,7 @@ const shaderProgram: ShaderProgram = {
         uniform: `
             uniform sampler2D _input_;
             uniform float _time_;
+            uniform bool _disabled_;
             `,
 
         mainFunctionName: "_glass_",
@@ -30,7 +31,7 @@ const shaderProgram: ShaderProgram = {
                 {
                     vec2 uv = vUV;
                     if (!_disabled_) {
-                        vUV = vUV * 0.7 + 0.15
+                        vUV = vUV * 0.7 + 0.15;
                     }
                     vec4 color = texture2D(_input_, vUV);
                     if (_disabled_) {

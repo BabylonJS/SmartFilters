@@ -3,6 +3,7 @@ uniform float time;
 uniform float rows;
 uniform float cols;
 uniform float frames;
+uniform bool disabled;
 
 vec4 mainImage(vec2 vUV) { // main
     if (!disabled) {
