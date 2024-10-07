@@ -143,7 +143,7 @@ export function injectAutoDisable(shaderProgram: ShaderProgram) {
     mainFunction.code = mainFunction.code.replace(
         "{",
         `{\n    vec4 ${autoDisableVariableName} = texture2D(${shaderFragment.mainInputTexture}, vUV);\n
-                if (_disabled_) return ${autoDisableVariableName};\n`
+                if (${decorateSymbol(DisableUniform)}) return ${autoDisableVariableName};\n`
     );
 }
 
