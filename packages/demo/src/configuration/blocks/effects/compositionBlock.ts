@@ -8,6 +8,7 @@ import {
     DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
@@ -231,6 +232,16 @@ export class CompositionBlock extends DisableableShaderBlock {
     /**
      * Defines blend mode of the composition.
      */
+    @editableInPropertyPage("Alpha Mode", PropertyTypeForEdition.List, "PROPERTIES", {
+        notifiers: { rebuild: true },
+        options: [
+            { label: "Disable", value: ALPHA_DISABLE },
+            { label: "Add", value: ALPHA_ADD },
+            { label: "Combine", value: ALPHA_COMBINE },
+            { label: "Subtract", value: ALPHA_SUBTRACT },
+            { label: "Multiply", value: ALPHA_MULTIPLY },
+        ],
+    })
     public alphaMode: number = ALPHA_COMBINE;
 
     /**

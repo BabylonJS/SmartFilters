@@ -10,6 +10,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -137,6 +138,11 @@ export class WipeBlock extends DisableableShaderBlock {
     /**
      * Defines the angle of the wipe effect.
      */
+    @editableInPropertyPage("Angle", PropertyTypeForEdition.Float, "PROPERTIES", {
+        min: 0,
+        max: Math.PI * 2,
+        notifiers: { rebuild: true },
+    })
     public angle = Math.PI;
 
     /**

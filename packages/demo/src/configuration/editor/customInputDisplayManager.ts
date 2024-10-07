@@ -15,7 +15,7 @@ export class CustomInputDisplayManager extends InputDisplayManager {
 
         if (inputBlock.type === ConnectionPointType.Texture && inputBlock.name === WebCamInputBlockName) {
             const webCamInputBlock = inputBlock as WebCamInputBlock;
-            value = webCamInputBlock.webcamSource?.name ?? "Default";
+            value = webCamInputBlock.webcamSource?.label ?? "Default";
             contentArea.innerHTML = value;
         } else {
             return super.updatePreviewContent(nodeData, contentArea);

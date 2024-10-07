@@ -9,6 +9,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
+import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -128,6 +129,7 @@ export class TileBlock extends DisableableShaderBlock {
     /**
      * Defines the number of tiles to use for the transition.
      */
+    @editableInPropertyPage("Tile Count", PropertyTypeForEdition.Int, "PROPERTIES", { notifiers: { rebuild: true } })
     public tileCount = 10;
 
     /**
