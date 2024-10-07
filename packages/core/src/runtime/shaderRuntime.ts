@@ -17,11 +17,11 @@ export abstract class ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * Overridden by derived classes.
-     * @param _effect - defines the effect to bind the data to
-     * @param _width - defines the width of the output
-     * @param _height - defines the height of the output
+     * @param effect - defines the effect to bind the data to
+     * @param width - defines the width of the output
+     * @param height - defines the height of the output
      */
-    public bind(_effect: Effect, _width?: number, _height?: number): void {}
+    public abstract bind(effect: Effect, width?: number, height?: number): void;
 
     private _remappedShaderVariables: { [key: string]: string } = {};
 
@@ -66,7 +66,7 @@ export abstract class DisableableShaderBinding extends ShaderBinding {
      * @param _width - defines the width of the output
      * @param _height - defines the height of the output
      */
-    public override bind(effect: Effect, _width?: number, _height?: number): void {
+    public bind(effect: Effect, _width?: number, _height?: number): void {
         effect.setBool(this.getRemappedName(DisableUniform), this._disabled.value);
     }
 }

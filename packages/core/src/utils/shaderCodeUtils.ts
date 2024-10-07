@@ -117,7 +117,7 @@ export const DisableUniform = "disabled";
  * Injects the disable uniform and adds a check for it at the beginning of the main function
  * @param shaderProgram - The shader program to inject the disable feature into
  */
-export function injectAutoDisable(shaderProgram: ShaderProgram) {
+export function injectAutoSampleDisableCode(shaderProgram: ShaderProgram) {
     const shaderFragment = shaderProgram.fragment;
 
     // Inject the disable uniform

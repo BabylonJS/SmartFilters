@@ -83,8 +83,6 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
      * @param effect - defines the effect to bind the data to
      */
     public override bind(effect: Effect): void {
-        super.bind(effect);
-
         // Global pass Setup
         effect.setFloatArray(this.getRemappedName("weights"), wideWeights);
 

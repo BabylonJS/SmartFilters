@@ -724,7 +724,6 @@ export class SmartFilterOptimizer {
     /**
      * If this block used DisableStrategy.AutoSample, find all the sampleTexture calls which just pass the vUV,
      * skip the first one, and for all others replace with the local variable created by the DisableStrategy.AutoSample
-     * code in DisableableShaderBlock._applyAutoSampleStrategy()
      *
      * @param code - The shader code to process
      * @param sampler - The name of the sampler

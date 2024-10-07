@@ -4,7 +4,7 @@ import type { ConnectionPoint } from "../connection/connectionPoint.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import { ShaderBlock } from "./shaderBlock.js";
-import { injectAutoDisable } from "../utils/shaderCodeUtils.js";
+import { injectAutoSampleDisableCode } from "../utils/shaderCodeUtils.js";
 
 /**
  * The interface that describes the disableable block.
@@ -27,8 +27,8 @@ export enum BlockDisableStrategy {
     Manual = 0,
 
     /**
-     * The Smart Filter system will automatically add code to sample the texture and return immediately if disabled,
-     * and use it within the shader code otherwise. If you need to modify UVs before sampling the default input texture,
+     * The Smart Filter system will automatically add code to sample the mainInputTexture and return immediately if disabled,
+     * and otherwise use the value within the block's shader code. If you need to modify UVs before sampling the default input texture,
      * you'll need to use the Manual strategy instead.
      */
     AutoSample = 1,
@@ -55,10 +55,10 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
      */
     public readonly blockDisableStrategy: BlockDisableStrategy;
 
+    // The shader code is a static per block type - these help ensure we only modify it once
     private get _hasModifiedShaderCode() {
         return (this.constructor as typeof DisableableShaderBlock)._HasModifiedShaderCode;
     }
-
     private set _hasModifiedShaderCode(value: boolean) {
         (this.constructor as typeof DisableableShaderBlock)._HasModifiedShaderCode = value;
     }
@@ -87,7 +87,7 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
             const shaderProgram = this.getShaderProgram();
             switch (this.blockDisableStrategy) {
                 case BlockDisableStrategy.AutoSample:
-                    injectAutoDisable(shaderProgram);
+                    injectAutoSampleDisableCode(shaderProgram);
                     break;
             }
         }
