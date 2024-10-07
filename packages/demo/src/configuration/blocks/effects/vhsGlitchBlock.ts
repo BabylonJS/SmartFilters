@@ -79,7 +79,7 @@ export class VhsGlitchBlock extends DisableableShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, true);
+        super(smartFilter, name);
     }
 
     /**

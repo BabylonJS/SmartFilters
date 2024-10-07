@@ -5,7 +5,7 @@ uniform float cols;
 uniform float frames;
 
 vec4 mainImage(vec2 vUV) { // main
-    if (!_disabled_) {
+    if (!disabled) {
         float invRows = 1.0 / rows;
         float invCols = 1.0 / cols;
 

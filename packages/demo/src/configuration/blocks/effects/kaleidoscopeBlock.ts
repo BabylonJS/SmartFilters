@@ -27,7 +27,6 @@ const shaderProgram: ShaderProgram = {
         uniform: `
             uniform sampler2D _input_;
             uniform float _time_;
-            uniform boolean _disabled_;
             `,
 
         const: `

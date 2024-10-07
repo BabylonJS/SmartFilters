@@ -16,7 +16,6 @@ const shaderProgram: ShaderProgram = {
         uniform: `
             uniform sampler2D _input_;
             uniform float _time_;
-            uniform bool _disabled_;
             `,
 
         mainFunctionName: "_glass_",

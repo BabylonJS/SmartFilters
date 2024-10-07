@@ -8,7 +8,7 @@ const float videoPixelateMax = 1920.0;
 const float aspect = 1.72;
 
 vec4 pixelate(vec2 vUV) { // main
-    if (!_disabled_) {
+    if (!disabled) {
         float pixelateStrength = mix(videoPixelateMin, videoPixelateMax, pow(1. - intensity, videoPixelatePower));
         vec2 pixelate = vec2(pixelateStrength * aspect, pixelateStrength);
         vUV = floor(pixelate * vUV) / pixelate;

@@ -12,7 +12,6 @@ const shaderProgram: ShaderProgram = {
         uniform: `
                 uniform vec2 _texelStep_;
                 uniform sampler2D _input_;
-                uniform bool _disabled_;
             `,
 
         uniformSingle: `
@@ -28,8 +27,6 @@ const shaderProgram: ShaderProgram = {
                 name: "_directionalBlur_",
                 code: `
                 vec4 _directionalBlur_(vec2 vUV) {
-                    if (_disabled_) return texture2D(_input_, vUV);
-
                     vec2 start = vUV - 3.0 * _texelStep_;
     
                     vec4 finalWeightedColor = vec4(0., 0., 0., 0.);
