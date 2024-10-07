@@ -21,15 +21,15 @@ export interface IDisableableBlock {
  */
 export enum BlockDisableStrategy {
     /**
-     * The shader code is responsible for consulting the uniform bound to the disabled connection point
-     * and no-oping (returning texture2D(input, vUV)) if the value is true.
+     * The shader code is responsible for consulting a uniform named disabled
+     * and no-oping (returning texture2D(mainInputTexture, vUV)) if the value is true.
      */
     Manual = 0,
 
     /**
-     * The Smart Filter system will automatically code to sample the texture and the color immediately if disabled,
+     * The Smart Filter system will automatically add code to sample the texture and return immediately if disabled,
      * and use it within the shader code otherwise. If you need to modify UVs before sampling the default input texture,
-     * you'll need to set this to "manual" and handle the disabling yourself in the shader code.
+     * you'll need to use the Manual strategy instead.
      */
     AutoSample = 1,
 }

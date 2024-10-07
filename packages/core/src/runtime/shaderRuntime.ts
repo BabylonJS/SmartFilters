@@ -8,7 +8,7 @@ import type { IDisposable } from "../IDisposable";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
 import type { IDisableableBlock } from "../blocks/disableableShaderBlock";
-import { decorateSymbol, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
+import { decorateSymbol, DisableUniform, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
@@ -67,7 +67,7 @@ export abstract class DisableableShaderBinding extends ShaderBinding {
      * @param _height - defines the height of the output
      */
     public override bind(effect: Effect, _width?: number, _height?: number): void {
-        effect.setBool(this.getRemappedName("disabled"), this._disabled.value);
+        effect.setBool(this.getRemappedName(DisableUniform), this._disabled.value);
     }
 }
 

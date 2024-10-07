@@ -110,8 +110,8 @@ export type ShaderCreationOptions = {
     onCompiled?: (effect: Effect) => void;
 };
 
-export const AutoDisableMainInputColorName = decorateSymbol("_autoMainInputColor_");
-export const DisableUniform = decorateSymbol("disabled");
+export const AutoDisableMainInputColorName = "autoMainInputColor";
+export const DisableUniform = "disabled";
 
 /**
  * Injects the disable uniform and adds a check for it at the beginning of the main function
@@ -139,10 +139,11 @@ export function injectAutoDisable(shaderProgram: ShaderProgram) {
     }
 
     // Inject the code
+    const autoDisableVariableName = decorateSymbol(AutoDisableMainInputColorName);
     mainFunction.code = mainFunction.code.replace(
         "{",
-        `{\n    vec4 ${AutoDisableMainInputColorName} = texture2D(${shaderFragment.mainInputTexture}, vUV);\n
-                if (_disabled_) return ${AutoDisableMainInputColorName};\n`
+        `{\n    vec4 ${autoDisableVariableName} = texture2D(${shaderFragment.mainInputTexture}, vUV);\n
+                if (_disabled_) return ${autoDisableVariableName};\n`
     );
 }
 

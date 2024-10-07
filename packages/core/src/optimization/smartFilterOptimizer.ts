@@ -739,7 +739,7 @@ export class SmartFilterOptimizer {
                 isFirstMatch = false;
                 return match;
             }
-            return AutoDisableMainInputColorName;
+            return decorateSymbol(AutoDisableMainInputColorName);
         });
     }
 }
