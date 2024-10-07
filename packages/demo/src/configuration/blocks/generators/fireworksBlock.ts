@@ -107,7 +107,7 @@ export class FireworksBlock extends DisableableShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, false);
+        super(smartFilter, name, true);
     }
 
     /**

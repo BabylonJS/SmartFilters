@@ -110,8 +110,8 @@ export type ShaderCreationOptions = {
     onCompiled?: (effect: Effect) => void;
 };
 
-export const AutoDisableMainInputColorName = "_autoMainInputColor_";
-export const DisableUniform = "disabled";
+export const AutoDisableMainInputColorName = decorateSymbol("_autoMainInputColor_");
+export const DisableUniform = decorateSymbol("disabled");
 
 /**
  * Injects the disable uniform and adds a check for it at the beginning of the main function

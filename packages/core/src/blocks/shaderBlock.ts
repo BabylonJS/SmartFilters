@@ -89,10 +89,10 @@ export abstract class ShaderBlock extends BaseBlock {
      * Instantiates a new block.
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
-     * @param optimizable - Defines if the block should be processed by the optimizer (default: true)
+     * @param disableOptimization - Defines if the block should not be optimized (default: false)
      */
-    constructor(smartFilter: SmartFilter, name: string, optimizable = true) {
-        super(smartFilter, name, optimizable);
+    constructor(smartFilter: SmartFilter, name: string, disableOptimization = false) {
+        super(smartFilter, name, disableOptimization);
     }
 
     /**

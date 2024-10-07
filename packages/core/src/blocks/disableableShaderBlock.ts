@@ -19,7 +19,7 @@ export interface IDisableableBlock {
 /**
  * The strategy to use for making a block disableable.
  */
-export enum DisableStrategy {
+export enum BlockDisableStrategy {
     /**
      * The shader code is responsible for consulting the uniform bound to the disabled connection point
      * and no-oping (returning texture2D(input, vUV)) if the value is true.
@@ -53,7 +53,7 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
     /**
      * The strategy to use for making this block disableable.
      */
-    public readonly disableStrategy: DisableStrategy;
+    public readonly blockDisableStrategy: BlockDisableStrategy;
 
     private get _hasModifiedShaderCode() {
         return (this.constructor as typeof DisableableShaderBlock)._HasModifiedShaderCode;
@@ -67,17 +67,17 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
      * Instantiates a new block.
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
-     * @param optimizable - Defines if the block should be processed by the optimizer (default: true)
-     * @param disableStrategy - Defines the strategy to use for making this block disableable (default: DisableStrategy.AutoSample)
+     * @param disableOptimization - Defines if the block should not be optimized (default: false)
+     * @param disableStrategy - Defines the strategy to use for making this block disableable (default: BlockDisableStrategy.AutoSample)
      */
     constructor(
         smartFilter: SmartFilter,
         name: string,
-        optimizable = true,
-        disableStrategy = DisableStrategy.AutoSample
+        disableOptimization = false,
+        disableStrategy = BlockDisableStrategy.AutoSample
     ) {
-        super(smartFilter, name, optimizable);
-        this.disableStrategy = disableStrategy;
+        super(smartFilter, name, disableOptimization);
+        this.blockDisableStrategy = disableStrategy;
 
         // If we haven't already modified the shader code for this block type, do so now
         if (!this._hasModifiedShaderCode) {
@@ -85,11 +85,11 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
 
             // Apply the disable strategy
             const shaderProgram = this.getShaderProgram();
-            switch (this.disableStrategy) {
-                case DisableStrategy.AutoSample:
+            switch (this.blockDisableStrategy) {
+                case BlockDisableStrategy.AutoSample:
                     injectAutoDisable(shaderProgram);
                     break;
-                case DisableStrategy.Manual:
+                case BlockDisableStrategy.Manual:
                     injectDisableUniform(shaderProgram.fragment);
                     break;
             }

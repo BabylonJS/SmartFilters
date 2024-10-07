@@ -17,7 +17,7 @@ import {
     undecorateSymbol,
 } from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
-import { DisableableShaderBlock, DisableStrategy } from "../blocks/disableableShaderBlock.js";
+import { DisableableShaderBlock, BlockDisableStrategy } from "../blocks/disableableShaderBlock.js";
 
 const showDebugData = false;
 
@@ -415,7 +415,7 @@ export class SmartFilterOptimizer {
     }
 
     private _canBeOptimized(block: BaseBlock): boolean {
-        if (!block.optimizable) {
+        if (block.disableOptimization) {
             return false;
         }
 
@@ -518,7 +518,10 @@ export class SmartFilterOptimizer {
                 }
 
                 // If we are using the AutoSample strategy, we must preprocess the code that samples the texture
-                if (block instanceof DisableableShaderBlock && block.disableStrategy === DisableStrategy.AutoSample) {
+                if (
+                    block instanceof DisableableShaderBlock &&
+                    block.blockDisableStrategy === BlockDisableStrategy.AutoSample
+                ) {
                     code = this._applyAutoSampleStrategy(code, sampler);
                 }
 

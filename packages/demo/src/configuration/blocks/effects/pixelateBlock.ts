@@ -79,7 +79,7 @@ export class PixelateBlock extends DisableableShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, true, DisableStrategy.Manual);
+        super(smartFilter, name, false, DisableStrategy.Manual);
     }
 
     /**
