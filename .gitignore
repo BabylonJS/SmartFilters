@@ -34,6 +34,3 @@ dist
 
 # generated shader TS files
 **/*.shader.ts
-
-# https certs
-cert
