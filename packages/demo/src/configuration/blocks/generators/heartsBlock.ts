@@ -1,7 +1,12 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    createStrongRef,
+    DisableableShaderBinding,
+    DisableableShaderBlock,
+} from "@babylonjs/smart-filters";
 import { shaderProgram, uniforms } from "../generators/heartsBlock.shader";
 import { BlockNames } from "../blockNames";
 import { Color3 } from "@babylonjs/core/Maths/math.color";
@@ -9,7 +14,7 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
 /**
  * The shader bindings for the Hearts block.
  */
-export class HeartsShaderBinding extends ShaderBinding {
+export class HeartsShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
     private readonly _tint: RuntimeData<ConnectionPointType.Color3>;
@@ -51,7 +56,7 @@ export class HeartsShaderBinding extends ShaderBinding {
 /**
  * A procedural block that renders a heart-emitting tunnel on the input texture.
  */
-export class HeartsBlock extends ShaderBlock {
+export class HeartsBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -94,7 +99,7 @@ export class HeartsBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
         const tint = this.tint.runtimeData;

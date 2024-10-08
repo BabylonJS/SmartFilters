@@ -1,14 +1,22 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBinding,
+    DisableStrategy,
+    type ShaderProgram,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _input_;
             uniform float _time_;
+            uniform bool _disabled_;
             `,
 
         mainFunctionName: "_glass_",
@@ -21,8 +29,14 @@ const shaderProgram = injectDisableUniform({
                 code: `
                 vec4 _glass_(vec2 vUV)
                 {
-                    vec4 color = texture2D(_input_, vUV * 0.7 + 0.15);
                     vec2 uv = vUV;
+                    if (!_disabled_) {
+                        vUV = vUV * 0.7 + 0.15;
+                    }
+                    vec4 color = texture2D(_input_, vUV);
+                    if (_disabled_) {
+                        return color;
+                    }
                 
                     color = vec4(color.rgb, _mask_(uv) * color.a);
                 
@@ -76,12 +90,12 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Glass block.
  */
-export class GlassShaderBinding extends ShaderBinding {
+export class GlassShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
@@ -115,7 +129,7 @@ export class GlassShaderBinding extends ShaderBinding {
 /**
  * A block performing a glass looking like effect.
  */
-export class GlassBlock extends ShaderBlock {
+export class GlassBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -142,14 +156,14 @@ export class GlassBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, false, DisableStrategy.Manual);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this._confirmRuntimeDataSupplied(this.time);
 

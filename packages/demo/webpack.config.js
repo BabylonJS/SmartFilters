@@ -10,7 +10,6 @@ var buildConfig = function (env) {
         context: __dirname,
         entry: {
             index: SRC_DIR + "/app.ts",
-            fhl: SRC_DIR + "/fhl.ts",
         },
         performance: {
             maxEntrypointSize: 5120000,

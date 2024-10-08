@@ -3,14 +3,14 @@ import "@babylonjs/core/Engines/Extensions/engine.renderTarget.js";
 
 import type { InitializationData, SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
-import type { Binding } from "../runtime/shaderRuntime";
+import type { ShaderBinding } from "../runtime/shaderRuntime";
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import { ShaderRuntime } from "../runtime/shaderRuntime.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createCommand } from "../command/command.js";
-import { DisableableBlock } from "./disableableBlock.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
 import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
+import { BaseBlock } from "./baseBlock.js";
 
 /**
  * This is the base class for all shader blocks.
@@ -19,7 +19,7 @@ import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/ren
  *
  * The only required function to implement is the bind function.
  */
-export abstract class ShaderBlock extends DisableableBlock {
+export abstract class ShaderBlock extends BaseBlock {
     /**
      * The class name of the block.
      */
@@ -30,7 +30,7 @@ export abstract class ShaderBlock extends DisableableBlock {
      * It should throw an error if required inputs are missing.
      * @returns The class instance that binds the data to the effect
      */
-    public abstract getShaderBinding(): Binding;
+    public abstract getShaderBinding(): ShaderBinding;
 
     /**
      * The shader program (vertex and fragment code) to use to render the block

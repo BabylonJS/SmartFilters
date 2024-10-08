@@ -1,17 +1,17 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
 import {
-    ShaderBlock,
-    ConnectionPointType,
-    ShaderBinding,
-    injectDisableUniform,
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBinding,
+    type ShaderProgram,
     editableInPropertyPage,
     PropertyTypeForEdition,
 } from "@babylonjs/smart-filters";
+import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _textureA_;
@@ -56,12 +56,12 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Tile block.
  */
-export class TileShaderBinding extends ShaderBinding {
+export class TileShaderBinding extends DisableableShaderBinding {
     private readonly _textureA: RuntimeData<ConnectionPointType.Texture>;
     private readonly _textureB: RuntimeData<ConnectionPointType.Texture>;
     private readonly _mix: RuntimeData<ConnectionPointType.Float>;
@@ -105,7 +105,7 @@ export class TileShaderBinding extends ShaderBinding {
 /**
  * A block simulating a tile effect to transition between two textures according to the mix value.
  */
-export class TileBlock extends ShaderBlock {
+export class TileBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -150,7 +150,7 @@ export class TileBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const textureA = this._confirmRuntimeDataSupplied(this.textureA);
         const textureB = this._confirmRuntimeDataSupplied(this.textureB);
         const mix = this._confirmRuntimeDataSupplied(this.mix);

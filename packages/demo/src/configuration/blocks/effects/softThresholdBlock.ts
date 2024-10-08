@@ -1,14 +1,21 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    createStrongRef,
+    DisableableShaderBinding,
+    DisableableShaderBlock,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "./softThresholdBlock.shader";
 
 /**
  * The shader bindings for the SoftThreshold block.
  */
-export class SoftThresholdShaderBinding extends ShaderBinding {
+export class SoftThresholdShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _threshold: RuntimeData<ConnectionPointType.Float>;
 
@@ -45,7 +52,7 @@ export class SoftThresholdShaderBinding extends ShaderBinding {
 /**
  * A simple block that adds a high contrast, black-and-white effect to the input texture.
  */
-export class SoftThresholdBlock extends ShaderBlock {
+export class SoftThresholdBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -83,7 +90,7 @@ export class SoftThresholdBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const threshold = this._confirmRuntimeDataSupplied(this.threshold);
 
