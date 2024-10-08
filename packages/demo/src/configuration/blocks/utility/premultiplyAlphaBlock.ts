@@ -1,9 +1,9 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
+import { ConnectionPointType, DisableableShaderBlock, DisableableShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _input_;
@@ -25,12 +25,12 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the PremultiplyAlpha block.
  */
-export class PremultiplyAlphaShaderBinding extends ShaderBinding {
+export class PremultiplyAlphaShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**
@@ -57,7 +57,7 @@ export class PremultiplyAlphaShaderBinding extends ShaderBinding {
  * A utility block that premultiplies the input texture against its alpha.
  * This is useful for preserving transparency when the WebGL context expects colors with pre-multiplied alpha (true by default).
  */
-export class PremultiplyAlphaBlock extends ShaderBlock {
+export class PremultiplyAlphaBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -86,7 +86,7 @@ export class PremultiplyAlphaBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
 
         return new PremultiplyAlphaShaderBinding(this, input);

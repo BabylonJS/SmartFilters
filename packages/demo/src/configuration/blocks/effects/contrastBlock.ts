@@ -1,16 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import {
-    ShaderBlock,
     ConnectionPointType,
-    ShaderBinding,
-    injectDisableUniform,
     createStrongRef,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         uniform: `
             uniform sampler2D _input_;
@@ -61,12 +60,12 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Contrast block.
  */
-export class ContrastShaderBinding extends ShaderBinding {
+export class ContrastShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _intensity: RuntimeData<ConnectionPointType.Float>;
 
@@ -100,7 +99,7 @@ export class ContrastShaderBinding extends ShaderBinding {
 /**
  * A simple block to change the contrast of a texture.
  */
-export class ContrastBlock extends ShaderBlock {
+export class ContrastBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -138,7 +137,7 @@ export class ContrastBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const intensity = this.intensity.runtimeData;
 

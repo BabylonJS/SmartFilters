@@ -1,14 +1,19 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { uniforms, shaderProgram } from "./maskBlock.shader";
 
 /**
  * The shader bindings for the Mask block.
  */
-export class MaskShaderBinding extends ShaderBinding {
+export class MaskShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _maskTexture: RuntimeData<ConnectionPointType.Texture>;
 
@@ -42,7 +47,7 @@ export class MaskShaderBinding extends ShaderBinding {
 /**
  * A simple block to apply a mask from one texture to the color of another texture
  */
-export class MaskBlock extends ShaderBlock {
+export class MaskBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -75,7 +80,7 @@ export class MaskBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const mask = this._confirmRuntimeDataSupplied(this.mask);
 

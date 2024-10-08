@@ -1,10 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
+    DisableStrategy,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     vertex: `
         // Attributes
         attribute vec2 position;
@@ -22,6 +27,7 @@ const shaderProgram = injectDisableUniform({
         uniform: `
             uniform sampler2D _input_;
             uniform float _time_;
+            uniform bool _disabled_;
             `,
 
         const: `
@@ -47,6 +53,8 @@ const shaderProgram = injectDisableUniform({
                 name: "_kaleidoscope_",
                 code: `
                 vec4 _kaleidoscope_(vec2 vUV) {
+                    if (_disabled_) return texture2D(_input_, vUV);
+                    
                     float distanceToCircle = abs(length(vUV) - _radius_);
                     vec4 result = vec4(0., 0., 0., 0.);
                 
@@ -89,12 +97,12 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 /**
  * The shader bindings for the Kaleidoscope block.
  */
-export class KaleidoscopeShaderBinding extends ShaderBinding {
+export class KaleidoscopeShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
@@ -128,7 +136,7 @@ export class KaleidoscopeShaderBinding extends ShaderBinding {
 /**
  * A block performing a Kaleidoscope looking like effect.
  */
-export class KaleidoscopeBlock extends ShaderBlock {
+export class KaleidoscopeBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -155,14 +163,14 @@ export class KaleidoscopeBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, false, DisableStrategy.Manual);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this._confirmRuntimeDataSupplied(this.time);
 

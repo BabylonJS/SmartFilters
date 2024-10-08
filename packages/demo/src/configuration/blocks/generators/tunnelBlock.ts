@@ -1,14 +1,19 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "../generators/tunnelBlock.shader";
 
 /**
  * The shader bindings for the Tunnel block.
  */
-export class TunnelShaderBinding extends ShaderBinding {
+export class TunnelShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
@@ -45,7 +50,7 @@ export class TunnelShaderBinding extends ShaderBinding {
 /**
  * A shader block that creates a tunnel-like background effect.
  */
-export class TunnelBlock extends ShaderBlock {
+export class TunnelBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -79,7 +84,7 @@ export class TunnelBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.fallback);
         const time = this.time.runtimeData;
 

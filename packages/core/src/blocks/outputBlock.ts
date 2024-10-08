@@ -1,7 +1,7 @@
 import type { InitializationData, SmartFilter } from "../smartFilter";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { BaseBlock } from "./baseBlock.js";
-import { Binding, ShaderRuntime } from "../runtime/shaderRuntime.js";
+import { ShaderBinding, ShaderRuntime } from "../runtime/shaderRuntime.js";
 import type { Nullable } from "@babylonjs/core/types";
 import type { RenderTargetWrapper } from "@babylonjs/core/Engines/renderTargetWrapper";
 import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
@@ -95,7 +95,7 @@ export class OutputBlock extends BaseBlock {
 /**
  * Shader binding to use when the OutputBlock is directly connected to a texture InputBlock.
  */
-class OutputShaderBinding extends Binding {
+class OutputShaderBinding extends ShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
 
     /**

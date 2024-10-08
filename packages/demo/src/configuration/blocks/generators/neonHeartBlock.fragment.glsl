@@ -109,6 +109,7 @@ float getSegment(float t, vec2 pos, float offset){
 }
 
 vec4 mainImage(vec2 vUV){ // main
+    vec4 origColor = texture2D(input, vUV);
     vec2 centre = vec2(0.5, 0.5);
     vec2 pos = centre - vUV;
     pos.y /= aspectRatio;
@@ -147,5 +148,5 @@ vec4 mainImage(vec2 vUV){ // main
     col = pow(col, vec3(0.4545));
 
     // Output to screen with blending
-    return mix(texture2D(input, vUV), vec4(col, 1.), blend);
+    return mix(origColor, vec4(col, 1.), blend);
 }
