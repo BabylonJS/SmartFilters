@@ -40,7 +40,6 @@ export enum BlockDisableStrategy {
  * mainInputTexture through to the output connection point.
  */
 export abstract class DisableableShaderBlock extends ShaderBlock implements IDisableableBlock {
-    private static _HasModifiedShaderCode = false;
     /**
      * The disabled connection point of the block.
      */
@@ -55,7 +54,13 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
      */
     public readonly blockDisableStrategy: BlockDisableStrategy;
 
-    // The shader code is a static per block type - these help ensure we only modify it once
+    // The shader code is a static per block type. When an instance of a block is created, we may need to alter
+    // that code based on the block's disable strategy. We only want to do this once per block type, or we could
+    // incorrectly modify the shader code multiple times (once per block instance). Here we use a static boolean
+    // which will be per block type to track if we've already modified the shader code for this block type.
+    // This is more memory efficient than the alternative of making a copy of the shader code for each block instance
+    // and modifying each copy.
+    private static _HasModifiedShaderCode = false;
     private get _hasModifiedShaderCode() {
         return (this.constructor as typeof DisableableShaderBlock)._HasModifiedShaderCode;
     }
