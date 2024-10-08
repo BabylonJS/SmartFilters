@@ -1,14 +1,21 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { type SmartFilter, type IDisableableBlock, type RuntimeData, createStrongRef } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    createStrongRef,
+    DisableableShaderBinding,
+    DisableableShaderBlock,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "../generators/fireworksBlock.shader";
 
 /**
  * The shader bindings for the Fireworks block.
  */
-export class FireworksShaderBinding extends ShaderBinding {
+export class FireworksShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
     private readonly _fireworks: RuntimeData<ConnectionPointType.Float>;
@@ -55,7 +62,7 @@ export class FireworksShaderBinding extends ShaderBinding {
 /**
  * A block that adds a fireworks effect overlaid on the input texture.
  */
-export class FireworksBlock extends ShaderBlock {
+export class FireworksBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -107,7 +114,7 @@ export class FireworksBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
         const fireworks = this.fireworks.runtimeData;

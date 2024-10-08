@@ -1,7 +1,12 @@
 // For demo and non-commercial usage only
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import {
+    type SmartFilter,
+    type IDisableableBlock,
+    type RuntimeData,
+    DisableableShaderBinding,
+} from "@babylonjs/smart-filters";
+import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { shaderProgram, uniforms } from "../generators/neonHeartBlock.shader";
 import { BlockNames } from "../blockNames";
 import { Color3 } from "@babylonjs/core/Maths/math.color";
@@ -9,7 +14,7 @@ import { Color3 } from "@babylonjs/core/Maths/math.color";
 /**
  * The shader bindings for the Neon Heart block.
  */
-export class NeonHeartShaderBinding extends ShaderBinding {
+export class NeonHeartShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
     private readonly _color1: RuntimeData<ConnectionPointType.Color3>;
@@ -56,7 +61,7 @@ export class NeonHeartShaderBinding extends ShaderBinding {
 /**
  * A procedural block that draws an animated neon heart around the center of the input texture.
  */
-export class NeonHeartBlock extends ShaderBlock {
+export class NeonHeartBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -108,7 +113,7 @@ export class NeonHeartBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const time = this.time.runtimeData;
         const color1 = this.color1.runtimeData;

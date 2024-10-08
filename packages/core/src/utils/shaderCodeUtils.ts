@@ -46,7 +46,7 @@ export type ShaderCode = {
     mainFunctionName: string;
 
     /**
-     * The name of the main input texture.
+     * The name of the input texture which is passed through if the block is disabled.
      */
     mainInputTexture?: string;
 
@@ -110,28 +110,41 @@ export type ShaderCreationOptions = {
     onCompiled?: (effect: Effect) => void;
 };
 
+export const AutoDisableMainInputColorName = "autoMainInputColor";
+export const DisableUniform = "disabled";
+
 /**
- * Injects the disable uniform into a shader program.
- * @param shaderProgram - The shader program to inject the disable uniform into.
- * @returns The modified shader program
+ * Injects the disable uniform and adds a check for it at the beginning of the main function
+ * @param shaderProgram - The shader program to inject the disable feature into
  */
-export function injectDisableUniform(shaderProgram: ShaderProgram) {
+export function injectAutoSampleDisableCode(shaderProgram: ShaderProgram) {
     const shaderFragment = shaderProgram.fragment;
 
-    shaderFragment.uniform += "\nuniform bool _disabled_;";
+    // Inject the disable uniform
+    shaderFragment.uniform += `\nuniform bool ${decorateSymbol(DisableUniform)};`;
 
-    for (let i = 0; i < shaderFragment.functions.length; ++i) {
-        const func = shaderFragment.functions[i]!;
-        if (func.name === shaderFragment.mainFunctionName) {
-            func.code = func.code.replace(
-                "{",
-                `{\n    if (_disabled_) return texture2D(${shaderProgram.fragment.mainInputTexture}, vUV);\n`
-            );
-            break;
-        }
+    // Find the main function
+    const mainFunction = shaderFragment.functions.find((f) => f.name === shaderFragment.mainFunctionName);
+    if (!mainFunction) {
+        throw new Error(
+            `Main function not found when trying to inject auto disable into ${shaderFragment.mainFunctionName}`
+        );
     }
 
-    return shaderProgram;
+    // Ensure the shader has a main input texture
+    if (!shaderFragment.mainInputTexture) {
+        throw new Error(
+            `Main input texture not found when trying to inject auto disable into ${shaderFragment.mainFunctionName}`
+        );
+    }
+
+    // Inject the code
+    const autoDisableVariableName = decorateSymbol(AutoDisableMainInputColorName);
+    mainFunction.code = mainFunction.code.replace(
+        "{",
+        `{\n    vec4 ${autoDisableVariableName} = texture2D(${shaderFragment.mainInputTexture}, vUV);\n
+                if (${decorateSymbol(DisableUniform)}) return ${autoDisableVariableName};\n`
+    );
 }
 
 /**

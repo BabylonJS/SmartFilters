@@ -1,11 +1,11 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, injectDisableUniform } from "@babylonjs/smart-filters";
+import type { SmartFilter, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
+import { ConnectionPointType, ShaderBinding, ShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
-const shaderProgram = injectDisableUniform({
+const shaderProgram: ShaderProgram = {
     fragment: {
         const: `
             const float _epsilon_ = 0.01;
@@ -50,7 +50,7 @@ const shaderProgram = injectDisableUniform({
             },
         ],
     },
-});
+};
 
 const wideWeights = Float32Array.from([0.05, 0.1, 0.2, 0.3, 0.2, 0.1, 0.05]);
 
@@ -64,18 +64,16 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
 
     /**
      * Creates a new shader binding instance for the DirectionalBlur block.
-     * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param blurHorizontalWidth - The horizontal blur width
      * @param blurVerticalWidth - The vertical blur width
      */
     constructor(
-        parentBlock: IDisableableBlock,
         inputTexture: RuntimeData<ConnectionPointType.Texture>,
         blurHorizontalWidth: number,
         blurVerticalWidth: number
     ) {
-        super(parentBlock);
+        super();
         this._inputTexture = inputTexture;
         this._blurHorizontalWidth = blurHorizontalWidth;
         this._blurVerticalWidth = blurVerticalWidth;
@@ -86,8 +84,6 @@ export class DirectionalBlurShaderBinding extends ShaderBinding {
      * @param effect - defines the effect to bind the data to
      */
     public override bind(effect: Effect): void {
-        super.bind(effect);
-
         // Global pass Setup
         effect.setFloatArray(this.getRemappedName("weights"), wideWeights);
 
@@ -181,6 +177,6 @@ export class DirectionalBlurBlock extends ShaderBlock {
     public getShaderBinding(): ShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
 
-        return new DirectionalBlurShaderBinding(this, input, this.blurHorizontalWidth, this.blurVerticalWidth);
+        return new DirectionalBlurShaderBinding(input, this.blurHorizontalWidth, this.blurVerticalWidth);
     }
 }

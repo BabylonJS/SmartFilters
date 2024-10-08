@@ -1,14 +1,20 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData } from "@babylonjs/smart-filters";
-import { ShaderBlock, ConnectionPointType, ShaderBinding, createStrongRef } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    createStrongRef,
+    DisableableShaderBlock,
+    DisableableShaderBinding,
+    DisableStrategy,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
 import { shaderProgram, uniforms } from "./pixelateBlock.shader";
 
 /**
  * The shader bindings for the Pixelate block.
  */
-export class PixelateShaderBinding extends ShaderBinding {
+export class PixelateShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _intensity: RuntimeData<ConnectionPointType.Float>;
 
@@ -42,7 +48,7 @@ export class PixelateShaderBinding extends ShaderBinding {
 /**
  * A simple block pixelating the input texture.
  */
-export class PixelateBlock extends ShaderBlock {
+export class PixelateBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
@@ -73,14 +79,14 @@ export class PixelateBlock extends ShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, false, DisableStrategy.Manual);
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): DisableableShaderBinding {
         const input = this._confirmRuntimeDataSupplied(this.input);
         const intensity = this.intensity.runtimeData;
 

@@ -1,7 +1,7 @@
 import type { Nullable } from "@babylonjs/core/types";
 
 import type { ConnectionPoint } from "../connection/connectionPoint";
-import type { Binding } from "../runtime/shaderRuntime";
+import type { ShaderBinding } from "../runtime/shaderRuntime";
 import type { InputBlock } from "../blocks/inputBlock";
 import type { BaseBlock } from "../blocks/baseBlock";
 import { SmartFilter } from "../smartFilter.js";
@@ -9,9 +9,15 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBlock } from "../blocks/shaderBlock.js";
 import { isTextureInputBlock } from "../blocks/inputBlock.js";
 import { OptimizedShaderBlock } from "./optimizedShaderBlock.js";
-import { decorateChar, decorateSymbol, getShaderFragmentCode, undecorateSymbol } from "../utils/shaderCodeUtils.js";
+import {
+    AutoDisableMainInputColorName,
+    decorateChar,
+    decorateSymbol,
+    getShaderFragmentCode,
+    undecorateSymbol,
+} from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
-import { DisableableBlock } from "../blocks/disableableBlock.js";
+import { DisableableShaderBlock, BlockDisableStrategy } from "../blocks/disableableShaderBlock.js";
 
 const showDebugData = false;
 
@@ -132,6 +138,9 @@ export class SmartFilterOptimizer {
                 const connectionsToReconnect: [ConnectionPoint, ConnectionPoint][] = [];
 
                 if (this._options.removeDisabledBlocks) {
+                    // Need to propagate runtime data to ensure we can tell if a block is disabled
+                    this._sourceSmartFilter.output.ownerBlock.propagateRuntimeData();
+
                     const alreadyVisitedBlocks = new Set<BaseBlock>();
                     this._disconnectDisabledBlocks(
                         this._sourceSmartFilter.output.connectedTo.ownerBlock,
@@ -203,7 +212,7 @@ export class SmartFilterOptimizer {
             this._disconnectDisabledBlocks(input.connectedTo.ownerBlock, alreadyVisitedBlocks, inputsToReconnect);
         }
 
-        if (block instanceof DisableableBlock && block.disabled.runtimeData.value) {
+        if (block instanceof DisableableShaderBlock && block.disabled.runtimeData.value) {
             block.disconnectFromGraph(inputsToReconnect);
         }
     }
@@ -508,6 +517,14 @@ export class SmartFilterOptimizer {
                     throw `The connection point corresponding to the input named "${samplerName}" in block named "${block.name}" is not connected!`;
                 }
 
+                // If we are using the AutoSample strategy, we must preprocess the code that samples the texture
+                if (
+                    block instanceof DisableableShaderBlock &&
+                    block.blockDisableStrategy === BlockDisableStrategy.AutoSample
+                ) {
+                    code = this._applyAutoSampleStrategy(code, sampler);
+                }
+
                 const parentBlock = input.connectedTo.ownerBlock;
 
                 if (isTextureInputBlock(parentBlock)) {
@@ -629,7 +646,7 @@ export class SmartFilterOptimizer {
         });
 
         // Sets the remapping of the shader variables
-        const blockOwnerToShaderBinding = new Map<ShaderBlock, Binding>();
+        const blockOwnerToShaderBinding = new Map<ShaderBlock, ShaderBinding>();
 
         let codeUniforms = "";
         let codeConsts = "";
@@ -702,5 +719,26 @@ export class SmartFilterOptimizer {
         optimizedBlock.setShaderBindings(Array.from(blockOwnerToShaderBinding.values()));
 
         return optimizedBlock;
+    }
+
+    /**
+     * If this block used DisableStrategy.AutoSample, find all the sampleTexture calls which just pass the vUV,
+     * skip the first one, and for all others replace with the local variable created by the DisableStrategy.AutoSample
+     *
+     * @param code - The shader code to process
+     * @param sampler - The name of the sampler
+     *
+     * @returns The processed code
+     */
+    private _applyAutoSampleStrategy(code: string, sampler: string): string {
+        let isFirstMatch = true;
+        const rx = new RegExp(`sampleTexture\\s*\\(\\s*${sampler}\\s*,\\s*vUV\\s*\\)`, "g");
+        return code.replace(rx, (match) => {
+            if (isFirstMatch) {
+                isFirstMatch = false;
+                return match;
+            }
+            return decorateSymbol(AutoDisableMainInputColorName);
+        });
     }
 }
