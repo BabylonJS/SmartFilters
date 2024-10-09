@@ -30,8 +30,9 @@ export { type SmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 export { InternalSmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 export { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
 
-export { SmartFilter } from "./smartFilter.js";
+export { SmartFilter, type InitializationData } from "./smartFilter.js";
 
 export { SmartFilterOptimizer } from "./optimization/smartFilterOptimizer.js";
 export * from "./utils/textureLoaders.js";
 export * from "./serialization/index.js";
+export * from "./editorUtils/editableInPropertyPage.js";

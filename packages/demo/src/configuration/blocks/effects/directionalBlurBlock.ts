@@ -1,9 +1,13 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
 import type { SmartFilter, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
-import { ConnectionPointType, ShaderBinding, ShaderBlock } from "@babylonjs/smart-filters";
+import {
+    ShaderBlock,
+    ConnectionPointType,
+    ShaderBinding,
+    editableInPropertyPage,
+    PropertyTypeForEdition,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters-editor";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

@@ -1,15 +1,14 @@
 import * as react from "react";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
-
 import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
 import { TextLineComponent } from "@babylonjs/shared-ui-components/lines/textLineComponent.js";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps";
-import type { BaseBlock } from "@babylonjs/smart-filters";
 import {
+    type BaseBlock,
     PropertyTypeForEdition,
     type IEditablePropertyOption,
     type IPropertyDescriptionForEdition,
-} from "../../nodeDecorators/editableInPropertyPage.js";
+} from "@babylonjs/smart-filters";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponent.js";
 import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
