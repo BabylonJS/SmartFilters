@@ -34,6 +34,46 @@
                 background-position: top left;
             }
 
+            #errorContainer {
+                grid-column-start: 2;
+                grid-column-end: 5;
+                grid-row-start: 2;
+                grid-row-end: 2;
+                background-color: #ff000040;
+                display: none;
+            }
+
+            #errorBox {
+                border: 1px solid black;
+                border-radius: 4px;
+                background-color: white;
+                color: black;
+                margin: 20px;
+                padding: 10px;
+            }
+
+            #errorHeader {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid black;
+                padding-bottom: 4px;
+            }
+
+            #errorCloseButton {
+                width: 25px;
+                height: 25px;
+            }
+
+            #errorTitle {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 4px;
+            }
+
+            #errorMessage {
+                white-space: pre-line;
+            }
+
             .footer .center {
                 grid-column: 2;
             }
@@ -178,6 +218,15 @@
             </div>
             <div class="content" id="container" width="1024" height="700">
                 <canvas id="renderCanvas" width="1024" height="700"></canvas>
+            </div>
+            <div id="errorContainer">
+                <div id="errorBox">
+                    <div id="errorHeader">
+                        <div id="errorTitle">Error</div>
+                        <button id="errorCloseButton">X</button>
+                    </div>
+                    <div id="errorMessage"></div>
+                </div>
             </div>
             <div class="footer">
                 <div class="center">
