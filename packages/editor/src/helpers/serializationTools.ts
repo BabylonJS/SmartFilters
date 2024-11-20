@@ -23,6 +23,7 @@ export function setEditorData(smartFilter: SmartFilter, globalState: GlobalState
                 blockId: block.uniqueId,
                 x: node.x,
                 y: node.y,
+                isCollapsed: node.isCollapsed,
             });
         }
     }

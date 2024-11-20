@@ -42,8 +42,8 @@
         "recursive-copy": "^2.0.13"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^7.11.2",
-        "@babylonjs/shared-ui-components": "^7.11.2",
+        "@babylonjs/core": "^7.34.3",
+        "@babylonjs/shared-ui-components": "^7.34.3",
         "@fortawesome/fontawesome-svg-core": "^6.1.0",
         "@fortawesome/free-solid-svg-icons": "^6.1.0",
         "@fortawesome/react-fontawesome": "^0.1.18",

@@ -6,10 +6,10 @@ import { GraphEditor } from "./graphEditor.js";
 import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger.js";
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
-import { Popup } from "./sharedComponents/popup.js";
 import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
+import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 
 /**
  * An object that contains all of the information the Editor needs to display and
@@ -123,13 +123,12 @@ export type SmartFilterEditorOptions = {
     reloadAssets: (smartFilter: SmartFilter) => void;
 };
 
-const filterEditorPopupId = "filter-editor";
-
 /**
  * Class used to create a node editor
  */
 export class SmartFilterEditor {
     private static _CurrentState: GlobalState;
+    private static _PopupWindow: Window | null;
 
     /**
      * Show the node editor
@@ -137,9 +136,8 @@ export class SmartFilterEditor {
      */
     public static Show(options: SmartFilterEditorOptions) {
         if (this._CurrentState) {
-            const popupWindow = (Popup as any)[filterEditorPopupId];
-            if (popupWindow) {
-                popupWindow.close();
+            if (this._PopupWindow) {
+                this._PopupWindow.close();
             }
         }
 
@@ -147,7 +145,11 @@ export class SmartFilterEditor {
         let hostElement = options.hostElement;
 
         if (!hostElement) {
-            hostElement = Popup.CreatePopup("BABYLON.JS Smart Filter EDITOR", filterEditorPopupId, 1500, 800)!;
+            hostElement = CreatePopup("BABYLON.JS SMART FILTER EDITOR", {
+                onWindowCreateCallback: (w) => (this._PopupWindow = w),
+                width: 1500,
+                height: 800,
+            })!;
         }
 
         const globalState = new GlobalState(
@@ -174,15 +176,6 @@ export class SmartFilterEditor {
 
         reactDOM.render(graphEditor, hostElement);
 
-        // if (options.customLoadObservable) {
-        //     options.customLoadObservable.add((data) => {
-        //         SerializationTools.Deserialize(data, globalState);
-        //         globalState.mode = options.nodeMaterial.mode;
-        //         globalState.onResetRequiredObservable.notifyObservers(false);
-        //         globalState.onBuiltObservable.notifyObservers();
-        //     });
-        // }
-
         this._CurrentState = globalState;
 
         globalState.hostWindow.addEventListener("beforeunload", () => {
@@ -190,26 +183,23 @@ export class SmartFilterEditor {
         });
 
         // Close the popup window when the page is refreshed or scene is disposed
-        const popupWindow = (Popup as any)[filterEditorPopupId];
-        if (globalState.smartFilter && popupWindow) {
+        if (globalState.smartFilter && this._PopupWindow) {
             options.engine.onDisposeObservable.addOnce(() => {
-                if (popupWindow) {
-                    popupWindow.close();
+                if (this._PopupWindow) {
+                    this._PopupWindow.close();
                 }
             });
             window.onbeforeunload = () => {
-                const popupWindow = (Popup as any)[filterEditorPopupId];
-                if (popupWindow) {
-                    popupWindow.close();
+                if (this._PopupWindow) {
+                    this._PopupWindow.close();
                 }
             };
         }
     }
 
     public static Hide() {
-        const popupWindow = (Popup as any)[filterEditorPopupId];
-        if (popupWindow) {
-            popupWindow.close();
+        if (this._PopupWindow) {
+            this._PopupWindow.close();
         }
     }
 }
