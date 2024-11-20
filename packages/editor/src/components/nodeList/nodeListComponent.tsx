@@ -6,17 +6,11 @@ import { LineContainerComponent } from "../../sharedComponents/lineContainerComp
 import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
 
 import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
-// import { DraggableLineWithButtonComponent } from "../../sharedComponents/draggableLineWithButtonComponent";
-// import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent";
-
-// import addButton from "../../assets/imgs/add.svg";
-// import deleteButton from "../../assets/imgs/delete.svg";
 
 import "../../assets/styles/components/nodeList.scss";
 
 import type { Nullable } from "@babylonjs/core/types";
 import type { Observer } from "@babylonjs/core/Misc/observable";
-// import { Tools } from "@babylonjs/core/Misc/tools";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
