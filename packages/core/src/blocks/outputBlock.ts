@@ -61,6 +61,7 @@ export class OutputBlock extends BaseBlock {
                 block.propagateRuntimeData();
             }
         });
+        this._confirmRuntimeDataSupplied(this.input);
     }
 
     /**
