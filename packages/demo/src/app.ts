@@ -11,6 +11,7 @@ import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/b
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
 import type { SmartFilter } from "@babylonjs/smart-filters";
+import { hookupBackgroundOption } from "./backgroundOption";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;
@@ -36,10 +37,13 @@ const inRepoSelection = document.getElementById("inRepoSelection")!;
 const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
 const version = document.getElementById("version")!;
-const optimizeCheckbox = document.getElementById("optimize") as HTMLInputElement;
+const optimizeCheckbox = document.getElementById("optimizeCheckbox") as HTMLInputElement;
 const errorContainer = document.getElementById("errorContainer")! as HTMLDivElement;
 const errorMessage = document.getElementById("errorMessage")! as HTMLDivElement;
 const errorCloseButton = document.getElementById("errorCloseButton")! as HTMLButtonElement;
+
+// Background option
+hookupBackgroundOption();
 
 // Create our services
 const engine = createThinEngine(canvas);
