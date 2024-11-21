@@ -24,7 +24,9 @@ export function launchEditor(
     currentSmartFilter: SmartFilter,
     engine: ThinEngine,
     renderer: SmartFilterRenderer,
-    smartFilterLoader: SmartFilterLoader
+    smartFilterLoader: SmartFilterLoader,
+    errorHandler: (message: string) => void,
+    closeError: () => void
 ) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
@@ -61,13 +63,16 @@ export function launchEditor(
             blockRegistration,
             filter: currentSmartFilter,
             rebuildRuntime: (smartFilter: SmartFilter) => {
-                renderer.startRendering(smartFilter).catch((err: unknown) => {
-                    console.error("Could not start rendering", err);
-                });
+                renderer
+                    .startRendering(smartFilter)
+                    .then(closeError)
+                    .catch((err: unknown) => {
+                        errorHandler(`Could not start rendering\n${err}`);
+                    });
             },
             reloadAssets: (smartFilter: SmartFilter) => {
                 renderer.loadAssets(smartFilter).catch((err: unknown) => {
-                    console.error("Could not reload assets", err);
+                    errorHandler(`Could not reload assets:\n${err}`);
                 });
             },
             downloadSmartFilter: () => {
