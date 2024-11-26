@@ -11,6 +11,7 @@ import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/b
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
 import type { SmartFilter } from "@babylonjs/smart-filters";
+import { hookupBackgroundOption } from "./backgroundOption";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;
@@ -31,12 +32,18 @@ let optimize: boolean = localStorage.getItem(LocalStorageOptimizeName) === "true
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
-const canvas = document.getElementById("renderCanvas")! as HTMLCanvasElement;
+const canvas = document.getElementById("renderCanvas")! as unknown as HTMLCanvasElement;
 const inRepoSelection = document.getElementById("inRepoSelection")!;
 const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
 const version = document.getElementById("version")!;
-const optimizeCheckbox = document.getElementById("optimize") as HTMLInputElement;
+const optimizeCheckbox = document.getElementById("optimizeCheckbox") as HTMLInputElement;
+const errorContainer = document.getElementById("errorContainer")! as HTMLDivElement;
+const errorMessage = document.getElementById("errorMessage")! as HTMLDivElement;
+const errorCloseButton = document.getElementById("errorCloseButton")! as HTMLButtonElement;
+
+// Background option
+hookupBackgroundOption();
 
 // Create our services
 const engine = createThinEngine(canvas);
@@ -57,7 +64,7 @@ let currentSmartFilterState: CurrentSmartFilterState | undefined;
 // Init TextureRenderHelper if we are using one
 if (textureRenderHelper) {
     textureRenderHelper.startAsync().catch((err: unknown) => {
-        console.error("Could not start TextureRenderHelper", err);
+        showError(`Could not start TextureRenderHelper: ${err}`);
     });
 }
 
@@ -79,7 +86,7 @@ function renderCurrentSmartFilter() {
             }
         })
         .catch((err: unknown) => {
-            console.error("Could not start rendering", err);
+            showError(`Could not start rendering: ${err}`);
         });
 
     // Ensure hash is empty if we're not loading from a snippet
@@ -170,7 +177,14 @@ smartFilterSelect.addEventListener("change", () => {
 editActionLink.onclick = async () => {
     if (currentSmartFilterState) {
         const module = await import(/* webpackChunkName: "smartFilterEditor" */ "./helpers/launchEditor");
-        module.launchEditor(currentSmartFilterState.smartFilter, engine, renderer, smartFilterLoader);
+        module.launchEditor(
+            currentSmartFilterState.smartFilter,
+            engine,
+            renderer,
+            smartFilterLoader,
+            showError,
+            closeError
+        );
     }
 };
 
@@ -189,3 +203,14 @@ fetch("./version.json").then((response: Response) => {
         version.textContent = versionInfo.versionToDisplay;
     });
 });
+
+// Error handling
+errorCloseButton.addEventListener("click", closeError);
+function showError(message: string) {
+    console.error(message);
+    errorMessage.textContent = message;
+    errorContainer.style.display = "grid";
+}
+function closeError() {
+    errorContainer.style.display = "none";
+}

@@ -28,24 +28,59 @@
                 margin: auto;
                 border: none !important;
                 outline: none !important;
+            }
+
+            .gridBackground {
                 background: conic-gradient(#cccccc 90deg, #ffffff 90deg 180deg, #cccccc 180deg 270deg, #ffffff 270deg);
                 background-repeat: repeat;
                 background-size: 100px 100px;
                 background-position: top left;
             }
 
-            .footer .center {
-                grid-column: 2;
-            }
-
-            .footer .center div {
-                display: none;
-            }
-
             .container {
                 display: grid;
                 grid-template-columns: auto 230px 494px 300px auto;
                 grid-template-rows: 80px 700px 80px 30px;
+            }
+
+            #errorContainer {
+                grid-column-start: 2;
+                grid-column-end: 5;
+                grid-row-start: 2;
+                grid-row-end: 2;
+                background-color: #ff000040;
+                display: none;
+            }
+
+            #errorBox {
+                border: 1px solid black;
+                border-radius: 4px;
+                background-color: white;
+                color: black;
+                margin: 20px;
+                padding: 10px;
+            }
+
+            #errorHeader {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid black;
+                padding-bottom: 4px;
+            }
+
+            #errorCloseButton {
+                width: 25px;
+                height: 25px;
+            }
+
+            #errorTitle {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 4px;
+            }
+
+            #errorMessage {
+                white-space: pre-line;
             }
 
             .headerLogo {
@@ -87,9 +122,10 @@
 
             .demoContent {
                 grid-column-start: 2;
-                grid-column-end: 4;
+                grid-column-end: 5;
                 grid-row-start: 2;
                 grid-row-end: 2;
+                display: flex;
             }
 
             .footer {
@@ -99,6 +135,14 @@
                 grid-row-end: 3;
                 display: grid;
                 grid-template-columns: 1fr auto 1fr;
+            }
+
+            .footer .center {
+                grid-column: 2;
+            }
+
+            .footer .center div {
+                display: none;
             }
 
             .versionLine {
@@ -113,12 +157,15 @@
                 color: #ffffff;
                 text-decoration: unset;
             }
+
             a:hover {
                 color: #ffffff;
             }
+
             a:visited {
                 color: #ffffff;
             }
+
             a:focus {
                 color: #ffffff;
             }
@@ -129,7 +176,6 @@
 
             .footer {
                 background-color: #201936;
-                line-height: 80px;
                 text-align: center;
             }
 
@@ -137,6 +183,7 @@
                 color: #bb464b;
                 text-decoration: unset;
             }
+
             .footer a:visited {
                 color: #bb464b;
                 text-decoration: unset;
@@ -147,18 +194,24 @@
                 line-height: normal;
             }
 
-            .footer #options {
-                text-align: right;
+            .footer .right {
                 margin-right: 10px;
-                vertical-align: top;
-                line-height: normal;
                 display: flex;
-                flex-direction: column;
+                justify-content: end;
+                align-items: baseline;
             }
-            #options label {
-                cursor: pointer;
+
+            .options .label {
                 -webkit-user-select: none;
                 user-select: none;
+            }
+
+            .options .option {
+                text-align: left;
+            }
+
+            .options .option input {
+                margin-left: 0px;
             }
         </style>
     </head>
@@ -179,6 +232,15 @@
             <div class="demoContent" id="container" width="1024" height="700">
                 <canvas id="renderCanvas" width="1024" height="700"></canvas>
             </div>
+            <div id="errorContainer">
+                <div id="errorBox">
+                    <div id="errorHeader">
+                        <div id="errorTitle">Error</div>
+                        <button id="errorCloseButton">X</button>
+                    </div>
+                    <div id="errorMessage"></div>
+                </div>
+            </div>
             <div class="footer">
                 <div class="center">
                     <div id="inRepoSelection">
@@ -197,10 +259,25 @@
                         <a href="https://github.com/BabylonJS/SmartFilters/tree/main/packages/demo">here</a>.
                     </p>
                 </div>
-                <div id="options">
-                    <div>
-                        <label><input type="checkbox" id="optimize" title="Optimize" />Optimize</label>
-                    </div>
+                <div class="right">
+                    <table class="options">
+                        <tr>
+                            <td class="label">Background:</td>
+                            <td class="option">
+                                <select title="Background" id="backgroundSelect">
+                                    <option value="grid">Grid</option>
+                                    <option value="black">Black</option>
+                                    <option value="white">White</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">Optimize:</td>
+                            <td class="option">
+                                <input type="checkbox" id="optimizeCheckbox" title="Optimize" />
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <div class="versionLine">

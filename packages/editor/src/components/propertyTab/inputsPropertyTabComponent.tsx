@@ -52,6 +52,7 @@ export class InputsPropertyTabComponent extends react.Component<IInputsPropertyT
             case ConnectionPointType.Float: {
                 return (
                     <FloatSliderComponent
+                        key={block.uniqueId}
                         lockObject={this.props.lockObject}
                         label={block.name}
                         target={block.runtimeValue}
