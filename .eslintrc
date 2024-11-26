@@ -11,7 +11,7 @@
     // Limit Usage on Demo and editor for now
     "overrides": [
         {
-            "files": ["packages/editor/**", "packages/core/**", "packages/demo/**", "**.test.ts"], // Or *.test.js
+            "files": ["packages/editor/**", "packages/demo/**", "**.test.ts"], // Or *.test.js
             "rules": {
                 "jsdoc/require-jsdoc": "off",
                 "jsdoc/require-param": "off",

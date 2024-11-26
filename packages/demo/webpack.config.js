@@ -9,7 +9,7 @@ var buildConfig = function (env) {
     return {
         context: __dirname,
         entry: {
-            index: SRC_DIR + "/app.ts"
+            index: SRC_DIR + "/app.ts",
         },
         performance: {
             maxEntrypointSize: 5120000,
@@ -18,7 +18,7 @@ var buildConfig = function (env) {
         output: {
             path: (isProd ? DIST_DIR : DEV_DIR) + "/scripts/",
             publicPath: "/scripts/",
-            filename: "[name].js",
+            filename: "[name].[contenthash].js",
             library: "[name]",
             libraryTarget: "umd",
             devtoolModuleFilenameTemplate: isProd ? "webpack://[namespace]/[resource-path]?[loaders]" : "file:///[absolute-resource-path]",
@@ -44,7 +44,7 @@ var buildConfig = function (env) {
                     type: "asset/inline",
                 },
                 {
-                    test: /(?<!modules)\.s[ac]ss$/i,
+                    test: /(?<!module)\.s[ac]ss$/i,
                     use: [
                         "style-loader",
                         {
@@ -63,7 +63,7 @@ var buildConfig = function (env) {
                     ],
                 },
                 {
-                    test: /\.modules\.s[ac]ss$/i,
+                    test: /\.module\.s[ac]ss$/i,
                     use: [
                         "style-loader",
                         {

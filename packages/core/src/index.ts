@@ -17,20 +17,22 @@ export { ConnectionPoint } from "./connection/connectionPoint.js";
 export { type RuntimeData } from "./connection/connectionPoint.js";
 
 export { BaseBlock } from "./blocks/baseBlock.js";
-export { InputBlock } from "./blocks/inputBlock.js";
+export { InputBlock, type InputBlockEditorData } from "./blocks/inputBlock.js";
 export { type AnyInputBlock } from "./blocks/inputBlock.js";
 export { ShaderBlock } from "./blocks/shaderBlock.js";
+export { DisableableShaderBlock, BlockDisableStrategy as DisableStrategy } from "./blocks/disableableShaderBlock.js";
 export { AggregateBlock } from "./blocks/aggregateBlock.js";
-export { CopyBlock } from "./blocks/copyBlock.js";
-export { ShaderBinding, ShaderRuntime } from "./runtime/shaderRuntime.js";
-export { type ShaderProgram, injectDisableUniform } from "./utils/shaderCodeUtils.js";
-export { type IDisableableBlock } from "./blocks/disableableBlock.js";
+export { DisableableShaderBinding, ShaderBinding, ShaderRuntime } from "./runtime/shaderRuntime.js";
+export { type ShaderProgram } from "./utils/shaderCodeUtils.js";
+export { type IDisableableBlock } from "./blocks/disableableShaderBlock.js";
 
 export { type SmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 export { InternalSmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 export { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
 
-export { SmartFilter } from "./smartFilter.js";
+export { SmartFilter, type InitializationData } from "./smartFilter.js";
 
 export { SmartFilterOptimizer } from "./optimization/smartFilterOptimizer.js";
 export * from "./utils/textureLoaders.js";
+export * from "./serialization/index.js";
+export * from "./editorUtils/editableInPropertyPage.js";

@@ -1,14 +1,12 @@
 import * as react from "react";
-import type { GlobalState } from "../../../globalState";
 import { Color3LineComponent } from "@babylonjs/shared-ui-components/lines/color3LineComponent.js";
-import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
 import type { ConnectionPointType, InputBlock } from "@babylonjs/smart-filters";
 import { Color3 } from "@babylonjs/core/Maths/math.color.js";
+import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
 
 interface IColor3PropertyTabComponentProps {
-    globalState: GlobalState;
+    stateManager: StateManager;
     inputBlock: InputBlock<ConnectionPointType.Color3>;
-    lockObject: LockObject;
 }
 
 export class Color3PropertyTabComponent extends react.Component<IColor3PropertyTabComponentProps> {
@@ -19,7 +17,7 @@ export class Color3PropertyTabComponent extends react.Component<IColor3PropertyT
         };
         return (
             <Color3LineComponent
-                lockObject={this.props.lockObject}
+                lockObject={this.props.stateManager.lockObject}
                 label="Value"
                 target={foo}
                 propertyName="color"
@@ -27,9 +25,7 @@ export class Color3PropertyTabComponent extends react.Component<IColor3PropertyT
                     target.r = foo.color.r;
                     target.g = foo.color.g;
                     target.b = foo.color.b;
-                    this.props.globalState.stateManager.onUpdateRequiredObservable.notifyObservers(
-                        this.props.inputBlock
-                    );
+                    this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
                 }}
             ></Color3LineComponent>
         );

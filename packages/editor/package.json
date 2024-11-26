@@ -1,7 +1,6 @@
 {
     "name": "@babylonjs/smart-filters-editor",
-    "private": true,
-    "version": "0.0.1",
+    "version": "0.0.0",
     "description": "An editor for the smart filters.",
     "author": {
         "name": "Sebastien VANDENBERGHE"
@@ -36,15 +35,15 @@
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "assets": "node build/copyAssets.js",
         "build": "npm run assets && tsc -p ./tsconfig.build.json",
-        "watch": "npm run assets && tsc -p ./tsconfig.build.json --watch",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "preparePublish": "node build/preparePublish.js"
     },
     "devDependencies": {
         "recursive-copy": "^2.0.13"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^7.11.2",
-        "@babylonjs/shared-ui-components": "^7.11.2",
+        "@babylonjs/core": "^7.35.2",
+        "@babylonjs/shared-ui-components": "^7.35.2",
         "@fortawesome/fontawesome-svg-core": "^6.1.0",
         "@fortawesome/free-solid-svg-icons": "^6.1.0",
         "@fortawesome/react-fontawesome": "^0.1.18",

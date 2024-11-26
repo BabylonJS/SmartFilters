@@ -8,6 +8,8 @@ import { OutputBlock } from "./blocks/outputBlock.js";
 import { InternalSmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 import { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
 import { AggregateBlock } from "./blocks/aggregateBlock.js";
+import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
+import type { IDisposable } from "./IDisposable";
 
 /**
  * How long to wait for shader compilation and texture loading to complete before erroring out.
@@ -22,16 +24,23 @@ export type InitializationData = {
      * The current smart filter runtime the block is being initialized for.
      */
     readonly runtime: InternalSmartFilterRuntime;
+
     /**
      * The output block of the smart filter.
      * This is used to determine if a block is linked to the output block so that we can prevent an
      * extra render pass.
      */
     readonly outputBlock: OutputBlock;
+
     /**
      * The list of promises to wait for during the initialization step.
      */
     readonly initializationPromises: Promise<void>[];
+
+    /**
+     * Resources that need to be disposed when the runtime is disposed.
+     */
+    readonly disposableResources: IDisposable[];
 };
 
 /**
@@ -55,19 +64,21 @@ export class SmartFilter {
     public readonly output: ConnectionPoint<ConnectionPointType.Texture>;
 
     /**
+     * The output block of the smart filter.
+     */
+    public readonly outputBlock: OutputBlock;
+
+    /**
      * User defined comments to describe the current smart filter.
      */
     public comments: Nullable<string> = null;
 
     /**
      * Data used by the smart filter editor.
-     * TODO. strong type and hide this.
      */
-    public editorData: any = null;
+    public editorData: Nullable<IEditorData> = null;
 
     private readonly _attachedBlocks: Array<BaseBlock>;
-    private readonly _outputBlock: OutputBlock;
-
     /**
      * Creates a new instance of a @see SmartFilter.
      * @param name - The friendly name of the smart filter
@@ -76,8 +87,8 @@ export class SmartFilter {
         this.name = name;
 
         this._attachedBlocks = new Array<BaseBlock>();
-        this._outputBlock = new OutputBlock(this);
-        this.output = this._outputBlock.input;
+        this.outputBlock = new OutputBlock(this);
+        this.output = this.outputBlock.input;
     }
 
     /**
@@ -136,22 +147,9 @@ export class SmartFilter {
     }
 
     private _generateCommandsAndGatherInitPromises(initializationData: InitializationData): void {
-        const outputBlock = this._outputBlock;
+        const outputBlock = this.outputBlock;
 
         outputBlock.visit(initializationData, (block: BaseBlock, initializationData: InitializationData) => {
-            // If the block is the output block,
-            if (block === outputBlock) {
-                // We only need to do something if the connected block is an input block.
-                // Indeed, any other block linked to the output block would directly render to the canvas
-                // as an optimization.
-                // In case the output block is not linked to an input block, we do not need extra commands
-                // or resources to create a render pass.
-                if (outputBlock.input.connectedTo?.ownerBlock.isInput) {
-                    block.generateCommandsAndGatherInitPromises(initializationData, true);
-                }
-                return;
-            }
-
             block.generateCommandsAndGatherInitPromises(
                 initializationData,
                 outputBlock.input.connectedTo?.ownerBlock === block
@@ -173,17 +171,18 @@ export class SmartFilter {
 
         const initializationData: InitializationData = {
             runtime,
-            outputBlock: this._outputBlock,
+            outputBlock: this.outputBlock,
             initializationPromises: [],
+            disposableResources: [],
         };
 
         this._workWithAggregateFreeGraph(() => {
-            this._outputBlock.prepareForRuntime();
+            this.outputBlock.prepareForRuntime();
 
             renderTargetGenerator = renderTargetGenerator ?? new RenderTargetGenerator(false);
             renderTargetGenerator.setOutputTextures(this, initializationData);
 
-            this._outputBlock.propagateRuntimeData();
+            this.outputBlock.propagateRuntimeData();
 
             this._generateCommandsAndGatherInitPromises(initializationData);
         });
@@ -198,6 +197,9 @@ export class SmartFilter {
             }
         }
 
+        // Register the resources to dispose when the runtime is disposed
+        initializationData.disposableResources.forEach((resource) => runtime.registerResource(resource));
+
         return runtime;
     }
 
@@ -210,18 +212,20 @@ export class SmartFilter {
         const mergedAggregateBlocks: AggregateBlock[] = [];
 
         // Merge all aggregate blocks
-        this._outputBlock.visit({}, (block: BaseBlock, _extraData: Object) => {
+        this.outputBlock.visit({}, (block: BaseBlock, _extraData: Object) => {
             if (block instanceof AggregateBlock) {
                 block._mergeIntoSmartFilter(mergedAggregateBlocks);
             }
         });
 
-        // Do the passed in work
-        work();
-
-        // Restore all aggregate blocks
-        for (const block of mergedAggregateBlocks) {
-            block._unmergeFromSmartFilter();
+        try {
+            // Do the passed in work
+            work();
+        } finally {
+            // Restore all aggregate blocks, even if work throws
+            for (const block of mergedAggregateBlocks) {
+                block._unmergeFromSmartFilter();
+            }
         }
     }
 }

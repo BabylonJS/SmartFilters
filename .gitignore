@@ -18,7 +18,10 @@ nbproject
 junit.xml
 
 # Node Modules
-node_modules/*
+**/node_modules/*
+
+# Build tools
+/packages/core/buildTools/
 packages/browserExtension/node_modules/*
 
 # Local dist
@@ -29,3 +32,6 @@ dist
 
 # unignore
 !/src/smartFiltersEditor/components/log
+
+# generated shader TS files
+**/*.shader.ts

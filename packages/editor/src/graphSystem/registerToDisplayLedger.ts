@@ -1,8 +1,10 @@
+import type { GlobalState } from "../globalState.js";
 import { InputDisplayManager } from "./display/inputDisplayManager.js";
 import { OutputDisplayManager } from "./display/outputDisplayManager.js";
 import { DisplayLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/displayLedger.js";
 
-export const RegisterToDisplayManagers = () => {
-    DisplayLedger.RegisteredControls["InputBlock"] = InputDisplayManager;
+export const RegisterToDisplayManagers = (globalState: GlobalState) => {
+    DisplayLedger.RegisteredControls["InputBlock"] =
+        globalState.blockRegistration.inputDisplayManager || InputDisplayManager;
     DisplayLedger.RegisteredControls["OutputBlock"] = OutputDisplayManager;
 };

@@ -182,8 +182,10 @@ export class ConnectionPoint<U extends ConnectionPointType = ConnectionPointType
 
         // Remove the connection point from the list of endpoints
         this._endpoints.splice(index, 1);
-        // Empty at the same time the connectedTo property of the other connection point
+
+        // Connections are double-linked - remove the reference back to this connection point from the one we just disconnected from
         endpoint._connectedTo = null;
+        endpoint.runtimeData = null;
     }
 
     /**

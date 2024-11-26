@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta charset="utf-8" />
-        <title>Smart Filter</title>
+        <title>Smart Filter Preview</title>
 
         <link rel="shortcut icon" href="/assets/favicon.ico" />
         <link rel="icon" type="image/png" href="/assets/favicon.ico" />
@@ -30,10 +30,57 @@
                 outline: none !important;
             }
 
+            .gridBackground {
+                background: conic-gradient(#cccccc 90deg, #ffffff 90deg 180deg, #cccccc 180deg 270deg, #ffffff 270deg);
+                background-repeat: repeat;
+                background-size: 100px 100px;
+                background-position: top left;
+            }
+
             .container {
                 display: grid;
                 grid-template-columns: auto 230px 494px 300px auto;
-                grid-template-rows: 80px 700px 80px;
+                grid-template-rows: 80px 700px 80px 30px;
+            }
+
+            #errorContainer {
+                grid-column-start: 2;
+                grid-column-end: 5;
+                grid-row-start: 2;
+                grid-row-end: 2;
+                background-color: #ff000040;
+                display: none;
+            }
+
+            #errorBox {
+                border: 1px solid black;
+                border-radius: 4px;
+                background-color: white;
+                color: black;
+                margin: 20px;
+                padding: 10px;
+            }
+
+            #errorHeader {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid black;
+                padding-bottom: 4px;
+            }
+
+            #errorCloseButton {
+                width: 25px;
+                height: 25px;
+            }
+
+            #errorTitle {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 4px;
+            }
+
+            #errorMessage {
+                white-space: pre-line;
             }
 
             .headerLogo {
@@ -73,11 +120,12 @@
                 background-color: #bb464b;
             }
 
-            .content {
+            .demoContent {
                 grid-column-start: 2;
-                grid-column-end: 4;
+                grid-column-end: 5;
                 grid-row-start: 2;
                 grid-row-end: 2;
+                display: flex;
             }
 
             .footer {
@@ -85,18 +133,39 @@
                 grid-column-end: 5;
                 grid-row-start: 3;
                 grid-row-end: 3;
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+            }
+
+            .footer .center {
+                grid-column: 2;
+            }
+
+            .footer .center div {
+                display: none;
+            }
+
+            .versionLine {
+                grid-column-start: 2;
+                grid-column-end: 5;
+                grid-row-start: 4;
+                grid-row-end: 4;
+                text-align: right;
             }
 
             a {
                 color: #ffffff;
                 text-decoration: unset;
             }
+
             a:hover {
                 color: #ffffff;
             }
+
             a:visited {
                 color: #ffffff;
             }
+
             a:focus {
                 color: #ffffff;
             }
@@ -107,7 +176,6 @@
 
             .footer {
                 background-color: #201936;
-                line-height: 80px;
                 text-align: center;
             }
 
@@ -115,6 +183,7 @@
                 color: #bb464b;
                 text-decoration: unset;
             }
+
             .footer a:visited {
                 color: #bb464b;
                 text-decoration: unset;
@@ -123,6 +192,26 @@
             .footer p {
                 margin-block: 0;
                 line-height: normal;
+            }
+
+            .footer .right {
+                margin-right: 10px;
+                display: flex;
+                justify-content: end;
+                align-items: baseline;
+            }
+
+            .options .label {
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            .options .option {
+                text-align: left;
+            }
+
+            .options .option input {
+                margin-left: 0px;
             }
         </style>
     </head>
@@ -135,24 +224,64 @@
                 </a>
             </div>
             <div class="headerText">
-                <a href="https://www.babylonjs.com"> Smart Filter </a>
+                <a href="https://www.babylonjs.com"> Smart Filter Preview </a>
             </div>
             <div class="editAction">
-                <a id="editActionLink" href="#">Edit</a>
+                <a id="editActionLink" href="javascript:;">Edit</a>
             </div>
-            <div class="content" id="container" width="1024" height="700">
+            <div class="demoContent" id="demoContent" width="1024" height="700">
                 <canvas id="renderCanvas" width="1024" height="700"></canvas>
             </div>
+            <div id="errorContainer">
+                <div id="errorBox">
+                    <div id="errorHeader">
+                        <div id="errorTitle">Error</div>
+                        <button id="errorCloseButton">X</button>
+                    </div>
+                    <div id="errorMessage"></div>
+                </div>
+            </div>
             <div class="footer">
-                <p>This demo filter starts with a texture of the Babylon logo, then loads your webcam.</p>
-                <p>
-                    If you see a black screen, you may need to turn on your webcam, or select a different webcam source
-                    (click Edit).
-                </p>
-                <p>
-                    You can have a look at all the awesome tools from babylon at
-                    <a href="https://www.babylonjs.com">our website</a>.
-                </p>
+                <div class="center">
+                    <div id="inRepoSelection">
+                        <p>
+                            SmartFilter:
+                            <select id="smartFilterSelect" title="SmartFilter"></select>
+                        </p>
+                        <p>To modify this list, see smartFilters.ts</p>
+                    </div>
+                    <div id="snippetAndFileFooter">
+                        <p>Viewing SmartFilter from <b id="sourceName">snippet server or local file</b>.</p>
+                        <p>To browse in-repo SmartFilters, reload the page with an empty hash.</p>
+                    </div>
+                    <p>
+                        The source for this preview tool can be found
+                        <a href="https://github.com/BabylonJS/SmartFilters/tree/main/packages/demo">here</a>.
+                    </p>
+                </div>
+                <div class="right">
+                    <table class="options">
+                        <tr>
+                            <td class="label">Background:</td>
+                            <td class="option">
+                                <select title="Background" id="backgroundSelect">
+                                    <option value="grid">Grid</option>
+                                    <option value="black">Black</option>
+                                    <option value="white">White</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">Optimize:</td>
+                            <td class="option">
+                                <input type="checkbox" id="optimizeCheckbox" title="Optimize" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="versionLine">
+                <div class="version" id="version"></div>
             </div>
         </div>
 

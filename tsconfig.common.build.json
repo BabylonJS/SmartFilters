@@ -7,7 +7,7 @@
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
-        "types": ["jest"],
+        "types": ["jest", "node"],
         "lib": ["dom", "es2015"],
         "jsx": "react-jsx",
 
@@ -16,7 +16,7 @@
         "strict": true,
         "alwaysStrict": true,
 
-        "exactOptionalPropertyTypes": true,
+        "experimentalDecorators": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,

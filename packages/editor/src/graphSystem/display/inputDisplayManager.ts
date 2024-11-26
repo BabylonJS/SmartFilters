@@ -2,11 +2,11 @@
 import { BlockTools } from "../../blockTools.js";
 import type { IDisplayManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/displayManager";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
-import styles from "../../assets/styles/graphSystem/display/inputDisplayManager.modules.scss";
+import styles from "../../assets/styles/graphSystem/display/inputDisplayManager.module.scss";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { Color3 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";
-import type { WebCamInputBlock } from "../../demoBlocks/index.js";
+import { getTextureInputBlockEditorData } from "../getEditorData.js";
 
 export class InputDisplayManager implements IDisplayManager {
     public getHeaderClass(_nodeData: INodeData) {
@@ -70,11 +70,15 @@ export class InputDisplayManager implements IDisplayManager {
                 value = inputBlock.runtimeValue.value.toFixed(4);
                 break;
             case ConnectionPointType.Texture: {
-                if (inputBlock.name === "WebCam") {
-                    const webCamInputBlock = inputBlock as WebCamInputBlock;
-                    value = webCamInputBlock.webcamSource?.name ?? "Default";
+                if (inputBlock.editorData?.urlTypeHint === "video") {
+                    value = "Video";
                 } else {
-                    value = "Display TBD";
+                    const style =
+                        getTextureInputBlockEditorData(inputBlock).flipY === false
+                            ? "transform: scaleY(-1); z-index: -1;"
+                            : "";
+                    const src = inputBlock.editorData?.url || inputBlock.runtimeValue.value?.getInternalTexture()?.url;
+                    value = `<img src="${src}" style="${style}"/>`;
                 }
                 break;
             }

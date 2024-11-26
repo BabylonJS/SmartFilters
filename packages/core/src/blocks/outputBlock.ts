@@ -1,9 +1,13 @@
 import type { InitializationData, SmartFilter } from "../smartFilter";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { BaseBlock } from "./baseBlock.js";
-import { CopyBlock } from "./copyBlock.js";
-import { ShaderRuntime } from "../runtime/shaderRuntime.js";
-import { createCommand } from "../command/command.js";
+import { ShaderBinding, ShaderRuntime } from "../runtime/shaderRuntime.js";
+import type { Nullable } from "@babylonjs/core/types";
+import type { RenderTargetWrapper } from "@babylonjs/core/Engines/renderTargetWrapper";
+import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
+import type { RuntimeData } from "../connection/connectionPoint";
+import type { Effect } from "@babylonjs/core/Materials/effect";
+import { shaderProgram, uniforms } from "./outputBlock.shader.js";
 
 /**
  * The output block of a smart filter.
@@ -23,7 +27,11 @@ export class OutputBlock extends BaseBlock {
      */
     public readonly input = this._registerInput("input", ConnectionPointType.Texture);
 
-    private _copyBlock: CopyBlock | null;
+    /**
+     * If supplied, the Smart Filter will render into this RenderTargetWrapper. Otherwise, it renders
+     * into the the canvas or WebGL context the ThinEngine is using for rendering.
+     */
+    public renderTargetWrapper: Nullable<RenderTargetWrapper> = null;
 
     /**
      * Create a new output block.
@@ -31,17 +39,6 @@ export class OutputBlock extends BaseBlock {
      */
     constructor(smartFilter: SmartFilter) {
         super(smartFilter, "output");
-
-        this._copyBlock = null;
-    }
-
-    private _getCopyBlock(): CopyBlock {
-        if (!this._copyBlock) {
-            this._copyBlock = new CopyBlock(this.smartFilter, "copy");
-            this._copyBlock.input.runtimeData = this.input.runtimeData;
-        }
-
-        return this._copyBlock;
     }
 
     /**
@@ -64,6 +61,7 @@ export class OutputBlock extends BaseBlock {
                 block.propagateRuntimeData();
             }
         });
+        this._confirmRuntimeDataSupplied(this.input);
     }
 
     /**
@@ -75,23 +73,47 @@ export class OutputBlock extends BaseBlock {
         initializationData: InitializationData,
         finalOutput: boolean
     ): void {
-        const copyBlock = this._getCopyBlock();
-        const runtime = initializationData.runtime;
+        // In the case that this OutputBlock is directly connected to a texture InputBlock, we must
+        // use a shader to copy the texture to the render target texture.
+        if (this.input.connectedTo?.ownerBlock.isInput && this.input.runtimeData) {
+            const runtime = initializationData.runtime;
 
-        const shaderBlockRuntime = new ShaderRuntime(
-            runtime.effectRenderer,
-            copyBlock.getShaderProgram(),
-            copyBlock.getShaderBinding()
-        );
-        initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
-        runtime.registerResource(shaderBlockRuntime);
+            const shaderBlockRuntime = new ShaderRuntime(
+                runtime.effectRenderer,
+                shaderProgram,
+                new OutputShaderBinding(this.input.runtimeData)
+            );
+            initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
+            runtime.registerResource(shaderBlockRuntime);
 
-        runtime.registerCommand(
-            createCommand(`${this.getClassName()}.renderToCanvas`, this, () => {
-                shaderBlockRuntime.renderToCanvas();
-            })
-        );
+            registerFinalRenderCommand(this.renderTargetWrapper, runtime, this, shaderBlockRuntime);
 
-        super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+            super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
+        }
+    }
+}
+
+/**
+ * Shader binding to use when the OutputBlock is directly connected to a texture InputBlock.
+ */
+class OutputShaderBinding extends ShaderBinding {
+    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
+
+    /**
+     * Creates a new shader binding instance.
+     * @param inputTexture - defines the input texture to copy
+     */
+    constructor(inputTexture: RuntimeData<ConnectionPointType.Texture>) {
+        super();
+        this._inputTexture = inputTexture;
+    }
+
+    /**
+     * Binds all the required data to the shader when rendering.
+     * @param effect - defines the effect to bind the data to
+     * @internal
+     */
+    public override bind(effect: Effect): void {
+        effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
     }
 }

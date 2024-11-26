@@ -51,11 +51,11 @@ export class RenderTargetGenerator {
 
     /**
      * Sets the output textures for the ShaderBlocks of the smart filter.
-     * @param smart - The smart filter to generate the render targets for.
+     * @param smartFilter - The smart filter to generate the render targets for.
      * @param initializationData - The initialization data to use.
      */
-    public setOutputTextures(smart: SmartFilter, initializationData: InitializationData) {
-        smart.output.ownerBlock.visit(
+    public setOutputTextures(smartFilter: SmartFilter, initializationData: InitializationData) {
+        smartFilter.output.ownerBlock.visit(
             initializationData,
             (block: BaseBlock, initializationData: InitializationData) => {
                 if (!(block instanceof ShaderBlock)) {
@@ -66,8 +66,8 @@ export class RenderTargetGenerator {
 
                 // We assign a texture to the output of the block only if this is not the last block in the chain,
                 // i.e. not the block connected to the smart output block (in which case the output of the block is to the canvas and not a texture).
-                if (!block.output.endpoints.some((cp) => cp.ownerBlock === smart.output.ownerBlock)) {
-                    refCountedTexture = this._getTexture(initializationData.runtime, block.textureRatio);
+                if (!block.output.endpoints.some((cp) => cp.ownerBlock === smartFilter.output.ownerBlock)) {
+                    refCountedTexture = this._getTexture(initializationData.runtime, block.textureRatio, smartFilter);
 
                     if (!block.output.runtimeData) {
                         const runtimeOutput = createStrongRef(refCountedTexture.texture);
@@ -93,7 +93,11 @@ export class RenderTargetGenerator {
                             continue;
                         }
                         const connectedBlock = input.connectedTo.ownerBlock;
-                        if (connectedBlock instanceof ShaderBlock && connectedBlock.output.runtimeData) {
+                        if (
+                            connectedBlock instanceof ShaderBlock &&
+                            connectedBlock.output.runtimeData &&
+                            connectedBlock.output.runtimeData.value
+                        ) {
                             this._releaseTexture(connectedBlock.output.runtimeData.value, connectedBlock.textureRatio);
                         }
                     }
@@ -118,11 +122,15 @@ export class RenderTargetGenerator {
         return null;
     }
 
-    private _getTexture(runtime: InternalSmartFilterRuntime, ratio: number): RefCountedTexture {
+    private _getTexture(
+        runtime: InternalSmartFilterRuntime,
+        ratio: number,
+        smartFilter: SmartFilter
+    ): RefCountedTexture {
         if (!this._optimize) {
             this._numTargetsCreated++;
             return {
-                texture: this._createTexture(runtime, ratio),
+                texture: this._createTexture(runtime, smartFilter, ratio),
                 refCount: 0,
             };
         }
@@ -136,7 +144,7 @@ export class RenderTargetGenerator {
         let refCountedTexture = this._findAvailableTexture(ratio);
         if (!refCountedTexture) {
             refCountedTexture = {
-                texture: this._createTexture(runtime, ratio),
+                texture: this._createTexture(runtime, smartFilter, ratio),
                 refCount: 0,
             };
             refCountedTextures.add(refCountedTexture);
@@ -169,10 +177,15 @@ export class RenderTargetGenerator {
     /**
      * Creates an offscreen texture to hold on the result of the block rendering.
      * @param runtime - The current runtime we create the texture for
+     * @param smartFilter - The smart filter the texture is created for
      * @param ratio - The ratio of the texture to create compared to the final output
      * @returns The render target texture
      */
-    private _createTexture(runtime: InternalSmartFilterRuntime, ratio: number): ThinRenderTargetTexture {
+    private _createTexture(
+        runtime: InternalSmartFilterRuntime,
+        smartFilter: SmartFilter,
+        ratio: number
+    ): ThinRenderTargetTexture {
         const engine = runtime.engine;
 
         // We are only rendering full screen post process without depth or stencil information
@@ -183,12 +196,19 @@ export class RenderTargetGenerator {
             samplingMode: 2, // Babylon Constants.TEXTURE_LINEAR_LINEAR,
         };
 
-        // The size of the output is by default the current rendering size of the engine
-        const width = engine.getRenderWidth(true);
-        const height = engine.getRenderHeight(true);
+        // Get the smartFilter output size - either from the output block's renderTargetTexture or the engine's render size
+        let outputWidth: number;
+        let outputHeight: number;
+        if (smartFilter.outputBlock.renderTargetWrapper) {
+            outputWidth = smartFilter.outputBlock.renderTargetWrapper.width;
+            outputHeight = smartFilter.outputBlock.renderTargetWrapper.height;
+        } else {
+            outputWidth = engine.getRenderWidth(true);
+            outputHeight = engine.getRenderHeight(true);
+        }
         const size = {
-            width: Math.floor(width * ratio),
-            height: Math.floor(height * ratio),
+            width: Math.floor(outputWidth * ratio),
+            height: Math.floor(outputHeight * ratio),
         };
 
         // Creates frame buffers for effects

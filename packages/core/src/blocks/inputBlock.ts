@@ -2,10 +2,11 @@ import type { SmartFilter } from "../smartFilter";
 import type { ConnectionPointValue } from "../connection/connectionPointType";
 import type { RuntimeData } from "../connection/connectionPoint";
 import type { ConnectionPointWithDefault } from "../connection/connectionPointWithDefault";
-import type { DisableableBlock } from "./disableableBlock";
+import type { DisableableShaderBlock } from "./disableableShaderBlock";
 import { BaseBlock } from "../blocks/baseBlock.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * Type predicate to check if value is a strong ref or a direct value
@@ -15,7 +16,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 function isRuntimeData<U extends ConnectionPointType>(
     value: ConnectionPointValue<U> | RuntimeData<U>
 ): value is RuntimeData<U> {
-    return (value as RuntimeData<ConnectionPointType>).value !== undefined;
+    return value && (value as RuntimeData<ConnectionPointType>).value !== undefined;
 }
 
 /**
@@ -32,9 +33,80 @@ export function isTextureInputBlock(block: BaseBlock): block is InputBlock<Conne
  * @param block - The block to check
  * @returns true if the block is a disableable block, otherwise false
  */
-export function isDisableableBlock(block: BaseBlock): block is DisableableBlock {
-    return (block as DisableableBlock).disabled !== undefined;
+export function isDisableableShaderBlock(block: BaseBlock): block is DisableableShaderBlock {
+    return (block as DisableableShaderBlock).disabled !== undefined;
 }
+
+/**
+ * This base class exists to provide a type that the serializer can use to represent
+ * any InputBlock without knowing the exact type it is.
+ */
+export abstract class InputBlockBase extends BaseBlock {
+    /**
+     * The class name of the block.
+     */
+    public static override ClassName = "InputBlock";
+
+    /**
+     * The type of the input.
+     */
+    public abstract readonly type: ConnectionPointType;
+}
+
+/**
+ * Describes the editor data that can be stored with an InputBlock of a given type.
+ */
+export type InputBlockEditorData<T extends ConnectionPointType> = T extends ConnectionPointType.Texture
+    ? {
+          /**
+           * The URL of the texture, or default if null.
+           */
+          url: Nullable<string>;
+
+          /**
+           * If supplied, gives a hint as to which type of texture the URL points to.
+           * Default is assumed to be "image"
+           */
+          urlTypeHint: Nullable<"image" | "video">;
+
+          /**
+           * The anisotropic filtering level of the texture, or default if null.
+           */
+          anisotropicFilteringLevel: Nullable<number>;
+
+          /**
+           * Whether the Y axis should be flipped, or default if null.
+           */
+          flipY: Nullable<boolean>;
+
+          /**
+           * The file extension to use, or default if null.
+           */
+          forcedExtension: Nullable<string>;
+      }
+    : T extends ConnectionPointType.Float
+      ? {
+            /**
+             * If supplied, how this should be animated by the editor.  Will not affect runtime behavior.
+             */
+            animationType: Nullable<"time">;
+
+            /**
+             * If supplied, the amount to change the value per millisecond when animating.
+             */
+            valueDeltaPerMs: Nullable<number>;
+
+            /**
+             * The minimum value of the float, used for slider control.
+             */
+            min: Nullable<number>;
+
+            /**
+             * The maximum value of the float, used for slider control.
+             */
+            max: Nullable<number>;
+        }
+      : {};
 
 /**
  * This represents any inputs used in the graph.
@@ -43,12 +115,7 @@ export function isDisableableBlock(block: BaseBlock): block is DisableableBlock 
  *
  * The value is dynamically set by the user.
  */
-export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
-    /**
-     * The class name of the block.
-     */
-    public static override ClassName = "InputBlock";
-
+export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
     /**
      * The output connection point of the block.
      */
@@ -58,6 +125,11 @@ export class InputBlock<U extends ConnectionPointType> extends BaseBlock {
      * The type of the input.
      */
     public readonly type: U;
+
+    /**
+     * Data used by the Editor to store options required for instantiating the block in the Editor.
+     */
+    public editorData: Nullable<InputBlockEditorData<U>> = null;
 
     /**
      * Gets the current value of the input.

@@ -1,29 +1,30 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { Nullable } from "@babylonjs/core/types";
-import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 
 import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
-import type { StrongRef } from "../runtime/strongRef";
 import type { RuntimeData } from "../connection/connectionPoint";
 import { ShaderBlock } from "../blocks/shaderBlock.js";
-import { Binding } from "../runtime/shaderRuntime.js";
+import { ShaderBinding } from "../runtime/shaderRuntime.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 
 /**
  * The shader bindings for the OptimizedShader block.
  * @internal
  */
-export class OptimizedShaderBinding extends Binding {
-    private _shaderBindings: Binding[];
-    private _inputTextures: { [name: string]: StrongRef<ThinTexture> };
+export class OptimizedShaderBinding extends ShaderBinding {
+    private _shaderBindings: ShaderBinding[];
+    private _inputTextures: { [name: string]: RuntimeData<ConnectionPointType.Texture> };
 
     /**
      * Creates a new shader binding instance for the OptimizedShader block.
      * @param shaderBindings - The list of shader bindings to process
      * @param inputTextures - The list of input textures to bind
      */
-    constructor(shaderBindings: Binding[], inputTextures: { [name: string]: StrongRef<ThinTexture> }) {
+    constructor(
+        shaderBindings: ShaderBinding[],
+        inputTextures: { [name: string]: RuntimeData<ConnectionPointType.Texture> }
+    ) {
         super();
 
         this._shaderBindings = shaderBindings;
@@ -55,8 +56,8 @@ export class OptimizedShaderBinding extends Binding {
  * @internal
  */
 export class OptimizedShaderBlock extends ShaderBlock {
-    private _shaderBindings: Nullable<Binding[]>;
-    private _inputTextures: { [name: string]: StrongRef<ThinTexture> } = {};
+    private _shaderBindings: Nullable<ShaderBinding[]>;
+    private _inputTextures: { [name: string]: RuntimeData<ConnectionPointType.Texture> } = {};
     private _shaderProgram: ShaderProgram;
 
     /**
@@ -103,7 +104,7 @@ export class OptimizedShaderBlock extends ShaderBlock {
      * Sets the list of shader bindings to use to render the block.
      * @param shaderBindings - The list of shader bindings to use to render the block
      */
-    public setShaderBindings(shaderBindings: Binding[]): void {
+    public setShaderBindings(shaderBindings: ShaderBinding[]): void {
         this._shaderBindings = shaderBindings;
     }
 
@@ -111,7 +112,7 @@ export class OptimizedShaderBlock extends ShaderBlock {
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): Binding {
+    public getShaderBinding(): ShaderBinding {
         if (this._shaderBindings === null) {
             throw new Error("Shader bindings not set!");
         }

@@ -5,6 +5,7 @@ import * as react from "react";
 import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
 import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
+import { FileButtonLineComponent } from "../../sharedComponents/fileButtonLineComponent.js";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 
@@ -115,20 +116,12 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         // }
     }
 
-    load(_file: File) {
-        // Tools.ReadFile(
-        //     file,
-        //     (data) => {
-        //         const decoder = new TextDecoder("utf-8");
-        //         SerializationTools.Deserialize(JSON.parse(decoder.decode(data)), this.props.globalState);
-        //         if (!this.changeMode(this.props.globalState.nodeMaterial!.mode, true, false)) {
-        //             this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-        //         }
-        //         this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
-        //     },
-        //     undefined,
-        //     true
-        // );
+    async load(_file: File) {
+        this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
+
+        this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
+        this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+        this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
     }
 
     loadFrame(_file: File) {
@@ -145,73 +138,19 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         // );
     }
 
-    save() {
-        // const json = SerializationTools.Serialize(this.props.globalState.nodeMaterial, this.props.globalState);
-        // StringTools.DownloadAsFile(this.props.globalState.hostDocument, json, "nodeMaterial.json");
+    downloadSmartFilter() {
+        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+        this.props.globalState.downloadSmartFilter();
     }
 
-    customSave() {
-        // this.setState({ uploadInProgress: true });
-        // this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry("Saving your material to Babylon.js snippet server...", false));
-        // this.props.globalState
-        //     .customSave!.action(SerializationTools.Serialize(this.props.globalState.nodeMaterial, this.props.globalState))
-        //     .then(() => {
-        //         this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry("Material saved successfully", false));
-        //         this.setState({ uploadInProgress: false });
-        //     })
-        //     .catch((err) => {
-        //         this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry(err, true));
-        //         this.setState({ uploadInProgress: false });
-        //     });
-    }
-
-    saveToSnippetServer() {
-        // const material = this.props.globalState.nodeMaterial;
-        // const xmlHttp = new XMLHttpRequest();
-        // const json = SerializationTools.Serialize(material, this.props.globalState);
-        // xmlHttp.onreadystatechange = () => {
-        //     if (xmlHttp.readyState == 4) {
-        //         if (xmlHttp.status == 200) {
-        //             const snippet = JSON.parse(xmlHttp.responseText);
-        //             const oldId = material.snippetId;
-        //             material.snippetId = snippet.id;
-        //             if (snippet.version && snippet.version != "0") {
-        //                 material.snippetId += "#" + snippet.version;
-        //             }
-        //             this.forceUpdate();
-        //             if (navigator.clipboard) {
-        //                 navigator.clipboard.writeText(material.snippetId);
-        //             }
-        //             const windowAsAny = window as any;
-        //             if (windowAsAny.Playground && oldId) {
-        //                 windowAsAny.Playground.onRequestCodeChangeObservable.notifyObservers({
-        //                     regex: new RegExp(oldId, "g"),
-        //                     replace: material.snippetId,
-        //                 });
-        //             }
-        //             this.props.globalState.hostDocument.defaultView!.alert(
-        //                 "NodeMaterial saved with ID: " + material.snippetId + " (please note that the id was also saved to your clipboard)"
-        //             );
-        //         } else {
-        //             this.props.globalState.hostDocument.defaultView!.alert(
-        //                 `Unable to save your node material. It may be too large (${(dataToSend.payload.length / 1024).toFixed(
-        //                     2
-        //                 )} KB) because of embedded textures. Please reduce texture sizes or point to a specific url instead of embedding them and try again.`
-        //             );
-        //         }
-        //     }
-        // };
-        // xmlHttp.open("POST", NodeMaterial.SnippetUrl + (material.snippetId ? "/" + material.snippetId : ""), true);
-        // xmlHttp.setRequestHeader("Content-Type", "application/json");
-        // const dataToSend = {
-        //     payload: JSON.stringify({
-        //         nodeMaterial: json,
-        //     }),
-        //     name: "",
-        //     description: "",
-        //     tags: "",
-        // };
-        // xmlHttp.send(JSON.stringify(dataToSend));
+    async saveToSnippetServer() {
+        this.setState({ uploadInProgress: true });
+        try {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            await this.props.globalState.saveToSnippetServer!();
+        } finally {
+            this.setState({ uploadInProgress: false });
+        }
     }
 
     loadFromSnippet() {
@@ -302,7 +241,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             lockObject={this.props.globalState.lockObject}
                             value={this.props.globalState.smartFilter!.comments ?? ""}
                             target={this.props.globalState.smartFilter}
-                            propertyName="comment"
+                            propertyName="comments"
                         />
                     </LineContainerComponent>
                     <LineContainerComponent title="UI">
@@ -350,15 +289,24 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             }}
                         />
                     </LineContainerComponent>
-                    {/* <LineContainerComponent title="FILE">
+                    <LineContainerComponent title="FILE">
                         <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
                         <ButtonLineComponent
                             label="Save"
                             onClick={() => {
-                                this.save();
+                                this.downloadSmartFilter();
                             }}
                         />
-                        <ButtonLineComponent
+                        {this.props.globalState.saveToSnippetServer && (
+                            <ButtonLineComponent
+                                label="Save to unique URL"
+                                isDisabled={this.state.uploadInProgress}
+                                onClick={() => {
+                                    this.saveToSnippetServer();
+                                }}
+                            />
+                        )}
+                        {/*<ButtonLineComponent
                             label="Generate code"
                             onClick={() => {
                                 StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
@@ -371,17 +319,9 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
                             }}
                         />
-                        {this.props.globalState.customSave && (
-                            <ButtonLineComponent
-                                label={this.props.globalState.customSave!.label}
-                                isDisabled={this.state.uploadInProgress}
-                                onClick={() => {
-                                    this.customSave();
-                                }}
-                            />
-                        )}
-                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />
+                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
                     </LineContainerComponent>
+                    {/*
                     {!this.props.globalState.customSave && (
                         <LineContainerComponent title="SNIPPET">
                             {this.props.globalState.nodeMaterial!.snippetId && <TextLineComponent label="Snippet ID" value={this.props.globalState.nodeMaterial!.snippetId} />}

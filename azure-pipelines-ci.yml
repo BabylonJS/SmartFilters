@@ -25,8 +25,19 @@ jobs:
           - script: "npm install"
             displayName: "Npm install"
 
+    - job: ESLint
+      displayName: "2. ESLint"
+      pool:
+          vmImage: "Ubuntu-latest"
+          demands: npm
+      steps:
+          - script: "npm install"
+            displayName: "Npm install"
+          - script: "npm run lint:check"
+            displayName: "Run ESLint Check"
+
     - job: UnitTests
-      displayName: "2. Unit Tests"
+      displayName: "3. Unit Tests"
       pool:
           vmImage: "Ubuntu-latest"
           demands: npm

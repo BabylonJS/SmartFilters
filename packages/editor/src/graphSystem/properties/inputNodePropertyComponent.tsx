@@ -1,18 +1,14 @@
 import * as react from "react";
-import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
-import { GeneralPropertyTabComponent } from "./genericNodePropertyComponent.js";
+import { GeneralPropertyTabComponent, GenericPropertyComponent } from "./genericNodePropertyComponent.js";
 import type { IPropertyComponentProps } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/propertyComponentProps";
-import { FloatLineComponent } from "@babylonjs/shared-ui-components/lines/floatLineComponent.js";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
-import { WebCamInputBlock, type WebCamSource } from "../../demoBlocks/index.js";
-
-type InputPropertyTabComponentState = {
-    webCamSourceOptions: IInspectableOptions[];
-};
+import { ImageSourcePropertyTabComponent } from "../../components/propertyTab/properties/imageSourcePropertyTabComponent.js";
+import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
+import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
 
 const booleanOptions: IInspectableOptions[] = [
     {
@@ -25,19 +21,44 @@ const booleanOptions: IInspectableOptions[] = [
     },
 ];
 
-export class InputPropertyTabComponent extends react.Component<
-    IPropertyComponentProps,
-    InputPropertyTabComponentState
-> {
-    // private _onValueChangedObserver: Nullable<Observer<AnyInputBlock>> = null;
-    private _loadWebCamSourcesPromise: Promise<void> | undefined;
-
+export class InputPropertyComponent extends react.Component<IPropertyComponentProps> {
     constructor(props: IPropertyComponentProps) {
         super(props);
+    }
 
-        this.state = {
-            webCamSourceOptions: [],
-        };
+    override render() {
+        // If this InputBlock has our reserved _propStore, it means it uses @editableProperty to define its properties
+        // So we will assume that the developer of that InputBlock intends to use the GenericPropertyComponent
+        if (this.props.nodeData.data._propStore) {
+            return <GenericPropertyComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />;
+        }
+
+        return (
+            <div>
+                <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
+                <LineContainerComponent title="PROPERTIES">
+                    <InputPropertyTabComponent
+                        stateManager={this.props.stateManager}
+                        inputBlock={this.props.nodeData.data}
+                    ></InputPropertyTabComponent>
+                </LineContainerComponent>
+            </div>
+        );
+    }
+}
+
+export type InputPropertyComponentProps = {
+    stateManager: StateManager;
+    inputBlock: AnyInputBlock;
+};
+
+/**
+ * Given an input block, returns the appropriate property component for the block's type
+ */
+export class InputPropertyTabComponent extends react.Component<InputPropertyComponentProps> {
+    // private _onValueChangedObserver: Nullable<Observer<AnyInputBlock>> = null;
+    constructor(props: InputPropertyComponentProps) {
+        super(props);
     }
 
     override componentDidMount() {
@@ -56,8 +77,15 @@ export class InputPropertyTabComponent extends react.Component<
         // }
     }
 
-    renderValue(globalState: GlobalState) {
-        const inputBlock = this.props.nodeData.data as AnyInputBlock;
+    setDefaultValue() {
+        // const inputBlock = this.props.nodeData.data as InputBlock;
+        // inputBlock.setDefaultValue();
+    }
+
+    override render() {
+        const inputBlock = this.props.inputBlock;
+
+        // Use the default property component
         switch (inputBlock.type) {
             case ConnectionPointType.Boolean: {
                 const dummyTarget = {
@@ -65,6 +93,7 @@ export class InputPropertyTabComponent extends react.Component<
                 };
                 return (
                     <OptionsLine
+                        key={inputBlock.uniqueId}
                         label="Value"
                         target={dummyTarget}
                         propertyName="value"
@@ -82,140 +111,22 @@ export class InputPropertyTabComponent extends react.Component<
             }
             case ConnectionPointType.Float: {
                 return (
-                    <FloatLineComponent
-                        lockObject={this.props.stateManager.lockObject}
-                        label="Value"
-                        target={inputBlock.runtimeValue}
-                        propertyName="value"
-                        onChange={() => {
-                            this.forceUpdate();
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                        }}
-                    ></FloatLineComponent>
+                    <FloatPropertyTabComponent
+                        key={inputBlock.uniqueId}
+                        inputBlock={inputBlock}
+                        stateManager={this.props.stateManager}
+                    />
                 );
-                // const cantDisplaySlider = isNaN(inputBlock.min) || isNaN(inputBlock.max) || inputBlock.min === inputBlock.max;
-                // return (
-                //     <>
-                //         <CheckBoxLineComponent label="Is boolean" target={inputBlock} propertyName="isBoolean" />
-                //         {inputBlock.isBoolean && (
-                //             <CheckBoxLineComponent
-                //                 label="Value"
-                //                 isSelected={() => {
-                //                     return inputBlock.value === 1;
-                //                 }}
-                //                 onSelect={(value) => {
-                //                     inputBlock.value = value ? 1 : 0;
-                //                     if (inputBlock.isConstant) {
-                //                         this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                     }
-                //                     this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                //                 }}
-                //             />
-                //         )}
-                //         {!inputBlock.isBoolean && (
-                //             <FloatLineComponent
-                //                 lockObject={this.props.stateManager.lockObject}
-                //                 label="Min"
-                //                 target={inputBlock}
-                //                 propertyName="min"
-                //                 onChange={() => {
-                //                     if (inputBlock.value < inputBlock.min) {
-                //                         inputBlock.value = inputBlock.min;
-                //                         if (inputBlock.isConstant) {
-                //                             this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                         }
-                //                     }
-                //                     this.forceUpdate();
-                //                 }}
-                //             ></FloatLineComponent>
-                //         )}
-                //         {!inputBlock.isBoolean && (
-                //             <FloatLineComponent
-                //                 lockObject={this.props.stateManager.lockObject}
-                //                 label="Max"
-                //                 target={inputBlock}
-                //                 propertyName="max"
-                //                 onChange={() => {
-                //                     if (inputBlock.value > inputBlock.max) {
-                //                         inputBlock.value = inputBlock.max;
-                //                         if (inputBlock.isConstant) {
-                //                             this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                         }
-                //                     }
-                //                     this.forceUpdate();
-                //                 }}
-                //             ></FloatLineComponent>
-                //         )}
-                //         {!inputBlock.isBoolean && cantDisplaySlider && <FloatPropertyTabComponent globalState={globalState} inputBlock={inputBlock} />}
-                //         {!inputBlock.isBoolean && !cantDisplaySlider && (
-                //             <SliderLineComponent
-                //                 lockObject={this.props.stateManager.lockObject}
-                //                 label="Value"
-                //                 target={inputBlock}
-                //                 propertyName="value"
-                //                 step={Math.abs(inputBlock.max - inputBlock.min) / 100.0}
-                //                 minimum={Math.min(inputBlock.min, inputBlock.max)}
-                //                 maximum={inputBlock.max}
-                //                 onChange={() => {
-                //                     if (inputBlock.isConstant) {
-                //                         this.props.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-                //                     }
-                //                     this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                //                 }}
-                //             />
-                //         )}
-                //     </>
-                // );
             }
             case ConnectionPointType.Texture:
                 {
-                    if (inputBlock.name === "WebCam") {
-                        if (!this._loadWebCamSourcesPromise) {
-                            // Kick off lazy load of the WebCam sources
-                            this._loadWebCamSourcesPromise = WebCamInputBlock.EnumerateWebCamSources().then(
-                                (sources: WebCamSource[]) => {
-                                    const options = sources.map((source: WebCamSource) => ({
-                                        label: source.name,
-                                        value: source.id,
-                                    }));
-                                    this.setState({ webCamSourceOptions: options });
-                                }
-                            );
-                        }
-                        if (this.state.webCamSourceOptions.length === 0) {
-                            return <></>;
-                        } else {
-                            const webCamInputBlock = inputBlock as WebCamInputBlock;
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            return (
-                                <OptionsLine
-                                    label="Source"
-                                    target={inputBlock}
-                                    propertyName="deviceId"
-                                    options={this.state.webCamSourceOptions}
-                                    extractValue={() => {
-                                        return webCamInputBlock.webcamSource?.id || "";
-                                    }}
-                                    valuesAreStrings
-                                    noDirectUpdate
-                                    onSelect={(newDeviceId: string | number) => {
-                                        const option = this.state.webCamSourceOptions.find(
-                                            (option) => option.value === newDeviceId
-                                        );
-                                        if (option) {
-                                            webCamInputBlock.onWebCamSourceChanged.notifyObservers({
-                                                name: option.label,
-                                                id: option.value as string,
-                                            });
-                                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
-                                                inputBlock
-                                            );
-                                        }
-                                    }}
-                                ></OptionsLine>
-                            );
-                        }
-                    }
+                    return (
+                        <ImageSourcePropertyTabComponent
+                            key={inputBlock.uniqueId}
+                            inputBlock={inputBlock}
+                            stateManager={this.props.stateManager}
+                        />
+                    );
                 }
                 break;
             // case NodeMaterialBlockConnectionPointTypes.Vector2:
@@ -224,8 +135,8 @@ export class InputPropertyTabComponent extends react.Component<
                 return (
                     <>
                         <Color3PropertyTabComponent
-                            lockObject={globalState.lockObject}
-                            globalState={globalState}
+                            key={inputBlock.uniqueId}
+                            stateManager={this.props.stateManager}
                             inputBlock={inputBlock}
                         />
                         {/* <CheckBoxLineComponent
@@ -276,22 +187,6 @@ export class InputPropertyTabComponent extends react.Component<
             //     return <MatrixPropertyTabComponent lockObject={globalState.lockObject} globalState={globalState} inputBlock={inputBlock} />;
         }
 
-        return null;
-    }
-
-    setDefaultValue() {
-        // const inputBlock = this.props.nodeData.data as InputBlock;
-        // inputBlock.setDefaultValue();
-    }
-
-    override render() {
-        return (
-            <div>
-                <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
-                <LineContainerComponent title="PROPERTIES">
-                    {this.renderValue(this.props.stateManager.data as GlobalState)}
-                </LineContainerComponent>
-            </div>
-        );
+        return <></>;
     }
 }
