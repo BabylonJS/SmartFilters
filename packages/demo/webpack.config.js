@@ -1,4 +1,5 @@
 const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 var SRC_DIR = path.resolve(__dirname, "./src");
 var DIST_DIR = path.resolve(__dirname, "./www");
@@ -16,10 +17,10 @@ var buildConfig = function (env) {
             maxAssetSize: 5120000
         },
         output: {
-            path: (isProd ? DIST_DIR : DEV_DIR) + "/scripts/",
-            publicPath: "/scripts/",
-            filename: "[name].js",
-            library: "[name]",
+            path: isProd ? DIST_DIR : DEV_DIR,
+            publicPath: "/",
+            filename: "scripts/[name].[contenthash].js",
+            library: "scripts/[name]",
             libraryTarget: "umd",
             devtoolModuleFilenameTemplate: isProd ? "webpack://[namespace]/[resource-path]?[loaders]" : "file:///[absolute-resource-path]",
         },
@@ -27,6 +28,14 @@ var buildConfig = function (env) {
         devServer: {
             static: ["www"],
         },
+        plugins: [
+            new HtmlWebpackPlugin(
+                {
+                    template: './index.html', 
+                    filename: 'index.html'
+                }
+            )
+        ],
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss", ".svg"],
             alias: {

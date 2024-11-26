@@ -25,6 +25,7 @@ junit.xml
 
 # Local dist
 **/www/scripts/**
+**/www/index.html
 dist
 .temp
 *.tsbuildinfo
