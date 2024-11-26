@@ -18,7 +18,7 @@ var buildConfig = function (env) {
         output: {
             path: (isProd ? DIST_DIR : DEV_DIR) + "/scripts/",
             publicPath: "/scripts/",
-            filename: "[name].[contenthash].js",
+            filename: "[name].js",
             library: "[name]",
             libraryTarget: "umd",
             devtoolModuleFilenameTemplate: isProd ? "webpack://[namespace]/[resource-path]?[loaders]" : "file:///[absolute-resource-path]",
