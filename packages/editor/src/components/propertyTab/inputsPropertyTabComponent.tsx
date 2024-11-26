@@ -24,10 +24,6 @@ export class InputsPropertyTabComponent extends react.Component<IInputsPropertyT
 
     processInputBlockUpdate(ib: AnyInputBlock) {
         this.props.globalState.stateManager.onUpdateRequiredObservable.notifyObservers(ib);
-
-        // if (ib.isConstant) {
-        //     this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers(true);
-        // }
     }
 
     renderInputBlock(block: AnyInputBlock) {

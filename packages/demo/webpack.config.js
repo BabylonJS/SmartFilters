@@ -44,7 +44,7 @@ var buildConfig = function (env) {
                     type: "asset/inline",
                 },
                 {
-                    test: /(?<!modules)\.s[ac]ss$/i,
+                    test: /(?<!module)\.s[ac]ss$/i,
                     use: [
                         "style-loader",
                         {
@@ -63,7 +63,7 @@ var buildConfig = function (env) {
                     ],
                 },
                 {
-                    test: /\.modules\.s[ac]ss$/i,
+                    test: /\.module\.s[ac]ss$/i,
                     use: [
                         "style-loader",
                         {

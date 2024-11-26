@@ -17,7 +17,6 @@
         "alwaysStrict": true,
 
         "experimentalDecorators": true,
-        "exactOptionalPropertyTypes": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
