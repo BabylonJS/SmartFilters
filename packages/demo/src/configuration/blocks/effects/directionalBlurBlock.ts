@@ -171,7 +171,7 @@ export class DirectionalBlurBlock extends ShaderBlock {
     public override prepareForRuntime(): void {
         super.prepareForRuntime();
 
-        this._textureRatio = this.blurTextureRatio;
+        this.outputTextureOptions.ratio = this.blurTextureRatio;
     }
 
     /**

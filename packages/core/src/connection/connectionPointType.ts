@@ -5,7 +5,7 @@ import type { Nullable } from "@babylonjs/core/types";
 /**
  * Defines the type of a connection point.
  */
-export const enum ConnectionPointType {
+export enum ConnectionPointType {
     /** Float */
     Float = 1,
     /** Texture */
