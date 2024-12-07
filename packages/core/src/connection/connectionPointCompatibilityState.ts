@@ -1,7 +1,7 @@
 /**
  * Defines how compatible connection points are.
  */
-export enum ConnectionPointCompatibilityState {
+export const enum ConnectionPointCompatibilityState {
     /** Points are compatibles */
     Compatible,
     /** Points are incompatible because of their types */

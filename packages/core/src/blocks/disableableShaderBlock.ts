@@ -19,7 +19,7 @@ export interface IDisableableBlock {
 /**
  * The strategy to use for making a block disableable.
  */
-export enum BlockDisableStrategy {
+export const enum BlockDisableStrategy {
     /**
      * The shader code is responsible for defining and consulting a uniform named disabled
      * and no-oping (returning texture2D(mainInputTexture, vUV)) if the value is true.

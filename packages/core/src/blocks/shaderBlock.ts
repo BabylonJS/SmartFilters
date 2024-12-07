@@ -11,6 +11,7 @@ import { createCommand } from "../command/command.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
 import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import { BaseBlock } from "./baseBlock.js";
+import type { OutputTextureOptions } from "./textureOptions";
 
 /**
  * This is the base class for all shader blocks.
@@ -42,21 +43,12 @@ export abstract class ShaderBlock extends BaseBlock {
      */
     public readonly output = this._registerOutput("output", ConnectionPointType.Texture);
 
-    protected _textureRatio: number = 1;
-
     /**
-     * Gets the texture ratio of the output texture.
+     * The options used when creating the texture this block outputs to
      */
-    public get textureRatio() {
-        return this._textureRatio;
-    }
-
-    /**
-     * Sets the texture ratio of the output texture.
-     */
-    public set textureRatio(value: number) {
-        this._textureRatio = value;
-    }
+    public outputTextureOptions: OutputTextureOptions = {
+        ratio: 1,
+    };
 
     /**
      * Disconnects the block from the graph.

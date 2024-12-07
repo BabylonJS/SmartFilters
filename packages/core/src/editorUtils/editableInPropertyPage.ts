@@ -3,7 +3,7 @@ import type { Observable } from "@babylonjs/core/Misc/observable";
 /**
  * Enum defining the type of properties that can be edited in the property pages in the node editor
  */
-export enum PropertyTypeForEdition {
+export const enum PropertyTypeForEdition {
     /** property is a boolean */
     Boolean,
     /** property is a float */
