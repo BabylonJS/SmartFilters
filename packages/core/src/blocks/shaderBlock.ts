@@ -11,7 +11,10 @@ import { createCommand } from "../command/command.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
 import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import { BaseBlock } from "./baseBlock.js";
-import type { OutputTextureOptions } from "./textureOptions";
+import { TextureFormat, TextureType, type OutputTextureOptions } from "./textureOptions.js";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../editorUtils/editableInPropertyPage.js";
+
+const OutputTexturePropertiesGroupName = "OUTPUT TEXTURE PROPERTIES";
 
 /**
  * This is the base class for all shader blocks.
@@ -46,8 +49,52 @@ export abstract class ShaderBlock extends BaseBlock {
     /**
      * The options used when creating the texture this block outputs to
      */
+    // TODO: figure out how to display in the editor
+    // May have to flatten to fields in the class
+    // May be able to make new @editableInPropertyPage thingy that registers these on the class even if they are
+    // stored in this sub object
+    // public outputTextureOptions: OutputTextureOptions = {
+    //     @editableInPropertyPage("Pass Texture Ratio", PropertyTypeForEdition.Float, "PROPERTIES", {
+    //         min: 0,
+    //         max: 1,
+    //         notifiers: { rebuild: true },
+    //     })
+    //     ratio: 1,
+    // };
+    @editableInPropertyPage("Ratio", PropertyTypeForEdition.Float, OutputTexturePropertiesGroupName, {
+        min: 0.1,
+        max: 10.0,
+        notifiers: { rebuild: true },
+        subPropertyName: "ratio",
+    })
+    @editableInPropertyPage("Format", PropertyTypeForEdition.List, OutputTexturePropertiesGroupName, {
+        notifiers: { rebuild: true },
+        subPropertyName: "format",
+        options: [
+            { label: "R", value: TextureFormat.R },
+            { label: "RG", value: TextureFormat.RG },
+            { label: "RGB", value: TextureFormat.RGB },
+            { label: "RGBA", value: TextureFormat.RGBA },
+        ],
+    })
+    @editableInPropertyPage("Type", PropertyTypeForEdition.List, OutputTexturePropertiesGroupName, {
+        notifiers: { rebuild: true },
+        subPropertyName: "type",
+        options: [
+            { label: "UByte", value: TextureType.UNSIGNED_BYTE },
+            { label: "Float", value: TextureType.FLOAT },
+            { label: "Half Float", value: TextureType.HALF_FLOAT },
+            { label: "Byte", value: TextureType.BYTE },
+            { label: "Short", value: TextureType.SHORT },
+            { label: "UShort", value: TextureType.UNSIGNED_SHORT },
+            { label: "Int", value: TextureType.INT },
+            { label: "UInt", value: TextureType.UNSIGNED_INT },
+        ],
+    })
     public outputTextureOptions: OutputTextureOptions = {
         ratio: 1,
+        format: TextureFormat.RGBA,
+        type: TextureType.UNSIGNED_BYTE,
     };
 
     /**

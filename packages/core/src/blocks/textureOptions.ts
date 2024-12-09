@@ -45,14 +45,14 @@ export type OutputTextureOptions = {
     ratio: number;
 
     /**
-     * The optional format of the texture
+     * The format of the texture
      */
-    format?: TextureFormat;
+    format: TextureFormat;
 
     /**
-     * The optional type of the texture
+     * The type of the texture
      */
-    type?: TextureType;
+    type: TextureType;
 };
 
 /**

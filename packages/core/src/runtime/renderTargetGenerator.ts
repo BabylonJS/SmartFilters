@@ -203,8 +203,8 @@ export class RenderTargetGenerator {
             generateStencilBuffer: false,
             generateMipMaps: false,
             samplingMode: 2, // Babylon Constants.TEXTURE_LINEAR_LINEAR,
-            format: textureOptions.format !== undefined ? textureOptions.format : 0, // Babylon Constants.TEXTUREFORMAT_RGBA,
-            type: textureOptions.type !== undefined ? textureOptions.type : 0, // Babylon Constants.TEXTURETYPE_UNSIGNED_BYTE,
+            format: textureOptions.format,
+            type: textureOptions.type,
         };
 
         // Get the smartFilter output size - either from the output block's renderTargetTexture or the engine's render size
