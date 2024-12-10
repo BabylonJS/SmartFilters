@@ -32,6 +32,8 @@ interface RefCountedTexture {
 export class RenderTargetGenerator {
     private _optimize: boolean;
     private _renderTargetPool: Map<string, Set<RefCountedTexture>>;
+    private _textureOptionsHashCache = new Map<ShaderBlock, string>();
+
     private _numTargetsCreated;
 
     /**
@@ -57,22 +59,6 @@ export class RenderTargetGenerator {
      * @param initializationData - The initialization data to use.
      */
     public setOutputTextures(smartFilter: SmartFilter, initializationData: InitializationData) {
-        const textureOptionsHashCache = new Map<ShaderBlock, string>();
-
-        /**
-         * Gets a textureOptionsHash for a block, using a cache that lives for the lifetime of the setOutputTextures call
-         * @param block - The block to get the texture options hash for
-         * @returns The texture options hash for the block
-         */
-        function getTextureOptionsHash(block: ShaderBlock): string {
-            let textureOptionsHash = textureOptionsHashCache.get(block);
-            if (textureOptionsHash === undefined) {
-                textureOptionsHash = JSON.stringify(block.outputTextureOptions);
-                textureOptionsHashCache.set(block, textureOptionsHash);
-            }
-            return textureOptionsHash;
-        }
-
         smartFilter.output.ownerBlock.visit(
             initializationData,
             (block: BaseBlock, initializationData: InitializationData) => {
@@ -81,7 +67,7 @@ export class RenderTargetGenerator {
                 }
 
                 let refCountedTexture: Nullable<RefCountedTexture> = null;
-                const textureOptionsHash = getTextureOptionsHash(block);
+                const textureOptionsHash = this._getTextureOptionsHash(block);
 
                 // We assign a texture to the output of the block only if this is not the last block in the chain,
                 // i.e. not the block connected to the smart output block (in which case the output of the block is to the canvas and not a texture).
@@ -124,7 +110,7 @@ export class RenderTargetGenerator {
                         ) {
                             this._releaseTexture(
                                 connectedBlock.output.runtimeData.value,
-                                getTextureOptionsHash(connectedBlock)
+                                this._getTextureOptionsHash(connectedBlock)
                             );
                         }
                     }
@@ -132,6 +118,7 @@ export class RenderTargetGenerator {
             }
         );
         this._renderTargetPool.clear();
+        this._textureOptionsHashCache.clear();
     }
 
     private _findAvailableTexture(textureOptionsHash: string): Nullable<RefCountedTexture> {
@@ -254,5 +241,19 @@ export class RenderTargetGenerator {
         finalRenderTarget.anisotropicFilteringLevel = 1;
 
         return finalRenderTarget;
+    }
+
+    /**
+     * Gets a textureOptionsHash for a block, using a cache to avoid recomputing it.
+     * @param block - The block to get the texture options hash for
+     * @returns The texture options hash for the block
+     */
+    private _getTextureOptionsHash(block: ShaderBlock): string {
+        let textureOptionsHash = this._textureOptionsHashCache.get(block);
+        if (textureOptionsHash === undefined) {
+            textureOptionsHash = JSON.stringify(block.outputTextureOptions);
+            this._textureOptionsHashCache.set(block, textureOptionsHash);
+        }
+        return textureOptionsHash;
     }
 }
