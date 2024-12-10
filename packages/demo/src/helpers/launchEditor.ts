@@ -26,7 +26,7 @@ export function launchEditor(
     renderer: SmartFilterRenderer,
     smartFilterLoader: SmartFilterLoader,
     errorHandler: (message: string) => void,
-    closeError: () => void
+    rebuildRuntime: (smartFilter: SmartFilter) => void
 ) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
@@ -62,14 +62,7 @@ export function launchEditor(
             engine,
             blockRegistration,
             filter: currentSmartFilter,
-            rebuildRuntime: (smartFilter: SmartFilter) => {
-                renderer
-                    .startRendering(smartFilter)
-                    .then(closeError)
-                    .catch((err: unknown) => {
-                        errorHandler(`Could not start rendering\n${err}`);
-                    });
-            },
+            rebuildRuntime,
             reloadAssets: (smartFilter: SmartFilter) => {
                 renderer.loadAssets(smartFilter).catch((err: unknown) => {
                     errorHandler(`Could not reload assets:\n${err}`);

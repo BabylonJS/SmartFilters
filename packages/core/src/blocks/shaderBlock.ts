@@ -73,7 +73,6 @@ export abstract class ShaderBlock extends BaseBlock {
         options: [
             { label: "R", value: TextureFormat.R },
             { label: "RG", value: TextureFormat.RG },
-            { label: "RGB", value: TextureFormat.RGB },
             { label: "RGBA", value: TextureFormat.RGBA },
         ],
     })
@@ -84,11 +83,6 @@ export abstract class ShaderBlock extends BaseBlock {
             { label: "UByte", value: TextureType.UNSIGNED_BYTE },
             { label: "Float", value: TextureType.FLOAT },
             { label: "Half Float", value: TextureType.HALF_FLOAT },
-            { label: "Byte", value: TextureType.BYTE },
-            { label: "Short", value: TextureType.SHORT },
-            { label: "UShort", value: TextureType.UNSIGNED_SHORT },
-            { label: "Int", value: TextureType.INT },
-            { label: "UInt", value: TextureType.UNSIGNED_INT },
         ],
     })
     public outputTextureOptions: OutputTextureOptions = {

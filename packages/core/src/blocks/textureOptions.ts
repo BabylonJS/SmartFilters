@@ -1,9 +1,7 @@
 /**
  * The format of a texture - corresponds to the Babylon.js TextureFormat constants
  */
-export const enum TextureFormat {
-    /** Babylon Constants.TEXTUREFORMAT_RGB */
-    RGB = 4,
+export enum TextureFormat {
     /** Babylon Constants.TEXTUREFORMAT_RGBA */
     RGBA = 5,
     /** Babylon Constants.TEXTUREFORMAT_R */
@@ -15,23 +13,13 @@ export const enum TextureFormat {
 /**
  * The type of a texture - corresponds to the Babylon.js TextureType constants
  */
-export const enum TextureType {
+export enum TextureType {
     /** Babylon Constants.TEXTURETYPE_UNSIGNED_BYTE */
     UNSIGNED_BYTE = 0,
     /** Babylon Constants.TEXTURETYPE_FLOAT */
     FLOAT = 1,
     /** Babylon Constants.TEXTURETYPE_HALF_FLOAT */
     HALF_FLOAT = 2,
-    /** Babylon Constants.TEXTURETYPE_BYTE */
-    BYTE = 3,
-    /** Babylon Constants.TEXTURETYPE_SHORT */
-    SHORT = 4,
-    /** Babylon Constants.TEXTURETYPE_UNSIGNED_SHORT */
-    UNSIGNED_SHORT = 5,
-    /** Babylon Constants.TEXTURETYPE_INT */
-    INT = 6,
-    /** Babylon Constants.TEXTURETYPE_UNSIGNED_INTEGER */
-    UNSIGNED_INT = 7,
 }
 
 // IMPORTANT: Update textureOptionsMatch() if you add more fields to OutputTextureOptions
