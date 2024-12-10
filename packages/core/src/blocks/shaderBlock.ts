@@ -49,18 +49,6 @@ export abstract class ShaderBlock extends BaseBlock {
     /**
      * The options used when creating the texture this block outputs to
      */
-    // TODO: figure out how to display in the editor
-    // May have to flatten to fields in the class
-    // May be able to make new @editableInPropertyPage thingy that registers these on the class even if they are
-    // stored in this sub object
-    // public outputTextureOptions: OutputTextureOptions = {
-    //     @editableInPropertyPage("Pass Texture Ratio", PropertyTypeForEdition.Float, "PROPERTIES", {
-    //         min: 0,
-    //         max: 1,
-    //         notifiers: { rebuild: true },
-    //     })
-    //     ratio: 1,
-    // };
     @editableInPropertyPage("Ratio", PropertyTypeForEdition.Float, OutputTexturePropertiesGroupName, {
         min: 0.1,
         max: 10.0,
