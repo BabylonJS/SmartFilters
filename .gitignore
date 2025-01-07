@@ -26,6 +26,7 @@ packages/browserExtension/node_modules/*
 
 # Local dist
 **/www/scripts/**
+**/www/index.html
 dist
 .temp
 *.tsbuildinfo
