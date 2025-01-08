@@ -1,7 +1,10 @@
+import { Observable } from "@babylonjs/core/Misc/observable.js";
+import type { SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 
 const smartFilter = (window as any).currentSmartFilter;
 const thinEngine = (window as any).thinEngine;
+const beforeRenderObservable = new Observable<void>();
 
 if (smartFilter) {
     // Display the editor
@@ -11,5 +14,25 @@ if (smartFilter) {
         // onRuntimeCreated: (runtime: SmartFilterRuntime) => {
         //     renderer.setRuntime(runtime);
         // },
+        blockRegistration: {
+            getIsUniqueBlock: () => {
+                return false;
+            },
+            getBlockFromString: () => {
+                return null;
+            },
+            createInputBlock: () => {
+                return null;
+            },
+            allBlockNames: {},
+            blockTooltips: {},
+        },
+        downloadSmartFilter: () => {},
+        loadSmartFilter: async (_file: File) => {
+            throw new Error("Not implemented");
+        },
+        beforeRenderObservable,
+        rebuildRuntime: (_smartFilter: SmartFilter) => {},
+        reloadAssets: (_: SmartFilter) => {},
     });
 }

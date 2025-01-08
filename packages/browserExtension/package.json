@@ -39,7 +39,7 @@
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^7.11.2"
+        "@babylonjs/core": "^7.35.2"
     },
     "devDependencies": {
         "@fortawesome/fontawesome-svg-core": "^6.1.0",

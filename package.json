@@ -41,7 +41,8 @@
     "workspaces": [
         "packages/core",
         "packages/editor",
-        "packages/demo"
+        "packages/demo",
+        "packages/browserExtension"
     ],
     "devDependencies": {
         "@alex_neo/jest-expect-message": "~1.0.5",

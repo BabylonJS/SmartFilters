@@ -8,8 +8,9 @@
         "types": [
             // (various types, e.g. jquery, core-js),
             "chrome"
-        ]
+        ],
+        "resolveJsonModule": true
     },
-    "include": ["../**/*.ts", "../**/*.tsx"],
+    "include": ["../**/*.ts", "../**/*.tsx", "../demo/src/configuration/smartFilters/serialized/*.json"],
     "exclude": ["**/node_modules", "**/dist"]
 }
