@@ -4,8 +4,8 @@
         "baseUrl": "packages",
 
         "paths": {
-            "@babylonjs/smart-filters": ["core/src"],
-            "@babylonjs/smart-filters-editor": ["editor/src"]
+            "@babylonjs/smart-filters": ["packages/core/src"],
+            "@babylonjs/smart-filters-editor": ["packages/editor/src"]
         }
     }
 }

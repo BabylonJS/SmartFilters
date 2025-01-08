@@ -11,6 +11,6 @@
         ],
         "resolveJsonModule": true
     },
-    "include": ["../**/*.ts", "../**/*.tsx", "../demo/src/configuration/smartFilters/serialized/*.json"],
+    "include": ["./src/**/*.ts", "./src/**/*.tsx"],
     "exclude": ["**/node_modules", "**/dist"]
 }
