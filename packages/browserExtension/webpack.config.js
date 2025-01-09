@@ -2,8 +2,7 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
 var SRC_DIR = path.resolve(__dirname, "./src");
-var DIST_DIR = path.resolve(__dirname, "./dist/browserExtension/unpacked");
-var DEV_DIR = path.resolve(__dirname, "./.temp");
+var OUTPUT_DIR = path.resolve(__dirname, "./www");
 
 var buildConfig = function (env) {
     var isProd = env.prod;
@@ -11,21 +10,21 @@ var buildConfig = function (env) {
         context: __dirname,
         entry: {
             background: SRC_DIR + "/background.ts",
-            main: SRC_DIR + "/main.ts"
+            editorLauncher: SRC_DIR + "/editorLauncher.ts"
         },
         performance: {
             maxEntrypointSize: 5120000,
             maxAssetSize: 5120000
         },
         output: {
-            path: DIST_DIR + "/scripts/",
-            publicPath: "/scripts/",
-            filename: "[name].js",
-            library: "[name]",
+            path: OUTPUT_DIR,
+            publicPath: "/",
+            filename: "scripts/[name].js",
+            library: "scripts/[name]",
             libraryTarget: "umd",
             devtoolModuleFilenameTemplate: isProd ? "webpack://[namespace]/[resource-path]?[loaders]" : "file:///[absolute-resource-path]",
         },
-        devtool: isProd ? false : "source-map",
+        devtool: isProd ? false : "inline-source-map",
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss", ".svg"],
             alias: {
@@ -39,7 +38,7 @@ var buildConfig = function (env) {
         plugins: [
             new CopyPlugin({
               patterns: [
-                { from: "./src/assets/manifest.json", to: "../manifest.json" },
+                { from: "./src/assets/manifest.json", to: "./manifest.json" },
               ],
             }),
           ],
@@ -50,7 +49,7 @@ var buildConfig = function (env) {
                     type: "asset/inline",
                 },
                 {
-                    test: /(?<!modules)\.s[ac]ss$/i,
+                    test: /(?<!module)\.s[ac]ss$/i,
                     use: [
                         "style-loader",
                         {
@@ -69,7 +68,7 @@ var buildConfig = function (env) {
                     ],
                 },
                 {
-                    test: /\.modules\.s[ac]ss$/i,
+                    test: /\.module\.s[ac]ss$/i,
                     use: [
                         "style-loader",
                         {
