@@ -20,8 +20,10 @@ var buildConfig = function (env) {
             path: OUTPUT_DIR,
             publicPath: "/",
             filename: "scripts/[name].js",
-            library: "scripts/[name]",
-            libraryTarget: "umd",
+            library: {      
+                name: "[name]",      
+                type: 'var'
+            },
             devtoolModuleFilenameTemplate: isProd ? "webpack://[namespace]/[resource-path]?[loaders]" : "file:///[absolute-resource-path]",
         },
         devtool: isProd ? false : "inline-source-map",
