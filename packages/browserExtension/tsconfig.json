@@ -11,6 +11,13 @@
         ],
         "resolveJsonModule": true
     },
-    "include": ["./src/**/*.ts", "./src/**/*.tsx"],
+    "include": [
+        "./src/**/*.ts",
+        "./src/**/*.tsx",
+        "../core/src/**/*.ts",
+        "../core/src/**/*.tsx",
+        "../editor/src/**/*.ts",
+        "../editor/src/**/*.tsx"
+    ],
     "exclude": ["**/node_modules", "**/dist"]
 }

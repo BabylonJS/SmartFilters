@@ -24,7 +24,7 @@
         "postinstall": "npm run build",
         "clean": "npm run clean --workspaces",
         "assets": "npm run assets -w @babylonjs/smart-filters-editor",
-        "build": "npm run clean && npm run assets && npm run build:buildTools && npm run build:shaders && tsc -b -v && npm run build -w @babylonjs/smart-filters-demo",
+        "build": "npm run clean && npm run assets && npm run build:buildTools && npm run build:shaders && tsc -b -v && npm run build -w @babylonjs/smart-filters-browser-extension && npm run build -w @babylonjs/smart-filters-demo",
         "build:buildTools": "npm run build -w @babylonjs/smart-filters",
         "build:shaders": "npm run build:runTools -w @babylonjs/smart-filters && npm run build:runTools -w @babylonjs/smart-filters-demo",
         "watch": "tsc -b -v -w",

@@ -9,5 +9,5 @@
     },
 
     "include": ["../**/*.ts", "../**/*.tsx", "./src/configuration/smartFilters/serialized/*.json"],
-    "exclude": ["**/node_modules", "**/.temp"]
+    "exclude": ["**/node_modules", "**/.temp", "../browserExtension/**"]
 }

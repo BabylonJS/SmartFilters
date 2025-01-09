@@ -2,7 +2,7 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
 var SRC_DIR = path.resolve(__dirname, "./src");
-var DIST_DIR = path.resolve(__dirname, "./dist");
+var DIST_DIR = path.resolve(__dirname, "./dist/browserExtension/unpacked");
 var DEV_DIR = path.resolve(__dirname, "./.temp");
 
 var buildConfig = function (env) {
