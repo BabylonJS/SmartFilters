@@ -86,10 +86,10 @@ export type SmartFilterEditorOptions = {
     hostElement?: HTMLElement;
 
     /**
-     * A callback that is responsible for doing the work of initiating a download of the
-     * serialized version of the Smart Filter.
+     * If supplied, a save button will appear in the editor, and this callback will be called
+     * when it is clicked to initiate the download of the serialized version of the Smart Filter.
      */
-    downloadSmartFilter: () => void;
+    downloadSmartFilter?: () => void;
 
     /**
      * If supplied, a load button will appear in the editor, and when the user clicks it,
@@ -159,7 +159,7 @@ export class SmartFilterEditor {
             options.filter ?? null,
             options.blockRegistration ?? null,
             hostElement,
-            options.downloadSmartFilter,
+            options.downloadSmartFilter ?? null,
             options.loadSmartFilter ?? null,
             options.beforeRenderObservable,
             options.rebuildRuntime,

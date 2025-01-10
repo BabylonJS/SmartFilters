@@ -11,7 +11,6 @@ if (smartFilter) {
     SmartFilterEditor.Show({
         engine: thinEngine,
         filter: smartFilter,
-        downloadSmartFilter: () => {},
         beforeRenderObservable,
         rebuildRuntime: (_smartFilter: SmartFilter) => {},
         reloadAssets: (_: SmartFilter) => {},

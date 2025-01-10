@@ -141,8 +141,10 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     downloadSmartFilter() {
-        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-        this.props.globalState.downloadSmartFilter();
+        if (this.props.globalState.downloadSmartFilter) {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            this.props.globalState.downloadSmartFilter();
+        }
     }
 
     async saveToSnippetServer() {
@@ -295,12 +297,14 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         {this.props.globalState.loadSmartFilter && (
                             <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
                         )}
-                        <ButtonLineComponent
-                            label="Save"
-                            onClick={() => {
-                                this.downloadSmartFilter();
-                            }}
-                        />
+                        {this.props.globalState.downloadSmartFilter && (
+                            <ButtonLineComponent
+                                label="Save"
+                                onClick={() => {
+                                    this.downloadSmartFilter();
+                                }}
+                            />
+                        )}
                         {this.props.globalState.saveToSnippetServer && (
                             <ButtonLineComponent
                                 label="Save to unique URL"

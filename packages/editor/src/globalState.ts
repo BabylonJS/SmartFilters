@@ -53,7 +53,7 @@ export class GlobalState {
 
     texturePresets: TexturePreset[];
 
-    downloadSmartFilter: () => void;
+    downloadSmartFilter: Nullable<() => void>;
 
     loadSmartFilter: Nullable<(file: File) => Promise<SmartFilter>>;
 
@@ -68,7 +68,7 @@ export class GlobalState {
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: Nullable<BlockRegistration>,
         hostElement: HTMLElement,
-        downloadSmartFilter: () => void,
+        downloadSmartFilter: Nullable<() => void>,
         loadSmartFilter: Nullable<(file: File) => Promise<SmartFilter>>,
         beforeRenderObservable: Observable<void>,
         rebuildRuntime: (smartFilter: SmartFilter) => void,
