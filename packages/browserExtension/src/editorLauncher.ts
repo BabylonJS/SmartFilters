@@ -10,6 +10,5 @@ if (smartFilter) {
         engine: thinEngine,
         filter: smartFilter,
         rebuildRuntime: (_smartFilter: SmartFilter) => {},
-        reloadAssets: (_: SmartFilter) => {},
     });
 }

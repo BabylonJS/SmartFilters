@@ -114,9 +114,11 @@ export type SmartFilterEditorOptions = {
     rebuildRuntime: (smartFilter: SmartFilter) => void;
 
     /**
-     * Called when the editor determines that the assets (images or videos) need to be reloaded
+     * An optional callback, which if supplied allows the texture input blocks to allow the user
+     * to set the texture to user supplied images or videos. If not supplied, texture input blocks
+     * are read only.
      */
-    reloadAssets: (smartFilter: SmartFilter) => void;
+    reloadAssets?: (smartFilter: SmartFilter) => void;
 };
 
 /**
@@ -156,7 +158,7 @@ export class SmartFilterEditor {
             options.downloadSmartFilter ?? null,
             options.loadSmartFilter ?? null,
             options.rebuildRuntime,
-            options.reloadAssets,
+            options.reloadAssets ?? null,
             options.saveToSnippetServer,
             options.texturePresets
         );

@@ -59,7 +59,7 @@ export class GlobalState {
 
     rebuildRuntime: (smartFilter: SmartFilter) => void;
 
-    reloadAssets: (smartFilter: SmartFilter) => void;
+    reloadAssets: Nullable<(smartFilter: SmartFilter) => void>;
 
     public constructor(
         engine: ThinEngine,
@@ -69,7 +69,7 @@ export class GlobalState {
         downloadSmartFilter: Nullable<() => void>,
         loadSmartFilter: Nullable<(file: File) => Promise<SmartFilter>>,
         rebuildRuntime: (smartFilter: SmartFilter) => void,
-        reloadAssets: (smartFilter: SmartFilter) => void,
+        reloadAssets: Nullable<(smartFilter: SmartFilter) => void>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = []
     ) {
