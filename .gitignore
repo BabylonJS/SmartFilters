@@ -22,7 +22,6 @@ junit.xml
 
 # Build tools
 /packages/core/buildTools/
-packages/browserExtension/node_modules/*
 
 # Local dist
 **/www/scripts/**
