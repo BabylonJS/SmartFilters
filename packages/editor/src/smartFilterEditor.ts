@@ -8,7 +8,6 @@ import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyL
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
 import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
-import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 
 /**
@@ -110,11 +109,6 @@ export type SmartFilterEditorOptions = {
     texturePresets?: TexturePreset[];
 
     /**
-     * An observable that is called before rendering the filter every frame.
-     */
-    beforeRenderObservable: Observable<void>;
-
-    /**
      * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
      */
     rebuildRuntime: (smartFilter: SmartFilter) => void;
@@ -161,7 +155,6 @@ export class SmartFilterEditor {
             hostElement,
             options.downloadSmartFilter ?? null,
             options.loadSmartFilter ?? null,
-            options.beforeRenderObservable,
             options.rebuildRuntime,
             options.reloadAssets,
             options.saveToSnippetServer,

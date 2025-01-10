@@ -128,7 +128,6 @@ export function launchEditor(
                 setSnippet(snippet.id, snippet.version);
             },
             texturePresets,
-            beforeRenderObservable: renderer.beforeRenderObservable,
         });
     }
     if (renderer.runtime) {
