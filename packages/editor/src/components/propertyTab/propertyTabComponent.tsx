@@ -117,11 +117,13 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     async load(_file: File) {
-        this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
+        if (this.props.globalState.loadSmartFilter) {
+            this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
 
-        this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
-        this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-        this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
+            this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
+            this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+            this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
+        }
     }
 
     loadFrame(_file: File) {
@@ -290,7 +292,9 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         />
                     </LineContainerComponent>
                     <LineContainerComponent title="FILE">
-                        <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
+                        {this.props.globalState.loadSmartFilter && (
+                            <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
+                        )}
                         <ButtonLineComponent
                             label="Save"
                             onClick={() => {

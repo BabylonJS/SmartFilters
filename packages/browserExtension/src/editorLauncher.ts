@@ -12,9 +12,6 @@ if (smartFilter) {
         engine: thinEngine,
         filter: smartFilter,
         downloadSmartFilter: () => {},
-        loadSmartFilter: async (_file: File) => {
-            throw new Error("Not implemented");
-        },
         beforeRenderObservable,
         rebuildRuntime: (_smartFilter: SmartFilter) => {},
         reloadAssets: (_: SmartFilter) => {},

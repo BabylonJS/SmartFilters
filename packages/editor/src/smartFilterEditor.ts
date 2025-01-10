@@ -92,10 +92,11 @@ export type SmartFilterEditorOptions = {
     downloadSmartFilter: () => void;
 
     /**
-     * A callback that is responsible for loading a serialized Smart Filter from the provided file,
-     * and should then call SmartFilterEditor.Show with the loaded Smart Filter.
+     * If supplied, a load button will appear in the editor, and when the user clicks it,
+     * this callback will be passed the serialized Smart Filter file. The callback should
+     * load the file and return the new SmartFilter.
      */
-    loadSmartFilter: (file: File) => Promise<SmartFilter>;
+    loadSmartFilter?: (file: File) => Promise<SmartFilter>;
 
     /**
      * An optional callback to save the current Smart Filter to the snippet server.
@@ -159,7 +160,7 @@ export class SmartFilterEditor {
             options.blockRegistration ?? null,
             hostElement,
             options.downloadSmartFilter,
-            options.loadSmartFilter,
+            options.loadSmartFilter ?? null,
             options.beforeRenderObservable,
             options.rebuildRuntime,
             options.reloadAssets,
