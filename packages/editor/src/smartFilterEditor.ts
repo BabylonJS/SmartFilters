@@ -109,9 +109,11 @@ export type SmartFilterEditorOptions = {
     texturePresets?: TexturePreset[];
 
     /**
-     * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
+     * An optional callback, which if supplied, is called when the editor determines that
+     * the graph has changed and the runtime needs to be rebuilt. If not supplied, structural changes
+     * to the graph will be ignored.
      */
-    rebuildRuntime: (smartFilter: SmartFilter) => void;
+    rebuildRuntime?: (smartFilter: SmartFilter) => void;
 
     /**
      * An optional callback, which if supplied allows the texture input blocks to allow the user
@@ -157,7 +159,7 @@ export class SmartFilterEditor {
             hostElement,
             options.downloadSmartFilter ?? null,
             options.loadSmartFilter ?? null,
-            options.rebuildRuntime,
+            options.rebuildRuntime ?? null,
             options.reloadAssets ?? null,
             options.saveToSnippetServer,
             options.texturePresets

@@ -1,4 +1,3 @@
-import type { SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 
 const smartFilter = (window as any).currentSmartFilter;
@@ -9,6 +8,5 @@ if (smartFilter) {
     SmartFilterEditor.Show({
         engine: thinEngine,
         filter: smartFilter,
-        rebuildRuntime: (_smartFilter: SmartFilter) => {},
     });
 }

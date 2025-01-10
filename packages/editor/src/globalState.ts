@@ -57,7 +57,7 @@ export class GlobalState {
 
     saveToSnippetServer?: (() => void) | undefined;
 
-    rebuildRuntime: (smartFilter: SmartFilter) => void;
+    rebuildRuntime: Nullable<(smartFilter: SmartFilter) => void>;
 
     reloadAssets: Nullable<(smartFilter: SmartFilter) => void>;
 
@@ -68,7 +68,7 @@ export class GlobalState {
         hostElement: HTMLElement,
         downloadSmartFilter: Nullable<() => void>,
         loadSmartFilter: Nullable<(file: File) => Promise<SmartFilter>>,
-        rebuildRuntime: (smartFilter: SmartFilter) => void,
+        rebuildRuntime: Nullable<(smartFilter: SmartFilter) => void>,
         reloadAssets: Nullable<(smartFilter: SmartFilter) => void>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = []

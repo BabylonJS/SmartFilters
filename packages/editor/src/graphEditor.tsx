@@ -147,7 +147,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         );
 
         this.props.globalState.stateManager.onRebuildRequiredObservable.add(async () => {
-            this.props.globalState.rebuildRuntime(this.props.globalState.smartFilter);
+            if (this.props.globalState.rebuildRuntime) {
+                this.props.globalState.rebuildRuntime(this.props.globalState.smartFilter);
+            }
         });
 
         this.props.globalState.onSaveEditorDataRequiredObservable.add(() => {
