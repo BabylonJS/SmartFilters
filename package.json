@@ -29,6 +29,7 @@
         "build:shaders": "npm run build:runTools -w @babylonjs/smart-filters && npm run build:runTools -w @babylonjs/smart-filters-demo",
         "watch": "tsc -b -v -w",
         "start": "npm run assets && concurrently \"npm run watch\" \"npm run start -w @babylonjs/smart-filters-demo\"",
+        "watch:browserExtension": "npm run assets && concurrently \"npm run watch\" \"npm run watch -w @babylonjs/smart-filters-browser-extension\"",
         "test": "jest",
         "format": "npm run format:check && npm run format:fix",
         "format:check": "prettier --check \"./packages/**/src/**/*.{ts,tsx,js,json,scss,css}\"",

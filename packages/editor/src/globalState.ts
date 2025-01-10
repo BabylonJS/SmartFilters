@@ -21,7 +21,7 @@ export class GlobalState {
 
     smartFilter: SmartFilter;
 
-    blockRegistration: BlockRegistration;
+    blockRegistration: Nullable<BlockRegistration>;
 
     hostElement: HTMLElement;
 
@@ -66,7 +66,7 @@ export class GlobalState {
     public constructor(
         engine: ThinEngine,
         smartFilter: Nullable<SmartFilter>,
-        blockRegistration: BlockRegistration,
+        blockRegistration: Nullable<BlockRegistration>,
         hostElement: HTMLElement,
         downloadSmartFilter: () => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,

@@ -40,48 +40,53 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
     override render() {
         // Create node menu
         const blockMenu = [];
-        const allBlocks = this.props.globalState.blockRegistration.allBlockNames;
-        for (const key in allBlocks) {
-            const blockList = (this.props.globalState.blockRegistration.allBlockNames as any)[key]
-                .filter(
-                    (b: string) => !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
-                )
-                .sort((a: string, b: string) => a.localeCompare(b))
-                .map((block: string) => {
-                    return (
-                        <DraggableLineComponent
-                            key={block}
-                            data={block}
-                            tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
-                        />
+        const blockRegistration = this.props.globalState.blockRegistration;
+        if (blockRegistration) {
+            const allBlocks = blockRegistration.allBlockNames;
+            for (const key in allBlocks) {
+                const blockList = (blockRegistration.allBlockNames as any)[key]
+                    .filter(
+                        (b: string) =>
+                            !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
+                    )
+                    .sort((a: string, b: string) => a.localeCompare(b))
+                    .map((block: string) => {
+                        return (
+                            <DraggableLineComponent
+                                key={block}
+                                data={block}
+                                tooltip={blockRegistration.blockTooltips[block] || ""}
+                            />
+                        );
+                    });
+
+                if (blockList.length) {
+                    blockMenu.push(
+                        <LineContainerComponent
+                            key={key + " blocks"}
+                            title={key.replace("__", ": ").replace("_", " ")}
+                            closed={false}
+                        >
+                            {blockList}
+                        </LineContainerComponent>
                     );
-                });
-
-            if (blockList.length) {
-                blockMenu.push(
-                    <LineContainerComponent
-                        key={key + " blocks"}
-                        title={key.replace("__", ": ").replace("_", " ")}
-                        closed={false}
-                    >
-                        {blockList}
-                    </LineContainerComponent>
-                );
+                }
             }
-        }
 
-        // Register blocks
-        const ledger = NodeLedger.RegisteredNodeNames;
-        for (const key in allBlocks) {
-            const blocks = allBlocks[key] as string[];
-            if (blocks.length) {
-                for (const block of blocks) {
-                    if (!ledger.includes(block)) {
-                        ledger.push(block);
+            // Register blocks
+            const ledger = NodeLedger.RegisteredNodeNames;
+            for (const key in allBlocks) {
+                const blocks = allBlocks[key] as string[];
+                if (blocks.length) {
+                    for (const block of blocks) {
+                        if (!ledger.includes(block)) {
+                            ledger.push(block);
+                        }
                     }
                 }
             }
         }
+
         NodeLedger.NameFormatter = (name) => {
             let finalName = name;
             // custom frame

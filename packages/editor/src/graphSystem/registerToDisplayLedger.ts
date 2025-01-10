@@ -5,6 +5,6 @@ import { DisplayLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/d
 
 export const RegisterToDisplayManagers = (globalState: GlobalState) => {
     DisplayLedger.RegisteredControls["InputBlock"] =
-        globalState.blockRegistration.inputDisplayManager || InputDisplayManager;
+        globalState.blockRegistration?.inputDisplayManager || InputDisplayManager;
     DisplayLedger.RegisteredControls["OutputBlock"] = OutputDisplayManager;
 };

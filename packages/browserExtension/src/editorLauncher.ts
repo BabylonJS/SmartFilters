@@ -11,22 +11,6 @@ if (smartFilter) {
     SmartFilterEditor.Show({
         engine: thinEngine,
         filter: smartFilter,
-        // onRuntimeCreated: (runtime: SmartFilterRuntime) => {
-        //     renderer.setRuntime(runtime);
-        // },
-        blockRegistration: {
-            getIsUniqueBlock: () => {
-                return false;
-            },
-            getBlockFromString: () => {
-                return null;
-            },
-            createInputBlock: () => {
-                return null;
-            },
-            allBlockNames: {},
-            blockTooltips: {},
-        },
         downloadSmartFilter: () => {},
         loadSmartFilter: async (_file: File) => {
             throw new Error("Not implemented");

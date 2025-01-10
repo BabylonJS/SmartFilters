@@ -64,10 +64,8 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     addValueNode(type: string) {
         const nodeType = BlockTools.GetConnectionNodeTypeFromString(type);
 
-        let newInputBlock: Nullable<BaseBlock> = this.props.globalState.blockRegistration.createInputBlock(
-            this.props.globalState,
-            type
-        );
+        let newInputBlock: Nullable<BaseBlock> =
+            this.props.globalState.blockRegistration?.createInputBlock(this.props.globalState, type) ?? null;
 
         if (!newInputBlock) {
             newInputBlock = createDefaultInput(
@@ -289,28 +287,34 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     };
 
     emitNewBlock(blockType: string, targetX: number, targetY: number) {
-        let newNode: GraphNode;
+        let newNode: Nullable<GraphNode> = null;
 
         if (blockType.indexOf("Block") === -1) {
             newNode = this.addValueNode(blockType);
         } else {
-            const block = this.props.globalState.blockRegistration.getBlockFromString(
-                blockType,
-                this.props.globalState.smartFilter
-            )!;
-            if (this.props.globalState.blockRegistration.getIsUniqueBlock(block)) {
-                const className = block.getClassName();
-                for (const other of this._graphCanvas.getCachedData()) {
-                    if (other !== block && other.getClassName() === className) {
-                        this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
-                            `You can only have one ${className} per graph`
-                        );
-                        return;
+            const blockRegistration = this.props.globalState.blockRegistration;
+            if (blockRegistration) {
+                const block = blockRegistration.getBlockFromString(blockType, this.props.globalState.smartFilter);
+                if (block) {
+                    if (blockRegistration.getIsUniqueBlock(block)) {
+                        const className = block.getClassName();
+                        for (const other of this._graphCanvas.getCachedData()) {
+                            if (other !== block && other.getClassName() === className) {
+                                this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
+                                    `You can only have one ${className} per graph`
+                                );
+                                return;
+                            }
+                        }
                     }
+
+                    newNode = this.appendBlock(block);
                 }
             }
+        }
 
-            newNode = this.appendBlock(block);
+        if (!newNode) {
+            return;
         }
 
         // Size exceptions

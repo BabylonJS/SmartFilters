@@ -19,5 +19,5 @@
         "../editor/src/**/*.ts",
         "../editor/src/**/*.tsx"
     ],
-    "exclude": ["**/node_modules", "**/dist"]
+    "exclude": ["**/node_modules"]
 }

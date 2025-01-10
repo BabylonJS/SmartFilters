@@ -67,12 +67,13 @@ export type SmartFilterEditorOptions = {
     engine: ThinEngine;
 
     /**
-     * A BlockRegistration object which is responsible for providing the information
-     * required for the Editor to be able to display and work with the Smart Filter
-     * blocks the application uses. Note that each application may have its own set
-     * of blocks, so this information must be passed in and not baked into the editor.
+     * An optional BlockRegistration object which provides the information
+     * required for the Editor to be able to display Smart Filter blocks in
+     * the picker for the user to add to the Smart Filter. Note that each application
+     * may have its own set of blocks, so this information must be passed in and not
+     * baked into the editor.
      */
-    blockRegistration: BlockRegistration;
+    blockRegistration?: BlockRegistration;
 
     /**
      * The Smart Filter to edit
@@ -155,7 +156,7 @@ export class SmartFilterEditor {
         const globalState = new GlobalState(
             options.engine,
             options.filter ?? null,
-            options.blockRegistration,
+            options.blockRegistration ?? null,
             hostElement,
             options.downloadSmartFilter,
             options.loadSmartFilter,
