@@ -99,6 +99,10 @@ var buildConfig = function (env) {
                     enforce: "pre",
                     use: ["source-map-loader"],
                 },
+                {
+                    test: /\.glsl$/i,
+                    type: "asset/source"
+                }
             ],
         },
         mode: isProd ? "production" : "development",

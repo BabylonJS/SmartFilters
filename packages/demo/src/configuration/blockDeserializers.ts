@@ -4,6 +4,7 @@ import {
     type DeserializeBlockV1,
     type ISerializedBlockV1,
     type BaseBlock,
+    SerializedShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
@@ -33,10 +34,11 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     deserializers.set(
         BlockNames.blackAndWhite,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-            const { BlackAndWhiteBlock } = await import(
-                /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock"
+            const blockDefinitionJson = await import(
+                /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock.fragment.glsl"
             );
-            return new BlackAndWhiteBlock(smartFilter, serializedBlock.name);
+
+            return new SerializedShaderBlock(smartFilter, serializedBlock.name, blockDefinitionJson.default);
         }
     );
 
