@@ -34,6 +34,7 @@ export function getBlockDeserializers(): Map<string, DeserializeBlockV1> {
     deserializers.set(
         BlockNames.blackAndWhite,
         async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+            // TODO: should we have both the vertex and fragment shaders in the same file?
             const blockDefinitionJson = await import(
                 /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock.fragment.glsl"
             );
