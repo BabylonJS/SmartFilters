@@ -42,11 +42,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     private _mouseLocationY = 0;
     private _onWidgetKeyUpPointer: any;
 
-    appendBlock(dataToAppend: BaseBlock | INodeData, recursion = true) {
+    appendBlock(dataToAppend: INodeData, recursion = true) {
         return this._graphCanvas.createNodeFromObject(
-            dataToAppend instanceof BaseBlock
-                ? TypeLedger.NodeDataBuilder(dataToAppend, this._graphCanvas)
-                : dataToAppend,
+            dataToAppend,
             (block: BaseBlock) => {
                 if (this.props.globalState.smartFilter!.attachedBlocks.indexOf(block) === -1) {
                     // TODO manage add but should not be possible to arrive here.
@@ -75,7 +73,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             );
         }
 
-        return this.appendBlock(newInputBlock);
+        return this.appendBlock(TypeLedger.NodeDataBuilder(newInputBlock, this._graphCanvas));
     }
 
     override componentDidMount() {
@@ -234,7 +232,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         const smartFilter = this.props.globalState.smartFilter;
 
         smartFilter.attachedBlocks.forEach((n: BaseBlock) => {
-            this.appendBlock(n, true);
+            this.appendBlock(TypeLedger.NodeDataBuilder(n, this._graphCanvas), true);
         });
 
         // Links
@@ -310,7 +308,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                         }
                     }
 
-                    newNode = this.appendBlock(block);
+                    newNode = this.appendBlock(TypeLedger.NodeDataBuilder(block, this._graphCanvas));
                 }
             }
         }
@@ -388,7 +386,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                             ref={this._graphCanvasRef}
                             stateManager={this.props.globalState.stateManager}
                             onEmitNewNode={(nodeData) => {
-                                return this.appendBlock(nodeData.data as BaseBlock);
+                                return this.appendBlock(
+                                    TypeLedger.NodeDataBuilder(nodeData.data as BaseBlock, this._graphCanvas)
+                                );
                             }}
                         />
                         <Splitter
