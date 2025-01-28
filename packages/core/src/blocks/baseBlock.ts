@@ -66,7 +66,6 @@ export abstract class BaseBlock implements ICommandOwner {
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
      * @param disableOptimization - Defines if the block is optimizable or not
-     
      */
     constructor(
         smartFilter: SmartFilter,

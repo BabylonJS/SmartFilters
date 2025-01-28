@@ -6,8 +6,6 @@ import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSyste
 import type { BlockTypeV1 } from "./blockSerialization.types.js";
 import type { SerializedSmartFilterBase } from "../serializedSmartFilter.js";
 
-// TODO: rename file to smartFilterSerialization.types.ts
-
 /**
  * ----------------------------------------------------------------------------
  * Serialized Data Types
@@ -18,7 +16,7 @@ import type { SerializedSmartFilterBase } from "../serializedSmartFilter.js";
  * V1 Serialized Smart Filter
  */
 export type SerializedSmartFilterV1 = SerializedSmartFilterBase & {
-    /** The version of the serialized data */
+    /** The format version of the serialized data (not the version of the SmartFilter itself).*/
     version: 1;
 
     /** The SmartFilter name */

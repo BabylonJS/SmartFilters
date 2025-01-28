@@ -9,19 +9,19 @@ import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 import type { SerializedBlockDefinitionBase } from "../serializedBlockDefinition";
 
 /**
- * The unique name of the class of block.
+ * The unique type for the block.
  * The application doing the deserialization will use this to instantiate the correct block type.
- * Class names are expected to be unique and their behavior should be semantically equivalent across versions
+ * Block types are expected to be unique and their behavior should be semantically equivalent across versions
  * (their results must be similar enough that the differences are not perceivable).
  */
 export type BlockTypeV1 = string;
 
 /**
- * The V1 format of a serialized block type.
+ * The V1 definition of a serialized block.
  */
 export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
     /**
-     * The version of the serialized block format, not the version of the block itself.
+     * The format version of the serialized data (not the version of the block definition itself).
      */
     version: 1;
 

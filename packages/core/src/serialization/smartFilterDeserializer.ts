@@ -10,7 +10,7 @@ import type {
     ISerializedConnectionV1,
     OptionalBlockDeserializerV1,
     SerializedSmartFilterV1,
-} from "./v1/serialization.types";
+} from "./v1/smartFilterSerialization.types";
 import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
 import type { Nullable } from "@babylonjs/core/types";
 

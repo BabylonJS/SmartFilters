@@ -10,7 +10,7 @@ import type {
     TextureInputBlockData,
     Vector2InputBlockData,
 } from "./inputBlock.serialization.types";
-import type { IBlockSerializerV1 } from "../serialization/v1/serialization.types";
+import type { IBlockSerializerV1 } from "../serialization/v1/smartFilterSerialization.types.js";
 
 /**
  * Determines which generic type of InputBlock we are trying to serialize and calls the appropriate function

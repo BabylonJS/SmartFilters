@@ -1,5 +1,5 @@
 import type { BaseBlock } from "../../blocks/baseBlock";
-import type { ISerializedBlockV1, SerializeBlockV1 } from "./serialization.types";
+import type { ISerializedBlockV1, SerializeBlockV1 } from "./smartFilterSerialization.types";
 
 /**
  * The default V1 block serializer which can be used for any block that relies only on ConnectionPoints

@@ -10,7 +10,7 @@ import type {
     ISerializedConnectionV1,
     SerializeBlockV1,
     SerializedSmartFilterV1,
-} from "./v1/serialization.types";
+} from "./v1/smartFilterSerialization.types";
 
 /**
  * Determines if two serialized connection points are equivalent to each other

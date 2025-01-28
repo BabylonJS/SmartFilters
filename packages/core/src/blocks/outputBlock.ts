@@ -22,11 +22,6 @@ export class OutputBlock extends BaseBlock {
     public static override ClassName = "OutputBlock";
 
     /**
-     * The type of the block.
-     */
-    public static BlockType = OutputBlock.ClassName;
-
-    /**
      * Input connection point of the output block.
      * This takes a texture as input.
      */

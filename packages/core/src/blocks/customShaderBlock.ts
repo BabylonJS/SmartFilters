@@ -29,7 +29,7 @@ class CustomShaderBlockBinding extends ShaderBinding {
 
     /**
      * Binds all the required data to the shader when rendering.
-     * @param effect - defines the effect to bind the data to
+     * @param effect - The effect to bind the data to
      */
     public override bind(effect: Effect): void {
         let remappedName: string;
@@ -103,9 +103,9 @@ export class CustomShaderBlock extends ShaderBlock {
     }
 
     /**
-     * Instantiates a new deserialized shader block.
+     * Instantiates a new custom shader block.
      * @param smartFilter - The smart filter this block belongs to
-     * @param name - Defines the name of the block
+     * @param name - The name of the block
      * @param disableOptimization - If true, this optimizer will not attempt to optimize this block
      * @param blockType - The type of the block
      * @param inputConnectionPoints - The input connection points of the
