@@ -266,7 +266,7 @@ export class SmartFilterOptimizer {
                     s.type === "function" &&
                     s.name === funcName &&
                     s.owners[0] &&
-                    s.owners[0].getClassName() === block.getClassName()
+                    s.owners[0].blockType === block.blockType
             );
 
             const newVarName = existingRemapped?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
@@ -334,7 +334,7 @@ export class SmartFilterOptimizer {
                         s.type === varDecl &&
                         s.name === varName &&
                         s.owners[0] &&
-                        s.owners[0].getClassName() === block.getClassName()
+                        s.owners[0].blockType === block.blockType
                 );
                 if (existingRemapped && singleInstance) {
                     newVarName = existingRemapped.remappedName;
@@ -590,7 +590,7 @@ export class SmartFilterOptimizer {
             return newShaderFuncName;
         }
 
-        throw `Unhandled block type! className=${block.getClassName()}`;
+        throw `Unhandled block type! blockType=${block.blockType}`;
     }
 
     private _saveBlockStackState(): void {
