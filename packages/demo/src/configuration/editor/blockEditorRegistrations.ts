@@ -25,12 +25,13 @@ import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
 import { PremultiplyAlphaBlock } from "../blocks/utility/premultiplyAlphaBlock";
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
-import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import { ConnectionPointType, CustomShaderBlock, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 import { ParticleBlock } from "../blocks/generators/particleBlock";
 import { HeartsBlock } from "../blocks/generators/heartsBlock";
 import { NeonHeartBlock } from "../blocks/generators/neonHeartBlock";
 import { SpritesheetBlock } from "../blocks/effects/spritesheetBlock";
+import { deserializedTintBlockDefinition } from "../blocks/effects/tintBlock";
 
 export const blockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
@@ -276,10 +277,16 @@ export const blockEditorRegistrations: IBlockEditorRegistration[] = [
         tooltip: "Animates a sprite sheet texture",
     },
     {
+        name: "TintBlock",
+        factory: (smartFilter: SmartFilter) =>
+            CustomShaderBlock.Create(smartFilter, "Tint", deserializedTintBlockDefinition),
+        category: "Effects",
+        tooltip: "Adds colored tint to the input texture",
+    },
+    {
         name: "PremultiplyAlphaBlock",
         factory: (smartFilter: SmartFilter) => new PremultiplyAlphaBlock(smartFilter, "PremultiplyAlpha"),
         category: "Utility",
         tooltip: "Premultiplies the input texture's color against its alpha",
     },
-    // TODO: add serialized blocks to the list too
 ];

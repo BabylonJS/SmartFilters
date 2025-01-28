@@ -4,27 +4,12 @@ import {
     type DeserializeBlockV1,
     type ISerializedBlockV1,
     type BaseBlock,
-    type SerializedBlockDefinition,
     CustomShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { WebCamInputBlock, WebCamInputBlockName } from "./blocks/inputs/webCamInputBlock";
 
-export async function inputBlockDeserializer(
-    smartFilter: SmartFilter,
-    serializedBlock: ISerializedBlockV1,
-    engine: ThinEngine
-): Promise<Nullable<BaseBlock>> {
-    if (serializedBlock.name === WebCamInputBlockName) {
-        return new WebCamInputBlock(smartFilter, engine);
-    }
-    return null;
-}
-
-// TODO: simplify this file - maybe just have one map?
-// TODO: generate .JSON using the build tool
 /**
  * Creates instances of blocks upon request
  * @param smartFilter - The SmartFilter the block will belong to
@@ -44,46 +29,11 @@ export async function blockFactory(
         newBlock = await deserializer(smartFilter, serializedBlock, engine);
     }
 
-    // If not, see if it's in our list of custom shader blocks (defined by JSON)
-    if (!newBlock) {
-        const blockDefinition = await getSerializedBlockDefinition(serializedBlock.blockType);
-        if (blockDefinition) {
-            newBlock = CustomShaderBlock.Create(smartFilter, serializedBlock.name, blockDefinition);
-        }
-    }
-
     return newBlock;
 }
 
-const serializedBlockDefinitionCache = new Map<string, SerializedBlockDefinition>();
-async function getSerializedBlockDefinition(blockType: string): Promise<Nullable<SerializedBlockDefinition>> {
-    let blockDefinition = serializedBlockDefinitionCache.get(blockType);
-
-    // If not cached, see if it's in our list of known serialized blocks
-    if (!blockDefinition) {
-        let blockDefinitionJson: any;
-
-        switch (blockType) {
-            case "TintBlock":
-                {
-                    blockDefinitionJson = await import(
-                        /* webpackChunkName: "tintBlock" */ `./blocks/effects/tintBlock.json`
-                    );
-                }
-                break;
-            default: {
-                return null;
-            }
-        }
-        blockDefinition = JSON.parse(blockDefinitionJson.default) as SerializedBlockDefinition;
-        serializedBlockDefinitionCache.set(blockType, blockDefinition);
-    }
-
-    return blockDefinition;
-}
-
 /**
- * Generates the Map of block deserializers used when loaded serialized Smart Filters.
+ * The Map of block deserializers used when loaded serialized Smart Filters.
  *
  * Important notes:
  *   1. Do not import the block code directly in this file. Instead, use dynamic imports to ensure that the block code
@@ -94,22 +44,28 @@ async function getSerializedBlockDefinition(blockType: string): Promise<Nullable
  */
 const deserializers = new Map<string, DeserializeBlockV1>();
 
+// Deserializing a block defined by a serialized definition
+// --------------------------------------------------------
+deserializers.set(BlockNames.tint, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+    const { deserializedTintBlockDefinition } = await import(
+        /* webpackChunkName: "tintBlock" */ "./blocks/effects/tintBlock"
+    );
+    return CustomShaderBlock.Create(smartFilter, serializedBlock.name, deserializedTintBlockDefinition);
+});
+
+// Trivial deserializers of hardcoded blocks
+// -----------------------------------------
 deserializers.set(BlockNames.pixelate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { PixelateBlock } = await import(/* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock");
     return new PixelateBlock(smartFilter, serializedBlock.name);
 });
 
-// deserializers.set(
-//     BlockNames.blackAndWhite,
-//     async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-//         const serializedBlockDefinition = getSerializedBlockDefinition(serializedBlock
-//         const blockDefinitionJson = await import(
-//             /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock.fragment.glsl"
-//         );
-//         const serializedBlockDefinition = JSON.parse(blockDefinitionJson.default) as SerializedBlockDefinition;
-//         return new CustomShaderBlock(smartFilter, serializedBlock.name, serializedBlockDefinition);
-//     }
-// );
+deserializers.set(BlockNames.blackAndWhite, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+    const { BlackAndWhiteBlock } = await import(
+        /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock"
+    );
+    return new BlackAndWhiteBlock(smartFilter, serializedBlock.name);
+});
 
 deserializers.set(BlockNames.exposure, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { ExposureBlock } = await import(/* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock");
@@ -252,7 +208,8 @@ deserializers.set(
     }
 );
 
-// Non-trivial deserializers begin.
+// Custom deserializers for hardcoded blocks that require additional data
+// ----------------------------------------------------------------------
 
 deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { blurBlockDeserializer } = await import(
