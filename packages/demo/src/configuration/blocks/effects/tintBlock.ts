@@ -1,4 +1,4 @@
-import type { SerializedBlockDefinition } from "@babylonjs/smart-filters";
+import { ConnectionPointType, type SerializedBlockDefinition } from "@babylonjs/smart-filters";
 
 /**
  * This is included to show how a serialized block definition can be loaded and used.
@@ -29,6 +29,21 @@ export const deserializedTintBlockDefinition: SerializedBlockDefinition = {
             ],
         },
     },
-    inputConnectionPoints: [],
+    inputConnectionPoints: [
+        {
+            name: "input",
+            type: ConnectionPointType.Texture,
+        },
+        {
+            name: "tint",
+            type: ConnectionPointType.Color3,
+            defaultValue: { r: 1, g: 0, b: 0 },
+        },
+        {
+            name: "amount",
+            type: ConnectionPointType.Float,
+            defaultValue: 0.25,
+        },
+    ],
     disableOptimization: false,
 };

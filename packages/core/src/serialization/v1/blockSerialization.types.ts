@@ -4,8 +4,7 @@
  * ----------------------------------------------------------------------------
  */
 
-import type { IColor3Like, IColor4Like, IVector2Like } from "@babylonjs/core/Maths/math.like";
-import type { ConnectionPointType } from "../../connection/connectionPointType";
+import type { ConnectionPointType, ConnectionPointValue } from "../../connection/connectionPointType";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 import type { SerializedBlockDefinitionBase } from "../serializedBlockDefinition";
 
@@ -40,7 +39,7 @@ export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
      * The input connection points of the block.
      */
     // TODO: see if this can be exactly the same as the input list the base block tracks
-    inputConnectionPoints: SerializedInputConnectionPointV1[];
+    inputConnectionPoints: AnySerializedInputConnectionPointV1[];
 
     /**
      * If true, this optimizer will not attempt to optimize this block.
@@ -49,9 +48,20 @@ export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
 };
 
 /**
- * A V1 serialized input connection point on a serialized block.
+ * A V1 serialized input connection point of any supported type on a serialized block.
  */
-type SerializedInputConnectionPointV1Base = {
+export type AnySerializedInputConnectionPointV1 =
+    | SerializedInputConnectionPointV1<ConnectionPointType.Boolean>
+    | SerializedInputConnectionPointV1<ConnectionPointType.Color3>
+    | SerializedInputConnectionPointV1<ConnectionPointType.Color4>
+    | SerializedInputConnectionPointV1<ConnectionPointType.Float>
+    | SerializedInputConnectionPointV1<ConnectionPointType.Texture>
+    | SerializedInputConnectionPointV1<ConnectionPointType.Vector2>;
+
+/**
+ * A V1 type-specific input connection point on a serialized block, used to ensure type and defaultValue are compatible.
+ */
+export type SerializedInputConnectionPointV1<U extends ConnectionPointType> = {
     /**
      * The name of the connection point.
      */
@@ -60,107 +70,10 @@ type SerializedInputConnectionPointV1Base = {
     /**
      * The type of the connection point.
      */
-    type:
-        | ConnectionPointType.Float
-        | ConnectionPointType.Texture
-        | ConnectionPointType.Color3
-        | ConnectionPointType.Color4
-        | ConnectionPointType.Boolean
-        | ConnectionPointType.Vector2;
-};
-
-/**
- * A V1 serialized input connection point on a serialized block.
- */
-export type SerializedInputConnectionPointV1 =
-    | FloatSerializedInputConnectionPointV1
-    | TextureSerializedInputConnectionPointV1
-    | Color3SerializedInputConnectionPointV1
-    | Color4SerializedInputConnectionPointV1
-    | BooleanSerializedInputConnectionPointV1
-    | Vector2SerializedInputConnectionPointV1;
-
-/**
- * The V1 serialized input connection point of type float.
- */
-type FloatSerializedInputConnectionPointV1 = SerializedInputConnectionPointV1Base & {
-    /**
-     * The type of the connection point.
-     */
-    type: ConnectionPointType.Float;
+    type: U;
 
     /**
      * The optional default value of the connection point.
      */
-    defaultValue?: number;
-};
-
-/**
- * The V1 serialized input connection point of type texture.
- */
-type TextureSerializedInputConnectionPointV1 = SerializedInputConnectionPointV1Base & {
-    /**
-     * The type of the connection point.
-     */
-    type: ConnectionPointType.Texture;
-};
-
-/**
- * The V1 serialized input connection point of type Color3.
- */
-type Color3SerializedInputConnectionPointV1 = SerializedInputConnectionPointV1Base & {
-    /**
-     * The type of the connection point.
-     */
-    type: ConnectionPointType.Color3;
-
-    /**
-     * The optional default value of the connection point.
-     */
-    defaultValue?: IColor3Like;
-};
-
-/**
- * The V1 serialized input connection point of type Color4.
- */
-type Color4SerializedInputConnectionPointV1 = SerializedInputConnectionPointV1Base & {
-    /**
-     * The type of the connection point.
-     */
-    type: ConnectionPointType.Color4;
-
-    /**
-     * The optional default value of the connection point.
-     */
-    defaultValue?: IColor4Like;
-};
-
-/**
- * The V1 serialized input connection point of type Boolean.
- */
-type BooleanSerializedInputConnectionPointV1 = SerializedInputConnectionPointV1Base & {
-    /**
-     * The type of the connection point.
-     */
-    type: ConnectionPointType.Boolean;
-
-    /**
-     * The optional default value of the connection point.
-     */
-    defaultValue?: boolean;
-};
-
-/**
- * The V1 serialized input connection point of type Vector2.
- */
-type Vector2SerializedInputConnectionPointV1 = SerializedInputConnectionPointV1Base & {
-    /**
-     * The type of the connection point.
-     */
-    type: ConnectionPointType.Vector2;
-
-    /**
-     * The optional default value of the connection point.
-     */
-    defaultValue?: IVector2Like;
+    defaultValue?: ConnectionPointValue<U>;
 };

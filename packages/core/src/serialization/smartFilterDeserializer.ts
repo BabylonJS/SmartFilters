@@ -121,6 +121,7 @@ export class SmartFilterDeserializer {
             if (!targetBlock) {
                 throw new Error(`Target block ${connection.inputBlock} not found`);
             }
+            // TODO: remove assumption that connection points are always also properties of the block
             const targetConnectionPoint = (targetBlock as any)[connection.inputConnectionPoint];
             if (!targetConnectionPoint || typeof targetConnectionPoint !== "object") {
                 throw new Error(
