@@ -3,7 +3,6 @@ import type { BaseBlock } from "../../blocks/baseBlock.js";
 import type { SmartFilter } from "../../smartFilter.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo.js";
-import type { BlockTypeV1 } from "./blockSerialization.types.js";
 import type { SerializedSmartFilterBase } from "../serializedSmartFilter.js";
 
 /**
@@ -45,8 +44,8 @@ export interface ISerializedBlockV1 {
     /** The unique ID of the block - correlates with the ID in the editorData for block position, etc. */
     uniqueId: number;
 
-    /** The type of the block */
-    blockType: BlockTypeV1;
+    /** The blockType of the block - used to determine how to instantiate the block during deserialization */
+    blockType: string;
 
     /** The comments for the block */
     comments: Nullable<string>;
@@ -88,7 +87,7 @@ export type SerializeBlockV1 = (block: BaseBlock) => ISerializedBlockV1;
  */
 export interface IBlockSerializerV1 {
     /** The blockType of the block that this serializer can serialize */
-    blockType: BlockTypeV1;
+    blockType: string;
 
     /** The function that serializes the block in the Smart Filter */
     serialize: SerializeBlockV1;

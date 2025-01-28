@@ -9,14 +9,6 @@ import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 import type { SerializedBlockDefinitionBase } from "../serializedBlockDefinition";
 
 /**
- * The unique type for the block.
- * The application doing the deserialization will use this to instantiate the correct block type.
- * Block types are expected to be unique and their behavior should be semantically equivalent across versions
- * (their results must be similar enough that the differences are not perceivable).
- */
-export type BlockTypeV1 = string;
-
-/**
  * The V1 definition of a serialized block.
  */
 export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
@@ -26,9 +18,12 @@ export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
     version: 1;
 
     /**
-     * The type of the block used to refer to it in serialized SmartFilters and in the editor UI.
+     * The type used to refer to the block in serialized SmartFilters and in the editor UI.
+     * The application doing the deserialization will use this to instantiate the correct block definition.
+     * Block types are expected to be unique and their behavior should be semantically equivalent across implementations
+     * (their results must be similar enough that the differences are not perceivable).
      */
-    blockType: BlockTypeV1;
+    blockType: string;
 
     /**
      * The shader program for the block.
@@ -41,7 +36,7 @@ export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
     inputConnectionPoints: AnySerializedInputConnectionPointV1[];
 
     /**
-     * If true, this optimizer will not attempt to optimize this block.
+     * If true, the optimizer will not attempt to optimize this block.
      */
     disableOptimization: boolean;
 };
