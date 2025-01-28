@@ -15,7 +15,7 @@ import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
 import type { Nullable } from "@babylonjs/core/types";
 
 /**
- * A block factory function that creates a block of the given class name, or return null if it cannot.
+ * A function that creates a block instance of the given class block type, or return null if it cannot.
  */
 export type BlockFactory = (
     smartFilter: SmartFilter,
