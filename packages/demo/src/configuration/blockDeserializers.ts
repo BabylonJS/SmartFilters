@@ -48,7 +48,7 @@ export async function blockFactory(
     if (!newBlock) {
         const blockDefinition = await getSerializedBlockDefinition(serializedBlock.className);
         if (blockDefinition) {
-            newBlock = new CustomShaderBlock(smartFilter, serializedBlock.name, blockDefinition);
+            newBlock = CustomShaderBlock.Create(smartFilter, serializedBlock.name, blockDefinition);
         }
     }
 

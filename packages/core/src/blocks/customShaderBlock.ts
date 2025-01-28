@@ -8,21 +8,47 @@ import { ShaderBlock } from "./shaderBlock.js";
  * A block which loads a SerializedBlockDefinition for use in a SmartFilter.
  */
 export class CustomShaderBlock extends ShaderBlock {
-    // private readonly _shaderProgram: ShaderProgram;
+    /**
+     * Deserializes a CustomShaderBlock from a serialized block definition.
+     * @param smartFilter - The smart filter this block belongs to
+     * @param name - Defines the name of the block
+     * @param blockDefinition - The serialized block definition
+     * @returns The deserialized CustomShaderBlock instance
+     */
+    public static Create(
+        smartFilter: SmartFilter,
+        name: string,
+        blockDefinition: SerializedBlockDefinition
+    ): CustomShaderBlock {
+        return new CustomShaderBlock(smartFilter, name, blockDefinition.className, blockDefinition.disableOptimization);
+    }
+
+    private readonly _blockType: string;
 
     /**
      * The class name of the block.
      */
-    public static override ClassName = "ShaderBlock";
+    public static override ClassName = "CustomShaderBlock";
 
+    /**
+     * Gets the class name of the block.
+     * @returns The class name of the block
+     */
+    public override getClassName(): string {
+        // For deserialized custom blocks, the block type comes from the serialized block definition,
+        // and isn't this same as our className
+        return this._blockType;
+    }
     /**
      * Instantiates a new deserialized shader block.
      * @param smartFilter - The smart filter this block belongs to
      * @param name - Defines the name of the block
-     * @param blockDefinition - The block definition to use
+     * @param blockType - The type of the block
+     * @param disableOptimization - If true, this optimizer will not attempt to optimize this block
      */
-    constructor(smartFilter: SmartFilter, name: string, blockDefinition: SerializedBlockDefinition) {
-        super(smartFilter, name, blockDefinition.disableOptimization);
+    private constructor(smartFilter: SmartFilter, name: string, blockType: string, disableOptimization: boolean) {
+        super(smartFilter, name, disableOptimization);
+        this._blockType = blockType;
         // this._shaderProgram = serializedBlock.shaderProgram;
 
         // Register input connection points
