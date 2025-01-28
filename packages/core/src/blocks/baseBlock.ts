@@ -47,7 +47,9 @@ export abstract class BaseBlock implements ICommandOwner {
     /**
      * The type of the block - used when serializing / deserializing the block, and in the editor.
      */
-    public readonly blockType: string;
+    public get blockType(): string {
+        return this._blockTypeOverride || this.getClassName();
+    }
 
     /**
      * User provided comments about the block. It can be used to document the block.
@@ -56,26 +58,25 @@ export abstract class BaseBlock implements ICommandOwner {
 
     private readonly _inputs: ConnectionPoint[] = [];
     private readonly _outputs: ConnectionPoint[] = [];
+    private readonly _blockTypeOverride: Nullable<string>;
 
     /**
      * Instantiates a new block.
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
-     * @param blockTypeOverride - If not null, overrides the block type with the given value, otherwise it will equal the className
      * @param disableOptimization - Defines if the block is optimizable or not
+     * @param blockTypeOverride - If not null, overrides the block type with the given value, otherwise it will equal the className
      */
     constructor(
         smartFilter: SmartFilter,
         name: string,
-        blockTypeOverride: Nullable<string> = null,
-        public readonly disableOptimization = false
+        public readonly disableOptimization = false,
+        blockTypeOverride: Nullable<string> = null
     ) {
         this.uniqueId = UniqueIdGenerator.UniqueId;
         this.name = name;
         this.smartFilter = smartFilter;
-
-        // Blocks defined in code have class names equal to the blockType, by convention
-        this.blockType = blockTypeOverride || this.getClassName();
+        this._blockTypeOverride = blockTypeOverride;
 
         // Register the block in the smart filter
         smartFilter.registerBlock(this);

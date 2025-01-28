@@ -90,16 +90,16 @@ export abstract class ShaderBlock extends BaseBlock {
      * Instantiates a new block.
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
-     * @param blockTypeOverride - If not null, overrides the block type with the given value, otherwise it will equal the className
      * @param disableOptimization - Defines if the block should not be optimized (default: false)
+     * @param blockTypeOverride - If not null, overrides the block type with the given value, otherwise it will equal the className
      */
     constructor(
         smartFilter: SmartFilter,
         name: string,
-        blockTypeOverride: Nullable<string> = null,
-        disableOptimization = false
+        disableOptimization = false,
+        blockTypeOverride: Nullable<string> = null
     ) {
-        super(smartFilter, name, blockTypeOverride, disableOptimization);
+        super(smartFilter, name, disableOptimization, blockTypeOverride);
     }
 
     /**

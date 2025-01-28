@@ -20,7 +20,9 @@ export class CustomShaderBlock extends ShaderBlock {
         name: string,
         blockDefinition: SerializedBlockDefinition
     ): CustomShaderBlock {
-        return new CustomShaderBlock(smartFilter, name, blockDefinition.blockType, blockDefinition.disableOptimization);
+        // When a new version of SerializedBlockDefinition is created, this function should be updated to handle the new properties.
+
+        return new CustomShaderBlock(smartFilter, name, blockDefinition.disableOptimization, blockDefinition.blockType);
     }
 
     /**
@@ -32,11 +34,11 @@ export class CustomShaderBlock extends ShaderBlock {
      * Instantiates a new deserialized shader block.
      * @param smartFilter - The smart filter this block belongs to
      * @param name - Defines the name of the block
-     * @param blockType - The type of the block
      * @param disableOptimization - If true, this optimizer will not attempt to optimize this block
+     * @param blockType - The type of the block
      */
-    private constructor(smartFilter: SmartFilter, name: string, blockType: string, disableOptimization: boolean) {
-        super(smartFilter, name, blockType, disableOptimization);
+    private constructor(smartFilter: SmartFilter, name: string, disableOptimization: boolean, blockType: string) {
+        super(smartFilter, name, disableOptimization, blockType);
         // this._shaderProgram = serializedBlock.shaderProgram;
 
         // Register input connection points
