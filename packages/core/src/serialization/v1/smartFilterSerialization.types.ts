@@ -3,7 +3,6 @@ import type { BaseBlock } from "../../blocks/baseBlock.js";
 import type { SmartFilter } from "../../smartFilter.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo.js";
-import type { SerializedSmartFilterBase } from "../serializedSmartFilter.js";
 
 /**
  * ----------------------------------------------------------------------------
@@ -14,7 +13,7 @@ import type { SerializedSmartFilterBase } from "../serializedSmartFilter.js";
 /**
  * V1 Serialized Smart Filter
  */
-export type SerializedSmartFilterV1 = SerializedSmartFilterBase & {
+export type SerializedSmartFilterV1 = {
     /** The format version of the serialized data (not the version of the SmartFilter itself).*/
     version: 1;
 

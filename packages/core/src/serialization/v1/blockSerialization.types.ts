@@ -6,12 +6,11 @@
 
 import type { ConnectionPointType, ConnectionPointValue } from "../../connection/connectionPointType";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils";
-import type { SerializedBlockDefinitionBase } from "../serializedBlockDefinition";
 
 /**
  * The V1 definition of a serialized block.
  */
-export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
+export type SerializedBlockDefinitionV1 = {
     /**
      * The format version of the serialized data (not the version of the block definition itself).
      */
