@@ -9,18 +9,16 @@ import type { ConnectionPointType } from "../../connection/connectionPointType";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 import type { SerializedBlockDefinitionBase } from "../serializedBlockDefinition";
 
-// TODO: rename - className is by convention the real class name - maybe blockType, blockDefinition, or blockClass?
-
 /**
  * The unique name of the class of block.
  * The application doing the deserialization will use this to instantiate the correct block type.
  * Class names are expected to be unique and their behavior should be semantically equivalent across versions
  * (their results must be similar enough that the differences are not perceivable).
  */
-export type BlockClassNameV1 = string;
+export type BlockTypeV1 = string;
 
 /**
- * The V1 format of a serialized block definition.
+ * The V1 format of a serialized block type.
  */
 export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
     /**
@@ -29,10 +27,9 @@ export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
     version: 1;
 
     /**
-     * The class name of the block used to refer to it in serialized SmartFilters and in the editor UI.
+     * The type of the block used to refer to it in serialized SmartFilters and in the editor UI.
      */
-    // TODO: rename - className is by convention the real class name
-    className: BlockClassNameV1;
+    blockType: BlockTypeV1;
 
     /**
      * The shader program for the block.

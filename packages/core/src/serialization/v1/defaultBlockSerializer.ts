@@ -11,8 +11,7 @@ export const defaultBlockSerializer: SerializeBlockV1 = (block: BaseBlock): ISer
     return {
         name: block.name,
         uniqueId: block.uniqueId,
-        // TODO: Rename?
-        className: block.getClassName(),
+        blockType: block.blockType,
         comments: block.comments,
         data: undefined,
     };

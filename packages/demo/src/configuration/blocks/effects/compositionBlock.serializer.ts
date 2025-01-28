@@ -6,7 +6,7 @@ import { BlockNames } from "../blockNames";
  * The V1 serializer for a Composition Block
  */
 export const compositionBlockSerializer: IBlockSerializerV1 = {
-    className: BlockNames.composition,
+    blockType: BlockNames.composition,
     serialize: (block: BaseBlock) => {
         if (block.getClassName() !== BlockNames.composition) {
             throw new Error("Was asked to serialize an unrecognized block type");
@@ -16,7 +16,7 @@ export const compositionBlockSerializer: IBlockSerializerV1 = {
         return {
             name: block.name,
             uniqueId: block.uniqueId,
-            className: BlockNames.composition,
+            blockType: BlockNames.composition,
             comments: block.comments,
             data: {
                 alphaMode: compositionBlock.alphaMode,

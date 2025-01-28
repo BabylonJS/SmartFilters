@@ -139,14 +139,20 @@ export class SmartFilterDeserializer {
         smartFilter: SmartFilter,
         serializedBlock: ISerializedBlockV1,
         engine: ThinEngine,
-        blockDefinitionsWhichCouldNotBeDeserialized: string[],
+        blockTypesWhichCouldNotBeDeserialized: string[],
         blockIdMap: Map<number, BaseBlock>,
         blockNameMap: Map<string, BaseBlock>
     ): Promise<void> {
         let newBlock: Nullable<BaseBlock> = null;
 
+        // Back compat for early Smart Filter V1 serialization where the blockType was stored in className
+        // Not worth creating a new version for this, as it's only used in the deserializer
+        if ((serializedBlock as any).className && !serializedBlock.blockType) {
+            serializedBlock.blockType = (serializedBlock as any).className;
+        }
+
         // Get the instance of the block
-        switch (serializedBlock.className) {
+        switch (serializedBlock.blockType) {
             case InputBlock.ClassName:
                 {
                     if (this._customInputBlockDeserializer) {
@@ -166,7 +172,7 @@ export class SmartFilterDeserializer {
                 // If it's not an input or output block, use the provided block factory
                 newBlock = await this._blockFactory(smartFilter, engine, serializedBlock);
                 if (!newBlock) {
-                    blockDefinitionsWhichCouldNotBeDeserialized.push(serializedBlock.className);
+                    blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
                     return;
                 }
             }

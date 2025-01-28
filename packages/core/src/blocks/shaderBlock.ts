@@ -11,6 +11,7 @@ import { createCommand } from "../command/command.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
 import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import { BaseBlock } from "./baseBlock.js";
+import type { Nullable } from "@babylonjs/core/types";
 
 /**
  * This is the base class for all shader blocks.
@@ -89,10 +90,16 @@ export abstract class ShaderBlock extends BaseBlock {
      * Instantiates a new block.
      * @param smartFilter - Defines the smart filter the block belongs to
      * @param name - Defines the name of the block
+     * @param blockTypeOverride - If not null, overrides the block type with the given value, otherwise it will equal the className
      * @param disableOptimization - Defines if the block should not be optimized (default: false)
      */
-    constructor(smartFilter: SmartFilter, name: string, disableOptimization = false) {
-        super(smartFilter, name, disableOptimization);
+    constructor(
+        smartFilter: SmartFilter,
+        name: string,
+        blockTypeOverride: Nullable<string> = null,
+        disableOptimization = false
+    ) {
+        super(smartFilter, name, blockTypeOverride, disableOptimization);
     }
 
     /**

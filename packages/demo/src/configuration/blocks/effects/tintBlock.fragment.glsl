@@ -1,4 +1,4 @@
-// blockClassName: TintBlock
+// blockType: TintBlock
 // disableOptimization: false
 // blockDefinitionVersion: 1
 

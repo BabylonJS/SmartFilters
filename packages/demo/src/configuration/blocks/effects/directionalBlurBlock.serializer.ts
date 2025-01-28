@@ -6,7 +6,7 @@ import { BlockNames } from "../blockNames";
  * The V1 serializer for a Directional Blur Block
  */
 export const directionalBlurBlockSerializer: IBlockSerializerV1 = {
-    className: BlockNames.directionalBlur,
+    blockType: BlockNames.directionalBlur,
     serialize: (block: BaseBlock) => {
         if (block.getClassName() !== BlockNames.directionalBlur) {
             throw new Error("Was asked to serialize an unrecognized block type");
@@ -16,7 +16,7 @@ export const directionalBlurBlockSerializer: IBlockSerializerV1 = {
         return {
             name: block.name,
             uniqueId: block.uniqueId,
-            className: BlockNames.directionalBlur,
+            blockType: BlockNames.directionalBlur,
             comments: block.comments,
             data: {
                 blurTextureRatio: directionalBlurBlock.blurTextureRatio,

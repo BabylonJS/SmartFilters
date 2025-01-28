@@ -39,14 +39,14 @@ export async function blockFactory(
     let newBlock: Nullable<BaseBlock> = null;
 
     // See if it's our list of hardcoded blocks
-    const deserializer = deserializers.get(serializedBlock.className);
+    const deserializer = deserializers.get(serializedBlock.blockType);
     if (deserializer) {
         newBlock = await deserializer(smartFilter, serializedBlock, engine);
     }
 
     // If not, see if it's in our list of custom shader blocks (defined by JSON)
     if (!newBlock) {
-        const blockDefinition = await getSerializedBlockDefinition(serializedBlock.className);
+        const blockDefinition = await getSerializedBlockDefinition(serializedBlock.blockType);
         if (blockDefinition) {
             newBlock = CustomShaderBlock.Create(smartFilter, serializedBlock.name, blockDefinition);
         }
@@ -56,14 +56,14 @@ export async function blockFactory(
 }
 
 const serializedBlockDefinitionCache = new Map<string, SerializedBlockDefinition>();
-async function getSerializedBlockDefinition(blockClassName: string): Promise<Nullable<SerializedBlockDefinition>> {
-    let blockDefinition = serializedBlockDefinitionCache.get(blockClassName);
+async function getSerializedBlockDefinition(blockType: string): Promise<Nullable<SerializedBlockDefinition>> {
+    let blockDefinition = serializedBlockDefinitionCache.get(blockType);
 
     // If not cached, see if it's in our list of known serialized blocks
     if (!blockDefinition) {
         let blockDefinitionJson: any;
 
-        switch (blockClassName) {
+        switch (blockType) {
             case "TintBlock":
                 {
                     blockDefinitionJson = await import(
@@ -76,7 +76,7 @@ async function getSerializedBlockDefinition(blockClassName: string): Promise<Nul
             }
         }
         blockDefinition = JSON.parse(blockDefinitionJson.default) as SerializedBlockDefinition;
-        serializedBlockDefinitionCache.set(blockClassName, blockDefinition);
+        serializedBlockDefinitionCache.set(blockType, blockDefinition);
     }
 
     return blockDefinition;

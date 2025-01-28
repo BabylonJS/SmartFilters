@@ -78,7 +78,7 @@ export class OptimizedShaderBlock extends ShaderBlock {
      * @param name - The name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, true);
+        super(smartFilter, name, null, true);
 
         this._shaderBindings = null;
         this._shaderProgram = undefined as any;

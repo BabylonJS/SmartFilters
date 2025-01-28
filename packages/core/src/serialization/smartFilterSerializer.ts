@@ -37,17 +37,17 @@ export class SmartFilterSerializer {
 
     /**
      * Creates a new SmartFilterSerializer
-     * @param blocksUsingDefaultSerialization - A list of the classNames of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
+     * @param blocksUsingDefaultSerialization - A list of the blockType of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
      * @param additionalBlockSerializers - An array of block serializers to use, beyond those for the core blocks
      */
     public constructor(blocksUsingDefaultSerialization: string[], additionalBlockSerializers: IBlockSerializerV1[]) {
-        this._blockSerializers.set(inputBlockSerializer.className, inputBlockSerializer.serialize);
+        this._blockSerializers.set(inputBlockSerializer.blockType, inputBlockSerializer.serialize);
         this._blockSerializers.set(OutputBlock.ClassName, defaultBlockSerializer);
         blocksUsingDefaultSerialization.forEach((block) => {
             this._blockSerializers.set(block, defaultBlockSerializer);
         });
         additionalBlockSerializers.forEach((serializer) =>
-            this._blockSerializers.set(serializer.className, serializer.serialize)
+            this._blockSerializers.set(serializer.blockType, serializer.serialize)
         );
     }
 

@@ -81,7 +81,7 @@ export abstract class DisableableShaderBlock extends ShaderBlock implements IDis
         disableOptimization = false,
         disableStrategy = BlockDisableStrategy.AutoSample
     ) {
-        super(smartFilter, name, disableOptimization);
+        super(smartFilter, name, null, disableOptimization);
         this.blockDisableStrategy = disableStrategy;
 
         // If we haven't already modified the shader code for this block type, do so now
