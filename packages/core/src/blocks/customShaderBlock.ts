@@ -8,7 +8,7 @@ import type {
     SerializedInputConnectionPointV1,
 } from "../serialization/v1/blockSerialization.types";
 import type { SmartFilter } from "../smartFilter";
-// import type { ShaderProgram } from "../utils/shaderCodeUtils";
+import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { ShaderBlock } from "./shaderBlock.js";
 import type { RuntimeData } from "../connection/connectionPoint";
 
@@ -82,7 +82,8 @@ export class CustomShaderBlock extends ShaderBlock {
             name,
             blockDefinition.disableOptimization,
             blockDefinition.blockType,
-            blockDefinition.inputConnectionPoints
+            blockDefinition.inputConnectionPoints,
+            blockDefinition.shaderProgram
         );
     }
 
@@ -91,20 +92,24 @@ export class CustomShaderBlock extends ShaderBlock {
      */
     public static override ClassName = "CustomShaderBlock";
 
+    private readonly _shaderProgram: ShaderProgram;
+
     /**
      * Instantiates a new deserialized shader block.
      * @param smartFilter - The smart filter this block belongs to
      * @param name - Defines the name of the block
      * @param disableOptimization - If true, this optimizer will not attempt to optimize this block
      * @param blockType - The type of the block
-     * @param inputConnectionPoints - The input connection points of the block
+     * @param inputConnectionPoints - The input connection points of the
+     * @param shaderProgram - The shader program for the block
      */
     private constructor(
         smartFilter: SmartFilter,
         name: string,
         disableOptimization: boolean,
         blockType: string,
-        inputConnectionPoints: AnySerializedInputConnectionPointV1[]
+        inputConnectionPoints: AnySerializedInputConnectionPointV1[],
+        shaderProgram: ShaderProgram
     ) {
         super(smartFilter, name, disableOptimization, blockType);
 
@@ -112,11 +117,15 @@ export class CustomShaderBlock extends ShaderBlock {
             this._registerSerializedInputConnectionPointV1(input);
         }
 
-        // this._shaderProgram = serializedBlock.shaderProgram;
+        this._shaderProgram = shaderProgram;
+    }
 
-        // Register input connection points
-
-        // TODO: is there any need to create class properties for each input connection point?
+    /**
+     * Gets the shader program to use to render the block.
+     * @returns The shader program to use to render the block
+     */
+    public override getShaderProgram() {
+        return this._shaderProgram;
     }
 
     /**
