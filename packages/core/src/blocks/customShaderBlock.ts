@@ -26,56 +26,36 @@ class CustomShaderBlockBinding extends ShaderBinding {
         super();
 
         for (const input of inputsWithRuntimeData) {
-            const name = input.name;
-
             switch (input.type) {
                 case ConnectionPointType.Float:
-                    {
-                        const runTimeData = input.runtimeData;
-                        this._bindSteps.push((effect) => {
-                            effect.setFloat(this.getRemappedName(name), runTimeData.value);
-                        });
-                    }
+                    this._bindSteps.push((effect) => {
+                        effect.setFloat(this.getRemappedName(input.name), input.runtimeData.value);
+                    });
                     break;
                 case ConnectionPointType.Texture:
-                    {
-                        const runTimeData = input.runtimeData;
-                        this._bindSteps.push((effect) => {
-                            effect.setTexture(this.getRemappedName(name), runTimeData.value);
-                        });
-                    }
+                    this._bindSteps.push((effect) => {
+                        effect.setTexture(this.getRemappedName(input.name), input.runtimeData.value);
+                    });
                     break;
                 case ConnectionPointType.Color3:
-                    {
-                        const runTimeData = input.runtimeData;
-                        this._bindSteps.push((effect) => {
-                            effect.setColor3(this.getRemappedName(name), runTimeData.value);
-                        });
-                    }
+                    this._bindSteps.push((effect) => {
+                        effect.setColor3(this.getRemappedName(input.name), input.runtimeData.value);
+                    });
                     break;
                 case ConnectionPointType.Color4:
-                    {
-                        const runTimeData = input.runtimeData;
-                        this._bindSteps.push((effect) => {
-                            effect.setDirectColor4(this.getRemappedName(name), runTimeData.value);
-                        });
-                    }
+                    this._bindSteps.push((effect) => {
+                        effect.setDirectColor4(this.getRemappedName(input.name), input.runtimeData.value);
+                    });
                     break;
                 case ConnectionPointType.Boolean:
-                    {
-                        const runTimeData = input.runtimeData;
-                        this._bindSteps.push((effect) => {
-                            effect.setBool(this.getRemappedName(name), runTimeData.value);
-                        });
-                    }
+                    this._bindSteps.push((effect) => {
+                        effect.setBool(this.getRemappedName(input.name), input.runtimeData.value);
+                    });
                     break;
                 case ConnectionPointType.Vector2:
-                    {
-                        const runTimeData = input.runtimeData;
-                        this._bindSteps.push((effect) => {
-                            effect.setVector2(this.getRemappedName(name), runTimeData.value);
-                        });
-                    }
+                    this._bindSteps.push((effect) => {
+                        effect.setVector2(this.getRemappedName(input.name), input.runtimeData.value);
+                    });
                     break;
             }
         }
