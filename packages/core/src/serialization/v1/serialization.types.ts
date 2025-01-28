@@ -3,6 +3,10 @@ import type { BaseBlock } from "../../blocks/baseBlock.js";
 import type { SmartFilter } from "../../smartFilter.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo.js";
+import type { BlockClassNameV1 } from "./blockSerialization.types.js";
+import type { SerializedSmartFilterBase } from "../serializedSmartFilter.js";
+
+// TODO: rename file to smartFilterSerialization.types.ts
 
 /**
  * ----------------------------------------------------------------------------
@@ -13,7 +17,7 @@ import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSyste
 /**
  * V1 Serialized Smart Filter
  */
-export type SerializedSmartFilterV1 = {
+export type SerializedSmartFilterV1 = SerializedSmartFilterBase & {
     /** The version of the serialized data */
     version: 1;
 
@@ -34,7 +38,7 @@ export type SerializedSmartFilterV1 = {
 };
 
 /**
- * V1 Serialized Block
+ * V1 Serialized Block In A Smart Filter
  */
 export interface ISerializedBlockV1 {
     /** The name of the block */
@@ -43,8 +47,10 @@ export interface ISerializedBlockV1 {
     /** The unique ID of the block - correlates with the ID in the editorData for block position, etc. */
     uniqueId: number;
 
+    // TODO: rename - className is by convention the real class name - maybe blockType, blockDefinitionName, or blockClass?
+
     /** The class name of the block */
-    className: string;
+    className: BlockClassNameV1;
 
     /** The comments for the block */
     comments: Nullable<string>;
@@ -82,13 +88,13 @@ export interface ISerializedConnectionV1 {
 export type SerializeBlockV1 = (block: BaseBlock) => ISerializedBlockV1;
 
 /**
- * A V1 block serializer
+ * A V1 serializer for blocks in a SmartFilter
  */
 export interface IBlockSerializerV1 {
     /** The className of the block that this serializer can serialize */
-    className: string;
+    className: BlockClassNameV1;
 
-    /** The function that serializes the block */
+    /** The function that serializes the block in the Smart Filter */
     serialize: SerializeBlockV1;
 }
 
@@ -98,8 +104,9 @@ export interface IBlockSerializerV1 {
  * ----------------------------------------------------------------------------
  */
 
+// TODO: type still needed?
 /**
- * A function that deserializes a block from a V1 serialized block object
+ * A function that deserializes a V1 block in a SmartFilter
  */
 export type DeserializeBlockV1 = (
     smartFilter: SmartFilter,

@@ -1,3 +1,7 @@
+// blockClassName: TintBlock
+// disableOptimization: false
+// blockDefinitionVersion: 1
+
 uniform sampler2D input; // main
 uniform vec3 tint;
 uniform float amount;

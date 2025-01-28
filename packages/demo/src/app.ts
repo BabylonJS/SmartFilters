@@ -7,7 +7,7 @@ import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
-import { getBlockDeserializers, inputBlockDeserializer } from "./configuration/blockDeserializers";
+import { blockFactory, inputBlockDeserializer } from "./configuration/blockDeserializers";
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
 import type { SmartFilter } from "@babylonjs/smart-filters";
@@ -53,7 +53,7 @@ const smartFilterLoader = new SmartFilterLoader(
     engine,
     renderer,
     smartFilterManifests,
-    getBlockDeserializers(),
+    blockFactory,
     inputBlockDeserializer,
     textureRenderHelper
 );

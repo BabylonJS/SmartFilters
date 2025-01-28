@@ -7,6 +7,6 @@
         "composite": true
     },
 
-    "include": ["../**/*.ts", "../**/*.tsx"],
+    "include": ["../**/*.ts", "../**/*.tsx", "src/serialization/serializedBlocks"],
     "exclude": ["**/node_modules", "**/dist"]
 }

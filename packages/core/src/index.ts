@@ -20,7 +20,7 @@ export { BaseBlock } from "./blocks/baseBlock.js";
 export { InputBlock, type InputBlockEditorData } from "./blocks/inputBlock.js";
 export { type AnyInputBlock } from "./blocks/inputBlock.js";
 export { ShaderBlock } from "./blocks/shaderBlock.js";
-export { SerializedShaderBlock } from "./blocks/serializedShaderBlock.js";
+export { CustomShaderBlock } from "./blocks/customShaderBlock.js";
 export { DisableableShaderBlock, BlockDisableStrategy as DisableStrategy } from "./blocks/disableableShaderBlock.js";
 export { AggregateBlock } from "./blocks/aggregateBlock.js";
 export { DisableableShaderBinding, ShaderBinding, ShaderRuntime } from "./runtime/shaderRuntime.js";

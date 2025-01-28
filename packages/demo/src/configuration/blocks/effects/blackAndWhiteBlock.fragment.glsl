@@ -1,4 +1,3 @@
-// SmartFilterBlockVersion: 1
 uniform sampler2D input; // main
 
 vec4 blackAndWhite(vec2 vUV) { // main

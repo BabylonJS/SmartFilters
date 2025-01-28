@@ -12,7 +12,8 @@
         "../**/*.ts",
         "../**/*.tsx",
         "./src/configuration/smartFilters/serialized/*.json",
-        "./src/configuration/blocks/**/*.glsl"
+        "./src/configuration/blocks/**/*.glsl",
+        "./src/configuration/blocks/**/*.json"
     ],
     "exclude": ["**/node_modules", "**/.temp"]
 }
