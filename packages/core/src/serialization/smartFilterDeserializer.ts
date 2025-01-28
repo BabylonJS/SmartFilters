@@ -105,7 +105,9 @@ export class SmartFilterDeserializer {
             if (!sourceBlock) {
                 throw new Error(`Source block ${connection.outputBlock} not found`);
             }
-            const sourceConnectionPoint = (sourceBlock as any)[connection.outputConnectionPoint];
+            const sourceConnectionPoint = sourceBlock.outputs.find(
+                (output) => output.name === connection.outputConnectionPoint
+            );
             if (!sourceConnectionPoint || typeof sourceConnectionPoint.connectTo !== "function") {
                 throw new Error(
                     `Block ${connection.outputBlock} does not have an connection point named ${connection.outputConnectionPoint}`
@@ -121,8 +123,10 @@ export class SmartFilterDeserializer {
             if (!targetBlock) {
                 throw new Error(`Target block ${connection.inputBlock} not found`);
             }
-            // TODO: remove assumption that connection points are always also properties of the block
-            const targetConnectionPoint = (targetBlock as any)[connection.inputConnectionPoint];
+
+            const targetConnectionPoint = targetBlock.inputs.find(
+                (input) => input.name === connection.inputConnectionPoint
+            );
             if (!targetConnectionPoint || typeof targetConnectionPoint !== "object") {
                 throw new Error(
                     `Block ${connection.inputBlock} does not have a connection point named ${connection.inputConnectionPoint}`
