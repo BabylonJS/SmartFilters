@@ -38,7 +38,6 @@ export type SerializedBlockDefinitionV1 = SerializedBlockDefinitionBase & {
     /**
      * The input connection points of the block.
      */
-    // TODO: see if this can be exactly the same as the input list the base block tracks
     inputConnectionPoints: AnySerializedInputConnectionPointV1[];
 
     /**

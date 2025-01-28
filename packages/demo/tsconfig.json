@@ -8,12 +8,6 @@
         "resolveJsonModule": true
     },
 
-    "include": [
-        "../**/*.ts",
-        "../**/*.tsx",
-        "./src/configuration/smartFilters/serialized/*.json",
-        "./src/configuration/blocks/**/*.glsl",
-        "./src/configuration/blocks/**/*.json"
-    ],
+    "include": ["../**/*.ts", "../**/*.tsx", "./src/configuration/smartFilters/serialized/*.json"],
     "exclude": ["**/node_modules", "**/.temp"]
 }
