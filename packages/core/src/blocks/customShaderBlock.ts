@@ -93,6 +93,14 @@ export class CustomShaderBlock extends ShaderBlock {
     public static override ClassName = "CustomShaderBlock";
 
     private readonly _shaderProgram: ShaderProgram;
+    private readonly _blockType: string;
+
+    /**
+     * The type of the block - used when serializing / deserializing the block, and in the editor.
+     */
+    public override get blockType(): string {
+        return this._blockType;
+    }
 
     /**
      * Instantiates a new deserialized shader block.
@@ -111,7 +119,8 @@ export class CustomShaderBlock extends ShaderBlock {
         inputConnectionPoints: AnySerializedInputConnectionPointV1[],
         shaderProgram: ShaderProgram
     ) {
-        super(smartFilter, name, disableOptimization, blockType);
+        super(smartFilter, name, disableOptimization);
+        this._blockType = blockType;
 
         for (const input of inputConnectionPoints) {
             this._registerSerializedInputConnectionPointV1(input);
