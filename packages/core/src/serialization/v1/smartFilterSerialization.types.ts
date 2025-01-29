@@ -98,7 +98,6 @@ export interface IBlockSerializerV1 {
  * ----------------------------------------------------------------------------
  */
 
-// TODO: type still needed?
 /**
  * A function that deserializes a V1 block in a SmartFilter
  */
