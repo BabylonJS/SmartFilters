@@ -1,4 +1,11 @@
-import { type BaseBlock, logCommands, type SmartFilter, SmartFilterSerializer } from "@babylonjs/smart-filters";
+import {
+    type BaseBlock,
+    CustomShaderBlock,
+    logCommands,
+    type SerializedBlockDefinition,
+    type SmartFilter,
+    SmartFilterSerializer,
+} from "@babylonjs/smart-filters";
 import { blockEditorRegistrations } from "../configuration/editor/blockEditorRegistrations";
 import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
@@ -12,6 +19,7 @@ import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 import type { SmartFilterLoader } from "../smartFilterLoader";
 import { getSnippet, setSnippet } from "./hashFunctions";
+import type { CustomShaderBlockManager } from "../customShaderBlockManager";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -26,11 +34,20 @@ export function launchEditor(
     renderer: SmartFilterRenderer,
     smartFilterLoader: SmartFilterLoader,
     errorHandler: (message: string) => void,
-    closeError: () => void
+    closeError: () => void,
+    customShaderBlockManager: CustomShaderBlockManager
 ) {
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
     const allBlockNames: { [key: string]: string[] } = {};
+    allBlockNames["Custom_Blocks"] = customShaderBlockManager.getCustomBlockTypeNames();
+    for (const customBlockType of allBlockNames["Custom_Blocks"]) {
+        const blockDefinition = customShaderBlockManager.getBlockDefinition(customBlockType);
+        if (blockDefinition) {
+            blockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+        }
+    }
+
     blockEditorRegistrations.forEach((registration: IBlockEditorRegistration) => {
         blockTooltips[registration.name] = registration.tooltip;
         if (typeof allBlockNames[registration.category] === "object") {
@@ -129,10 +146,27 @@ export function launchEditor(
             },
             texturePresets,
             beforeRenderObservable: renderer.beforeRenderObservable,
+            addCustomShaderBlock: (serializedData: string) => {
+                const blockDefinition: SerializedBlockDefinition = JSON.parse(serializedData);
+                customShaderBlockManager.saveBlockDefinition(blockDefinition);
+                allBlockNames["Custom_Blocks"] = customShaderBlockManager.getCustomBlockTypeNames();
+                blockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+            },
         });
     }
     if (renderer.runtime) {
         // Display debug info in the console
         logCommands(renderer.runtime.commandBuffer);
     }
+}
+
+function createBlockEditorRegistration(blockDefinition: SerializedBlockDefinition): IBlockEditorRegistration {
+    return {
+        name: blockDefinition.blockType,
+        category: "Custom_Blocks",
+        factory: (smartFilter: SmartFilter) => {
+            return CustomShaderBlock.Create(smartFilter, blockDefinition.blockType, blockDefinition);
+        },
+        tooltip: blockDefinition.blockType,
+    };
 }

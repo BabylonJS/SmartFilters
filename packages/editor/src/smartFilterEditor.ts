@@ -121,6 +121,12 @@ export type SmartFilterEditorOptions = {
      * Called when the editor determines that the assets (images or videos) need to be reloaded
      */
     reloadAssets: (smartFilter: SmartFilter) => void;
+
+    /**
+     * If supplied, the editor will call this function when the user tries to add a custom shader block
+     * @param serializedData - The serialized data of the custom shader block
+     */
+    addCustomShaderBlock?: (serializedData: string) => void;
 };
 
 /**
@@ -163,7 +169,8 @@ export class SmartFilterEditor {
             options.rebuildRuntime,
             options.reloadAssets,
             options.saveToSnippetServer,
-            options.texturePresets
+            options.texturePresets,
+            options.addCustomShaderBlock
         );
 
         RegisterToDisplayManagers(globalState);

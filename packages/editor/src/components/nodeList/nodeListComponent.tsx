@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as react from "react";
 import type { GlobalState } from "../../globalState";
-
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
-
 import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
-
 import "../../assets/styles/components/nodeList.scss";
-
 import type { Nullable } from "@babylonjs/core/types";
 import type { Observer } from "@babylonjs/core/Misc/observable";
+import { DraggableLineWithButtonComponent } from "../../sharedComponents/draggableLineWithButtonComponent.js";
+import deleteButton from "../../assets/imgs/delete.svg";
+import addButton from "../../assets/imgs/add.svg";
+import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
+import { Tools } from "@babylonjs/core/Misc/tools.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -37,6 +38,24 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         this.setState({ filter: filter });
     }
 
+    loadCustomBlock(file: File) {
+        Tools.ReadFile(
+            file,
+            async (data) => {
+                if (!this.props.globalState.addCustomShaderBlock) {
+                    return;
+                }
+
+                const decoder = new TextDecoder("utf-8");
+                this.props.globalState.addCustomShaderBlock(decoder.decode(data));
+
+                this.forceUpdate();
+            },
+            undefined,
+            true
+        );
+    }
+
     override render() {
         // Create node menu
         const blockMenu = [];
@@ -48,6 +67,21 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                 )
                 .sort((a: string, b: string) => a.localeCompare(b))
                 .map((block: string) => {
+                    if (key === "Custom_Blocks") {
+                        return (
+                            <DraggableLineWithButtonComponent
+                                key={block}
+                                data={block}
+                                tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
+                                iconImage={deleteButton}
+                                iconTitle="Delete"
+                                onIconClick={(value) => {
+                                    console.log("TODO: delete custom block", value);
+                                }}
+                                lenSuffixToRemove={11}
+                            />
+                        );
+                    }
                     return (
                         <DraggableLineComponent
                             key={block}
@@ -56,6 +90,22 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         />
                     );
                 });
+
+            if (key === "Custom_Blocks") {
+                const line = (
+                    <LineWithFileButtonComponent
+                        key="add..."
+                        title={"Add Custom Block"}
+                        closed={false}
+                        label="Add..."
+                        uploadName={"custom-block-upload"}
+                        iconImage={addButton}
+                        accept=".json"
+                        onIconClick={(file) => this.loadCustomBlock(file)}
+                    />
+                );
+                blockList.push(line);
+            }
 
             if (blockList.length) {
                 blockMenu.push(

@@ -63,6 +63,8 @@ export class GlobalState {
 
     reloadAssets: (smartFilter: SmartFilter) => void;
 
+    addCustomShaderBlock?: (serializedData: string) => void;
+
     public constructor(
         engine: ThinEngine,
         smartFilter: Nullable<SmartFilter>,
@@ -74,7 +76,8 @@ export class GlobalState {
         rebuildRuntime: (smartFilter: SmartFilter) => void,
         reloadAssets: (smartFilter: SmartFilter) => void,
         saveToSnippetServer?: () => void,
-        texturePresets: TexturePreset[] = []
+        texturePresets: TexturePreset[] = [],
+        addCustomShaderBlock?: (serializedData: string) => void
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
@@ -98,5 +101,6 @@ export class GlobalState {
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
         this.reloadAssets = reloadAssets;
+        this.addCustomShaderBlock = addCustomShaderBlock;
     }
 }
