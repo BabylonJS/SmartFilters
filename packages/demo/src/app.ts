@@ -145,14 +145,14 @@ async function loadFromHash() {
         if (snippetToken) {
             // Reset hash with our formatting to keep it looking consistent
             setSnippet(snippetToken, version, false);
-            smartFilterLoader.loadFromSnippet(snippetToken, version);
+            await smartFilterLoader.loadFromSnippet(snippetToken, version);
         } else {
             const smartFilterName =
                 localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-            smartFilterLoader.loadFromManifest(smartFilterName);
+            await smartFilterLoader.loadFromManifest(smartFilterName);
         }
     } catch (e) {
-        smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName);
+        showError(`Could not load SmartFilter: ${e}`);
     }
 }
 

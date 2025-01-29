@@ -148,18 +148,8 @@ export class SmartFilterLoader {
     ): Promise<SmartFilter> {
         this._renderer.beforeRenderObservable.clear();
 
-        // Load the SmartFilter using the provided function. If that fails, retry with the default SmartFilter.
-        let smartFilter: SmartFilter;
-        try {
-            smartFilter = await loader();
-        } catch (e) {
-            console.warn("Failed to load requested SmartFilter.", e);
-            const defaultSmartFilterName = this.defaultSmartFilterName;
-            if (!defaultSmartFilterName) {
-                throw new Error("Cannot fallback to default SmartFilter - no SmartFilter manifests were registered");
-            }
-            return this.loadFromManifest(defaultSmartFilterName);
-        }
+        // Load the SmartFilter using the provided function.
+        const smartFilter = await loader();
 
         // If the SmartFilter has a texture render helper, assign its input texture as the Smart Filter's output
         if (this._textureRenderHelper) {
