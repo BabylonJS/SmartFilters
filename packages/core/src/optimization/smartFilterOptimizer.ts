@@ -18,6 +18,7 @@ import {
 } from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
 import { DisableableShaderBlock, BlockDisableStrategy } from "../blocks/disableableShaderBlock.js";
+import { textureOptionsMatch, type OutputTextureOptions } from "../blocks/textureOptions.js";
 
 const showDebugData = false;
 
@@ -104,7 +105,7 @@ export class SmartFilterOptimizer {
     private _mainFunctionNameToCode: Map<string, string> = new Map();
     private _dependencyGraph: DependencyGraph<string> = new DependencyGraph<string>();
     private _vertexShaderCode: string | undefined;
-    private _textureRatio: number | undefined;
+    private _currentOutputTextureOptions: OutputTextureOptions | undefined;
     private _forceUnoptimized: boolean = false;
 
     /**
@@ -224,7 +225,7 @@ export class SmartFilterOptimizer {
         this._mainFunctionNameToCode = new Map();
         this._dependencyGraph = new DependencyGraph();
         this._vertexShaderCode = undefined;
-        this._textureRatio = undefined;
+        this._currentOutputTextureOptions = undefined;
         this._forceUnoptimized = false;
     }
 
@@ -424,7 +425,7 @@ export class SmartFilterOptimizer {
                 return false;
             }
 
-            if (block.textureRatio !== this._textureRatio) {
+            if (!textureOptionsMatch(block.outputTextureOptions, this._currentOutputTextureOptions)) {
                 return false;
             }
         }
@@ -442,8 +443,8 @@ export class SmartFilterOptimizer {
         const block = outputConnectionPoint.ownerBlock;
 
         if (block instanceof ShaderBlock) {
-            if (this._textureRatio === undefined) {
-                this._textureRatio = block.textureRatio;
+            if (this._currentOutputTextureOptions === undefined) {
+                this._currentOutputTextureOptions = block.outputTextureOptions;
             }
 
             const shaderProgram = block.getShaderProgram();
@@ -712,8 +713,8 @@ export class SmartFilterOptimizer {
             },
         });
 
-        if (this._textureRatio !== undefined) {
-            optimizedBlock.textureRatio = this._textureRatio;
+        if (this._currentOutputTextureOptions !== undefined) {
+            optimizedBlock.outputTextureOptions = this._currentOutputTextureOptions;
         }
 
         optimizedBlock.setShaderBindings(Array.from(blockOwnerToShaderBinding.values()));
