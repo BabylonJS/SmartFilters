@@ -57,6 +57,7 @@ export class CustomShaderBlockManager {
         if (index > -1) {
             blockTypeList.splice(index, 1);
             this._blockDefinitions.delete(blockType);
+            localStorage.setItem(CustomShaderBlockKey, JSON.stringify(blockTypeList));
             localStorage.removeItem(blockType + CustomShaderBlockDefinitionKeySuffix);
         }
     }

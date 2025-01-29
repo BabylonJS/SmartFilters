@@ -56,6 +56,16 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         );
     }
 
+    deleteCustomBlock(blockType: string) {
+        if (!this.props.globalState.deleteCustomShaderBlock) {
+            return;
+        }
+
+        this.props.globalState.deleteCustomShaderBlock(blockType);
+
+        this.forceUpdate();
+    }
+
     override render() {
         // Create node menu
         const blockMenu = [];
@@ -75,8 +85,8 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                                 tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
-                                onIconClick={(value) => {
-                                    console.log("TODO: delete custom block", value);
+                                onIconClick={() => {
+                                    this.deleteCustomBlock(block);
                                 }}
                                 lenSuffixToRemove={11}
                             />

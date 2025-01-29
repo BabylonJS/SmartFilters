@@ -48,8 +48,8 @@ export function launchEditor(
     // Register custom shader blocks
     const customShaderBlockTypeNames = customShaderBlockManager.getCustomShaderBlockTypeNames();
     const customShaderBlockEditorRegistrations: IBlockEditorRegistration[] = [];
+    allBlockNames["Custom_Blocks"] = []; // This will be populated like the other categories below
     if (customShaderBlockTypeNames.length > 0) {
-        allBlockNames["Custom_Blocks"] = []; // This will be populated like the other categories below
         for (const customBlockType of customShaderBlockTypeNames) {
             const blockDefinition = customShaderBlockManager.getBlockDefinition(customBlockType);
             if (blockDefinition) {
@@ -162,8 +162,26 @@ export function launchEditor(
         addCustomShaderBlock: (serializedData: string) => {
             const blockDefinition: SerializedBlockDefinition = JSON.parse(serializedData);
             customShaderBlockManager.saveBlockDefinition(blockDefinition);
+            allBlockNames["Custom_Blocks"]?.push(blockDefinition.blockType);
+            blockTooltips[blockDefinition.blockType] = blockDefinition.blockType;
+            allBlockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+        },
+        deleteCustomShaderBlock: (blockType: string) => {
+            customShaderBlockManager.deleteBlockDefinition(blockType);
+            const customBlockTypeNameList = allBlockNames["Custom_Blocks"];
+            if (customBlockTypeNameList) {
+                const index = customBlockTypeNameList.indexOf(blockType);
+                if (index !== -1) {
+                    customBlockTypeNameList.splice(index, 1);
+                }
+            }
+            const index = allBlockEditorRegistrations.findIndex((r) => r.name === blockType);
+            if (index !== -1) {
+                allBlockEditorRegistrations.splice(index, 1);
+            }
+
             // allBlockNames["Custom_Blocks"] = customShaderBlockManager.getCustomBlockTypeNames();
-            // blockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+            // blockEditorRegistrations = blockEditorRegistrations.filter((r) => r.name !== blockType);
         },
     });
 

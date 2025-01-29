@@ -127,6 +127,12 @@ export type SmartFilterEditorOptions = {
      * @param serializedData - The serialized data of the custom shader block
      */
     addCustomShaderBlock?: (serializedData: string) => void;
+
+    /**
+     * If supplied, the editor will call this function when the user tries to delete a custom shader block
+     * @param blockType - The type of the custom shader block to delete
+     */
+    deleteCustomShaderBlock?: (blockType: string) => void;
 };
 
 /**
@@ -170,7 +176,8 @@ export class SmartFilterEditor {
             options.reloadAssets,
             options.saveToSnippetServer,
             options.texturePresets,
-            options.addCustomShaderBlock
+            options.addCustomShaderBlock,
+            options.deleteCustomShaderBlock
         );
 
         RegisterToDisplayManagers(globalState);
