@@ -33,7 +33,11 @@ import { NeonHeartBlock } from "../blocks/generators/neonHeartBlock";
 import { SpritesheetBlock } from "../blocks/effects/spritesheetBlock";
 import { deserializedTintBlockDefinition } from "../blocks/effects/tintBlock";
 
-export const blockEditorRegistrations: IBlockEditorRegistration[] = [
+/**
+ * Extends the default block editor registrations with registrations for the hardcoded blocks
+ * (those who are defined in code and included in this project)
+ */
+export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
     ...defaultBlockEditorRegistrations,
     {
         name: WebCamInputBlockName,

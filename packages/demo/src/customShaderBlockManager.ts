@@ -30,7 +30,7 @@ export class CustomShaderBlockManager {
         return CustomShaderBlock.Create(smartFilter, serializedBlock.name, blockDefinition);
     }
 
-    public getCustomBlockTypeNames(): string[] {
+    public getCustomShaderBlockTypeNames(): string[] {
         return Array.from(this._blockDefinitions.keys());
     }
 
