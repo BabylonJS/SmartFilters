@@ -1,6 +1,6 @@
 import { ConnectionPointType, type SmartFilter, type InputBlock } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
-import { WebCamInputBlock } from "../configuration/blocks/inputs/webCamInputBlock";
+import { WebCamInputBlock } from "../configuration/blocks/hardcoded/inputs/webCamInputBlock";
 
 /**
  * Registers animations for the Smart Filter.

@@ -7,9 +7,9 @@ import {
     createStrongRef,
 } from "@babylonjs/smart-filters";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
-import { BlackAndWhiteBlock } from "../../blocks/effects/blackAndWhiteBlock";
-import { PixelateBlock } from "../../blocks/effects/pixelateBlock";
-import { PremultiplyAlphaBlock } from "../../blocks/utility/premultiplyAlphaBlock";
+import { BlackAndWhiteBlock } from "../../blocks/hardcoded/effects/blackAndWhiteBlock";
+import { PixelateBlock } from "../../blocks/hardcoded/effects/pixelateBlock";
+import { PremultiplyAlphaBlock } from "../../blocks/hardcoded/utility/premultiplyAlphaBlock";
 
 export function createSimpleLogoSmartFilter(engine: ThinEngine): SmartFilter {
     const smartFilter = new SmartFilter(HardCodedSmartFilterNames.simpleLogo);

@@ -6,7 +6,7 @@ import {
     type BaseBlock,
     CustomShaderBlock,
 } from "@babylonjs/smart-filters";
-import { BlockNames } from "./blocks/blockNames";
+import { BlockNames } from "./blocks/hardcoded/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { CustomShaderBlockManager } from "../customShaderBlockManager";
@@ -55,7 +55,7 @@ const deserializers = new Map<string, DeserializeBlockV1>();
 // --------------------------------------------------------
 deserializers.set(BlockNames.tint, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { deserializedTintBlockDefinition } = await import(
-        /* webpackChunkName: "tintBlock" */ "./blocks/effects/tintBlock"
+        /* webpackChunkName: "tintBlock" */ "./blocks/hardcoded/effects/tintBlock"
     );
     return CustomShaderBlock.Create(smartFilter, serializedBlock.name, deserializedTintBlockDefinition);
 });
@@ -63,68 +63,76 @@ deserializers.set(BlockNames.tint, async (smartFilter: SmartFilter, serializedBl
 // Trivial deserializers of hardcoded blocks
 // -----------------------------------------
 deserializers.set(BlockNames.pixelate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { PixelateBlock } = await import(/* webpackChunkName: "pixelateBlock" */ "./blocks/effects/pixelateBlock");
+    const { PixelateBlock } = await import(
+        /* webpackChunkName: "pixelateBlock" */ "./blocks/hardcoded/effects/pixelateBlock"
+    );
     return new PixelateBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.blackAndWhite, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { BlackAndWhiteBlock } = await import(
-        /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/effects/blackAndWhiteBlock"
+        /* webpackChunkName: "blackAndWhiteBlock" */ "./blocks/hardcoded/effects/blackAndWhiteBlock"
     );
     return new BlackAndWhiteBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.exposure, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { ExposureBlock } = await import(/* webpackChunkName: "exposureBlock" */ "./blocks/effects/exposureBlock");
+    const { ExposureBlock } = await import(
+        /* webpackChunkName: "exposureBlock" */ "./blocks/hardcoded/effects/exposureBlock"
+    );
     return new ExposureBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.contrast, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { ContrastBlock } = await import(/* webpackChunkName: "contrastBlock" */ "./blocks/effects/contrastBlock");
+    const { ContrastBlock } = await import(
+        /* webpackChunkName: "contrastBlock" */ "./blocks/hardcoded/effects/contrastBlock"
+    );
     return new ContrastBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.desaturate, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { DesaturateBlock } = await import(
-        /* webpackChunkName: "desaturateBlock" */ "./blocks/effects/desaturateBlock"
+        /* webpackChunkName: "desaturateBlock" */ "./blocks/hardcoded/effects/desaturateBlock"
     );
     return new DesaturateBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.posterize, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { PosterizeBlock } = await import(/* webpackChunkName: "posterizeBlock" */ "./blocks/effects/posterizeBlock");
+    const { PosterizeBlock } = await import(
+        /* webpackChunkName: "posterizeBlock" */ "./blocks/hardcoded/effects/posterizeBlock"
+    );
     return new PosterizeBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.kaleidoscope, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { KaleidoscopeBlock } = await import(
-        /* webpackChunkName: "kaleidoscopeBlock" */ "./blocks/effects/kaleidoscopeBlock"
+        /* webpackChunkName: "kaleidoscopeBlock" */ "./blocks/hardcoded/effects/kaleidoscopeBlock"
     );
     return new KaleidoscopeBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.greenScreen, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { GreenScreenBlock } = await import(
-        /* webpackChunkName: "greenScreenBlock" */ "./blocks/effects/greenScreenBlock"
+        /* webpackChunkName: "greenScreenBlock" */ "./blocks/hardcoded/effects/greenScreenBlock"
     );
     return new GreenScreenBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.glass, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { GlassBlock } = await import(/* webpackChunkName: "glassBlock" */ "./blocks/effects/glassBlock");
+    const { GlassBlock } = await import(/* webpackChunkName: "glassBlock" */ "./blocks/hardcoded/effects/glassBlock");
     return new GlassBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.frame, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { FrameBlock } = await import(/* webpackChunkName: "frameBlock" */ "./blocks/effects/frameBlock");
+    const { FrameBlock } = await import(/* webpackChunkName: "frameBlock" */ "./blocks/hardcoded/effects/frameBlock");
     return new FrameBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(
     BlockNames.blackAndWhiteAndBlur,
     async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-        const { BlackAndWhiteAndBlurBlock } = await import(
-            /* webpackChunkName: "blackAndWhiteAndBlurBlock" */ "./blocks/effects/blackAndWhiteAndBlurBlock"
+        const { BlackAndWhiteAndBlurBlock } = await import(./blocks/hardcoded/transitions/glitchBlock
+            /* webpackChunkName: "blackAndWhiteAndBlurBlock" */ "./blocks/hardcoded/effects/blackAndWhiteAndBlurBlock"
         );
         return new BlackAndWhiteAndBlurBlock(smartFilter, serializedBlock.name);
     }
@@ -134,27 +142,27 @@ deserializers.set(BlockNames.glitch, async (smartFilter: SmartFilter, serialized
     const { GlitchBlock } = await import(/* webpackChunkName: "glitchBlock" */ "./blocks/transitions/glitchBlock");
     return new GlitchBlock(smartFilter, serializedBlock.name);
 });
-
+./blocks/hardcoded/generators/starryPlanesBlock
 deserializers.set(BlockNames.mask, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { MaskBlock } = await import(/* webpackChunkName: "maskBlock" */ "./blocks/effects/maskBlock");
+    const { MaskBlock } = await import(/* webpackChunkName: "maskBlock" */ "./blocks/hardcoded/effects/maskBlock");
     return new MaskBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(BlockNames.starryPlanes, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+deserializers.set(BlockNames.starryPlanes, async (smartFilter: SmartFilter, seri./blocks/hardcoded/generators/tunnelBlock) => {
     const { StarryPlanesBlock } = await import(
         /* webpackChunkName: "starryPlanesBlock" */ "./blocks/generators/starryPlanesBlock"
     );
     return new StarryPlanesBlock(smartFilter, serializedBlock.name);
 });
-
+./blocks/hardcoded/generators/fireworksBlock
 deserializers.set(BlockNames.tunnel, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { TunnelBlock } = await import(/* webpackChunkName: "tunnelBlock" */ "./blocks/generators/tunnelBlock");
     return new TunnelBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(BlockNames.fireworks, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+deserializers.set(BlockNames.fireworks, async (smartFilter: SmartFilter, seriali./blocks/hardcoded/generators/auroraBlock> {
     const { FireworksBlock } = await import(
-        /* webpackChunkName: "fireworksBlock" */ "./blocks/generators/fireworksBlock"
+        /* webpackChunkName: "fireworksBlock" */ "./blocks/hardcoded/generators/fireworksBlock"
     );
     return new FireworksBlock(smartFilter, serializedBlock.name);
 });
@@ -165,23 +173,27 @@ deserializers.set(BlockNames.aurora, async (smartFilter: SmartFilter, serialized
 });
 
 deserializers.set(BlockNames.vhsGlitch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { VhsGlitchBlock } = await import(/* webpackChunkName: "vhsGlitchBlock" */ "./blocks/effects/vhsGlitchBlock");
+    const { VhsGlitchBlock } = await import(
+        /* webpackChunkName: "vhsGlitchBlock" */ "./blocks/hardcoded/effects/vhsGlitchBlock"
+    );
     return new VhsGlitchBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.softThreshold, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { SoftThresholdBlock } = await import(
-        /* webpackChunkName: "softThresholdBlock" */ "./blocks/effects/softThresholdBlock"
-    );
+        /* webpackChunkName: "softThresholdBlock" */ "./blocks/hardcoded/effects/softThresholdBlock"
+    );./blocks/hardcoded/generators/particleBlock
     return new SoftThresholdBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.sketch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { SketchBlock } = await import(/* webpackChunkName: "sketchBlock" */ "./blocks/effects/sketchBlock");
+    const { SketchBlock } = await import(./blocks/hardcoded/generators/heartsBlock
+        /* webpackChunkName: "sketchBlock" */ "./blocks/hardcoded/effects/sketchBlock"
+    );
     return new SketchBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(BlockNames.particle, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
+deserializers.set(BlockNames.particle, async (smar./blocks/hardcoded/generators/neonHeartBlockock: ISerializedBlockV1) => {
     const { ParticleBlock } = await import(/* webpackChunkName: "particleBlock" */ "./blocks/generators/particleBlock");
     return new ParticleBlock(smartFilter, serializedBlock.name);
 });
@@ -197,10 +209,10 @@ deserializers.set(BlockNames.neonHeart, async (smartFilter: SmartFilter, seriali
     );
     return new NeonHeartBlock(smartFilter, serializedBlock.name);
 });
-
+./blocks/hardcoded/utility/premultiplyAlphaBlock
 deserializers.set(BlockNames.spritesheet, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { SpritesheetBlock } = await import(
-        /* webpackChunkName: "spritesheetBlock" */ "./blocks/effects/spritesheetBlock"
+        /* webpackChunkName: "spritesheetBlock" */ "./blocks/hardcoded/effects/spritesheetBlock"
     );
     return new SpritesheetBlock(smartFilter, serializedBlock.name);
 });
@@ -220,23 +232,23 @@ deserializers.set(
 
 deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { blurBlockDeserializer } = await import(
-        /* webpackChunkName: "blurBlockDeserializer" */ "./blocks/effects/blurBlock.deserializer"
+        /* webpackChunkName: "blurBlockDeserializer" */ "./blocks/hardcoded/effects/blurBlock.deserializer"
     );
     return blurBlockDeserializer(smartFilter, serializedBlock);
 });
 
 deserializers.set(BlockNames.directionalBlur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { directionalBlurDeserializer } = await import(
-        /* webpackChunkName: "directionalBlurBlockDeserializer" */ "./blocks/effects/directionalBlurBlock.deserializer"
+        /* webpackChunkName: "directionalBlurBlockDeserializer" */ "./blocks/hardcoded/effects/directionalBlurBlock.deserializer"
     );
-    return directionalBlurDeserializer(smartFilter, serializedBlock);
+    return directionalBlurDeserializer(smartFilter, seria./blocks/hardcoded/transitions/tileBlock.deserializer
 });
 
 deserializers.set(BlockNames.composition, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { compositionDeserializer } = await import(
-        /* webpackChunkName: "compositionBlockDeserializer" */ "./blocks/effects/compositionBlock.deserializer"
+        /* webpackChunkName: "compositionBlockDeserializer" */ "./blocks/hardcoded/effects/compositionBlock.deserializer"
     );
-    return compositionDeserializer(smartFilter, serializedBlock);
+    return compositionDeserializer(smartFilter, serialize./blocks/hardcoded/transitions/wipeBlock.deserializer
 });
 
 deserializers.set(BlockNames.tile, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {

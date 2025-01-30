@@ -1,7 +1,7 @@
 import type { Nullable } from "@babylonjs/core/types";
 import { type BaseBlock } from "@babylonjs/smart-filters";
 import { type GlobalState } from "@babylonjs/smart-filters-editor";
-import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
+import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/hardcoded/inputs/webCamInputBlock";
 
 /**
  * Intercepts the creation of an input block and can return specialized input blocks.

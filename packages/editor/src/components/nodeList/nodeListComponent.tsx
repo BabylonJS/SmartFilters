@@ -110,7 +110,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         label="Add..."
                         uploadName={"custom-block-upload"}
                         iconImage={addButton}
-                        accept=".json"
+                        accept=".json, .glsl"
                         onIconClick={(file) => this.loadCustomBlock(file)}
                     />
                 );

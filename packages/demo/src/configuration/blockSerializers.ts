@@ -1,10 +1,10 @@
 import type { IBlockSerializerV1 } from "@babylonjs/smart-filters";
-import { BlockNames } from "./blocks/blockNames";
-import { blurBlockSerializer } from "./blocks/effects/blurBlock.serializer";
-import { directionalBlurBlockSerializer } from "./blocks/effects/directionalBlurBlock.serializer";
-import { compositionBlockSerializer } from "./blocks/effects/compositionBlock.serializer";
-import { tileBlockSerializer } from "./blocks/transitions/tileBlock.serializer";
-import { wipeBlockSerializer } from "./blocks/transitions/wipeBlock.serializer";
+import { BlockNames } from "./blocks/hardcoded/blockNames";
+import { blurBlockSerializer } from "./blocks/hardcoded/effects/blurBlock.serializer";
+import { directionalBlurBlockSerializer } from "./blocks/hardcoded/effects/directionalBlurBlock.serializer";
+import { compositionBlockSerializer } from "./blocks/hardcoded/effects/compositionBlock.serializer";
+import { tileBlockSerializer } from "./blocks/hardcoded/transitions/tileBlock.serializer";
+import { wipeBlockSerializer } from "./blocks/hardcoded/transitions/wipeBlock.serializer";
 
 /**
  * Any blocks that do not need to make use of ISerializedBlockV1.data can use the default serialization and

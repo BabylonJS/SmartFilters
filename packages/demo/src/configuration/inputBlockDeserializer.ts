@@ -1,7 +1,7 @@
 import type { SmartFilter, ISerializedBlockV1, BaseBlock } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { WebCamInputBlock, WebCamInputBlockName } from "./blocks/inputs/webCamInputBlock";
+import { WebCamInputBlock, WebCamInputBlockName } from "./blocks/hardcoded/inputs/webCamInputBlock";
 
 export async function inputBlockDeserializer(
     smartFilter: SmartFilter,

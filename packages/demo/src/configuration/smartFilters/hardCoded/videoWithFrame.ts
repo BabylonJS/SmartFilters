@@ -1,9 +1,9 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { ConnectionPointType, InputBlock, SmartFilter, createImageTexture } from "@babylonjs/smart-filters";
-import { BlackAndWhiteBlock } from "../../blocks/effects/blackAndWhiteBlock";
+import { BlackAndWhiteBlock } from "../../blocks/hardcoded/effects/blackAndWhiteBlock";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
-import { BlurBlock } from "../../blocks/effects/blurBlock";
-import { FrameBlock } from "../../blocks/effects/frameBlock";
+import { BlurBlock } from "../../blocks/hardcoded/effects/blurBlock";
+import { FrameBlock } from "../../blocks/hardcoded/effects/frameBlock";
 import type { SmartFilterRenderer } from "../../../smartFilterRenderer";
 import { createVideoTextureAsync } from "../../../demoTextureLoaders";
 
