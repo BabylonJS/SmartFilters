@@ -51,6 +51,8 @@ export interface IEditablePropertyOption {
     options?: IEditablePropertyListOption[] | Observable<IEditablePropertyListOption[]>;
     /** whether the options' values should be treated as strings */
     valuesAreStrings?: boolean;
+    /** If supplied, the sub property to read/write */
+    subPropertyName?: string;
 }
 
 /**
@@ -67,6 +69,8 @@ export interface IPropertyDescriptionForEdition {
     groupName: string;
     /** options for the property */
     options: IEditablePropertyOption;
+    /** name of the class that contains the property */
+    className: string;
 }
 
 /**
@@ -96,6 +100,7 @@ export function editableInPropertyPage(
             type: propertyType,
             groupName: groupName,
             options: options ?? {},
+            className: target.constructor.name,
         });
     };
 }

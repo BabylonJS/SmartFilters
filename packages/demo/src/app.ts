@@ -74,8 +74,10 @@ if (textureRenderHelper) {
     });
 }
 
-function renderCurrentSmartFilter() {
-    SmartFilterEditor.Hide();
+function renderCurrentSmartFilter(hideEditor: boolean = true) {
+    if (hideEditor) {
+        SmartFilterEditor.Hide();
+    }
 
     const smartFilterState = currentSmartFilterState;
     if (!smartFilterState) {
@@ -87,6 +89,7 @@ function renderCurrentSmartFilter() {
     renderer
         .startRendering(smartFilterState.smartFilter, optimize, optimize)
         .then((smartFilterRendered: SmartFilter) => {
+            closeError();
             if (optimize) {
                 smartFilterState.optimizedSmartFilter = smartFilterRendered;
             }
@@ -200,7 +203,7 @@ optimizeCheckbox.checked = optimize;
 optimizeCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
     optimize = optimizeCheckbox.checked;
-    renderCurrentSmartFilter();
+    renderCurrentSmartFilter(false);
 };
 
 // Display the current version by loading the version.json file

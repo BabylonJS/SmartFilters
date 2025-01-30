@@ -3,10 +3,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBinding } from "../runtime/shaderRuntime.js";
 import { createStrongRef } from "../runtime/strongRef.js";
 import type { SerializedBlockDefinition } from "../serialization/serializedBlockDefinition";
-import type {
-    AnySerializedInputConnectionPointV1,
-    SerializedInputConnectionPointV1,
-} from "../serialization/v1/blockSerialization.types";
+import type { SerializedInputConnectionPointV1 } from "../serialization/v1/blockSerialization.types";
 import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { ShaderBlock } from "./shaderBlock.js";
@@ -129,7 +126,7 @@ export class CustomShaderBlock extends ShaderBlock {
         name: string,
         disableOptimization: boolean,
         blockType: string,
-        inputConnectionPoints: AnySerializedInputConnectionPointV1[],
+        inputConnectionPoints: SerializedInputConnectionPointV1[],
         shaderProgram: ShaderProgram
     ) {
         super(smartFilter, name, disableOptimization);
@@ -193,17 +190,17 @@ export class CustomShaderBlock extends ShaderBlock {
  */
 type InputWithRuntimeData<U extends ConnectionPointType> = {
     /**
-     * asdf
+     * The name of the input connection point
      */
     name: string;
 
     /**
-     * asdf
+     * The type of the input connection point
      */
     type: U;
 
     /**
-     * asdf
+     * The runtime data for the input connection point
      */
     runtimeData: RuntimeData<U>;
 };
