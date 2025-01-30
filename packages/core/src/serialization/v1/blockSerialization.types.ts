@@ -4,7 +4,7 @@
  * ----------------------------------------------------------------------------
  */
 
-import type { ConnectionPointType, ConnectionPointValue } from "../../connection/connectionPointType";
+import type { AllConnectionPointTypes, ConnectionPointValue } from "../../connection/connectionPointType";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 
 /**
@@ -34,7 +34,7 @@ export type SerializedBlockDefinitionV1 = {
     /**
      * The input connection points of the block.
      */
-    inputConnectionPoints: AnySerializedInputConnectionPointV1[];
+    inputConnectionPoints: SerializedInputConnectionPointV1[];
 
     /**
      * If true, the optimizer will not attempt to optimize this block.
@@ -43,20 +43,9 @@ export type SerializedBlockDefinitionV1 = {
 };
 
 /**
- * A V1 serialized input connection point of any supported type on a serialized block.
+ * A V1 input connection point of a serialized block definition.
  */
-export type AnySerializedInputConnectionPointV1 =
-    | SerializedInputConnectionPointV1<ConnectionPointType.Boolean>
-    | SerializedInputConnectionPointV1<ConnectionPointType.Color3>
-    | SerializedInputConnectionPointV1<ConnectionPointType.Color4>
-    | SerializedInputConnectionPointV1<ConnectionPointType.Float>
-    | SerializedInputConnectionPointV1<ConnectionPointType.Texture>
-    | SerializedInputConnectionPointV1<ConnectionPointType.Vector2>;
-
-/**
- * A V1 type-specific input connection point on a serialized block, used to ensure type and defaultValue are compatible.
- */
-export type SerializedInputConnectionPointV1<U extends ConnectionPointType> = {
+export type SerializedInputConnectionPointV1<U extends AllConnectionPointTypes = AllConnectionPointTypes> = {
     /**
      * The name of the connection point.
      */
