@@ -2,8 +2,8 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import {
     type SmartFilter,
     SmartFilterDeserializer,
-    type DeserializeBlockV1,
     type OptionalBlockDeserializerV1,
+    type BlockFactory,
 } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import type { TextureRenderHelper } from "./textureRenderHelper";
@@ -57,7 +57,7 @@ export class SmartFilterLoader {
         engine: ThinEngine,
         renderer: SmartFilterRenderer,
         manifests: SmartFilterManifest[],
-        blockDeserializers: Map<string, DeserializeBlockV1>,
+        blockFactory: BlockFactory,
         inputBlockDeserializer: OptionalBlockDeserializerV1,
         textureRenderHelper: Nullable<TextureRenderHelper>
     ) {
@@ -71,7 +71,7 @@ export class SmartFilterLoader {
                 "No SmartFilterManifests were passed to the SmartFilterLoader - add some manifests to smartFilterManifests.ts"
             );
         }
-        this._deserializer = new SmartFilterDeserializer(blockDeserializers, inputBlockDeserializer);
+        this._deserializer = new SmartFilterDeserializer(blockFactory, inputBlockDeserializer);
     }
 
     /**

@@ -6,13 +6,22 @@ import { OutputBlock } from "../blocks/outputBlock.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { InputBlock } from "../blocks/inputBlock.js";
 import type {
-    DeserializeBlockV1,
     ISerializedBlockV1,
     ISerializedConnectionV1,
     OptionalBlockDeserializerV1,
     SerializedSmartFilterV1,
-} from "./v1/serialization.types";
+} from "./v1/smartFilterSerialization.types";
 import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
+import type { Nullable } from "@babylonjs/core/types";
+
+/**
+ * A function that creates a block instance of the given class block type, or return null if it cannot.
+ */
+export type BlockFactory = (
+    smartFilter: SmartFilter,
+    engine: ThinEngine,
+    serializedBlock: ISerializedBlockV1
+) => Promise<Nullable<BaseBlock>>;
 
 /**
  * Deserializes serialized SmartFilters. The caller passes in a map of block deserializers it wants to use,
@@ -20,39 +29,17 @@ import { UniqueIdGenerator } from "../utils/uniqueIdGenerator.js";
  * The deserializer supports versioned serialized SmartFilters.
  */
 export class SmartFilterDeserializer {
-    private readonly _blockDeserializersV1: Map<string, DeserializeBlockV1> = new Map();
+    private readonly _blockFactory: BlockFactory;
+    private readonly _customInputBlockDeserializer?: OptionalBlockDeserializerV1;
 
     /**
      * Creates a new SmartFilterDeserializer
-     * @param blockDeserializers - The map of block serializers to use, beyond those for the core blocks
+     * @param blockFactory - A function that creates a block of the given class name, or returns null if it cannot
      * @param customInputBlockDeserializer - An optional custom deserializer for InputBlocks - if supplied and it returns null, the default deserializer will be used
      */
-    public constructor(
-        blockDeserializers: Map<string, DeserializeBlockV1>,
-        customInputBlockDeserializer?: OptionalBlockDeserializerV1
-    ) {
-        this._blockDeserializersV1 = blockDeserializers;
-
-        this._blockDeserializersV1.set(
-            InputBlock.ClassName,
-            async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1, engine: ThinEngine) => {
-                if (customInputBlockDeserializer) {
-                    const customDeserializerResult = await customInputBlockDeserializer(
-                        smartFilter,
-                        serializedBlock,
-                        engine
-                    );
-                    if (customDeserializerResult !== null) {
-                        return customDeserializerResult;
-                    }
-                }
-                return inputBlockDeserializer(smartFilter, serializedBlock);
-            }
-        );
-
-        this._blockDeserializersV1.set(OutputBlock.ClassName, (smartFilter: SmartFilter) =>
-            Promise.resolve(smartFilter.output.ownerBlock)
-        );
+    public constructor(blockFactory: BlockFactory, customInputBlockDeserializer?: OptionalBlockDeserializerV1) {
+        this._blockFactory = blockFactory;
+        this._customInputBlockDeserializer = customInputBlockDeserializer;
     }
 
     /**
@@ -85,30 +72,27 @@ export class SmartFilterDeserializer {
 
         // Deserialize the blocks
         const blockDeserializationWork: Promise<void>[] = [];
+        const blockDefinitionsWhichCouldNotBeDeserialized: string[] = [];
         serializedSmartFilter.blocks.forEach((serializedBlock: ISerializedBlockV1) => {
-            const blockDeserializer = this._blockDeserializersV1.get(serializedBlock.className);
-            if (!blockDeserializer) {
-                throw new Error(`No deserializer found for block type ${serializedBlock.className}`);
-            }
             blockDeserializationWork.push(
-                blockDeserializer(smartFilter, serializedBlock, engine).then((newBlock) => {
-                    // Deserializers are not responsible for setting the uniqueId or comments.
-                    // This is so they don't have to be passed into the constructors when programmatically creating
-                    // blocks, and so each deserializer doesn't have to remember to do it.
-                    newBlock.uniqueId = serializedBlock.uniqueId;
-                    newBlock.comments = serializedBlock.comments;
-
-                    // We need to ensure any uniqueIds generated in the future (e.g. a new block is added to the SmartFilter)
-                    // are higher than this one.
-                    UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
-
-                    // Save in the map
-                    blockIdMap.set(newBlock.uniqueId, newBlock);
-                    blockNameMap.set(newBlock.name, newBlock);
-                })
+                this._deserializeBlockV1(
+                    smartFilter,
+                    serializedBlock,
+                    engine,
+                    blockDefinitionsWhichCouldNotBeDeserialized,
+                    blockIdMap,
+                    blockNameMap
+                )
             );
         });
         await Promise.all(blockDeserializationWork);
+
+        // If any block definitions could not be deserialized, throw an error
+        if (blockDefinitionsWhichCouldNotBeDeserialized.length > 0) {
+            throw new Error(
+                `Could not deserialize the following block definitions: ${blockDefinitionsWhichCouldNotBeDeserialized.join(", ")}`
+            );
+        }
 
         // Deserialize the connections
         serializedSmartFilter.connections.forEach((connection: ISerializedConnectionV1) => {
@@ -121,7 +105,9 @@ export class SmartFilterDeserializer {
             if (!sourceBlock) {
                 throw new Error(`Source block ${connection.outputBlock} not found`);
             }
-            const sourceConnectionPoint = (sourceBlock as any)[connection.outputConnectionPoint];
+            const sourceConnectionPoint = sourceBlock.outputs.find(
+                (output) => output.name === connection.outputConnectionPoint
+            );
             if (!sourceConnectionPoint || typeof sourceConnectionPoint.connectTo !== "function") {
                 throw new Error(
                     `Block ${connection.outputBlock} does not have an connection point named ${connection.outputConnectionPoint}`
@@ -137,7 +123,10 @@ export class SmartFilterDeserializer {
             if (!targetBlock) {
                 throw new Error(`Target block ${connection.inputBlock} not found`);
             }
-            const targetConnectionPoint = (targetBlock as any)[connection.inputConnectionPoint];
+
+            const targetConnectionPoint = targetBlock.inputs.find(
+                (input) => input.name === connection.inputConnectionPoint
+            );
             if (!targetConnectionPoint || typeof targetConnectionPoint !== "object") {
                 throw new Error(
                     `Block ${connection.inputBlock} does not have a connection point named ${connection.inputConnectionPoint}`
@@ -149,5 +138,63 @@ export class SmartFilterDeserializer {
         });
 
         return smartFilter;
+    }
+
+    private async _deserializeBlockV1(
+        smartFilter: SmartFilter,
+        serializedBlock: ISerializedBlockV1,
+        engine: ThinEngine,
+        blockTypesWhichCouldNotBeDeserialized: string[],
+        blockIdMap: Map<number, BaseBlock>,
+        blockNameMap: Map<string, BaseBlock>
+    ): Promise<void> {
+        let newBlock: Nullable<BaseBlock> = null;
+
+        // Back compat for early Smart Filter V1 serialization where the blockType was stored in className
+        // Not worth creating a new version for this, as it's only used in the deserializer
+        if ((serializedBlock as any).className && !serializedBlock.blockType) {
+            serializedBlock.blockType = (serializedBlock as any).className;
+        }
+
+        // Get the instance of the block
+        switch (serializedBlock.blockType) {
+            case InputBlock.ClassName:
+                {
+                    if (this._customInputBlockDeserializer) {
+                        newBlock = await this._customInputBlockDeserializer(smartFilter, serializedBlock, engine);
+                    }
+                    if (newBlock === null) {
+                        newBlock = inputBlockDeserializer(smartFilter, serializedBlock);
+                    }
+                }
+                break;
+            case OutputBlock.ClassName:
+                {
+                    newBlock = smartFilter.output.ownerBlock;
+                }
+                break;
+            default: {
+                // If it's not an input or output block, use the provided block factory
+                newBlock = await this._blockFactory(smartFilter, engine, serializedBlock);
+                if (!newBlock) {
+                    blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
+                    return;
+                }
+            }
+        }
+
+        // Deserializers are not responsible for setting the uniqueId or comments.
+        // This is so they don't have to be passed into the constructors when programmatically creating
+        // blocks, and so each deserializer doesn't have to remember to do it.
+        newBlock.uniqueId = serializedBlock.uniqueId;
+        newBlock.comments = serializedBlock.comments;
+
+        // We need to ensure any uniqueIds generated in the future (e.g. a new block is added to the SmartFilter)
+        // are higher than this one.
+        UniqueIdGenerator.EnsureIdsGreaterThan(newBlock.uniqueId);
+
+        // Save in the map
+        blockIdMap.set(newBlock.uniqueId, newBlock);
+        blockNameMap.set(newBlock.name, newBlock);
     }
 }

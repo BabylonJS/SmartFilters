@@ -7,7 +7,7 @@ import type { CommandBuffer } from "./commandBuffer";
 export function logCommands(commandBuffer: Readonly<CommandBuffer>) {
     console.log("----- Command buffer commands -----");
     commandBuffer.visitCommands((command) => {
-        console.log(`  Owner: ${command.owner.getClassName()} (${command.owner.name}) - Command: ${command.name}`);
+        console.log(`  Owner: ${command.owner.blockType} (${command.owner.name}) - Command: ${command.name}`);
     });
     console.log("-----------------------------------");
 }

@@ -45,6 +45,15 @@ export abstract class BaseBlock implements ICommandOwner {
     public readonly name: string;
 
     /**
+     * The type of the block - used when serializing / deserializing the block, and in the editor.
+     * For programmatically created blocks, this should be the class name of the block.
+     * For custom blocks, this is specified in the block definition.
+     */
+    public get blockType(): string {
+        return this.getClassName();
+    }
+
+    /**
      * User provided comments about the block. It can be used to document the block.
      */
     public comments: Nullable<string> = null;

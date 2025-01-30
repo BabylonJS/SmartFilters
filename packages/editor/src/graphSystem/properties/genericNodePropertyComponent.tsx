@@ -59,7 +59,7 @@ export class GeneralPropertyTabComponent extends react.Component<IPropertyCompon
                             // }}
                         />
                     }
-                    <TextLineComponent label="Type" value={block.getClassName()} />
+                    <TextLineComponent label="Type" value={block.blockType} />
                     <TextInputLineComponent
                         label="Comments"
                         propertyName="comments"

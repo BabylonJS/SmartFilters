@@ -10,7 +10,7 @@ import type {
     TextureInputBlockData,
     Vector2InputBlockData,
 } from "./inputBlock.serialization.types";
-import type { IBlockSerializerV1 } from "../serialization/v1/serialization.types";
+import type { IBlockSerializerV1 } from "../serialization/v1/smartFilterSerialization.types.js";
 
 /**
  * Determines which generic type of InputBlock we are trying to serialize and calls the appropriate function
@@ -127,15 +127,15 @@ function serializeVector2InputBlock(inputBlock: InputBlock<ConnectionPointType.V
  * The V1 serializer for an InputBlock
  */
 export const inputBlockSerializer: IBlockSerializerV1 = {
-    className: InputBlockBase.ClassName,
+    blockType: InputBlockBase.ClassName,
     serialize: (block: BaseBlock) => {
-        if (block.getClassName() !== InputBlockBase.ClassName) {
+        if (block.blockType !== InputBlockBase.ClassName) {
             throw new Error("Was asked to serialize an unrecognized block type");
         }
         return {
             name: block.name,
             uniqueId: block.uniqueId,
-            className: InputBlockBase.ClassName,
+            blockType: InputBlockBase.ClassName,
             comments: block.comments,
             data: serializeInputBlockData(block as unknown as InputBlockBase),
         };

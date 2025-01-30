@@ -38,16 +38,16 @@ export function registerFinalRenderCommand(
     commandOwner: BaseBlock,
     shaderBlockRuntime: ShaderRuntime
 ): void {
-    const commandOwnerClassName = commandOwner.getClassName();
+    const commandOwnerBlockType = commandOwner.blockType;
     if (renderTargetWrapper) {
         runtime.registerCommand(
-            createCommand(`${commandOwnerClassName}.renderToFinalTexture`, commandOwner, () => {
+            createCommand(`${commandOwnerBlockType}.renderToFinalTexture`, commandOwner, () => {
                 shaderBlockRuntime.renderToTexture(renderTargetWrapper);
             })
         );
     } else {
         runtime.registerCommand(
-            createCommand(`${commandOwnerClassName}.renderToCanvas`, commandOwner, () => {
+            createCommand(`${commandOwnerBlockType}.renderToCanvas`, commandOwner, () => {
                 shaderBlockRuntime.renderToCanvas();
             })
         );

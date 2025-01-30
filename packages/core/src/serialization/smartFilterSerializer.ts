@@ -10,7 +10,8 @@ import type {
     ISerializedConnectionV1,
     SerializeBlockV1,
     SerializedSmartFilterV1,
-} from "./v1/serialization.types";
+} from "./v1/smartFilterSerialization.types";
+import { CustomShaderBlock } from "../blocks/customShaderBlock.js";
 
 /**
  * Determines if two serialized connection points are equivalent to each other
@@ -37,17 +38,17 @@ export class SmartFilterSerializer {
 
     /**
      * Creates a new SmartFilterSerializer
-     * @param blocksUsingDefaultSerialization - A list of the classNames of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
+     * @param blocksUsingDefaultSerialization - A list of the blockType of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
      * @param additionalBlockSerializers - An array of block serializers to use, beyond those for the core blocks
      */
     public constructor(blocksUsingDefaultSerialization: string[], additionalBlockSerializers: IBlockSerializerV1[]) {
-        this._blockSerializers.set(inputBlockSerializer.className, inputBlockSerializer.serialize);
+        this._blockSerializers.set(inputBlockSerializer.blockType, inputBlockSerializer.serialize);
         this._blockSerializers.set(OutputBlock.ClassName, defaultBlockSerializer);
         blocksUsingDefaultSerialization.forEach((block) => {
             this._blockSerializers.set(block, defaultBlockSerializer);
         });
         additionalBlockSerializers.forEach((serializer) =>
-            this._blockSerializers.set(serializer.className, serializer.serialize)
+            this._blockSerializers.set(serializer.blockType, serializer.serialize)
         );
     }
 
@@ -61,9 +62,12 @@ export class SmartFilterSerializer {
 
         const blocks = smartFilter.attachedBlocks.map((block: BaseBlock) => {
             // Serialize the block itself
-            const serializeFn = this._blockSerializers.get(block.getClassName());
+            const serializeFn =
+                block.getClassName() === CustomShaderBlock.ClassName
+                    ? defaultBlockSerializer
+                    : this._blockSerializers.get(block.blockType);
             if (!serializeFn) {
-                throw new Error(`No serializer was provided for a block of type ${block.getClassName()}`);
+                throw new Error(`No serializer was provided for a block of type ${block.blockType}`);
             }
             const serializedBlock: ISerializedBlockV1 = serializeFn(block);
 

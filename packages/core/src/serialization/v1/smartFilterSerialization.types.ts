@@ -14,7 +14,7 @@ import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSyste
  * V1 Serialized Smart Filter
  */
 export type SerializedSmartFilterV1 = {
-    /** The version of the serialized data */
+    /** The format version of the serialized data (not the version of the SmartFilter itself).*/
     version: 1;
 
     /** The SmartFilter name */
@@ -34,7 +34,8 @@ export type SerializedSmartFilterV1 = {
 };
 
 /**
- * V1 Serialized Block
+ * V1 format of a block in a serialized Smart Filter.
+ * Not to be confused with a SerializedBlockDefinitionV1 which serializes the definition of a CustomShaderBlock.
  */
 export interface ISerializedBlockV1 {
     /** The name of the block */
@@ -43,8 +44,8 @@ export interface ISerializedBlockV1 {
     /** The unique ID of the block - correlates with the ID in the editorData for block position, etc. */
     uniqueId: number;
 
-    /** The class name of the block */
-    className: string;
+    /** The blockType of the block - used to determine how to instantiate the block during deserialization */
+    blockType: string;
 
     /** The comments for the block */
     comments: Nullable<string>;
@@ -82,13 +83,13 @@ export interface ISerializedConnectionV1 {
 export type SerializeBlockV1 = (block: BaseBlock) => ISerializedBlockV1;
 
 /**
- * A V1 block serializer
+ * A V1 serializer for blocks in a SmartFilter
  */
 export interface IBlockSerializerV1 {
-    /** The className of the block that this serializer can serialize */
-    className: string;
+    /** The blockType of the block that this serializer can serialize */
+    blockType: string;
 
-    /** The function that serializes the block */
+    /** The function that serializes the block in the Smart Filter */
     serialize: SerializeBlockV1;
 }
 
@@ -99,7 +100,7 @@ export interface IBlockSerializerV1 {
  */
 
 /**
- * A function that deserializes a block from a V1 serialized block object
+ * A function that deserializes a V1 block in a SmartFilter
  */
 export type DeserializeBlockV1 = (
     smartFilter: SmartFilter,

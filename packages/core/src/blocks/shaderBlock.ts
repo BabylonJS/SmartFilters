@@ -152,11 +152,11 @@ export abstract class ShaderBlock extends BaseBlock {
         } else {
             const renderTarget = getRenderTargetWrapper(
                 this.output.runtimeData?.value as ThinRenderTargetTexture,
-                this.getClassName()
+                this.blockType
             );
 
             runtime.registerCommand(
-                createCommand(`${this.getClassName()}.render`, this, () => {
+                createCommand(`${this.blockType}.render`, this, () => {
                     shaderBlockRuntime.renderToTexture(renderTarget);
                 })
             );

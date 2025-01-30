@@ -1,105 +1,49 @@
-import type { Effect } from "@babylonjs/core/Materials/effect";
-import {
-    type SmartFilter,
-    type IDisableableBlock,
-    type RuntimeData,
-    DisableableShaderBinding,
-} from "@babylonjs/smart-filters";
-import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
-import { uniforms, shaderProgram } from "./tintBlock.shader";
-import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { ConnectionPointType, type SerializedBlockDefinition } from "@babylonjs/smart-filters";
 
 /**
- * The shader bindings for the Tint block.
+ * This is included to show how a serialized block definition can be loaded and used.
+ * This object could have been deserialized from a JSON file, for example.
  */
-export class TintShaderBinding extends DisableableShaderBinding {
-    private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
-    private readonly _tint: RuntimeData<ConnectionPointType.Color3>;
-    private readonly _amount: RuntimeData<ConnectionPointType.Float>;
-
-    /**
-     * Creates a new shader binding instance for the Tint block.
-     * @param parentBlock - The parent block
-     * @param inputTexture - the input texture
-     * @param tint - the tint to apply
-     * @param amount - the amount of tint to apply
-     */
-    constructor(
-        parentBlock: IDisableableBlock,
-        inputTexture: RuntimeData<ConnectionPointType.Texture>,
-        tint: RuntimeData<ConnectionPointType.Color3>,
-        amount: RuntimeData<ConnectionPointType.Float>
-    ) {
-        super(parentBlock);
-        this._inputTexture = inputTexture;
-        this._tint = tint;
-        this._amount = amount;
-    }
-
-    /**
-     * Binds all the required data to the shader when rendering.
-     * @param effect - defines the effect to bind the data to
-     */
-    public override bind(effect: Effect): void {
-        super.bind(effect);
-        effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setColor3(this.getRemappedName(uniforms.tint), this._tint.value);
-        effect.setFloat(this.getRemappedName(uniforms.amount), this._amount.value);
-    }
-}
-
-/**
- * A simple block to apply a tint to a texture
- */
-export class TintBlock extends DisableableShaderBlock {
-    /**
-     * The class name of the block.
-     */
-    public static override ClassName = BlockNames.tint;
-
-    /**
-     * The input texture connection point.
-     */
-    public readonly input = this._registerInput("input", ConnectionPointType.Texture);
-
-    /**
-     * The tint color connection point.
-     */
-    public readonly tint = this._registerOptionalInput(
-        "tint",
-        ConnectionPointType.Color3,
-        createStrongRef(new Color3(1, 0, 0))
-    );
-
-    /**
-     * The strength of the tint, as a connection point.
-     */
-    public readonly amount = this._registerOptionalInput("amount", ConnectionPointType.Float, createStrongRef(0.25));
-
-    /**
-     * The shader program (vertex and fragment code) to use to render the block
-     */
-    public static override ShaderCode = shaderProgram;
-
-    /**
-     * Instantiates a new Block.
-     * @param smartFilter - The smart filter this block belongs to
-     * @param name - The friendly name of the block
-     */
-    constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
-    }
-
-    /**
-     * Get the class instance that binds all the required data to the shader (effect) when rendering.
-     * @returns The class instance that binds the data to the effect
-     */
-    public getShaderBinding(): DisableableShaderBinding {
-        const input = this._confirmRuntimeDataSupplied(this.input);
-        const tint = this.tint.runtimeData;
-        const amount = this.amount.runtimeData;
-
-        return new TintShaderBinding(this, input, tint, amount);
-    }
-}
+export const deserializedTintBlockDefinition: SerializedBlockDefinition = {
+    version: 1,
+    blockType: "TintBlock",
+    shaderProgram: {
+        fragment: {
+            uniform: `
+                uniform sampler2D _input_; // main 
+                uniform vec3 _tint_;
+                uniform float _amount_;
+                `,
+            mainInputTexture: "_input_",
+            mainFunctionName: "_mainImage_",
+            functions: [
+                {
+                    name: "_mainImage_",
+                    code: `
+                        vec4 _mainImage_(vec2 vUV) {
+                            vec4 color = texture2D(_input_, vUV);
+                            vec3 tinted = mix(color.rgb, _tint_, _amount_);
+                            return vec4(tinted, color.a);
+                        }`,
+                },
+            ],
+        },
+    },
+    inputConnectionPoints: [
+        {
+            name: "input",
+            type: ConnectionPointType.Texture,
+        },
+        {
+            name: "tint",
+            type: ConnectionPointType.Color3,
+            defaultValue: { r: 1, g: 0, b: 0 },
+        },
+        {
+            name: "amount",
+            type: ConnectionPointType.Float,
+            defaultValue: 0.25,
+        },
+    ],
+    disableOptimization: false,
+};

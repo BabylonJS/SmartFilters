@@ -8,7 +8,7 @@ import { BlockNames } from "../blockNames";
  * internally, so there's no need to worry about serializing them.
  */
 export const blurBlockSerializer: IBlockSerializerV1 = {
-    className: BlockNames.blur,
+    blockType: BlockNames.blur,
     serialize: (block: BaseBlock) => {
         if (block.getClassName() !== BlockNames.blur) {
             throw new Error("Was asked to serialize an unrecognized block type");
@@ -18,7 +18,7 @@ export const blurBlockSerializer: IBlockSerializerV1 = {
         return {
             name: block.name,
             uniqueId: block.uniqueId,
-            className: BlockNames.blur,
+            blockType: BlockNames.blur,
             comments: block.comments,
             data: {
                 blurTextureRatioPerPass: blurBlock.blurTextureRatioPerPass,

@@ -6,7 +6,7 @@ import { BlockNames } from "../blockNames";
  * The V1 serializer for a tile Block
  */
 export const tileBlockSerializer: IBlockSerializerV1 = {
-    className: BlockNames.tile,
+    blockType: BlockNames.tile,
     serialize: (block: BaseBlock) => {
         if (block.getClassName() !== BlockNames.tile) {
             throw new Error("Was asked to serialize an unrecognized block type");
@@ -16,7 +16,7 @@ export const tileBlockSerializer: IBlockSerializerV1 = {
         return {
             name: block.name,
             uniqueId: block.uniqueId,
-            className: BlockNames.tile,
+            blockType: BlockNames.tile,
             comments: block.comments,
             data: {
                 tileCount: tileBlock.tileCount,
