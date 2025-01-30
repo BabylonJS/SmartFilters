@@ -119,8 +119,29 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
         const componentList: { [groupName: string]: JSX.Element[] } = {};
         const groups: string[] = [];
 
-        for (const { propertyName, displayName, type, groupName, options } of propStore) {
+        const classes: string[] = [];
+        let proto = Object.getPrototypeOf(block);
+        while (proto) {
+            classes.push(proto.constructor.name);
+            proto = Object.getPrototypeOf(proto);
+        }
+
+        for (const propDescription of propStore) {
+            const { displayName, type, groupName, options, className } = propDescription;
+            let propertyName = propDescription.propertyName;
+            let target: unknown = block;
+
+            // If we are targeting a sub property, update the target and property name we pass to the UI accordingly
+            if (options.subPropertyName) {
+                target = (block as any)[propertyName];
+                propertyName = options.subPropertyName;
+            }
+
             let components = componentList[groupName];
+
+            if (classes.indexOf(className) === -1) {
+                continue;
+            }
 
             if (!components) {
                 components = [];
@@ -132,8 +153,9 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                 case PropertyTypeForEdition.Boolean: {
                     components.push(
                         <CheckBoxLineComponent
+                            key={`checkBox-${propertyName}`}
                             label={displayName}
-                            target={block}
+                            target={target}
                             propertyName={propertyName}
                             onValueChanged={() => this.forceRebuild(options.notifiers)}
                         />
@@ -143,10 +165,11 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                 case PropertyTypeForEdition.Float: {
                     components.push(
                         <FloatSliderComponent
+                            key={`slider-${propertyName}`}
                             lockObject={this.props.stateManager.lockObject}
                             label={displayName}
                             propertyName={propertyName}
-                            target={block}
+                            target={target}
                             min={options.min ?? null}
                             max={options.max ?? null}
                             onChange={() => this.forceRebuild(options.notifiers)}
@@ -157,13 +180,14 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                 case PropertyTypeForEdition.Int: {
                     components.push(
                         <FloatLineComponent
+                            key={`float-${propertyName}`}
                             lockObject={this.props.stateManager.lockObject}
                             digits={0}
                             step={"1"}
                             isInteger={true}
                             label={displayName}
                             propertyName={propertyName}
-                            target={block}
+                            target={target}
                             onChange={() => this.forceRebuild(options.notifiers)}
                         />
                     );
@@ -172,10 +196,11 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                 case PropertyTypeForEdition.Vector2: {
                     components.push(
                         <Vector2LineComponent
+                            key={`vector2-${propertyName}`}
                             lockObject={this.props.stateManager.lockObject}
                             label={displayName}
                             propertyName={propertyName}
-                            target={block}
+                            target={target}
                             onChange={() => this.forceRebuild(options.notifiers)}
                         />
                     );
@@ -183,8 +208,9 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
                 }
                 case PropertyTypeForEdition.List: {
                     const props = {
+                        key: `list-${propertyName}`,
                         label: displayName,
-                        target: block,
+                        target,
                         propertyName: propertyName,
                         valuesAreStrings: options.valuesAreStrings ?? false,
                         onSelect: () => this.forceRebuild(options.notifiers),
@@ -205,7 +231,9 @@ export class GenericPropertyTabComponent extends react.Component<IPropertyCompon
         return (
             <>
                 {groups.map((group) => (
-                    <LineContainerComponent title={group}>{componentList[group]}</LineContainerComponent>
+                    <LineContainerComponent key={`group-${group}`} title={group}>
+                        {componentList[group]}
+                    </LineContainerComponent>
                 ))}
             </>
         );

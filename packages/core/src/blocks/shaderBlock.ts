@@ -11,6 +11,10 @@ import { createCommand } from "../command/command.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
 import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import { BaseBlock } from "./baseBlock.js";
+import { TextureFormat, TextureType, type OutputTextureOptions } from "./textureOptions.js";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../editorUtils/editableInPropertyPage.js";
+
+const OutputTexturePropertiesGroupName = "OUTPUT TEXTURE PROPERTIES";
 
 /**
  * This is the base class for all shader blocks.
@@ -42,21 +46,38 @@ export abstract class ShaderBlock extends BaseBlock {
      */
     public readonly output = this._registerOutput("output", ConnectionPointType.Texture);
 
-    protected _textureRatio: number = 1;
-
     /**
-     * Gets the texture ratio of the output texture.
+     * The options used when creating the texture this block outputs to
      */
-    public get textureRatio() {
-        return this._textureRatio;
-    }
-
-    /**
-     * Sets the texture ratio of the output texture.
-     */
-    public set textureRatio(value: number) {
-        this._textureRatio = value;
-    }
+    @editableInPropertyPage("Ratio", PropertyTypeForEdition.Float, OutputTexturePropertiesGroupName, {
+        min: 0.1,
+        max: 10.0,
+        notifiers: { rebuild: true },
+        subPropertyName: "ratio",
+    })
+    @editableInPropertyPage("Format", PropertyTypeForEdition.List, OutputTexturePropertiesGroupName, {
+        notifiers: { rebuild: true },
+        subPropertyName: "format",
+        options: [
+            { label: "R", value: TextureFormat.R },
+            { label: "RG", value: TextureFormat.RG },
+            { label: "RGBA", value: TextureFormat.RGBA },
+        ],
+    })
+    @editableInPropertyPage("Type", PropertyTypeForEdition.List, OutputTexturePropertiesGroupName, {
+        notifiers: { rebuild: true },
+        subPropertyName: "type",
+        options: [
+            { label: "UByte", value: TextureType.UNSIGNED_BYTE },
+            { label: "Float", value: TextureType.FLOAT },
+            { label: "Half Float", value: TextureType.HALF_FLOAT },
+        ],
+    })
+    public outputTextureOptions: OutputTextureOptions = {
+        ratio: 1,
+        format: TextureFormat.RGBA,
+        type: TextureType.UNSIGNED_BYTE,
+    };
 
     /**
      * Disconnects the block from the graph.
