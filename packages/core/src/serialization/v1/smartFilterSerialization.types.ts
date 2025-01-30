@@ -34,7 +34,8 @@ export type SerializedSmartFilterV1 = {
 };
 
 /**
- * V1 Serialized Block In A Smart Filter
+ * V1 format of a block in a serialized Smart Filter.
+ * Not to be confused with a SerializedBlockDefinitionV1 which serializes the definition of a CustomShaderBlock.
  */
 export interface ISerializedBlockV1 {
     /** The name of the block */

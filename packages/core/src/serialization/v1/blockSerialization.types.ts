@@ -8,7 +8,9 @@ import type { ConnectionPointType, ConnectionPointValue } from "../../connection
 import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 
 /**
- * The V1 definition of a serialized block.
+ * The V1 definition of a serialized block. A block definition is loaded by a CustomShaderBlock and defines how a
+ * blockType works. This should not be confused with an ISerializedBockV1, which is a serialized instance of a block in a
+ * serialized SmartFilter graph. It is referenced by blockType in a serialized SmartFilter.
  */
 export type SerializedBlockDefinitionV1 = {
     /**

@@ -193,17 +193,17 @@ export class CustomShaderBlock extends ShaderBlock {
  */
 type InputWithRuntimeData<U extends ConnectionPointType> = {
     /**
-     * asdf
+     * The name of the input connection point
      */
     name: string;
 
     /**
-     * asdf
+     * The type of the input connection point
      */
     type: U;
 
     /**
-     * asdf
+     * The runtime data for the input connection point
      */
     runtimeData: RuntimeData<U>;
 };
