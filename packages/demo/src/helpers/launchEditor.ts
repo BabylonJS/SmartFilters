@@ -179,9 +179,6 @@ export function launchEditor(
             if (index !== -1) {
                 allBlockEditorRegistrations.splice(index, 1);
             }
-
-            // allBlockNames["Custom_Blocks"] = customShaderBlockManager.getCustomBlockTypeNames();
-            // blockEditorRegistrations = blockEditorRegistrations.filter((r) => r.name !== blockType);
         },
     });
 
