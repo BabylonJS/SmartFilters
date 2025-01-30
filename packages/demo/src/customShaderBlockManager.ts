@@ -10,6 +10,10 @@ import {
 const CustomShaderBlockKey = "Custom-Shader-Block-List";
 const CustomShaderBlockDefinitionKeySuffix = "-Definition";
 
+/**
+ * Loads and saves CustomShaderBlock definitions from local storage, and
+ * creates CustomShaderBlocks from serialized block definitions.
+ */
 export class CustomShaderBlockManager {
     private _blockDefinitions = new Map<string, SerializedBlockDefinition>();
 
@@ -17,10 +21,21 @@ export class CustomShaderBlockManager {
         this.loadBlockDefinitions();
     }
 
+    /**
+     * Gets the block definition for a given block type.
+     * @param blockType - The block type to get the definition for
+     * @returns The block definition, or null if it doesn't exist
+     */
     public getBlockDefinition(blockType: string): Nullable<SerializedBlockDefinition> {
         return this._blockDefinitions.get(blockType) || null;
     }
 
+    /**
+     * Instantiates a block from a serialized block definition.
+     * @param smartFilter - The smart filter to create the block for
+     * @param serializedBlock - The serialized block definition
+     * @returns The instantiated block, or null if the block type is not registered
+     */
     public createBlock(smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1): Nullable<BaseBlock> {
         const blockDefinition = this._blockDefinitions.get(serializedBlock.name);
         if (!blockDefinition) {
@@ -30,10 +45,17 @@ export class CustomShaderBlockManager {
         return CustomShaderBlock.Create(smartFilter, serializedBlock.name, blockDefinition);
     }
 
+    /**
+     * Returns a list of all the loaded custom shader block type names.
+     * @returns The list of block type names
+     */
     public getCustomShaderBlockTypeNames(): string[] {
         return Array.from(this._blockDefinitions.keys());
     }
 
+    /**
+     * Loads all block definitions from local storage.
+     */
     public loadBlockDefinitions() {
         this._blockDefinitions.clear();
 
@@ -49,6 +71,10 @@ export class CustomShaderBlockManager {
         }
     }
 
+    /**
+     * Deletes a block definition from local storage.
+     * @param blockType - The block type to delete
+     */
     public deleteBlockDefinition(blockType: string) {
         const blockTypeListJson = localStorage.getItem(CustomShaderBlockKey);
         const blockTypeList: string[] = blockTypeListJson ? JSON.parse(blockTypeListJson) : [];
@@ -62,6 +88,10 @@ export class CustomShaderBlockManager {
         }
     }
 
+    /**
+     * Saves a block definition to local storage.
+     * @param blockDefinition - The block definition to save
+     */
     public saveBlockDefinition(blockDefinition: SerializedBlockDefinition) {
         this.deleteBlockDefinition(blockDefinition.blockType);
 
