@@ -8,17 +8,17 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "../generators/starryPlanesBlock.shader";
+import { shaderProgram, uniforms } from "./tunnelBlock.shader";
 
 /**
- * The shader bindings for the StarryPlanes block.
+ * The shader bindings for the Tunnel block.
  */
-export class StarryPlanesShaderBinding extends DisableableShaderBinding {
+export class TunnelShaderBinding extends DisableableShaderBinding {
     private readonly _inputTexture: RuntimeData<ConnectionPointType.Texture>;
     private readonly _time: RuntimeData<ConnectionPointType.Float>;
 
     /**
-     * Creates a new shader binding instance for the StarryPlanes block.
+     * Creates a new shader binding instance for the Tunnel block.
      * @param parentBlock - The parent block
      * @param inputTexture - The input texture
      * @param time - The time passed since the start of the effect
@@ -36,28 +36,28 @@ export class StarryPlanesShaderBinding extends DisableableShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * @param effect - defines the effect to bind the data to
-     * @param _width - defines the width of the output. Passed in
-     * @param _height - defines the height of the output
+     * @param _width - defines the width of the output. Passed in by ShaderRuntime.
+     * @param _height - defines the height of the output. Passed in by ShaderRuntime.
      */
     public override bind(effect: Effect, _width: number, _height: number): void {
         super.bind(effect);
         effect.setTexture(this.getRemappedName(uniforms.input), this._inputTexture.value);
-        effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
         effect.setFloat2(this.getRemappedName(uniforms.resolution), _width, _height);
+        effect.setFloat(this.getRemappedName(uniforms.time), this._time.value);
     }
 }
 
 /**
- * A shader block that renders a procedural starry background effect.
+ * A shader block that creates a tunnel-like background effect.
  */
-export class StarryPlanesBlock extends DisableableShaderBlock {
+export class TunnelBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.starryPlanes;
+    public static override ClassName = BlockNames.tunnel;
 
     /**
-     * The fallback texture connection point, in the event that the effect is disabled.
+     * The fallback texture to use if block is disabled.
      */
     public readonly fallback = this._registerInput("fallback", ConnectionPointType.Texture);
 
@@ -88,6 +88,6 @@ export class StarryPlanesBlock extends DisableableShaderBlock {
         const input = this._confirmRuntimeDataSupplied(this.fallback);
         const time = this.time.runtimeData;
 
-        return new StarryPlanesShaderBinding(this, input, time);
+        return new TunnelShaderBinding(this, input, time);
     }
 }
