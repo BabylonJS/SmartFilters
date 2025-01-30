@@ -160,8 +160,7 @@ export function launchEditor(
         texturePresets,
         beforeRenderObservable: renderer.beforeRenderObservable,
         addCustomShaderBlock: (serializedData: string) => {
-            const blockDefinition: SerializedBlockDefinition = JSON.parse(serializedData);
-            customShaderBlockManager.saveBlockDefinition(blockDefinition);
+            const blockDefinition = customShaderBlockManager.saveBlockDefinition(serializedData);
             allBlockNames["Custom_Blocks"]?.push(blockDefinition.blockType);
             blockTooltips[blockDefinition.blockType] = blockDefinition.blockType;
             allBlockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));

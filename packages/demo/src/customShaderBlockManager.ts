@@ -90,9 +90,20 @@ export class CustomShaderBlockManager {
 
     /**
      * Saves a block definition to local storage.
-     * @param blockDefinition - The block definition to save
+     * Supports either a JSON string of an SerializedBlockDefinition object, or a glsl shader with the required annotations so it can
+     * be converted to a SerializedBlockDefinition object.
+     * @param serializedData - The serialized block definition - either a SerializedBlockDefinition object in a JSON string, or a glsl shader
+     * @returns The block definition that was saved
      */
-    public saveBlockDefinition(blockDefinition: SerializedBlockDefinition) {
+    public saveBlockDefinition(serializedData: string): SerializedBlockDefinition {
+        let blockDefinition: SerializedBlockDefinition;
+
+        if (this._looksLikeGlsl(serializedData)) {
+            blockDefinition = this._parseGlsl(serializedData);
+        } else {
+            blockDefinition = JSON.parse(serializedData);
+        }
+
         this.deleteBlockDefinition(blockDefinition.blockType);
 
         // Add to the stored list of block definition names in local storage
@@ -109,5 +120,15 @@ export class CustomShaderBlockManager {
 
         // Store the definition in our map in memory
         this._blockDefinitions.set(blockDefinition.blockType, blockDefinition);
+
+        return blockDefinition;
+    }
+
+    private _parseGlsl(_serializedData: string): SerializedBlockDefinition {
+        throw new Error("Method not implemented.");
+    }
+
+    private _looksLikeGlsl(serializedData: string): boolean {
+        return serializedData.indexOf("SmartFilterGlslParserVersion") !== -1;
     }
 }
