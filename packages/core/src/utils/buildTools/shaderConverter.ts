@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import type { ShaderCode, ShaderFunction } from "../shaderCodeUtils";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
 const VERTEX_SHADER = "@VERTEX_SHADER@";
@@ -58,11 +59,11 @@ const UniformNameLinePrefix = "    ";
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
 /**
- * Converts a single shader
+ * Converts a single shader to a .ts file which can be imported by a hardcoded block
  * @param fragmentShaderPath - The path to the fragment file for the shader
  * @param importPath - The path to import the ShaderProgram type from
  */
-export function convertShader(fragmentShaderPath: string, importPath: string): void {
+export function convertShaderForHardcodedBlock(fragmentShaderPath: string, importPath: string): void {
     console.log(`Processing fragment shader: ${fragmentShaderPath}`);
 
     // See if there is a corresponding vertex shader
@@ -103,21 +104,30 @@ export function convertShader(fragmentShaderPath: string, importPath: string): v
 
     // Write the shader TS file
     const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".shader.ts");
+    const functionsSection: string[] = [];
+    for (const shaderFunction of fragmentShaderInfo.shaderCode.functions) {
+        functionsSection.push(
+            FunctionTemplate.replace(FUNCTION_NAME, shaderFunction.name).replace(
+                FUNCTION_CODE,
+                addLinePrefixes(shaderFunction.code, CodeLinePrefix)
+            )
+        );
+    }
     const finalContents = ShaderTemplate.replace(VERTEX_SHADER, vertexShader ? `\`${vertexShader}\`` : "undefined")
         .replace(TYPE_IMPORT_PATH, importPath)
-        .replace(UNIFORMS, "\n" + addLinePrefixes(fragmentShaderInfo.finalUniforms.join("\n"), UniformLinePrefix))
-        .replace(MAIN_FUNCTION_NAME, fragmentShaderInfo.mainFunctionName)
-        .replace(MAIN_INPUT_NAME, fragmentShaderInfo.mainInputName)
+        .replace(UNIFORMS, "\n" + addLinePrefixes(fragmentShaderInfo.shaderCode.uniform || "", UniformLinePrefix))
+        .replace(MAIN_FUNCTION_NAME, fragmentShaderInfo.shaderCode.mainFunctionName)
+        .replace(MAIN_INPUT_NAME, fragmentShaderInfo.shaderCode.mainInputTexture || '""')
         .replace(
             CONSTS_PROPERTY,
-            fragmentShaderInfo.finalConsts.length > 0
+            fragmentShaderInfo.shaderCode.const
                 ? ConstsTemplate.replace(
                       CONSTS_VALUE,
-                      addLinePrefixes(fragmentShaderInfo.finalConsts.join("\n"), ConstLinePrefix)
+                      addLinePrefixes(fragmentShaderInfo.shaderCode.const, ConstLinePrefix)
                   )
                 : ""
         )
-        .replace(FUNCTIONS, fragmentShaderInfo.extractedFunctions.join(""))
+        .replace(FUNCTIONS, functionsSection.join(""))
         .replace(UNIFORM_NAMES, addLinePrefixes(fragmentShaderInfo.uniformNames.join("\n"), UniformNameLinePrefix));
 
     fs.writeFileSync(shaderFile, finalContents);
@@ -128,29 +138,9 @@ export function convertShader(fragmentShaderPath: string, importPath: string): v
  */
 type FragmentShaderInfo = {
     /**
-     * The lines of code which declare the uniforms
+     * The shader code
      */
-    finalUniforms: (string | undefined)[];
-
-    /**
-     * The main function name
-     */
-    mainFunctionName: string;
-
-    /**
-     * The main input name
-     */
-    mainInputName: string;
-
-    /**
-     * The lines of code which declare the consts
-     */
-    finalConsts: (string | undefined)[];
-
-    /**
-     * The lines of code which declare the functions
-     */
-    extractedFunctions: string[];
+    shaderCode: ShaderCode;
 
     /**
      * The lines of code which declare the uniform names
@@ -202,17 +192,24 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
     if (mainInputs.length !== 1 || !mainInputs[0]) {
         throw new Error("Exactly one main input must be defined in the shader");
     }
-    const mainInputName = mainInputs[0];
+    const mainInputTexture = mainInputs[0];
 
     // Extract all the functions
     const { extractedFunctions, mainFunctionName } = extractFunctions(fragmentShaderWithRenamedSymbols);
 
-    return {
-        finalUniforms,
+    const shaderCode: ShaderCode = {
+        uniform: finalUniforms.join("\n"),
         mainFunctionName,
-        mainInputName,
-        finalConsts,
-        extractedFunctions,
+        mainInputTexture,
+        functions: extractedFunctions,
+    };
+
+    if (finalConsts.length > 0) {
+        shaderCode.const = finalConsts.join("\n");
+    }
+
+    return {
+        shaderCode,
         uniformNames,
     };
 }
@@ -239,7 +236,7 @@ function extractFunctions(fragment: string): {
     /**
      * The extracted functions
      */
-    extractedFunctions: string[];
+    extractedFunctions: ShaderFunction[];
 
     /**
      * The name of the main function
@@ -247,7 +244,7 @@ function extractFunctions(fragment: string): {
     mainFunctionName: string;
 } {
     const lines = fragment.split("\n");
-    const extractedFunctions: string[] = [];
+    const extractedFunctions: ShaderFunction[] = [];
     let mainFunctionName: string | undefined;
     let inFunction = false;
     let depth = 0;
@@ -271,12 +268,11 @@ function extractFunctions(fragment: string): {
             inFunction = false;
             const { functionBody, functionName, isMainFunction } = processFunctionBody(currentFunction);
 
-            extractedFunctions.push(
-                FunctionTemplate.replace(FUNCTION_NAME, functionName).replace(
-                    FUNCTION_CODE,
-                    addLinePrefixes(functionBody, CodeLinePrefix)
-                )
-            );
+            extractedFunctions.push({
+                name: functionName,
+                code: functionBody,
+            });
+
             if (isMainFunction) {
                 if (mainFunctionName) {
                     throw new Error("Multiple main functions found in shader code");
@@ -381,8 +377,6 @@ export function convertShaders(shaderPath: string, importPath: string) {
 
     // Convert all shaders
     for (const fragmentShaderFile of fragmentShaderFiles) {
-        convertShader(path.join(fragmentShaderFile.path, fragmentShaderFile.name), importPath);
+        convertShaderForHardcodedBlock(path.join(fragmentShaderFile.path, fragmentShaderFile.name), importPath);
     }
 }
-
-// TODO: simple copy from shader file to .ts, get it to build (including import trick)

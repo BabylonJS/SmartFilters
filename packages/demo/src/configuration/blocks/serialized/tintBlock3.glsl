@@ -1,5 +1,5 @@
-// SmartFilterGlslParserVersion: 1
-// BlockType: TintBlock3
+// [Smart Filter Shader Version] = 1
+// [Block Type] = "TintBlock3"
 
 uniform sampler2D _input_; // main 
 uniform vec3 _tint_;
