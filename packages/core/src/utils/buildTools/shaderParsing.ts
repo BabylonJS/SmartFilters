@@ -66,6 +66,9 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         }
     }
 
+    // Strip out any default uniform values so they aren't mistaken for function bodies
+    fragmentShader = fragmentShader.replace(/\/\/\s*default:(.*)/g, "");
+
     const fragmentShaderWithNoFunctionBodies = removeFunctionBodies(fragmentShader);
 
     // Collect uniform, const, and function names which need to be decorated

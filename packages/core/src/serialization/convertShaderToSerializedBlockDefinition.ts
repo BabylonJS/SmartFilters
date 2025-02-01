@@ -24,33 +24,43 @@ export function convertShaderToSerializedBlockDefinition(fragmentShader: string)
         const split = uniform.split(" ");
         const uniformTypeString = split[1];
         const uniformName = split[2]?.replace(";", "");
+        const defaultString = new RegExp(/\/\/\s*default:(.*)/gs).exec(uniform)?.[1];
+        let defaultValue: any | undefined = undefined;
+        if (defaultString) {
+            defaultValue = JSON.parse(defaultString.trim());
+        }
         if (!uniformTypeString || !uniformName) {
             throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
         }
 
-        let type: ConnectionPointType;
+        let inputConnectionPoint: SerializedInputConnectionPointV1;
         switch (uniformTypeString) {
             case "sampler2D":
-                type = ConnectionPointType.Texture;
+                inputConnectionPoint = {
+                    name: uniformName,
+                    type: ConnectionPointType.Texture,
+                };
                 break;
             case "vec3":
-                type = ConnectionPointType.Color3;
+                inputConnectionPoint = {
+                    name: uniformName,
+                    type: ConnectionPointType.Color3,
+                    defaultValue,
+                };
                 break;
             case "float":
-                type = ConnectionPointType.Float;
+                inputConnectionPoint = {
+                    name: uniformName,
+                    type: ConnectionPointType.Float,
+                    defaultValue,
+                };
                 break;
             default:
                 throw new Error(`Unsupported uniform type: '${uniformTypeString}'`);
         }
 
-        inputConnectionPoints.push({
-            name: uniformName,
-            type,
-        });
+        inputConnectionPoints.push(inputConnectionPoint);
     }
-
-    // TODO: fix runtime connection point hookup issue
-    // TODO: default value syntax
 
     return {
         version: 1,
