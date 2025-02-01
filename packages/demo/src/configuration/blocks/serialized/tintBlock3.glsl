@@ -1,12 +1,16 @@
-// [Smart Filter Shader Version] = 1
-// [Block Type] = "TintBlock3"
+/*
+{
+    "smartFilterShaderVersion": 1,
+    "blockType": "TintBlock3"
+}
+*/
 
-uniform sampler2D _input_; // main 
-uniform vec3 _tint_;
-uniform float _amount_;
+uniform sampler2D input; // main 
+uniform vec3 tint;
+uniform float amount;
 
-vec4 _mainImage_(vec2 vUV) { // main
-    vec4 color = texture2D(_input_, vUV);
-    vec3 tinted = mix(color.rgb, _tint_, _amount_);
+vec4 mainImage(vec2 vUV) { // main
+    vec4 color = texture2D(input, vUV);
+    vec3 tinted = mix(color.rgb, tint, amount);
     return vec4(tinted, color.a);
 }

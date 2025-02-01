@@ -1,142 +1,29 @@
-import * as fs from "fs";
-import * as path from "path";
+import type { Nullable } from "@babylonjs/core/types";
 import type { ShaderCode, ShaderFunction } from "../shaderCodeUtils";
-
-const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
-const VERTEX_SHADER = "@VERTEX_SHADER@";
-const UNIFORMS = "@UNIFORMS@";
-const CONSTS_VALUE = "@CONSTS@";
-const CONSTS_PROPERTY = "@CONSTS_PROPERTY@";
-const MAIN_INPUT_NAME = "@MAIN_INPUT_NAME@";
-const MAIN_FUNCTION_NAME = "@MAIN_FUNCTION_NAME@";
-const FUNCTIONS = "@FUNCTIONS@";
-const FUNCTION_NAME = "@FUNCTION_NAME@";
-const FUNCTION_CODE = "@FUNCTION_CODE@";
-const UNIFORM_NAMES = "@UNIFORM_NAMES@";
-
-const ConstsTemplate = `
-        const: \`${CONSTS_VALUE}\`,`;
-
-const FunctionTemplate = `
-            {
-                name: "${FUNCTION_NAME}",
-                code: \`
-${FUNCTION_CODE}
-                    \`,
-            },`;
-
-const CodeLinePrefix = "                    ";
-const UniformLinePrefix = "            ";
-const ConstLinePrefix = "            ";
-
-const ShaderTemplate = `import type { ShaderProgram } from "${TYPE_IMPORT_PATH}";
-
-/**
- * The shader program for the block.
- */
-export const shaderProgram: ShaderProgram = {
-    vertex: ${VERTEX_SHADER},
-    fragment: {
-        uniform: \`${UNIFORMS}\`,${CONSTS_PROPERTY}
-        mainInputTexture: "${MAIN_INPUT_NAME}",
-        mainFunctionName: "${MAIN_FUNCTION_NAME}",
-        functions: [${FUNCTIONS}
-        ],
-    },
-};
-
-/**
- * The uniform names for this shader, to be used in the shader binding so
- * that the names are always in sync.
- */
-export const uniforms = {
-${UNIFORM_NAMES}
-};
-`;
-
-const UniformNameLinePrefix = "    ";
+import { ConnectionPointType } from "../../connection/connectionPointType.js";
+import type { SerializedInputConnectionPointV1 } from "../../serialization/v1/blockSerialization.types";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
 /**
- * Converts a single shader to a .ts file which can be imported by a hardcoded block
- * @param fragmentShaderPath - The path to the fragment file for the shader
- * @param importPath - The path to import the ShaderProgram type from
- */
-export function convertShaderForHardcodedBlock(fragmentShaderPath: string, importPath: string): void {
-    console.log(`Processing fragment shader: ${fragmentShaderPath}`);
-
-    // See if there is a corresponding vertex shader
-    let vertexShader: string | undefined = undefined;
-    const vertexShaderPath = fragmentShaderPath.replace(".fragment.glsl", ".vertex.glsl");
-    if (fs.existsSync(vertexShaderPath)) {
-        vertexShader = fs.readFileSync(vertexShaderPath, "utf8");
-    }
-    if (vertexShader) {
-        console.log("Found vertex shader");
-    }
-
-    // Read the fragment shader
-    const fragmentShader = fs.readFileSync(fragmentShaderPath, "utf8");
-
-    // Version check
-    const versionsFound = [...fragmentShader.matchAll(/\/\/\s+\[Smart Filter Shader Version\]\s*=\s*(\d+)/g)].map(
-        (match) => match[1]
-    );
-    let version: number = 1;
-    if (versionsFound.length === 1 && versionsFound[0]) {
-        version = parseInt(versionsFound[0]);
-    }
-    console.log(`Shader version: ${version}`);
-
-    let fragmentShaderInfo: FragmentShaderInfo;
-
-    switch (version) {
-        case 1:
-            {
-                fragmentShaderInfo = processFragmentShaderV1(fragmentShader);
-            }
-            break;
-        default: {
-            throw new Error(`Unsupported shader version: ${version}`);
-        }
-    }
-
-    // Write the shader TS file
-    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".shader.ts");
-    const functionsSection: string[] = [];
-    for (const shaderFunction of fragmentShaderInfo.shaderCode.functions) {
-        functionsSection.push(
-            FunctionTemplate.replace(FUNCTION_NAME, shaderFunction.name).replace(
-                FUNCTION_CODE,
-                addLinePrefixes(shaderFunction.code, CodeLinePrefix)
-            )
-        );
-    }
-    const finalContents = ShaderTemplate.replace(VERTEX_SHADER, vertexShader ? `\`${vertexShader}\`` : "undefined")
-        .replace(TYPE_IMPORT_PATH, importPath)
-        .replace(UNIFORMS, "\n" + addLinePrefixes(fragmentShaderInfo.shaderCode.uniform || "", UniformLinePrefix))
-        .replace(MAIN_FUNCTION_NAME, fragmentShaderInfo.shaderCode.mainFunctionName)
-        .replace(MAIN_INPUT_NAME, fragmentShaderInfo.shaderCode.mainInputTexture || '""')
-        .replace(
-            CONSTS_PROPERTY,
-            fragmentShaderInfo.shaderCode.const
-                ? ConstsTemplate.replace(
-                      CONSTS_VALUE,
-                      addLinePrefixes(fragmentShaderInfo.shaderCode.const, ConstLinePrefix)
-                  )
-                : ""
-        )
-        .replace(FUNCTIONS, functionsSection.join(""))
-        .replace(UNIFORM_NAMES, addLinePrefixes(fragmentShaderInfo.uniformNames.join("\n"), UniformNameLinePrefix));
-
-    fs.writeFileSync(shaderFile, finalContents);
-}
-
-/**
  * Information about a fragment shader
  */
-type FragmentShaderInfo = {
+export type FragmentShaderInfo = {
+    /**
+     * The version of the smart filter shader header format
+     */
+    smartFilterShaderFormatVersion: number;
+
+    /**
+     * If supplied, the blockType to use for the block
+     */
+    blockType?: string;
+
+    /**
+     * If true, optimization should be disabled for this shader
+     */
+    disableOptimization?: boolean;
+
     /**
      * The shader code
      */
@@ -146,14 +33,32 @@ type FragmentShaderInfo = {
      * The lines of code which declare the uniform names
      */
     uniformNames: string[];
+
+    /**
+     * The input connection points for the shader
+     */
+    inputConnectionPoints: SerializedInputConnectionPointV1[];
 };
 
 /**
- * Processes a fragment shader
+ * Parses a fragment shader
  * @param fragmentShader - The fragment shader to process
  * @returns The processed fragment shader
  */
-function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
+export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo {
+    const header = readHeader(fragmentShader);
+    const smartFilterShaderFormatVersion = header?.smartFilterShaderFormatVersion || 1;
+
+    // Version check
+    if (smartFilterShaderFormatVersion !== 1) {
+        throw new Error(`Unsupported shader format version: ${smartFilterShaderFormatVersion}`);
+    }
+
+    // First skip past the header if there is one
+    if (fragmentShader.indexOf(SmartFilterShaderVersionLabel) !== -1) {
+        fragmentShader = fragmentShader.substring(fragmentShader.indexOf("*/") + 2);
+    }
+
     const fragmentShaderWithNoFunctionBodies = removeFunctionBodies(fragmentShader);
 
     // Collect uniform, const, and function names which need to be decorated
@@ -166,6 +71,44 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
         (match) => match[1]
     );
     console.log(`Functions found: ${JSON.stringify(functionNames)}`);
+
+    // Calculate the input connection points
+    const inputConnectionPoints: SerializedInputConnectionPointV1[] = [];
+    const unRenamedUniforms = [...fragmentShader.matchAll(/^\s*(uniform\s.*)/gm)].map((match) => match[1]);
+
+    if (unRenamedUniforms) {
+        for (const uniform of unRenamedUniforms) {
+            if (!uniform) {
+                continue;
+            }
+            const split = uniform.split(" ");
+            const uniformTypeString = split[1];
+            const uniformName = split[2]?.replace(";", "");
+            if (!uniformTypeString || !uniformName) {
+                throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
+            }
+
+            let type: ConnectionPointType;
+            switch (uniformTypeString) {
+                case "sampler2D":
+                    type = ConnectionPointType.Texture;
+                    break;
+                case "vec3":
+                    type = ConnectionPointType.Color3;
+                    break;
+                case "float":
+                    type = ConnectionPointType.Float;
+                    break;
+                default:
+                    throw new Error(`Unsupported uniform type: '${uniformTypeString}'`);
+            }
+
+            inputConnectionPoints.push({
+                name: uniformName,
+                type,
+            });
+        }
+    }
 
     // Decorate the uniforms, consts, and functions
     const symbolsToDecorate = [...uniforms, ...consts, ...functionNames];
@@ -209,22 +152,13 @@ function processFragmentShaderV1(fragmentShader: string): FragmentShaderInfo {
     }
 
     return {
+        smartFilterShaderFormatVersion,
+        blockType: header?.blockType,
         shaderCode,
         uniformNames,
+        inputConnectionPoints,
+        disableOptimization: !!header?.disableOptimizer,
     };
-}
-
-/**
- * Prefixes each line in the input
- * @param input - The input string
- * @param prefix - The prefix to add to each line
- * @returns The input with each line prefixed
- */
-function addLinePrefixes(input: string, prefix: string): string {
-    return input
-        .split("\n")
-        .map((line) => prefix + line)
-        .join("\n");
 }
 
 /**
@@ -362,21 +296,35 @@ function removeFunctionBodies(input: string): string {
 }
 
 /**
- * Converts .fragment.glsl and vertex.glsl file pairs into .shader.ts files which export a ShaderProgram object.
- * @param shaderPath - The path to the .glsl files to convert.
- * @param importPath - The path to import the ShaderProgram type from.
+ * The format of the header we expect in a GLSL shader
  */
-export function convertShaders(shaderPath: string, importPath: string) {
-    // Get all files in the path
-    const allFiles = fs.readdirSync(shaderPath, { withFileTypes: true, recursive: true });
+type GlslHeader = {
+    /**
+     * The version of the smart filter shader header format
+     */
+    smartFilterShaderFormatVersion: number;
 
-    // Find all fragment shaders (excluding the template)
-    const fragmentShaderFiles = allFiles.filter(
-        (file) => file.isFile() && file.name.endsWith(".fragment.glsl") && !file.name.endsWith("template.fragment.glsl")
-    );
+    /**
+     * The block type to use for the shader, required when converting to a
+     * SerializedBlockDefinition, but not when exporting to a .ts file
+     * to be included in a hardcoded block definition
+     */
+    blockType?: string;
 
-    // Convert all shaders
-    for (const fragmentShaderFile of fragmentShaderFiles) {
-        convertShaderForHardcodedBlock(path.join(fragmentShaderFile.path, fragmentShaderFile.name), importPath);
-    }
+    /**
+     * If true, optimization should be disabled for this shader
+     */
+    disableOptimizer?: boolean;
+};
+export const SmartFilterShaderVersionLabel = "smartFilterShaderVersion";
+export const BlockTypeLabel = "blockType";
+
+/**
+ * Searches the shader code for specially encoded values required by our format
+ * @param shaderCode - The shader code to search
+ * @returns - The value of the label or undefined if not found
+ */
+export function readHeader(shaderCode: string): Nullable<GlslHeader> {
+    const match = new RegExp("\\/\\*(.*)\\*\\/", "gs").exec(shaderCode);
+    return match && match[1] ? JSON.parse(match[1].trim()) : null;
 }

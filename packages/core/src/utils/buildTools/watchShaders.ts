@@ -6,7 +6,7 @@
  * @example node watchShaders.js <shaderPath> <importPath>
  */
 
-import { convertShaderForHardcodedBlock } from "./shaderConverter.js";
+import { convertShaderForHardcodedBlock } from "./convertShaderForHardcodedBlock.js";
 import { watch } from "chokidar";
 import { extname } from "path";
 
