@@ -38,4 +38,4 @@ export * from "./utils/textureLoaders.js";
 export * from "./serialization/index.js";
 export * from "./editorUtils/editableInPropertyPage.js";
 export * from "./utils/buildTools/shaderParsing.js";
-export * from "./utils/buildTools/convertShaderToSerializedBlockDefinition.js";
+export * from "./serialization/convertShaderToSerializedBlockDefinition.js";

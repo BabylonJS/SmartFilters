@@ -1,7 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types";
 import type { ShaderCode, ShaderFunction } from "../shaderCodeUtils";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import type { SerializedInputConnectionPointV1 } from "../../serialization/v1/blockSerialization.types";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
@@ -35,9 +33,9 @@ export type FragmentShaderInfo = {
     uniformNames: string[];
 
     /**
-     * The input connection points for the shader
+     * The original uniform declarations, before any renaming happened
      */
-    inputConnectionPoints: SerializedInputConnectionPointV1[];
+    unRenamedUniforms: string[];
 };
 
 /**
@@ -59,6 +57,15 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         fragmentShader = fragmentShader.substring(fragmentShader.indexOf("*/") + 2);
     }
 
+    // Capture the uniforms before they are renamed
+    const unRenamedUniforms: string[] = [];
+    const unRenamedUniformMatches = fragmentShader.matchAll(/^\s*(uniform\s.*)/gm);
+    for (const match of unRenamedUniformMatches) {
+        if (match[1]) {
+            unRenamedUniforms.push(match[1]);
+        }
+    }
+
     const fragmentShaderWithNoFunctionBodies = removeFunctionBodies(fragmentShader);
 
     // Collect uniform, const, and function names which need to be decorated
@@ -71,44 +78,6 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         (match) => match[1]
     );
     console.log(`Functions found: ${JSON.stringify(functionNames)}`);
-
-    // Calculate the input connection points
-    const inputConnectionPoints: SerializedInputConnectionPointV1[] = [];
-    const unRenamedUniforms = [...fragmentShader.matchAll(/^\s*(uniform\s.*)/gm)].map((match) => match[1]);
-
-    if (unRenamedUniforms) {
-        for (const uniform of unRenamedUniforms) {
-            if (!uniform) {
-                continue;
-            }
-            const split = uniform.split(" ");
-            const uniformTypeString = split[1];
-            const uniformName = split[2]?.replace(";", "");
-            if (!uniformTypeString || !uniformName) {
-                throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
-            }
-
-            let type: ConnectionPointType;
-            switch (uniformTypeString) {
-                case "sampler2D":
-                    type = ConnectionPointType.Texture;
-                    break;
-                case "vec3":
-                    type = ConnectionPointType.Color3;
-                    break;
-                case "float":
-                    type = ConnectionPointType.Float;
-                    break;
-                default:
-                    throw new Error(`Unsupported uniform type: '${uniformTypeString}'`);
-            }
-
-            inputConnectionPoints.push({
-                name: uniformName,
-                type,
-            });
-        }
-    }
 
     // Decorate the uniforms, consts, and functions
     const symbolsToDecorate = [...uniforms, ...consts, ...functionNames];
@@ -156,7 +125,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         blockType: header?.blockType,
         shaderCode,
         uniformNames,
-        inputConnectionPoints,
+        unRenamedUniforms,
         disableOptimization: !!header?.disableOptimizer,
     };
 }
