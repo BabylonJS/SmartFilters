@@ -1,5 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types";
-import type { ShaderCode, ShaderFunction } from "../shaderCodeUtils";
+import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
@@ -294,6 +294,6 @@ export const BlockTypeLabel = "blockType";
  * @returns - The value of the label or undefined if not found
  */
 export function readHeader(shaderCode: string): Nullable<GlslHeader> {
-    const match = new RegExp("\\/\\*(.*)\\*\\/", "gs").exec(shaderCode);
+    const match = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(shaderCode);
     return match && match[1] ? JSON.parse(match[1].trim()) : null;
 }
