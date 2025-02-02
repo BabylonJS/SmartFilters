@@ -3,7 +3,7 @@ import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { SmartFilterEditor } from "@babylonjs/smart-filters-editor-control";
 import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";

@@ -6,4 +6,4 @@ This package is currently in preview form, and updates will likely include break
 
 ## Smart Filters Editor Control
 
-The package contains the visual editor control used in the browser extension, the demo app, and the Smart Filters Editor application.
+The package contains the visual editor for Smart Filters deployed to https://sfe.babylonjs.com - it is currently in preview form, and will undergo significant, possibly breaking, changes before leaving preview.

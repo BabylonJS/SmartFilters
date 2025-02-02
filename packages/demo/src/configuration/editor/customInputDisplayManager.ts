@@ -1,6 +1,6 @@
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
-import { InputDisplayManager } from "@babylonjs/smart-filters-editor";
+import { InputDisplayManager } from "@babylonjs/smart-filters-editor-control";
 import { WebCamInputBlockName, type WebCamInputBlock } from "../blocks/hardcoded/inputs/webCamInputBlock";
 
 /**
