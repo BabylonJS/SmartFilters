@@ -9,7 +9,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./auroraBlock.shader";
+import { shaderProgram, uniforms } from "../generators/auroraBlock.shader";
 
 /**
  * The shader bindings for the aurora block.
