@@ -292,9 +292,9 @@ export const SmartFilterShaderVersionLabel = "smartFilterShaderVersion";
 export const BlockTypeLabel = "blockType";
 
 /**
- * Searches the shader code for specially encoded values required by our format
- * @param shaderCode - The shader code to search
- * @returns - The value of the label or undefined if not found
+ * Reads the GlslHeader from the shader code
+ * @param shaderCode - The shader code to read
+ * @returns - The GlslHeader if found, otherwise null
  */
 export function readHeader(shaderCode: string): Nullable<GlslHeader> {
     const match = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(shaderCode);
