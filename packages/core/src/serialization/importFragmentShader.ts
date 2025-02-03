@@ -5,8 +5,8 @@ import type { SerializedInputConnectionPointV1 } from "./v1/blockSerialization.t
 
 /**
  * Converts a fragment shader .glsl file to an SerializedBlockDefinition instance for use
- * as a CustomShaderBlock. The .glsl file must contain certain annotations to be able to be
- * imported. See readme.md for more information.
+ * as a CustomShaderBlock. The .glsl file must contain certain annotations to be imported.
+ * See readme.md for more information.
  * @param fragmentShader - The contents of the .glsl fragment shader file
  * @returns The serialized block definition
  */
@@ -23,6 +23,8 @@ export function importFragmentShader(fragmentShader: string): SerializedBlockDef
         if (!uniform) {
             continue;
         }
+
+        // Parse the uniform
         const matches = new RegExp(/^uniform\s+(\w+)\s+(\w+)\s*;(?:\s*\/\/\s*default:\s*(.*)\s*)?/gm).exec(uniform);
         if (!matches || matches.length < 3) {
             throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
@@ -34,53 +36,39 @@ export function importFragmentShader(fragmentShader: string): SerializedBlockDef
             throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
         }
 
-        let inputConnectionPoint: SerializedInputConnectionPointV1;
+        // Convert to ConnectionPointType
+        let type: ConnectionPointType;
         switch (uniformTypeString) {
             case "float":
-                inputConnectionPoint = {
-                    name: uniformName,
-                    type: ConnectionPointType.Float,
-                    defaultValue,
-                };
+                type = ConnectionPointType.Float;
                 break;
             case "sampler2D":
-                inputConnectionPoint = {
-                    name: uniformName,
-                    type: ConnectionPointType.Texture,
-                };
+                type = ConnectionPointType.Texture;
                 break;
             case "vec3":
-                inputConnectionPoint = {
-                    name: uniformName,
-                    type: ConnectionPointType.Color3,
-                    defaultValue,
-                };
+                type = ConnectionPointType.Color3;
                 break;
             case "vec4":
-                inputConnectionPoint = {
-                    name: uniformName,
-                    type: ConnectionPointType.Color4,
-                    defaultValue,
-                };
+                type = ConnectionPointType.Color4;
                 break;
             case "bool":
-                inputConnectionPoint = {
-                    name: uniformName,
-                    type: ConnectionPointType.Boolean,
-                    defaultValue,
-                };
+                type = ConnectionPointType.Boolean;
                 break;
             case "vec2":
-                inputConnectionPoint = {
-                    name: uniformName,
-                    type: ConnectionPointType.Vector2,
-                    defaultValue,
-                };
+                type = ConnectionPointType.Vector2;
                 break;
             default:
                 throw new Error(`Unsupported uniform type: '${uniformTypeString}'`);
         }
 
+        // Add to input connection point list
+        const inputConnectionPoint: SerializedInputConnectionPointV1 = {
+            name: uniformName,
+            type,
+        };
+        if (inputConnectionPoint.type !== ConnectionPointType.Texture && defaultValue) {
+            inputConnectionPoint.defaultValue = defaultValue;
+        }
         inputConnectionPoints.push(inputConnectionPoint);
     }
 
