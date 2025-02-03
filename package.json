@@ -42,7 +42,7 @@
     "workspaces": [
         "packages/core",
         "packages/editor",
-        "packages/editorControl",
+        "packages/sfe",
         "packages/demo"
     ],
     "devDependencies": {
