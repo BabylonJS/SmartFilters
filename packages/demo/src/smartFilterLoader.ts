@@ -138,7 +138,7 @@ export class SmartFilterLoader {
     }
 
     /**
-     * Internal method to reuse common loading logic and fallback handling.
+     * Internal method to reuse common loading logic
      * @param loader - Function that loads the SmartFilter from some source
      * @param source - Source of the SmartFilter (see SmartFilterSource)
      */

@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as react from "react";
+import type { Nullable } from "@babylonjs/core/types";
+import type { Observer } from "@babylonjs/core/Misc/observable";
+import { Tools } from "@babylonjs/core/Misc/tools.js";
+
 import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
 import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
 import "../../assets/styles/components/nodeList.scss";
-import type { Nullable } from "@babylonjs/core/types";
-import type { Observer } from "@babylonjs/core/Misc/observable";
 import { DraggableLineWithButtonComponent } from "../../sharedComponents/draggableLineWithButtonComponent.js";
 import deleteButton from "../../assets/imgs/delete.svg";
 import addButton from "../../assets/imgs/add.svg";
 import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
-import { Tools } from "@babylonjs/core/Misc/tools.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -88,7 +89,6 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                                 onIconClick={() => {
                                     this.deleteCustomShaderBlock(block);
                                 }}
-                                lenSuffixToRemove={11}
                             />
                         );
                     }
