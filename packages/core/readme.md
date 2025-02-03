@@ -16,7 +16,7 @@ This can be installed with `npm install @babylonjs/smart-filters`.
 
 It requires the following peer dependencies:
 
--   @babylonjs/core
+- @babylonjs/core
 
 ## How to use
 
@@ -48,23 +48,23 @@ The notion of a `SmartFilter` is a graph of blocks (all inheriting from `BaseBlo
 
 During the initialization phase, the `SmartFilter` examines the graph and builds a list of commands to execute during each frame and stores them in a `CommandBuffer`:
 
--   This keeps each frame render very fast by ensuring the work is branchless.
--   Basically, every `BaseBlock` during its `initialize` step will register in the `CommandBuffer` only the work it has to execute according to its options.
--   In the end the render loop it only needs to run and execute each command in the list.
--   This also allows for easy injection of debug tools or logging in between each command without growing the minimum required code to run a filter.
--   As discussed, the `Blocks` are responsible for "injecting" their command in the filter `CommandBuffer`.
--   For example: the `ShaderBlock` highlights how convenient it can be to only switch once at init time between rendering to the main frame buffer (if linked to the output) or to an intermediate texture if in the middle of the chain.
+- This keeps each frame render very fast by ensuring the work is branchless.
+- Basically, every `BaseBlock` during its `initialize` step will register in the `CommandBuffer` only the work it has to execute according to its options.
+- In the end the render loop it only needs to run and execute each command in the list.
+- This also allows for easy injection of debug tools or logging in between each command without growing the minimum required code to run a filter.
+- As discussed, the `Blocks` are responsible for "injecting" their command in the filter `CommandBuffer`.
+- For example: the `ShaderBlock` highlights how convenient it can be to only switch once at init time between rendering to the main frame buffer (if linked to the output) or to an intermediate texture if in the middle of the chain.
 
 Each block is responsible for exposing their inputs and outputs through `registerInput` and `registerOutput`:
 
--   This creates and stores the related `ConnectionPoint`.
--   All property values of a block must be updated only before `initialize` is called as the runtime won't reference it at render time.
--   All values that need to be dynamically updated after `initialize` must be defined as connection points or 'StrongRef'.
+- This creates and stores the related `ConnectionPoint`.
+- All property values of a block must be updated only before `initialize` is called as the runtime won't reference it at render time.
+- All values that need to be dynamically updated after `initialize` must be defined as connection points or 'StrongRef'.
 
 The `ConnectionPoints` are:
 
--   Strongly typed, allowing more type safety while creating `SmartFilter` by code, yet keeping enough flexibility to be understood efficiently at runtime.
--   They are also responsible for their compatibility when linked to each other.
+- Strongly typed, allowing more type safety while creating `SmartFilter` by code, yet keeping enough flexibility to be understood efficiently at runtime.
+- They are also responsible for their compatibility when linked to each other.
 
 The Smart Filter is fully abstracted away from the runtime notion and does not even require a Babylon Engine to work with. It is only responsible to hold the "graph" of the filter or the "map" of all its blocks. A Filter only needs a name to be created:
 
@@ -160,14 +160,15 @@ _Note_ The runtime should be disposed once it is not used anymore to free the GP
 
 The overall system is trying at best to follow 3 simple rules:
 
--   Be CPU efficient: for instance, we are trying to be branchless in most of our commands and we try to keep the number of commands as low as possible.
--   Be memory efficient: no commands should allocate memory as it could trigger some garbage collection at the expense of frame loss.
--   Be GPU efficient: the graph and texture optimizers minimize the number of "passes" required to render an image and the GPU resources used by the graph.
+- Be CPU efficient: for instance, we are trying to be branchless in most of our commands and we try to keep the number of commands as low as possible.
+- Be memory efficient: no commands should allocate memory as it could trigger some garbage collection at the expense of frame loss.
+- Be GPU efficient: the graph and texture optimizers minimize the number of "passes" required to render an image and the GPU resources used by the graph.
 
 ## Requirements for GLSL code
 
 To be imported into blocks, the following requirements must be met by .glsl files:
 
+1. The file must start with a multiline comment that contains a JSON encoded GlslHeader object
 1. There must be a sampler2D uniform designed as the main input texture (the one to be passed along) if this block is disabled. It must have a comment on its line like this:
    `// main`
 1. There must be a single main function which takes in a vec2 named vUV and returns a vec4, and it must have a comment on its line like this:

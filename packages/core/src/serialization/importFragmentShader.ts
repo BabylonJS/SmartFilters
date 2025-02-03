@@ -4,8 +4,9 @@ import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
 import type { SerializedInputConnectionPointV1 } from "./v1/blockSerialization.types.js";
 
 /**
- * Converts a single fragment shader .glsl file to an SerializedBlockDefinition instance for use
- * as a CustomShaderBlock.
+ * Converts a fragment shader .glsl file to an SerializedBlockDefinition instance for use
+ * as a CustomShaderBlock. The .glsl file must contain certain annotations to be able to be
+ * imported. See readme.md for more information.
  * @param fragmentShader - The contents of the .glsl fragment shader file
  * @returns The serialized block definition
  */
