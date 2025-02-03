@@ -38,7 +38,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         this.setState({ filter: filter });
     }
 
-    loadCustomBlock(file: File) {
+    loadCustomShaderBlock(file: File) {
         Tools.ReadFile(
             file,
             async (data) => {
@@ -56,7 +56,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         );
     }
 
-    deleteCustomBlock(blockType: string) {
+    deleteCustomShaderBlock(blockType: string) {
         if (!this.props.globalState.deleteCustomShaderBlock) {
             return;
         }
@@ -86,7 +86,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
                                 onIconClick={() => {
-                                    this.deleteCustomBlock(block);
+                                    this.deleteCustomShaderBlock(block);
                                 }}
                                 lenSuffixToRemove={11}
                             />
@@ -111,7 +111,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         uploadName={"custom-block-upload"}
                         iconImage={addButton}
                         accept=".json, .glsl"
-                        onIconClick={(file) => this.loadCustomBlock(file)}
+                        onIconClick={(file) => this.loadCustomShaderBlock(file)}
                     />
                 );
                 blockList.push(line);
