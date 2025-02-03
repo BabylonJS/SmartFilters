@@ -1,5 +1,5 @@
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import { BlockTypeLabel, parseFragmentShader } from "../utils/buildTools/shaderParsing.js";
+import { BlockTypeLabel, parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
 import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
 import type { SerializedInputConnectionPointV1 } from "./v1/blockSerialization.types.js";
 

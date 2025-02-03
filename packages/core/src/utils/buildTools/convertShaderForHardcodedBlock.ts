@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { parseFragmentShader } from "./shaderParsing.js";
+import { parseFragmentShader } from "./shaderConverter.js";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
 const VERTEX_SHADER = "@VERTEX_SHADER@";
