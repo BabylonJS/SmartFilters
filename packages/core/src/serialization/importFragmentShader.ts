@@ -23,20 +23,26 @@ export function importFragmentShader(fragmentShader: string): SerializedBlockDef
         if (!uniform) {
             continue;
         }
-        const split = uniform.split(" ");
-        const uniformTypeString = split[1];
-        const uniformName = split[2]?.replace(";", "");
-        const defaultString = new RegExp(/\/\/\s*default:(.*)/gs).exec(uniform)?.[1];
-        let defaultValue: any | undefined = undefined;
-        if (defaultString) {
-            defaultValue = JSON.parse(defaultString.trim());
+        const matches = new RegExp(/^uniform\s+(\w+)\s+(\w+)\s*;(?:\s*\/\/\s*default:\s*(.*)\s*)?/gm).exec(uniform);
+        if (!matches || matches.length < 3) {
+            throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
         }
+        const uniformTypeString = matches[1];
+        const uniformName = matches[2];
+        const defaultValue = matches[3] ? JSON.parse(matches[3].trim()) : undefined;
         if (!uniformTypeString || !uniformName) {
             throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
         }
 
         let inputConnectionPoint: SerializedInputConnectionPointV1;
         switch (uniformTypeString) {
+            case "float":
+                inputConnectionPoint = {
+                    name: uniformName,
+                    type: ConnectionPointType.Float,
+                    defaultValue,
+                };
+                break;
             case "sampler2D":
                 inputConnectionPoint = {
                     name: uniformName,
@@ -50,10 +56,24 @@ export function importFragmentShader(fragmentShader: string): SerializedBlockDef
                     defaultValue,
                 };
                 break;
-            case "float":
+            case "vec4":
                 inputConnectionPoint = {
                     name: uniformName,
-                    type: ConnectionPointType.Float,
+                    type: ConnectionPointType.Color4,
+                    defaultValue,
+                };
+                break;
+            case "bool":
+                inputConnectionPoint = {
+                    name: uniformName,
+                    type: ConnectionPointType.Boolean,
+                    defaultValue,
+                };
+                break;
+            case "vec2":
+                inputConnectionPoint = {
+                    name: uniformName,
+                    type: ConnectionPointType.Vector2,
                     defaultValue,
                 };
                 break;

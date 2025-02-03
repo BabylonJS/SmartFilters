@@ -59,9 +59,9 @@ export class GlobalState {
 
     saveToSnippetServer?: (() => void) | undefined;
 
-    rebuildRuntime: (smartFilter: SmartFilter) => void;
+    rebuildRuntime: () => void;
 
-    reloadAssets: (smartFilter: SmartFilter) => void;
+    reloadAssets: () => void;
 
     addCustomShaderBlock?: (serializedData: string) => void;
 
@@ -75,8 +75,8 @@ export class GlobalState {
         downloadSmartFilter: () => void,
         loadSmartFilter: (file: File) => Promise<SmartFilter>,
         beforeRenderObservable: Observable<void>,
-        rebuildRuntime: (smartFilter: SmartFilter) => void,
-        reloadAssets: (smartFilter: SmartFilter) => void,
+        rebuildRuntime: () => void,
+        reloadAssets: () => void,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
         addCustomShaderBlock?: (serializedData: string) => void,
