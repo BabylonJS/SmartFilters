@@ -8,7 +8,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./starryPlanesBlock.shader";
+import { shaderProgram, uniforms } from "../generators/starryPlanesBlock.shader";
 
 /**
  * The shader bindings for the StarryPlanes block.
