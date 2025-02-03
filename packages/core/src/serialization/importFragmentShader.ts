@@ -1,5 +1,5 @@
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import { BlockTypeLabel, parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
+import { parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
 import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
 import type { SerializedInputConnectionPointV1 } from "./v1/blockSerialization.types.js";
 
@@ -13,7 +13,7 @@ export function importFragmentShader(fragmentShader: string): SerializedBlockDef
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
 
     if (!fragmentShaderInfo.blockType) {
-        throw new Error(`${BlockTypeLabel} must be defined`);
+        throw new Error("blockType must be defined");
     }
 
     // Calculate the input connection points

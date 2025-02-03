@@ -274,7 +274,7 @@ type GlslHeader = {
     /**
      * The version of the smart filter shader header format
      */
-    smartFilterShaderFormatVersion: number;
+    [SmartFilterShaderVersionLabel]: number;
 
     /**
      * The block type to use for the shader, required when converting to a
@@ -288,8 +288,7 @@ type GlslHeader = {
      */
     disableOptimizer?: boolean;
 };
-export const SmartFilterShaderVersionLabel = "smartFilterShaderVersion";
-export const BlockTypeLabel = "blockType";
+export const SmartFilterShaderVersionLabel = "smartFilterShaderFormatVersion";
 
 /**
  * Reads the GlslHeader from the shader code
