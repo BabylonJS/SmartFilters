@@ -67,7 +67,7 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedBlockDefinition 
             name: uniform.name,
             type,
         };
-        if (inputConnectionPoint.type !== ConnectionPointType.Texture && uniform.properties?.default) {
+        if (inputConnectionPoint.type !== ConnectionPointType.Texture && uniform.properties?.default !== undefined) {
             inputConnectionPoint.defaultValue = uniform.properties.default;
         }
         inputConnectionPoints.push(inputConnectionPoint);
