@@ -50,7 +50,14 @@ export class SmartFilterDeserializer {
      */
     public async deserialize(engine: ThinEngine, smartFilterJson: any): Promise<SmartFilter> {
         const serializedSmartFilter: SerializedSmartFilter = smartFilterJson;
-        switch (serializedSmartFilter.version) {
+
+        // Back-compat for the rename of version to formatVersion, didn't warrant a new version
+        if ((serializedSmartFilter as any).version && serializedSmartFilter.formatVersion === undefined) {
+            serializedSmartFilter.formatVersion = (serializedSmartFilter as any).version;
+            delete (serializedSmartFilter as any).version;
+        }
+
+        switch (serializedSmartFilter.formatVersion) {
             case 1:
                 return await this._deserializeV1(engine, serializedSmartFilter);
         }

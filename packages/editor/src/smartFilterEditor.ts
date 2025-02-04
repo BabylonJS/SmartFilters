@@ -115,12 +115,24 @@ export type SmartFilterEditorOptions = {
     /**
      * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
      */
-    rebuildRuntime: (smartFilter: SmartFilter) => void;
+    rebuildRuntime: () => void;
 
     /**
      * Called when the editor determines that the assets (images or videos) need to be reloaded
      */
-    reloadAssets: (smartFilter: SmartFilter) => void;
+    reloadAssets: () => void;
+
+    /**
+     * If supplied, the editor will call this function when the user tries to add a custom shader block
+     * @param serializedData - The serialized data of the custom shader block
+     */
+    addCustomShaderBlock?: (serializedData: string) => void;
+
+    /**
+     * If supplied, the editor will call this function when the user tries to delete a custom shader block
+     * @param blockType - The type of the custom shader block to delete
+     */
+    deleteCustomShaderBlock?: (blockType: string) => void;
 };
 
 /**
@@ -163,7 +175,9 @@ export class SmartFilterEditor {
             options.rebuildRuntime,
             options.reloadAssets,
             options.saveToSnippetServer,
-            options.texturePresets
+            options.texturePresets,
+            options.addCustomShaderBlock,
+            options.deleteCustomShaderBlock
         );
 
         RegisterToDisplayManagers(globalState);

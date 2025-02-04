@@ -11,8 +11,10 @@ import { blockFactory } from "./configuration/blockFactory";
 import { inputBlockDeserializer } from "./configuration/inputBlockDeserializer";
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
-import type { SmartFilter } from "@babylonjs/smart-filters";
+import type { ISerializedBlockV1, SmartFilter } from "@babylonjs/smart-filters";
 import { hookupBackgroundOption } from "./backgroundOption";
+import { CustomShaderBlockManager } from "./customShaderBlockManager";
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;
@@ -26,9 +28,6 @@ const renderToTextureInsteadOfCanvas: boolean = false;
 // Constants
 const LocalStorageSmartFilterName = "SmartFilterName";
 const LocalStorageOptimizeName = "OptimizeSmartFilter";
-
-// Load settings from localStorage
-let optimize: boolean = localStorage.getItem(LocalStorageOptimizeName) === "true";
 
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
@@ -48,13 +47,16 @@ hookupBackgroundOption();
 
 // Create our services
 const engine = createThinEngine(canvas);
-const renderer = new SmartFilterRenderer(engine);
+const renderer = new SmartFilterRenderer(engine, localStorage.getItem(LocalStorageOptimizeName) === "true");
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
+const customShaderBlockManager = new CustomShaderBlockManager();
 const smartFilterLoader = new SmartFilterLoader(
     engine,
     renderer,
     smartFilterManifests,
-    blockFactory,
+    (smartFilter: SmartFilter, engine: ThinEngine, serializedBlock: ISerializedBlockV1) => {
+        return blockFactory(smartFilter, engine, serializedBlock, customShaderBlockManager);
+    },
     inputBlockDeserializer,
     textureRenderHelper
 );
@@ -79,13 +81,13 @@ function renderCurrentSmartFilter(hideEditor: boolean = true) {
         return;
     }
 
-    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, optimize ? "[optimized]" : "");
+    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, renderer.optimize ? "[optimized]" : "");
 
     renderer
-        .startRendering(smartFilterState.smartFilter, optimize, optimize)
+        .startRendering(smartFilterState.smartFilter)
         .then((smartFilterRendered: SmartFilter) => {
             closeError();
-            if (optimize) {
+            if (renderer.optimize) {
                 smartFilterState.optimizedSmartFilter = smartFilterRendered;
             }
         })
@@ -143,14 +145,14 @@ async function loadFromHash() {
         if (snippetToken) {
             // Reset hash with our formatting to keep it looking consistent
             setSnippet(snippetToken, version, false);
-            smartFilterLoader.loadFromSnippet(snippetToken, version);
+            await smartFilterLoader.loadFromSnippet(snippetToken, version);
         } else {
             const smartFilterName =
                 localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-            smartFilterLoader.loadFromManifest(smartFilterName);
+            await smartFilterLoader.loadFromManifest(smartFilterName);
         }
     } catch (e) {
-        smartFilterLoader.loadFromManifest(smartFilterLoader.defaultSmartFilterName);
+        showError(`Could not load SmartFilter: ${e}`);
     }
 }
 
@@ -187,21 +189,17 @@ editActionLink.onclick = async () => {
             renderer,
             smartFilterLoader,
             showError,
-            (smartFilter: SmartFilter) => {
-                if (currentSmartFilterState) {
-                    currentSmartFilterState.smartFilter = smartFilter;
-                    renderCurrentSmartFilter(false);
-                }
-            }
+            closeError,
+            customShaderBlockManager
         );
     }
 };
 
 // Set up the optimize checkbox
-optimizeCheckbox.checked = optimize;
+optimizeCheckbox.checked = renderer.optimize;
 optimizeCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
-    optimize = optimizeCheckbox.checked;
+    renderer.optimize = optimizeCheckbox.checked;
     renderCurrentSmartFilter(false);
 };
 

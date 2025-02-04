@@ -18,6 +18,7 @@ import { TextureAssetCache } from "./configuration/textureAssetCache";
 export class SmartFilterRenderer {
     private _animationDisposeWork: Nullable<() => void> = null;
     private _textureAssetCache: TextureAssetCache;
+    private _lastRenderedSmartFilter: Nullable<SmartFilter> = null;
 
     /**
      * Callback called before rendering the filter every frame.
@@ -40,10 +41,16 @@ export class SmartFilterRenderer {
     public runtime: Nullable<SmartFilterRuntime> = null;
 
     /**
+     * If true, Smart Filters rendered with this renderer will be optimized.
+     * Does not affect any previously rendered filters.
+     */
+    public optimize: boolean = false;
+
+    /**
      * Creates a new smart filter renderer.
      * @param engine - the engine to use to render the filter
      */
-    public constructor(engine: ThinEngine) {
+    public constructor(engine: ThinEngine, optimize: boolean) {
         this.engine = engine;
         this.beforeRenderObservable = new Observable<void>();
         this.afterRenderObservable = new Observable<void>();
@@ -52,15 +59,18 @@ export class SmartFilterRenderer {
         this.engine.stencilState.stencilTest = false;
 
         this._textureAssetCache = new TextureAssetCache(engine, this.beforeRenderObservable);
+
+        this.optimize = optimize;
     }
 
     /**
      * Starts rendering the filter. (won't stop until dispose is called)
      */
-    public async startRendering(filter: SmartFilter, optimizerFilter = false, optimizeTextures = false) {
-        const filterToRender = optimizerFilter ? this._optimize(filter) : filter;
+    public async startRendering(filter: SmartFilter) {
+        this._lastRenderedSmartFilter = filter;
+        const filterToRender = this.optimize ? this._optimize(filter) : filter;
 
-        const rtg = new RenderTargetGenerator(optimizeTextures);
+        const rtg = new RenderTargetGenerator(this.optimize);
         const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
 
         // NOTE: Always load assets and animations from the unoptimized filter because it has all the metadata needed to load assets and
@@ -93,6 +103,26 @@ export class SmartFilterRenderer {
 
         // Load the assets for the input blocks
         await this._textureAssetCache.loadAssetsForInputBlocks(inputBlocks);
+    }
+
+    /**
+     * Rebuilds the most recently rendered runtime.
+     */
+    public rebuildRuntime(): Promise<SmartFilter> {
+        if (!this._lastRenderedSmartFilter) {
+            throw new Error("No SmartFilter has been rendered yet");
+        }
+        return this.startRendering(this._lastRenderedSmartFilter);
+    }
+
+    /**
+     * Reloads the assets for the most recently rendered SmartFilter.
+     */
+    public reloadAssets(): Promise<void> {
+        if (!this._lastRenderedSmartFilter) {
+            throw new Error("No SmartFilter has been rendered yet");
+        }
+        return this.loadAssets(this._lastRenderedSmartFilter);
     }
 
     /**

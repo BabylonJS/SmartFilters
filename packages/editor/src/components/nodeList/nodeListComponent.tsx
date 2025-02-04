@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as react from "react";
-import type { GlobalState } from "../../globalState";
-
-import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
-import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
-
-import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
-
-import "../../assets/styles/components/nodeList.scss";
-
 import type { Nullable } from "@babylonjs/core/types";
 import type { Observer } from "@babylonjs/core/Misc/observable";
+import { Tools } from "@babylonjs/core/Misc/tools.js";
+
+import type { GlobalState } from "../../globalState";
+import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
+import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
+import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
+import "../../assets/styles/components/nodeList.scss";
+import { DraggableLineWithButtonComponent } from "../../sharedComponents/draggableLineWithButtonComponent.js";
+import deleteButton from "../../assets/imgs/delete.svg";
+import addButton from "../../assets/imgs/add.svg";
+import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -37,6 +39,34 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         this.setState({ filter: filter });
     }
 
+    loadCustomShaderBlock(file: File) {
+        Tools.ReadFile(
+            file,
+            async (data) => {
+                if (!this.props.globalState.addCustomShaderBlock) {
+                    return;
+                }
+
+                const decoder = new TextDecoder("utf-8");
+                this.props.globalState.addCustomShaderBlock(decoder.decode(data));
+
+                this.forceUpdate();
+            },
+            undefined,
+            true
+        );
+    }
+
+    deleteCustomShaderBlock(blockType: string) {
+        if (!this.props.globalState.deleteCustomShaderBlock) {
+            return;
+        }
+
+        this.props.globalState.deleteCustomShaderBlock(blockType);
+
+        this.forceUpdate();
+    }
+
     override render() {
         // Create node menu
         const blockMenu = [];
@@ -48,6 +78,20 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                 )
                 .sort((a: string, b: string) => a.localeCompare(b))
                 .map((block: string) => {
+                    if (key === "Custom_Blocks") {
+                        return (
+                            <DraggableLineWithButtonComponent
+                                key={block}
+                                data={block}
+                                tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
+                                iconImage={deleteButton}
+                                iconTitle="Delete"
+                                onIconClick={() => {
+                                    this.deleteCustomShaderBlock(block);
+                                }}
+                            />
+                        );
+                    }
                     return (
                         <DraggableLineComponent
                             key={block}
@@ -56,6 +100,22 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         />
                     );
                 });
+
+            if (key === "Custom_Blocks") {
+                const line = (
+                    <LineWithFileButtonComponent
+                        key="add..."
+                        title={"Add Custom Block"}
+                        closed={false}
+                        label="Add..."
+                        uploadName={"custom-block-upload"}
+                        iconImage={addButton}
+                        accept=".json, .glsl"
+                        onIconClick={(file) => this.loadCustomShaderBlock(file)}
+                    />
+                );
+                blockList.push(line);
+            }
 
             if (blockList.length) {
                 blockMenu.push(

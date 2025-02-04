@@ -29,7 +29,7 @@ export class DraggableLineWithButtonComponent extends react.Component<IDraggable
                     event.dataTransfer.setData("babylonjs-smartfilter-node", this.props.data);
                 }}
             >
-                {this.props.data.substr(0, this.props.data.length - (this.props.lenSuffixToRemove ?? 6))}
+                {this.props.data.replace("Block", "")}
                 <div
                     className="icon"
                     onClick={() => {
