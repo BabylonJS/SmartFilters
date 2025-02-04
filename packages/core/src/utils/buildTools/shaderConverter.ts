@@ -101,7 +101,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         });
 
         if (annotationJSON) {
-            // Strip out any default uniform values so they aren't mistaken for function bodies
+            // Strip out any annotation so it isn't mistaken for function bodies
             fragmentShader = fragmentShader.replace(annotationJSON, "");
         }
     }
