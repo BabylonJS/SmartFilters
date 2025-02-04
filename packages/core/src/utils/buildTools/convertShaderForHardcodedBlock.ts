@@ -104,7 +104,13 @@ export function convertShaderForHardcodedBlock(fragmentShaderPath: string, impor
                 : ""
         )
         .replace(FUNCTIONS, functionsSection.join(""))
-        .replace(UNIFORM_NAMES, addLinePrefixes(fragmentShaderInfo.uniformNames.join("\n"), UniformNameLinePrefix));
+        .replace(
+            UNIFORM_NAMES,
+            addLinePrefixes(
+                fragmentShaderInfo.uniforms.map((u) => `${u.name}: "${u.name}",`).join("\n"),
+                UniformNameLinePrefix
+            )
+        );
 
     fs.writeFileSync(shaderFile, finalContents);
 }

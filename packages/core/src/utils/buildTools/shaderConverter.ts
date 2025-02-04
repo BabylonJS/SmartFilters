@@ -4,6 +4,36 @@ import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
 /**
+ * Describes the supported metadata properties for a uniform
+ */
+export type UniformMetadataProperties = {
+    /**
+     * If supplied, the default value to use for the corresponding input connection point
+     */
+    default?: any;
+};
+
+/**
+ * Describes a uniform in a shader
+ */
+export type UniformMetadata = {
+    /**
+     * The original name of the uniform (not renamed)
+     */
+    name: string;
+
+    /**
+     * The type string of the uniform
+     */
+    type: string;
+
+    /**
+     * Optional properties of the uniform
+     */
+    properties?: UniformMetadataProperties;
+};
+
+/**
  * Information about a fragment shader
  */
 export type FragmentShaderInfo = {
@@ -23,14 +53,9 @@ export type FragmentShaderInfo = {
     shaderCode: ShaderCode;
 
     /**
-     * The lines of code which declare the uniform names
+     * The set of uniforms
      */
-    uniformNames: string[];
-
-    /**
-     * The original uniform declarations, before any renaming happened
-     */
-    unRenamedUniforms: string[];
+    uniforms: UniformMetadata[];
 };
 
 /**
@@ -43,23 +68,49 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     fragmentShader = fragmentShaderWithoutHeader;
     const blockType = header?.[SmartFilterBlockTypeKey] || undefined;
 
-    // Capture the uniforms before they are renamed
-    const unRenamedUniforms: string[] = [];
-    const unRenamedUniformMatches = fragmentShader.matchAll(/^\s*(uniform\s.*)/gm);
-    for (const match of unRenamedUniformMatches) {
-        if (match[1]) {
-            unRenamedUniforms.push(match[1]);
+    // Read the uniforms
+    const uniforms: UniformMetadata[] = [];
+    const uniformRegExp = new RegExp(/(\/\/\s*\{.*\}\n)?(uniform .*)/gm);
+    const uniformGroups = fragmentShader.matchAll(uniformRegExp);
+    for (const matches of uniformGroups) {
+        const annotationJSON = matches[1];
+        const uniformLine = matches[2];
+
+        if (!uniformLine) {
+            throw new Error("Uniform line not found");
+        }
+
+        const uniformLineMatches = new RegExp(/^uniform\s+(\w+)\s+(\w+)\s*;?/gm).exec(uniformLine);
+        if (!uniformLineMatches || uniformLineMatches.length < 3) {
+            throw new Error(`Uniforms must have a type and a name: '${uniformLine}'`);
+        }
+        const uniformTypeString = uniformLineMatches[1];
+        const uniformName = uniformLineMatches[2];
+
+        if (!uniformTypeString) {
+            throw new Error(`Uniforms must have a type: '${uniformLine}'`);
+        }
+        if (!uniformName) {
+            throw new Error(`Uniforms must have a name: '${uniformLine}'`);
+        }
+
+        uniforms.push({
+            name: uniformName,
+            type: uniformTypeString,
+            properties: annotationJSON ? JSON.parse(annotationJSON.replace("//", "").trim()) : undefined,
+        });
+
+        if (annotationJSON) {
+            // Strip out any default uniform values so they aren't mistaken for function bodies
+            fragmentShader = fragmentShader.replace(annotationJSON, "");
         }
     }
-
-    // Strip out any default uniform values so they aren't mistaken for function bodies
-    fragmentShader = fragmentShader.replace(/\/\/\s*default:(.*)/g, "");
 
     const fragmentShaderWithNoFunctionBodies = removeFunctionBodies(fragmentShader);
 
     // Collect uniform, const, and function names which need to be decorated
     // eslint-disable-next-line prettier/prettier
-    const uniforms = [...fragmentShader.matchAll(/\S*uniform.*\s(\w*);/g)].map((match) => match[1]);
+    const uniformNames = uniforms.map((uniform) => uniform.name);
     console.log(`Uniforms found: ${JSON.stringify(uniforms)}`);
     const consts = [...fragmentShader.matchAll(/\S*const\s+\w*\s+(\w*)\s*=.*;/g)].map((match) => match[1]);
     console.log(`Consts found: ${JSON.stringify(consts)}`);
@@ -69,14 +120,13 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     console.log(`Functions found: ${JSON.stringify(functionNames)}`);
 
     // Decorate the uniforms, consts, and functions
-    const symbolsToDecorate = [...uniforms, ...consts, ...functionNames];
+    const symbolsToDecorate = [...uniformNames, ...consts, ...functionNames];
     let fragmentShaderWithRenamedSymbols = fragmentShader;
     for (const symbol of symbolsToDecorate) {
         const regex = new RegExp(`(?<=\\W+)${symbol}(?=\\W+)`, "gs");
         fragmentShaderWithRenamedSymbols = fragmentShaderWithRenamedSymbols.replace(regex, `_${symbol}_`);
     }
     console.log(`${symbolsToDecorate.length} symbol(s) renamed`);
-    const uniformNames = uniforms.map((uniform) => `${uniform}: "${uniform}",`);
 
     // Extract all the uniforms
     const finalUniforms = [...fragmentShaderWithRenamedSymbols.matchAll(/^\s*(uniform\s.*)/gm)].map(
@@ -112,8 +162,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     return {
         blockType,
         shaderCode,
-        uniformNames,
-        unRenamedUniforms,
+        uniforms,
         disableOptimization: !!header?.disableOptimizer,
     };
 }

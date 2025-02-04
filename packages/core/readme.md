@@ -176,3 +176,6 @@ To be imported into blocks, the following requirements must be met by .glsl file
 1. Any uniforms which should have the same value across all instances of the same block should have a comment on its line like this:
    `// single`
 1. Functions must be declared with the open { on the same line as the function name
+1. Uniforms can have metadata, such as a default value if no connection is made to their corresponding connection point
+    - In the line immediately above the uniform declaration, start with a // comment followed by a JSON object
+    - The supported metadata is described in the UniformMetadataProperties type

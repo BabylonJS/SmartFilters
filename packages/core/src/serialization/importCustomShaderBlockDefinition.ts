@@ -36,26 +36,10 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedBlockDefinition 
 
     // Calculate the input connection points
     const inputConnectionPoints: SerializedInputConnectionPointV1[] = [];
-    for (const uniform of fragmentShaderInfo.unRenamedUniforms) {
-        if (!uniform) {
-            continue;
-        }
-
-        // Parse the uniform
-        const matches = new RegExp(/^uniform\s+(\w+)\s+(\w+)\s*;(?:\s*\/\/\s*default:\s*(.*)\s*)?/gm).exec(uniform);
-        if (!matches || matches.length < 3) {
-            throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
-        }
-        const uniformTypeString = matches[1];
-        const uniformName = matches[2];
-        const defaultValue = matches[3] ? JSON.parse(matches[3].trim()) : undefined;
-        if (!uniformTypeString || !uniformName) {
-            throw new Error(`Uniforms must have a type and a name: '${uniform}'`);
-        }
-
+    for (const uniform of fragmentShaderInfo.uniforms) {
         // Convert to ConnectionPointType
         let type: ConnectionPointType;
-        switch (uniformTypeString) {
+        switch (uniform.type) {
             case "float":
                 type = ConnectionPointType.Float;
                 break;
@@ -75,16 +59,16 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedBlockDefinition 
                 type = ConnectionPointType.Vector2;
                 break;
             default:
-                throw new Error(`Unsupported uniform type: '${uniformTypeString}'`);
+                throw new Error(`Unsupported uniform type: '${uniform.type}'`);
         }
 
         // Add to input connection point list
         const inputConnectionPoint: SerializedInputConnectionPointV1 = {
-            name: uniformName,
+            name: uniform.name,
             type,
         };
-        if (inputConnectionPoint.type !== ConnectionPointType.Texture && defaultValue) {
-            inputConnectionPoint.defaultValue = defaultValue;
+        if (inputConnectionPoint.type !== ConnectionPointType.Texture && uniform.properties?.default) {
+            inputConnectionPoint.defaultValue = uniform.properties.default;
         }
         inputConnectionPoints.push(inputConnectionPoint);
     }
