@@ -287,13 +287,25 @@ function readHeader(fragmentShader: string): {
      */
     fragmentShaderWithoutHeader: string;
 } {
-    const match = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(fragmentShader);
-    const header = match && match[1] ? JSON.parse(match[1].trim()) : null;
+    const singleLineHeaderMatch = new RegExp(/^\/\/\s*(\{.*\})/gm).exec(fragmentShader);
+    if (singleLineHeaderMatch && singleLineHeaderMatch[1]) {
+        return {
+            header: JSON.parse(singleLineHeaderMatch[1].trim()),
+            fragmentShaderWithoutHeader: fragmentShader.replace(singleLineHeaderMatch[0], ""),
+        };
+    }
+
+    const multiLineHeaderMatch = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(fragmentShader);
+    if (multiLineHeaderMatch && multiLineHeaderMatch[1]) {
+        return {
+            header: JSON.parse(multiLineHeaderMatch[1].trim()),
+            fragmentShaderWithoutHeader: fragmentShader.replace(multiLineHeaderMatch[0], ""),
+        };
+    }
 
     return {
-        header,
-        fragmentShaderWithoutHeader:
-            header && match && match[0] ? fragmentShader.replace(match[0], "") : fragmentShader,
+        header: null,
+        fragmentShaderWithoutHeader: fragmentShader,
     };
 }
 
