@@ -5,7 +5,7 @@ import { ConnectionPointType, type SerializedBlockDefinition } from "@babylonjs/
  * This object could have been deserialized from a JSON file, for example.
  */
 export const deserializedTintBlockDefinition: SerializedBlockDefinition = {
-    version: 1,
+    formatVersion: 1,
     blockType: "TintBlock",
     shaderProgram: {
         fragment: {

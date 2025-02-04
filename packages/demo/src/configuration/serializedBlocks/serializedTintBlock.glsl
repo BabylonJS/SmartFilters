@@ -1,7 +1,6 @@
 /*
 {
-    "smartFilterShaderFormatVersion": 1,
-    "blockType": "SerializedTintBlock"
+    "smartFilterBlockType": "SerializedTintBlock"
 }
 */
 

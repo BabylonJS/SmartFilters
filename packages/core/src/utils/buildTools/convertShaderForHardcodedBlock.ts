@@ -77,7 +77,6 @@ export function convertShaderForHardcodedBlock(fragmentShaderPath: string, impor
     // Read the fragment shader
     const fragmentShader = fs.readFileSync(fragmentShaderPath, "utf8");
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
-    console.log(`Shader version: ${fragmentShaderInfo.smartFilterShaderFormatVersion}`);
 
     // Write the shader TS file
     const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".shader.ts");

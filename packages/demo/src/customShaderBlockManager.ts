@@ -5,8 +5,7 @@ import {
     type BaseBlock,
     CustomShaderBlock,
     type SerializedBlockDefinition,
-    SmartFilterShaderVersionLabel,
-    importFragmentShader,
+    importCustomShaderBlockDefinition,
 } from "@babylonjs/smart-filters";
 
 const CustomShaderBlockListKey = "Custom-Shader-Block-List";
@@ -96,13 +95,7 @@ export class CustomShaderBlockManager {
      * @returns The block definition that was saved
      */
     public saveBlockDefinition(serializedData: string): SerializedBlockDefinition {
-        let blockDefinition: SerializedBlockDefinition;
-
-        if (this._looksLikeGlsl(serializedData)) {
-            blockDefinition = importFragmentShader(serializedData);
-        } else {
-            blockDefinition = JSON.parse(serializedData);
-        }
+        const blockDefinition = importCustomShaderBlockDefinition(serializedData);
 
         this.deleteBlockDefinition(blockDefinition.blockType);
 
@@ -121,10 +114,6 @@ export class CustomShaderBlockManager {
         this._blockDefinitions.set(blockDefinition.blockType, blockDefinition);
 
         return blockDefinition;
-    }
-
-    private _looksLikeGlsl(serializedData: string): boolean {
-        return serializedData.indexOf(SmartFilterShaderVersionLabel) !== -1;
     }
 
     private _readBlockTypeListFromLocalStorage(): string[] {

@@ -8,11 +8,6 @@ const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
  */
 export type FragmentShaderInfo = {
     /**
-     * The version of the smart filter shader header format
-     */
-    smartFilterShaderFormatVersion: number;
-
-    /**
      * If supplied, the blockType to use for the block
      */
     blockType?: string;
@@ -44,18 +39,9 @@ export type FragmentShaderInfo = {
  * @returns The processed fragment shader
  */
 export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo {
-    const header = readHeader(fragmentShader);
-    const smartFilterShaderFormatVersion = header?.smartFilterShaderFormatVersion || 1;
-
-    // Version check
-    if (smartFilterShaderFormatVersion !== 1) {
-        throw new Error(`Unsupported shader format version: ${smartFilterShaderFormatVersion}`);
-    }
-
-    // First skip past the header if there is one
-    if (fragmentShader.indexOf(SmartFilterShaderVersionLabel) !== -1) {
-        fragmentShader = fragmentShader.substring(fragmentShader.indexOf("*/") + 2);
-    }
+    const { header, fragmentShaderWithoutHeader } = readHeader(fragmentShader);
+    fragmentShader = fragmentShaderWithoutHeader;
+    const blockType = header?.[SmartFilterBlockTypeKey] || undefined;
 
     // Capture the uniforms before they are renamed
     const unRenamedUniforms: string[] = [];
@@ -124,8 +110,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     }
 
     return {
-        smartFilterShaderFormatVersion,
-        blockType: header?.blockType,
+        blockType,
         shaderCode,
         uniformNames,
         unRenamedUniforms,
@@ -267,35 +252,56 @@ function removeFunctionBodies(input: string): string {
     return output;
 }
 
+const SmartFilterBlockTypeKey = "smartFilterBlockType";
+
 /**
  * The format of the header we expect in a GLSL shader
  */
 type GlslHeader = {
     /**
-     * The version of the smart filter shader header format
-     */
-    [SmartFilterShaderVersionLabel]: number;
-
-    /**
      * The block type to use for the shader, required when converting to a
      * SerializedBlockDefinition, but not when exporting to a .ts file
      * to be included in a hardcoded block definition
      */
-    blockType?: string;
+    [SmartFilterBlockTypeKey]: string;
 
     /**
      * If true, optimization should be disabled for this shader
      */
     disableOptimizer?: boolean;
 };
-export const SmartFilterShaderVersionLabel = "smartFilterShaderFormatVersion";
 
 /**
  * Reads the GlslHeader from the shader code
- * @param shaderCode - The shader code to read
+ * @param fragmentShader - The shader code to read
  * @returns - The GlslHeader if found, otherwise null
  */
-export function readHeader(shaderCode: string): Nullable<GlslHeader> {
-    const match = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(shaderCode);
-    return match && match[1] ? JSON.parse(match[1].trim()) : null;
+function readHeader(fragmentShader: string): {
+    /**
+     * The glsl header, or null if there wasn't one
+     */
+    header: Nullable<GlslHeader>;
+
+    /**
+     * The fragment shader code with the header removed if there was one
+     */
+    fragmentShaderWithoutHeader: string;
+} {
+    const match = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(fragmentShader);
+    const header = match && match[1] ? JSON.parse(match[1].trim()) : null;
+
+    return {
+        header,
+        fragmentShaderWithoutHeader:
+            header && match && match[0] ? fragmentShader.replace(match[0], "") : fragmentShader,
+    };
+}
+
+/**
+ * Determines if a fragment shader has the GLSL header required for parsing
+ * @param fragmentShader - The fragment shader to check
+ * @returns True if the fragment shader has the GLSL header
+ */
+export function hasGlslHeader(fragmentShader: string): boolean {
+    return fragmentShader.indexOf(SmartFilterBlockTypeKey) !== -1;
 }

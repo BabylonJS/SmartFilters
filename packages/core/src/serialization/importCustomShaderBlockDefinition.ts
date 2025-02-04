@@ -1,7 +1,24 @@
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import { parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
+import { hasGlslHeader, parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
 import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
 import type { SerializedInputConnectionPointV1 } from "./v1/blockSerialization.types.js";
+
+/**
+ * Imports a serialized custom shader block definition. Supports importing a JSON string
+ * of an SerializedBlockDefinition object, or a glsl shader with the required annotations
+ * so it can be converted to a SerializedBlockDefinition object.
+ * See readme.md for more information.
+ * @param serializedBlockDefinition - The serialized block definition - either a SerializedBlockDefinition object in a JSON string, or an annotated glsl shader
+ * @returns The serialized block definition
+ */
+export function importCustomShaderBlockDefinition(serializedBlockDefinition: string): SerializedBlockDefinition {
+    if (hasGlslHeader(serializedBlockDefinition)) {
+        return importAnnotatedGlsl(serializedBlockDefinition);
+    } else {
+        // Assume this is a serialized SerializedBlockDefinition object
+        return JSON.parse(serializedBlockDefinition);
+    }
+}
 
 /**
  * Converts a fragment shader .glsl file to an SerializedBlockDefinition instance for use
@@ -10,7 +27,7 @@ import type { SerializedInputConnectionPointV1 } from "./v1/blockSerialization.t
  * @param fragmentShader - The contents of the .glsl fragment shader file
  * @returns The serialized block definition
  */
-export function importFragmentShader(fragmentShader: string): SerializedBlockDefinition {
+function importAnnotatedGlsl(fragmentShader: string): SerializedBlockDefinition {
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
 
     if (!fragmentShaderInfo.blockType) {
@@ -73,7 +90,7 @@ export function importFragmentShader(fragmentShader: string): SerializedBlockDef
     }
 
     return {
-        version: 1,
+        formatVersion: 1,
         blockType: fragmentShaderInfo.blockType,
         shaderProgram: {
             fragment: fragmentShaderInfo.shaderCode,
