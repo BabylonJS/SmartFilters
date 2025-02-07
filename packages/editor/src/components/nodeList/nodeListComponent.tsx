@@ -111,6 +111,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         uploadName={"custom-block-upload"}
                         iconImage={addButton}
                         accept=".json, .glsl"
+                        allowMultiple={true}
                         onIconClick={(file) => this.loadCustomShaderBlock(file)}
                     />
                 );
