@@ -70,7 +70,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
 
     // Read the uniforms
     const uniforms: UniformMetadata[] = [];
-    const uniformRegExp = new RegExp(/(\/\/\s*\{.*\}\n)?(uniform .*)/gm);
+    const uniformRegExp = new RegExp(/(\/\/\s*\{.*\}\s*(?:\r\n|\r|\n)+)?(uniform .*)/gm);
     const uniformGroups = fragmentShader.matchAll(uniformRegExp);
     for (const matches of uniformGroups) {
         const annotationJSON = matches[1];
