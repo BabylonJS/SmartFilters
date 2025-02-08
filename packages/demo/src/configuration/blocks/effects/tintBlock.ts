@@ -1,10 +1,11 @@
-import { ConnectionPointType, type SerializedBlockDefinition } from "@babylonjs/smart-filters";
+import { ConnectionPointType, type SerializedShaderBlockDefinition } from "@babylonjs/smart-filters";
 
 /**
  * This is included to show how a serialized block definition can be loaded and used.
  * This object could have been deserialized from a JSON file, for example.
  */
-export const deserializedTintBlockDefinition: SerializedBlockDefinition = {
+export const deserializedTintBlockDefinition: SerializedShaderBlockDefinition = {
+    format: "shaderBlockDefinition",
     formatVersion: 1,
     blockType: "TintBlock",
     shaderProgram: {

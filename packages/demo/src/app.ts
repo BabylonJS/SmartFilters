@@ -13,7 +13,7 @@ import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
 import type { ISerializedBlockV1, SmartFilter } from "@babylonjs/smart-filters";
 import { hookupBackgroundOption } from "./backgroundOption";
-import { CustomShaderBlockManager } from "./customShaderBlockManager";
+import { CustomBlockManager } from "./customBlockManager";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 
 type CurrentSmartFilterState = {
@@ -49,13 +49,13 @@ hookupBackgroundOption();
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine, localStorage.getItem(LocalStorageOptimizeName) === "true");
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
-const customShaderBlockManager = new CustomShaderBlockManager();
+const customBlockManager = new CustomBlockManager();
 const smartFilterLoader = new SmartFilterLoader(
     engine,
     renderer,
     smartFilterManifests,
     (smartFilter: SmartFilter, engine: ThinEngine, serializedBlock: ISerializedBlockV1) => {
-        return blockFactory(smartFilter, engine, serializedBlock, customShaderBlockManager);
+        return blockFactory(smartFilter, engine, serializedBlock, customBlockManager);
     },
     inputBlockDeserializer,
     textureRenderHelper
@@ -190,7 +190,7 @@ editActionLink.onclick = async () => {
             smartFilterLoader,
             showError,
             closeError,
-            customShaderBlockManager
+            customBlockManager
         );
     }
 };

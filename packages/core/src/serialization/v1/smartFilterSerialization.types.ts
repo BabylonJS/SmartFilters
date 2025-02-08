@@ -14,6 +14,9 @@ import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSyste
  * V1 Serialized Smart Filter
  */
 export type SerializedSmartFilterV1 = {
+    /** Which type of serialized data this is. */
+    format: "smartFilter";
+
     /** The format version of the serialized data (not the version of the SmartFilter itself).*/
     formatVersion: 1;
 

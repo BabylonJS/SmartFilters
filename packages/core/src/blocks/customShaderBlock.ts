@@ -2,8 +2,8 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { ShaderBinding } from "../runtime/shaderRuntime.js";
 import { createStrongRef } from "../runtime/strongRef.js";
-import type { SerializedBlockDefinition } from "../serialization/serializedBlockDefinition";
-import type { SerializedInputConnectionPointV1 } from "../serialization/v1/blockSerialization.types";
+import type { SerializedShaderBlockDefinition } from "../serialization/serializedShaderBlockDefinition.js";
+import type { SerializedInputConnectionPointV1 } from "../serialization/v1/shaderBlockSerialization.types.js";
 import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { ShaderBlock } from "./shaderBlock.js";
@@ -83,7 +83,7 @@ export class CustomShaderBlock extends ShaderBlock {
     public static Create(
         smartFilter: SmartFilter,
         name: string,
-        blockDefinition: SerializedBlockDefinition
+        blockDefinition: SerializedShaderBlockDefinition
     ): CustomShaderBlock {
         // When a new version of SerializedBlockDefinition is created, this function should be updated to handle the new properties.
 

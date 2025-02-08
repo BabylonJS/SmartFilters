@@ -3,9 +3,20 @@ import type { ConnectionPointType } from "../connection/connectionPointType.js";
 import type { IColor3Like, IColor4Like, IVector2Like } from "@babylonjs/core/Maths/math.like.js";
 
 /**
+ * Common data for all InputBlock types
+ */
+export type InputBlockDataBase = {
+    /**
+     * If true, this input block should not be exposed as an input connection point when this
+     * SmartFilter is loaded as a CustomAggregateBlock.
+     */
+    isInternal?: boolean;
+};
+
+/**
  * The data for an InputBlock for ConnectionPointType.Texture inputs
  */
-export type TextureInputBlockData = {
+export type TextureInputBlockData = InputBlockDataBase & {
     /** The type of the input block */
     inputType: ConnectionPointType.Texture;
 
@@ -37,7 +48,7 @@ export type TextureInputBlockData = {
 /**
  * The data for an InputBlock for ConnectionPointType.Boolean inputs
  */
-export type BooleanInputBlockData = {
+export type BooleanInputBlockData = InputBlockDataBase & {
     /** The type of the input block */
     inputType: ConnectionPointType.Boolean;
 
@@ -48,7 +59,7 @@ export type BooleanInputBlockData = {
 /**
  * The data for an InputBlock for ConnectionPointType.Float inputs
  */
-export type FloatInputBlockData = {
+export type FloatInputBlockData = InputBlockDataBase & {
     /** The type of the input block */
     inputType: ConnectionPointType.Float;
 
@@ -79,7 +90,7 @@ export type FloatInputBlockData = {
 /**
  * The data for an InputBlock for ConnectionPointType.Color3 inputs
  */
-export type Color3InputBlockData = {
+export type Color3InputBlockData = InputBlockDataBase & {
     /** The type of the input block */
     inputType: ConnectionPointType.Color3;
 
@@ -90,7 +101,7 @@ export type Color3InputBlockData = {
 /**
  * The data for an InputBlock for ConnectionPointType.Color4 inputs
  */
-export type Color4InputBlockData = {
+export type Color4InputBlockData = InputBlockDataBase & {
     /** The type of the input block */
     inputType: ConnectionPointType.Color4;
 
@@ -101,7 +112,7 @@ export type Color4InputBlockData = {
 /**
  * The data for an InputBlock for ConnectionPointType.Vector2 inputs
  */
-export type Vector2InputBlockData = {
+export type Vector2InputBlockData = InputBlockDataBase & {
     /** The type of the input block */
     inputType: ConnectionPointType.Vector2;
 

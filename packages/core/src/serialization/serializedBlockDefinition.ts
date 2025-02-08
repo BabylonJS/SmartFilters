@@ -1,7 +1,12 @@
-import type { SerializedBlockDefinitionV1 } from "./v1/blockSerialization.types";
+import type { SerializedShaderBlockDefinition } from "./serializedShaderBlockDefinition";
+import type { SerializedSmartFilter } from "./serializedSmartFilter";
 
 /**
- * Type union of all versions of serialized SmartFilter block definitions
- * A block definition is an object which is used to create a CustomShaderBlock instance.
+ * Type that represents any type of serialized block definition - shader or aggregate.
  */
-export type SerializedBlockDefinition = SerializedBlockDefinitionV1;
+export type SerializedBlockDefinition = (SerializedShaderBlockDefinition | SerializedSmartFilter) & {
+    /**
+     * The type of block this is.
+     */
+    blockType: string;
+};

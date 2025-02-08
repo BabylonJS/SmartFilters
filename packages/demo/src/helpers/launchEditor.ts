@@ -1,6 +1,5 @@
 import {
     type BaseBlock,
-    CustomShaderBlock,
     logCommands,
     type SerializedBlockDefinition,
     type SmartFilter,
@@ -19,7 +18,7 @@ import { StringTools } from "@babylonjs/shared-ui-components/stringTools";
 import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../configuration/blockSerializers";
 import type { SmartFilterLoader } from "../smartFilterLoader";
 import { getSnippet, setSnippet } from "./hashFunctions";
-import type { CustomShaderBlockManager } from "../customShaderBlockManager";
+import type { CustomBlockManager } from "../customBlockManager";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -35,7 +34,7 @@ export function launchEditor(
     smartFilterLoader: SmartFilterLoader,
     errorHandler: (message: string) => void,
     closeError: () => void,
-    customShaderBlockManager: CustomShaderBlockManager
+    customBlockManager: CustomBlockManager
 ) {
     if (!currentSmartFilter) {
         return;
@@ -46,14 +45,16 @@ export function launchEditor(
     const allBlockNames: { [key: string]: string[] } = {};
 
     // Register custom shader blocks
-    const customShaderBlockTypeNames = customShaderBlockManager.getCustomShaderBlockTypeNames();
+    const customShaderBlockTypeNames = customBlockManager.getCustomBlockTypeNames();
     const customShaderBlockEditorRegistrations: IBlockEditorRegistration[] = [];
     allBlockNames["Custom_Blocks"] = []; // This will be populated like the other categories below
     if (customShaderBlockTypeNames.length > 0) {
         for (const customBlockType of customShaderBlockTypeNames) {
-            const blockDefinition = customShaderBlockManager.getBlockDefinition(customBlockType);
+            const blockDefinition = customBlockManager.getBlockDefinition(customBlockType);
             if (blockDefinition) {
-                customShaderBlockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+                customShaderBlockEditorRegistrations.push(
+                    createBlockEditorRegistration(customBlockManager, blockDefinition)
+                );
             }
         }
     }
@@ -97,7 +98,7 @@ export function launchEditor(
     function addCustomShaderBlockToEditor(blockDefinition: SerializedBlockDefinition) {
         allBlockNames["Custom_Blocks"]?.push(blockDefinition.blockType);
         blockTooltips[blockDefinition.blockType] = blockDefinition.blockType;
-        allBlockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+        allBlockEditorRegistrations.push(createBlockEditorRegistration(customBlockManager, blockDefinition));
     }
     function removeCustomShaderBlockFromEditor(blockType: string) {
         const customBlockTypeNameList = allBlockNames["Custom_Blocks"];
@@ -184,7 +185,7 @@ export function launchEditor(
         beforeRenderObservable: renderer.beforeRenderObservable,
         addCustomShaderBlock: (serializedData: string) => {
             try {
-                const blockDefinition = customShaderBlockManager.saveBlockDefinition(serializedData);
+                const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
                 removeCustomShaderBlockFromEditor(blockDefinition.blockType);
                 addCustomShaderBlockToEditor(blockDefinition);
                 rebuildRuntime();
@@ -193,7 +194,7 @@ export function launchEditor(
             }
         },
         deleteCustomShaderBlock: (blockType: string) => {
-            customShaderBlockManager.deleteBlockDefinition(blockType);
+            customBlockManager.deleteBlockDefinition(blockType);
             removeCustomShaderBlockFromEditor(blockType);
         },
     });
@@ -204,12 +205,15 @@ export function launchEditor(
     }
 }
 
-function createBlockEditorRegistration(blockDefinition: SerializedBlockDefinition): IBlockEditorRegistration {
+function createBlockEditorRegistration(
+    customBlockManager: CustomBlockManager,
+    blockDefinition: SerializedBlockDefinition
+): IBlockEditorRegistration {
     return {
         name: blockDefinition.blockType,
         category: "Custom_Blocks",
         factory: (smartFilter: SmartFilter) => {
-            return CustomShaderBlock.Create(smartFilter, blockDefinition.blockType, blockDefinition);
+            return customBlockManager.createBlockFromBlockDefinition(smartFilter, blockDefinition);
         },
         tooltip: blockDefinition.blockType,
     };
