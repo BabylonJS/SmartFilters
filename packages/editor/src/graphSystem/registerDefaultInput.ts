@@ -24,6 +24,8 @@ export function createDefaultValue<U extends ConnectionPointType>(type: U, engin
             return createStrongRef(0) as RuntimeData<U>;
         case ConnectionPointType.Color3:
             return createStrongRef({ r: 0, g: 0, b: 0 }) as RuntimeData<U>;
+        case ConnectionPointType.Vector2:
+            return createStrongRef({ x: 0, y: 0 }) as RuntimeData<U>;
         case ConnectionPointType.Texture:
             return createStrongRef(createImageTexture(engine, "/assets/logo.png")) as RuntimeData<U>;
         default:
