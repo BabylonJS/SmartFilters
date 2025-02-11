@@ -53,11 +53,8 @@ class CustomShaderBlockBinding extends ShaderBinding {
                     break;
                 case ConnectionPointType.Vector2:
                     if (input.autoBind === "outputResolution") {
-                        const outputResolution: IVector2Like = { x: 0, y: 0 };
                         this._bindSteps.push((effect, width, height) => {
-                            outputResolution.x = width;
-                            outputResolution.y = height;
-                            effect.setVector2(this.getRemappedName(input.name), outputResolution);
+                            effect.setFloat2(this.getRemappedName(input.name), width, height);
                         });
                     } else {
                         this._bindSteps.push((effect) => {
