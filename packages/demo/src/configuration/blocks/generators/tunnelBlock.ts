@@ -8,7 +8,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./tunnelBlock.shader";
+import { shaderProgram, uniforms } from "../generators/tunnelBlock.shader";
 
 /**
  * The shader bindings for the Tunnel block.

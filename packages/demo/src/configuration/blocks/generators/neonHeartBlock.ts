@@ -7,7 +7,7 @@ import {
     DisableableShaderBinding,
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, createStrongRef, DisableableShaderBlock } from "@babylonjs/smart-filters";
-import { shaderProgram, uniforms } from "./neonHeartBlock.shader";
+import { shaderProgram, uniforms } from "../generators/neonHeartBlock.shader";
 import { BlockNames } from "../blockNames";
 import { Color3 } from "@babylonjs/core/Maths/math.color";
 

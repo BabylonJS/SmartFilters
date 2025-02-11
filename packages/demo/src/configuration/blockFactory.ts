@@ -131,49 +131,43 @@ deserializers.set(
 );
 
 deserializers.set(BlockNames.glitch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { GlitchBlock } = await import(
-        /* webpackChunkName: "glitchBlock" */ "./blocks/hardcoded/transitions/glitchBlock"
-    );
+    const { GlitchBlock } = await import(/* webpackChunkName: "glitchBlock" */ "./blocks/transitions/glitchBlock");
     return new GlitchBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.mask, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { MaskBlock } = await import(/* webpackChunkName: "maskBlock" */ "./blocks/effects/maskBlock");
     return new MaskBlock(smartFilter, serializedBlock.name);
-});./blocks/transitions/glitchBlock
+});
 
 deserializers.set(BlockNames.starryPlanes, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { StarryPlanesBlock } = await import(
-        /* webpackChunkName: "starryPlanesBlock" */ "./blocks/hardcoded/generators/starryPlanesBlock"
+        /* webpackChunkName: "starryPlanesBlock" */ "./blocks/generators/starryPlanesBlock"
     );
     return new StarryPlanesBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.tunnel, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { TunnelBlock } = await import(
-        /* webpackChunkName: "tunnelBlock" */ "./blocks/hardcoded/generators/tunnelBlock"
-    );./blocks/generators/starryPlanesBlock
+    const { TunnelBlock } = await import(/* webpackChunkName: "tunnelBlock" */ "./blocks/generators/tunnelBlock");
     return new TunnelBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.fireworks, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { FireworksBlock } = await import(
-        /* webpackChunkName: "fireworksBlock" */ "./blocks/hardcoded/generators/fireworksBlock"
-    );./blocks/generators/tunnelBlock
+        /* webpackChunkName: "fireworksBlock" */ "./blocks/generators/fireworksBlock"
+    );
     return new FireworksBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.aurora, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { AuroraBlock } = await import(
-        /* webpackChunkName: "auroraBlock" */ "./blocks/hardcoded/generators/auroraBlock"
-    );./blocks/generators/fireworksBlock
+    const { AuroraBlock } = await import(/* webpackChunkName: "auroraBlock" */ "./blocks/generators/auroraBlock");
     return new AuroraBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.vhsGlitch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { VhsGlitchBlock } = await import(/* webpackChunkName: "vhsGlitchBlock" */ "./blocks/effects/vhsGlitchBlock");
     return new VhsGlitchBlock(smartFilter, serializedBlock.name);
-});./blocks/generators/auroraBlock
+});
 
 deserializers.set(BlockNames.softThreshold, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { SoftThresholdBlock } = await import(
@@ -188,38 +182,34 @@ deserializers.set(BlockNames.sketch, async (smartFilter: SmartFilter, serialized
 });
 
 deserializers.set(BlockNames.particle, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { ParticleBlock } = await import(
-        /* webpackChunkName: "particleBlock" */ "./blocks/hardcoded/generators/particleBlock"
-    );
+    const { ParticleBlock } = await import(/* webpackChunkName: "particleBlock" */ "./blocks/generators/particleBlock");
     return new ParticleBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.hearts, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { HeartsBlock } = await import(
-        /* webpackChunkName: "heartsBlock" */ "./blocks/hardcoded/generators/heartsBlock"
-    );
+    const { HeartsBlock } = await import(/* webpackChunkName: "heartsBlock" */ "./blocks/generators/heartsBlock");
     return new HeartsBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(BlockNames.neonHeart, async (sm./blocks/generators/particleBlockerializedBlockV1) => {
+deserializers.set(BlockNames.neonHeart, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { NeonHeartBlock } = await import(
-        /* webpackChunkName: "neonHeartBlock" */ "./blocks/hardcoded/generators/neonHeartBlock"
+        /* webpackChunkName: "neonHeartBlock" */ "./blocks/generators/neonHeartBlock"
     );
     return new NeonHeartBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(BlockNames.spritesheet, async./blocks/generators/heartsBlockck: ISerializedBlockV1) => {
+deserializers.set(BlockNames.spritesheet, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { SpritesheetBlock } = await import(
         /* webpackChunkName: "spritesheetBlock" */ "./blocks/effects/spritesheetBlock"
     );
     return new SpritesheetBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(./blocks/generators/neonHeartBlock
+deserializers.set(
     BlockNames.premultiplyAlpha,
     async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
         const { PremultiplyAlphaBlock } = await import(
-            /* webpackChunkName: "premultiplyAlphaBlock" */ "./blocks/hardcoded/utility/premultiplyAlphaBlock"
+            /* webpackChunkName: "premultiplyAlphaBlock" */ "./blocks/utility/premultiplyAlphaBlock"
         );
         return new PremultiplyAlphaBlock(smartFilter, serializedBlock.name);
     }
@@ -231,7 +221,7 @@ deserializers.set(./blocks/generators/neonHeartBlock
 deserializers.set(BlockNames.blur, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { blurBlockDeserializer } = await import(
         /* webpackChunkName: "blurBlockDeserializer" */ "./blocks/effects/blurBlock.deserializer"
-    );./blocks/utility/premultiplyAlphaBlock
+    );
     return blurBlockDeserializer(smartFilter, serializedBlock);
 });
 
@@ -251,15 +241,14 @@ deserializers.set(BlockNames.composition, async (smartFilter: SmartFilter, seria
 
 deserializers.set(BlockNames.tile, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { tileDeserializer } = await import(
-        /* webpackChunkName: "tileBlockDeserializer" */ "./blocks/hardcoded/transitions/tileBlock.deserializer"
+        /* webpackChunkName: "tileBlockDeserializer" */ "./blocks/transitions/tileBlock.deserializer"
     );
     return tileDeserializer(smartFilter, serializedBlock);
 });
 
 deserializers.set(BlockNames.wipe, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { wipeDeserializer } = await import(
-        /* webpackChunkName: "wipeBlockDeserializer" */ "./blocks/hardcoded/transitions/wipeBlock.deserializer"
+        /* webpackChunkName: "wipeBlockDeserializer" */ "./blocks/transitions/wipeBlock.deserializer"
     );
     return wipeDeserializer(smartFilter, serializedBlock);
 });
-./blocks/transitions/tileBlock.deserializer./blocks/transitions/wipeBlock.deserializer

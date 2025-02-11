@@ -10,7 +10,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
-import { shaderProgram, uniforms } from "./fireworksBlock.shader";
+import { shaderProgram, uniforms } from "../generators/fireworksBlock.shader";
 
 /**
  * The shader bindings for the Fireworks block.

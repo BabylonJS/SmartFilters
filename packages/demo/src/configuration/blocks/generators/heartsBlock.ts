@@ -7,7 +7,7 @@ import {
     DisableableShaderBinding,
     DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
-import { shaderProgram, uniforms } from "./heartsBlock.shader";
+import { shaderProgram, uniforms } from "../generators/heartsBlock.shader";
 import { BlockNames } from "../blockNames";
 import { Color3 } from "@babylonjs/core/Maths/math.color";
 

@@ -67,10 +67,6 @@ export class GlobalState {
 
     deleteCustomShaderBlock?: (blockType: string) => void;
 
-    addCustomShaderBlock?: (serializedData: string) => void;
-
-    deleteCustomShaderBlock?: (blockType: string) => void;
-
     public constructor(
         engine: ThinEngine,
         smartFilter: Nullable<SmartFilter>,
