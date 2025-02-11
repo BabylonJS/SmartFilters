@@ -5,6 +5,7 @@ import { type SerializedSmartFilterV1 } from "@babylonjs/smart-filters";
  * This object could have been deserialized from a JSON file, for example.
  */
 export const deserializedTintBlockDefinition: SerializedSmartFilterV1 = {
+    format: "smartFilter",
     formatVersion: 1,
     name: "Pixelate And Desaturate",
     comments: null,
