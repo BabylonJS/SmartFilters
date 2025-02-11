@@ -10,6 +10,7 @@ import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { Color3LineComponent } from "@babylonjs/shared-ui-components/lines/color3LineComponent.js";
 import { Color3 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";
+import { Vector2PropertyTabComponent } from "./properties/vector2PropertyTabComponent.js";
 
 interface IInputsPropertyTabComponentProps {
     globalState: GlobalState;
@@ -61,6 +62,16 @@ export class InputsPropertyTabComponent extends react.Component<IInputsPropertyT
                         max={block.editorData?.max ?? null}
                         onChange={() => this.processInputBlockUpdate(block)}
                     ></FloatSliderComponent>
+                );
+            }
+            case ConnectionPointType.Vector2: {
+                return (
+                    <Vector2PropertyTabComponent
+                        stateManager={this.props.globalState.stateManager}
+                        lockObject={this.props.lockObject}
+                        inputBlock={block}
+                        key={block.uniqueId}
+                    ></Vector2PropertyTabComponent>
                 );
             }
         }

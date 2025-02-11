@@ -5,11 +5,10 @@ import {
     type BaseBlock,
     CustomShaderBlock,
     type SerializedBlockDefinition,
-    SmartFilterShaderVersionLabel,
-    convertShaderToSerializedBlockDefinition,
+    importCustomShaderBlockDefinition,
 } from "@babylonjs/smart-filters";
 
-const CustomShaderBlockKey = "Custom-Shader-Block-List";
+const CustomShaderBlockListKey = "Custom-Shader-Block-List";
 const CustomShaderBlockDefinitionKeySuffix = "-Definition";
 
 /**
@@ -39,7 +38,7 @@ export class CustomShaderBlockManager {
      * @returns The instantiated block, or null if the block type is not registered
      */
     public createBlock(smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1): Nullable<BaseBlock> {
-        const blockDefinition = this._blockDefinitions.get(serializedBlock.name);
+        const blockDefinition = this.getBlockDefinition(serializedBlock.name);
         if (!blockDefinition) {
             return null;
         }
@@ -61,8 +60,7 @@ export class CustomShaderBlockManager {
     public loadBlockDefinitions() {
         this._blockDefinitions.clear();
 
-        const blockTypeListJson = localStorage.getItem(CustomShaderBlockKey);
-        const blockTypeList: string[] = blockTypeListJson ? JSON.parse(blockTypeListJson) : [];
+        const blockTypeList = this._readBlockTypeListFromLocalStorage();
 
         for (const blockType of blockTypeList) {
             const blockDefinitionJson = localStorage.getItem(blockType + CustomShaderBlockDefinitionKeySuffix);
@@ -78,14 +76,13 @@ export class CustomShaderBlockManager {
      * @param blockType - The block type to delete
      */
     public deleteBlockDefinition(blockType: string) {
-        const blockTypeListJson = localStorage.getItem(CustomShaderBlockKey);
-        const blockTypeList: string[] = blockTypeListJson ? JSON.parse(blockTypeListJson) : [];
+        const blockTypeList = this._readBlockTypeListFromLocalStorage();
 
         const index = blockTypeList.indexOf(blockType);
         if (index > -1) {
             blockTypeList.splice(index, 1);
             this._blockDefinitions.delete(blockType);
-            localStorage.setItem(CustomShaderBlockKey, JSON.stringify(blockTypeList));
+            localStorage.setItem(CustomShaderBlockListKey, JSON.stringify(blockTypeList));
             localStorage.removeItem(blockType + CustomShaderBlockDefinitionKeySuffix);
         }
     }
@@ -98,21 +95,14 @@ export class CustomShaderBlockManager {
      * @returns The block definition that was saved
      */
     public saveBlockDefinition(serializedData: string): SerializedBlockDefinition {
-        let blockDefinition: SerializedBlockDefinition;
-
-        if (this._looksLikeGlsl(serializedData)) {
-            blockDefinition = convertShaderToSerializedBlockDefinition(serializedData);
-        } else {
-            blockDefinition = JSON.parse(serializedData);
-        }
+        const blockDefinition = importCustomShaderBlockDefinition(serializedData);
 
         this.deleteBlockDefinition(blockDefinition.blockType);
 
         // Add to the stored list of block definition names in local storage
-        const blockTypeListJson = localStorage.getItem(CustomShaderBlockKey);
-        const blockTypeList: string[] = blockTypeListJson ? JSON.parse(blockTypeListJson) : [];
+        const blockTypeList = this._readBlockTypeListFromLocalStorage();
         blockTypeList.push(blockDefinition.blockType);
-        localStorage.setItem(CustomShaderBlockKey, JSON.stringify(blockTypeList));
+        localStorage.setItem(CustomShaderBlockListKey, JSON.stringify(blockTypeList));
 
         // Store the definition in local storage
         localStorage.setItem(
@@ -126,7 +116,17 @@ export class CustomShaderBlockManager {
         return blockDefinition;
     }
 
-    private _looksLikeGlsl(serializedData: string): boolean {
-        return serializedData.indexOf(SmartFilterShaderVersionLabel) !== -1;
+    private _readBlockTypeListFromLocalStorage(): string[] {
+        const blockTypeListJson = localStorage.getItem(CustomShaderBlockListKey);
+        let blockTypeList: string[] = [];
+        if (blockTypeListJson) {
+            try {
+                blockTypeList = JSON.parse(blockTypeListJson);
+            } catch {
+                console.warn("Failed to parse Custom Shader Block list from local storage");
+            }
+        }
+
+        return blockTypeList;
     }
 }

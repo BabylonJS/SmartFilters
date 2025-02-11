@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as react from "react";
+import type { Nullable } from "@babylonjs/core/types";
+import type { Observer } from "@babylonjs/core/Misc/observable";
+import { Tools } from "@babylonjs/core/Misc/tools.js";
+
 import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
 import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
 import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
 import "../../assets/styles/components/nodeList.scss";
-import type { Nullable } from "@babylonjs/core/types";
-import type { Observer } from "@babylonjs/core/Misc/observable";
 import { DraggableLineWithButtonComponent } from "../../sharedComponents/draggableLineWithButtonComponent.js";
 import deleteButton from "../../assets/imgs/delete.svg";
 import addButton from "../../assets/imgs/add.svg";
 import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
-import { Tools } from "@babylonjs/core/Misc/tools.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -38,7 +39,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         this.setState({ filter: filter });
     }
 
-    loadCustomBlock(file: File) {
+    loadCustomShaderBlock(file: File) {
         Tools.ReadFile(
             file,
             async (data) => {
@@ -56,7 +57,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         );
     }
 
-    deleteCustomBlock(blockType: string) {
+    deleteCustomShaderBlock(blockType: string) {
         if (!this.props.globalState.deleteCustomShaderBlock) {
             return;
         }
@@ -86,9 +87,8 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
                                 onIconClick={() => {
-                                    this.deleteCustomBlock(block);
+                                    this.deleteCustomShaderBlock(block);
                                 }}
-                                lenSuffixToRemove={11}
                             />
                         );
                     }
@@ -111,7 +111,8 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         uploadName={"custom-block-upload"}
                         iconImage={addButton}
                         accept=".json, .glsl"
-                        onIconClick={(file) => this.loadCustomBlock(file)}
+                        allowMultiple={true}
+                        onIconClick={(file) => this.loadCustomShaderBlock(file)}
                     />
                 );
                 blockList.push(line);

@@ -14,9 +14,9 @@ import type { ShaderProgram } from "../../utils/shaderCodeUtils";
  */
 export type SerializedBlockDefinitionV1 = {
     /**
-     * The format version of the serialized data (not the version of the block definition itself).
+     * The version of the block definition format (format of the serialized data, not the version of the block definition itself).
      */
-    version: 1;
+    formatVersion: 1;
 
     /**
      * The type used to refer to the block in serialized SmartFilters and in the editor UI.

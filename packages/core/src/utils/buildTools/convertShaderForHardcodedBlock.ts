@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { parseFragmentShader } from "./shaderParsing.js";
+import { parseFragmentShader } from "./shaderConverter.js";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
 const VERTEX_SHADER = "@VERTEX_SHADER@";
@@ -77,7 +77,6 @@ export function convertShaderForHardcodedBlock(fragmentShaderPath: string, impor
     // Read the fragment shader
     const fragmentShader = fs.readFileSync(fragmentShaderPath, "utf8");
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
-    console.log(`Shader version: ${fragmentShaderInfo.smartFilterShaderFormatVersion}`);
 
     // Write the shader TS file
     const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".shader.ts");
@@ -105,7 +104,13 @@ export function convertShaderForHardcodedBlock(fragmentShaderPath: string, impor
                 : ""
         )
         .replace(FUNCTIONS, functionsSection.join(""))
-        .replace(UNIFORM_NAMES, addLinePrefixes(fragmentShaderInfo.uniformNames.join("\n"), UniformNameLinePrefix));
+        .replace(
+            UNIFORM_NAMES,
+            addLinePrefixes(
+                fragmentShaderInfo.uniforms.map((u) => `${u.name}: "${u.name}",`).join("\n"),
+                UniformNameLinePrefix
+            )
+        );
 
     fs.writeFileSync(shaderFile, finalContents);
 }

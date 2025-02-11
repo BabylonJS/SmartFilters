@@ -7,7 +7,7 @@ import {
     SmartFilterSerializer,
 } from "@babylonjs/smart-filters";
 import { hardcodedBlockEditorRegistrations } from "../configuration/editor/hardcodedBlockEditorRegistrations";
-import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor-control";
+import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
 import { CustomInputDisplayManager } from "../configuration/editor/customInputDisplayManager";
 import { getIsUniqueBlock } from "../configuration/editor/getIsUniqueBlock";
@@ -93,21 +93,44 @@ export function launchEditor(
         inputDisplayManager: CustomInputDisplayManager,
     };
 
+    // Functions to add / remove custom shader blocks from the editor at runtime
+    function addCustomShaderBlockToEditor(blockDefinition: SerializedBlockDefinition) {
+        allBlockNames["Custom_Blocks"]?.push(blockDefinition.blockType);
+        blockTooltips[blockDefinition.blockType] = blockDefinition.blockType;
+        allBlockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+    }
+    function removeCustomShaderBlockFromEditor(blockType: string) {
+        const customBlockTypeNameList = allBlockNames["Custom_Blocks"];
+        if (customBlockTypeNameList) {
+            const index = customBlockTypeNameList.indexOf(blockType);
+            if (index !== -1) {
+                customBlockTypeNameList.splice(index, 1);
+            }
+        }
+        const index = allBlockEditorRegistrations.findIndex((r) => r.name === blockType);
+        if (index !== -1) {
+            allBlockEditorRegistrations.splice(index, 1);
+        }
+    }
+
+    // Function to rebuild the runtime
+    function rebuildRuntime() {
+        renderer
+            .rebuildRuntime()
+            .then(closeError)
+            .catch((err: unknown) => {
+                errorHandler(`Could not start rendering\n${err}`);
+            });
+    }
+
     // Display the editor
     SmartFilterEditor.Show({
         engine,
         blockRegistration,
         filter: currentSmartFilter,
-        rebuildRuntime: (smartFilter: SmartFilter) => {
-            renderer
-                .startRendering(smartFilter)
-                .then(closeError)
-                .catch((err: unknown) => {
-                    errorHandler(`Could not start rendering\n${err}`);
-                });
-        },
-        reloadAssets: (smartFilter: SmartFilter) => {
-            renderer.loadAssets(smartFilter).catch((err: unknown) => {
+        rebuildRuntime,
+        reloadAssets: () => {
+            renderer.reloadAssets().catch((err: unknown) => {
                 errorHandler(`Could not reload assets:\n${err}`);
             });
         },
@@ -160,24 +183,18 @@ export function launchEditor(
         texturePresets,
         beforeRenderObservable: renderer.beforeRenderObservable,
         addCustomShaderBlock: (serializedData: string) => {
-            const blockDefinition = customShaderBlockManager.saveBlockDefinition(serializedData);
-            allBlockNames["Custom_Blocks"]?.push(blockDefinition.blockType);
-            blockTooltips[blockDefinition.blockType] = blockDefinition.blockType;
-            allBlockEditorRegistrations.push(createBlockEditorRegistration(blockDefinition));
+            try {
+                const blockDefinition = customShaderBlockManager.saveBlockDefinition(serializedData);
+                removeCustomShaderBlockFromEditor(blockDefinition.blockType);
+                addCustomShaderBlockToEditor(blockDefinition);
+                rebuildRuntime();
+            } catch (err) {
+                errorHandler(`Could not load custom block:\n${err}`);
+            }
         },
         deleteCustomShaderBlock: (blockType: string) => {
             customShaderBlockManager.deleteBlockDefinition(blockType);
-            const customBlockTypeNameList = allBlockNames["Custom_Blocks"];
-            if (customBlockTypeNameList) {
-                const index = customBlockTypeNameList.indexOf(blockType);
-                if (index !== -1) {
-                    customBlockTypeNameList.splice(index, 1);
-                }
-            }
-            const index = allBlockEditorRegistrations.findIndex((r) => r.name === blockType);
-            if (index !== -1) {
-                allBlockEditorRegistrations.splice(index, 1);
-            }
+            removeCustomShaderBlockFromEditor(blockType);
         },
     });
 

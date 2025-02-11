@@ -29,9 +29,6 @@ const renderToTextureInsteadOfCanvas: boolean = false;
 const LocalStorageSmartFilterName = "SmartFilterName";
 const LocalStorageOptimizeName = "OptimizeSmartFilter";
 
-// Load settings from localStorage
-let optimize: boolean = localStorage.getItem(LocalStorageOptimizeName) === "true";
-
 // Manage our HTML elements
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
@@ -50,7 +47,7 @@ hookupBackgroundOption();
 
 // Create our services
 const engine = createThinEngine(canvas);
-const renderer = new SmartFilterRenderer(engine);
+const renderer = new SmartFilterRenderer(engine, localStorage.getItem(LocalStorageOptimizeName) === "true");
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
 const customShaderBlockManager = new CustomShaderBlockManager();
 const smartFilterLoader = new SmartFilterLoader(
@@ -84,13 +81,13 @@ function renderCurrentSmartFilter(hideEditor: boolean = true) {
         return;
     }
 
-    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, optimize ? "[optimized]" : "");
+    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, renderer.optimize ? "[optimized]" : "");
 
     renderer
-        .startRendering(smartFilterState.smartFilter, optimize, optimize)
+        .startRendering(smartFilterState.smartFilter)
         .then((smartFilterRendered: SmartFilter) => {
             closeError();
-            if (optimize) {
+            if (renderer.optimize) {
                 smartFilterState.optimizedSmartFilter = smartFilterRendered;
             }
         })
@@ -199,10 +196,10 @@ editActionLink.onclick = async () => {
 };
 
 // Set up the optimize checkbox
-optimizeCheckbox.checked = optimize;
+optimizeCheckbox.checked = renderer.optimize;
 optimizeCheckbox.onchange = () => {
     localStorage.setItem(LocalStorageOptimizeName, optimizeCheckbox.checked.toString());
-    optimize = optimizeCheckbox.checked;
+    renderer.optimize = optimizeCheckbox.checked;
     renderCurrentSmartFilter(false);
 };
 

@@ -16,4 +16,9 @@ export const defaultBlockEditorRegistrations: IBlockEditorRegistration[] = [
         category: "Inputs",
         tooltip: "A texture to be used as input",
     },
+    {
+        name: "Vector2",
+        category: "Inputs",
+        tooltip: "A Vector2 to be used as input",
+    },
 ];

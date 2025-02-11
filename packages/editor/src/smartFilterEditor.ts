@@ -115,12 +115,12 @@ export type SmartFilterEditorOptions = {
     /**
      * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
      */
-    rebuildRuntime: (smartFilter: SmartFilter) => void;
+    rebuildRuntime: () => void;
 
     /**
      * Called when the editor determines that the assets (images or videos) need to be reloaded
      */
-    reloadAssets: (smartFilter: SmartFilter) => void;
+    reloadAssets: () => void;
 
     /**
      * If supplied, the editor will call this function when the user tries to add a custom shader block

@@ -59,6 +59,8 @@ export class BlockTools {
                 return "Color3";
             case ConnectionPointType.Texture:
                 return "Texture";
+            case ConnectionPointType.Vector2:
+                return "Vector2";
         }
 
         return "";

@@ -106,7 +106,7 @@ export class SmartFilterSerializer {
         });
 
         return {
-            version: 1,
+            formatVersion: 1,
             name: smartFilter.name,
             comments: smartFilter.comments,
             editorData: smartFilter.editorData,
