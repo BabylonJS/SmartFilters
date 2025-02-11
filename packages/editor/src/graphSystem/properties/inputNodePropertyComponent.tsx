@@ -9,6 +9,7 @@ import { Color3PropertyTabComponent } from "../../components/propertyTab/propert
 import { ImageSourcePropertyTabComponent } from "../../components/propertyTab/properties/imageSourcePropertyTabComponent.js";
 import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
+import { Vector2PropertyTabComponent } from "../../components/propertyTab/properties/vector2PropertyTabComponent.js";
 
 const booleanOptions: IInspectableOptions[] = [
     {
@@ -185,6 +186,15 @@ export class InputPropertyTabComponent extends react.Component<InputPropertyComp
             //     return <Vector4PropertyTabComponent lockObject={globalState.lockObject} globalState={globalState} inputBlock={inputBlock} />;
             // case NodeMaterialBlockConnectionPointTypes.Matrix:
             //     return <MatrixPropertyTabComponent lockObject={globalState.lockObject} globalState={globalState} inputBlock={inputBlock} />;
+            case ConnectionPointType.Vector2:
+                return (
+                    <Vector2PropertyTabComponent
+                        key={inputBlock.uniqueId}
+                        inputBlock={inputBlock}
+                        lockObject={this.props.stateManager.lockObject}
+                        stateManager={this.props.stateManager}
+                    />
+                );
         }
 
         return <></>;

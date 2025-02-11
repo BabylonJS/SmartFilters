@@ -82,6 +82,8 @@ export class InputDisplayManager implements IDisplayManager {
                 }
                 break;
             }
+            case ConnectionPointType.Vector2:
+                value = `(${inputBlock.runtimeValue.value.x.toFixed(4)}, ${inputBlock.runtimeValue.value.y.toFixed(4)})`;
         }
 
         contentArea.innerHTML = value;
