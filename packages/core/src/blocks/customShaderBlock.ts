@@ -8,12 +8,14 @@ import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { ShaderBlock } from "./shaderBlock.js";
 import type { RuntimeData } from "../connection/connectionPoint";
+import type { IVector2Like } from "@babylonjs/core/Maths/math.like.js";
+import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
  * The binding for a CustomShaderBlock
  */
 class CustomShaderBlockBinding extends ShaderBinding {
-    private readonly _bindSteps: ((effect: Effect) => void)[] = [];
+    private readonly _bindSteps: ((effect: Effect, width: number, height: number) => void)[] = [];
 
     /**
      * Creates a new shader binding instance for the CustomShaderBlock block.
@@ -50,9 +52,18 @@ class CustomShaderBlockBinding extends ShaderBinding {
                     });
                     break;
                 case ConnectionPointType.Vector2:
-                    this._bindSteps.push((effect) => {
-                        effect.setVector2(this.getRemappedName(input.name), input.runtimeData.value);
-                    });
+                    if (input.autoBind === "outputResolution") {
+                        const outputResolution: IVector2Like = { x: 0, y: 0 };
+                        this._bindSteps.push((effect, width, height) => {
+                            outputResolution.x = width;
+                            outputResolution.y = height;
+                            effect.setVector2(this.getRemappedName(input.name), outputResolution);
+                        });
+                    } else {
+                        this._bindSteps.push((effect) => {
+                            effect.setVector2(this.getRemappedName(input.name), input.runtimeData.value);
+                        });
+                    }
                     break;
             }
         }
@@ -61,10 +72,12 @@ class CustomShaderBlockBinding extends ShaderBinding {
     /**
      * Binds all the required data to the shader when rendering.
      * @param effect - The effect to bind the data to
+     * @param width - defines the width of the output
+     * @param height - defines the height of the output
      */
-    public override bind(effect: Effect): void {
+    public override bind(effect: Effect, width: number, height: number): void {
         for (let i = 0; i < this._bindSteps.length; i++) {
-            this._bindSteps[i]!(effect);
+            this._bindSteps[i]!(effect, width, height);
         }
     }
 }
@@ -104,6 +117,7 @@ export class CustomShaderBlock extends ShaderBlock {
 
     private readonly _shaderProgram: ShaderProgram;
     private readonly _blockType: string;
+    private _autoBoundInputs: Nullable<SerializedInputConnectionPointV1[]> = null;
 
     /**
      * The type of the block - used when serializing / deserializing the block, and in the editor.
@@ -155,14 +169,23 @@ export class CustomShaderBlock extends ShaderBlock {
     private _registerSerializedInputConnectionPointV1<U extends ConnectionPointType>(
         connectionPoint: SerializedInputConnectionPointV1<U>
     ): void {
-        if (connectionPoint.defaultValue !== undefined) {
-            this._registerOptionalInput(
-                connectionPoint.name,
-                connectionPoint.type,
-                createStrongRef(connectionPoint.defaultValue)
-            );
+        if (connectionPoint.autoBind) {
+            // Auto bound inputs are not registered as input connection points
+            if (this._autoBoundInputs === null) {
+                this._autoBoundInputs = [];
+            }
+            this._autoBoundInputs.push(connectionPoint);
         } else {
-            this._registerInput(connectionPoint.name, connectionPoint.type);
+            // If not auto bound, register as an input connection point
+            if (connectionPoint.defaultValue !== undefined) {
+                this._registerOptionalInput(
+                    connectionPoint.name,
+                    connectionPoint.type,
+                    createStrongRef(connectionPoint.defaultValue)
+                );
+            } else {
+                this._registerInput(connectionPoint.name, connectionPoint.type);
+            }
         }
     }
 
@@ -173,15 +196,35 @@ export class CustomShaderBlock extends ShaderBlock {
     public override getShaderBinding(): ShaderBinding {
         const inputs = this.inputs;
 
-        const inputsWithRuntimeData = inputs.map((input) => {
+        const inputsToBind: AnyInputWithRuntimeData[] = inputs.map((input) => {
             return {
                 name: input.name,
                 type: input.type,
                 runtimeData: this._confirmRuntimeDataSupplied(input),
+                autoBind: undefined,
             };
         });
 
-        return new CustomShaderBlockBinding(inputsWithRuntimeData);
+        if (this._autoBoundInputs) {
+            for (const autoBoundInput of this._autoBoundInputs) {
+                if (
+                    autoBoundInput.autoBind === "outputResolution" &&
+                    autoBoundInput.type == ConnectionPointType.Vector2
+                ) {
+                    inputsToBind.push({
+                        name: autoBoundInput.name,
+                        type: autoBoundInput.type,
+                        autoBind: autoBoundInput.autoBind,
+                    });
+                } else {
+                    throw new Error(
+                        `Auto bound input ${autoBoundInput.name} has an unsupported type or auto bind value`
+                    );
+                }
+            }
+        }
+
+        return new CustomShaderBlockBinding(inputsToBind);
     }
 }
 
@@ -203,6 +246,31 @@ type InputWithRuntimeData<U extends ConnectionPointType> = {
      * The runtime data for the input connection point
      */
     runtimeData: RuntimeData<U>;
+
+    /**
+     * Since this is an input connection point, it will not be auto bound
+     */
+    autoBind: undefined;
+};
+
+/**
+ * Represents an input which is auto-bound to the output resolution instead of an input connection point
+ */
+type AutoBindOutputResolution = {
+    /**
+     * The name of the input
+     */
+    name: string;
+
+    /**
+     * The type of the input
+     */
+    type: ConnectionPointType.Vector2;
+
+    /**
+     * The auto bind value for the input connection point
+     */
+    autoBind: "outputResolution";
 };
 
 /**
@@ -214,4 +282,5 @@ type AnyInputWithRuntimeData =
     | InputWithRuntimeData<ConnectionPointType.Color4>
     | InputWithRuntimeData<ConnectionPointType.Float>
     | InputWithRuntimeData<ConnectionPointType.Texture>
-    | InputWithRuntimeData<ConnectionPointType.Vector2>;
+    | InputWithRuntimeData<ConnectionPointType.Vector2>
+    | AutoBindOutputResolution;
