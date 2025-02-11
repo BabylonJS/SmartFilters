@@ -7,7 +7,7 @@ import {
     SmartFilterSerializer,
 } from "@babylonjs/smart-filters";
 import { hardcodedBlockEditorRegistrations } from "../configuration/editor/hardcodedBlockEditorRegistrations";
-import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor";
+import { type BlockRegistration, SmartFilterEditor } from "@babylonjs/smart-filters-editor-control";
 import { createInputBlock } from "../configuration/editor/createInputBlock";
 import { CustomInputDisplayManager } from "../configuration/editor/customInputDisplayManager";
 import { getIsUniqueBlock } from "../configuration/editor/getIsUniqueBlock";

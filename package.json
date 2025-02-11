@@ -24,7 +24,7 @@
         "postinstall": "npm run build",
         "clean": "npm run clean --workspaces",
         "assets": "npm run assets -w @babylonjs/smart-filters-editor-control",
-        "build": "npm run clean && npm run assets && npm run build:buildTools && npm run build:shaders && tsc -b -v && npm run build -w @babylonjs/smart-filters-demo && npm run build -w @babylonjs/smart-filters-editor-control",
+        "build": "npm run clean && npm run assets && npm run build:buildTools && npm run build:shaders && tsc -b -v && npm run build -w @babylonjs/smart-filters-demo && npm run build -w @babylonjs/smart-filters-editor-control && npm run build -w @babylonjs/smart-filters-editor",
         "build:buildTools": "npm run build -w @babylonjs/smart-filters",
         "build:shaders": "npm run build:runTools -w @babylonjs/smart-filters && npm run build:runTools -w @babylonjs/smart-filters-demo",
         "watch": "tsc -b -v -w",
@@ -37,7 +37,7 @@
         "lint": "npm run lint:check && npm run lint:fix",
         "lint:check": "eslint \"./packages/**/src/**/*.{ts,tsx,js,json}\"",
         "lint:fix": "eslint \"./packages/**/src/**/*.{ts,tsx,js,json}\" --fix",
-        "preparePublish": "npm run preparePublish -w @babylonjs/smart-filters && npm run preparePublish -w @babylonjs/smart-filters-demo && npm run preparePublish -w @babylonjs/smart-filters-editor-control && npm run preparePublish -w @babylonjs/smart-filters-editor"
+        "preparePublish": "npm run preparePublish -w @babylonjs/smart-filters && npm run preparePublish -w @babylonjs/smart-filters-editor"
     },
     "workspaces": [
         "packages/core",
