@@ -8,7 +8,6 @@ import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { ShaderBlock } from "./shaderBlock.js";
 import type { RuntimeData } from "../connection/connectionPoint";
-import type { IVector2Like } from "@babylonjs/core/Maths/math.like.js";
 import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
