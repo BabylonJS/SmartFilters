@@ -48,6 +48,11 @@ export type SerializedShaderBlockDefinitionV1 = {
 };
 
 /**
+ * Possible V1 auto bind values for input connection points.
+ */
+export type InputAutoBindV1 = "outputResolution";
+
+/**
  * A V1 input connection point of a serialized block definition.
  */
 export type SerializedInputConnectionPointV1<U extends AllConnectionPointTypes = AllConnectionPointTypes> = {
@@ -65,4 +70,9 @@ export type SerializedInputConnectionPointV1<U extends AllConnectionPointTypes =
      * The optional default value of the connection point.
      */
     defaultValue?: ConnectionPointValue<U>;
+
+    /**
+     * If supplied, the input will be automatically bound to this value, instead of creating an input connection point.
+     */
+    autoBind?: InputAutoBindV1;
 };

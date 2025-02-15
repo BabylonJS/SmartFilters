@@ -2,7 +2,7 @@ import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { hasGlslHeader, parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
 import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
 import type { SerializedShaderBlockDefinition } from "./serializedShaderBlockDefinition.js";
-import type { SerializedInputConnectionPointV1 } from "./v1/shaderBlockSerialization.types.js";
+import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/shaderBlockSerialization.types.js";
 
 /**
  * Imports a serialized custom block definition. Supports either serialized CustomShaderBlock definitions or
@@ -78,6 +78,7 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedShaderBlockDefin
         const inputConnectionPoint: SerializedInputConnectionPointV1 = {
             name: uniform.name,
             type,
+            autoBind: uniform.properties?.autoBind as InputAutoBindV1,
         };
         if (inputConnectionPoint.type !== ConnectionPointType.Texture && uniform.properties?.default !== undefined) {
             inputConnectionPoint.defaultValue = uniform.properties.default;
