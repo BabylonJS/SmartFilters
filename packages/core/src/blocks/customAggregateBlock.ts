@@ -8,6 +8,8 @@ import type { BaseBlock } from "./baseBlock.js";
  * The custom aggregate block class loads a serialized SmartFilter graph into a block which can be used in another SmartFilter.
  */
 export class CustomAggregateBlock extends AggregateBlock {
+    private readonly _innerSmartFilter: SmartFilter;
+
     /**
      * Creates a new CustomAggregateBlock
      * @param smartFilter - The SmartFilter to create the block for
@@ -35,6 +37,8 @@ export class CustomAggregateBlock extends AggregateBlock {
         disableOptimization: boolean
     ) {
         super(smartFilter, name, disableOptimization);
+
+        this._innerSmartFilter = innerSmartFilter;
 
         // TODO: add way for input block to be marked as should be exposed on aggregate block, and consider how that works with the metadata system that apps need for inputs as well
         for (const block of innerSmartFilter.attachedBlocks) {
