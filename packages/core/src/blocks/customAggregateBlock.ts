@@ -1,10 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
-import {
-    SmartFilterDeserializer,
-    type BlockFactory,
-    type OptionalBlockDeserializerV1,
-    type SerializedSmartFilterV1,
-} from "../serialization/index.js";
+import type { SmartFilterDeserializer, SerializedSmartFilterV1 } from "../serialization/index.js";
 import type { SmartFilter } from "../smartFilter.js";
 import { AggregateBlock } from "./aggregateBlock.js";
 import type { BaseBlock } from "./baseBlock.js";
@@ -19,8 +14,7 @@ export class CustomAggregateBlock extends AggregateBlock {
      * @param engine - The ThinEngine to use
      * @param name - The name of the block
      * @param serializedSmartFilter - The serialized SmartFilter to load into the block
-     * @param blockFactory - A function that creates a block of the given class name, or returns null if it cannot
-     * @param customInputBlockDeserializer - An optional custom deserializer for InputBlocks - if supplied and it returns null, the default deserializer will be used
+     * @param smartFilterDeserializer - The deserializer to use
      * @returns A promise that resolves to the new CustomAggregateBlock
      */
     public static async Create(
@@ -28,16 +22,21 @@ export class CustomAggregateBlock extends AggregateBlock {
         engine: ThinEngine,
         name: string,
         serializedSmartFilter: SerializedSmartFilterV1,
-        blockFactory: BlockFactory,
-        customInputBlockDeserializer?: OptionalBlockDeserializerV1
+        smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<BaseBlock> {
-        const deserializer = new SmartFilterDeserializer(blockFactory, customInputBlockDeserializer);
-        const innerSmartFilter = await deserializer.deserialize(engine, serializedSmartFilter);
-        return new CustomAggregateBlock(smartFilter, engine, name, innerSmartFilter);
+        const innerSmartFilter = await smartFilterDeserializer.deserialize(engine, serializedSmartFilter);
+        return new CustomAggregateBlock(smartFilter, name, innerSmartFilter, false);
     }
 
-    private constructor(smartFilter: SmartFilter, engine: ThinEngine, name: string, innerSmartFilter: SmartFilter) {
-        super(name);
+    private constructor(
+        smartFilter: SmartFilter,
+        name: string,
+        _innerSmartFilter: SmartFilter,
+        disableOptimization: boolean
+    ) {
+        super(smartFilter, name, disableOptimization);
+
+        // TODO: register the inputs
     }
 
     /**

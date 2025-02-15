@@ -1,10 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import {
-    type SmartFilter,
-    SmartFilterDeserializer,
-    type OptionalBlockDeserializerV1,
-    type BlockFactory,
-} from "@babylonjs/smart-filters";
+import type { SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import type { TextureRenderHelper } from "./textureRenderHelper";
 import { Observable } from "@babylonjs/core/Misc/observable";
@@ -40,10 +35,10 @@ export type SmartFilterLoadedEvent = {
  */
 export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
-    private readonly _deserializer: SmartFilterDeserializer;
     private readonly _renderer: SmartFilterRenderer;
     private readonly _textureRenderHelper: Nullable<TextureRenderHelper>;
 
+    public readonly smartFilterDeserializer: SmartFilterDeserializer;
     public readonly snippetUrl = "https://snippet.babylonjs.com";
     public readonly onSmartFilterLoadedObservable: Observable<SmartFilterLoadedEvent>;
     public readonly manifests: SmartFilterManifest[];
@@ -57,8 +52,7 @@ export class SmartFilterLoader {
         engine: ThinEngine,
         renderer: SmartFilterRenderer,
         manifests: SmartFilterManifest[],
-        blockFactory: BlockFactory,
-        inputBlockDeserializer: OptionalBlockDeserializerV1,
+        smartFilterDeserializer: SmartFilterDeserializer,
         textureRenderHelper: Nullable<TextureRenderHelper>
     ) {
         this._engine = engine;
@@ -71,7 +65,7 @@ export class SmartFilterLoader {
                 "No SmartFilterManifests were passed to the SmartFilterLoader - add some manifests to smartFilterManifests.ts"
             );
         }
-        this._deserializer = new SmartFilterDeserializer(blockFactory, inputBlockDeserializer);
+        this.smartFilterDeserializer = smartFilterDeserializer;
     }
 
     /**
@@ -89,7 +83,7 @@ export class SmartFilterLoader {
                 }
                 case "Serialized": {
                     const smartFilterJson = await manifest.getSmartFilterJson();
-                    return this._deserializer.deserialize(this._engine, smartFilterJson);
+                    return this.smartFilterDeserializer.deserialize(this._engine, smartFilterJson);
                 }
             }
             throw new Error("Could not read manifest " + name);
@@ -112,7 +106,7 @@ export class SmartFilterLoader {
                     (error) => reject(error)
                 );
             });
-            return this._deserializer.deserialize(this._engine, JSON.parse(data));
+            return this.smartFilterDeserializer.deserialize(this._engine, JSON.parse(data));
         }, SmartFilterSource.File);
     }
 
@@ -133,7 +127,7 @@ export class SmartFilterLoader {
             const snippet = JSON.parse(data.jsonPayload);
             const serializedSmartFilter = JSON.parse(snippet.smartFilter);
 
-            return this._deserializer.deserialize(this._engine, serializedSmartFilter);
+            return this.smartFilterDeserializer.deserialize(this._engine, serializedSmartFilter);
         }, SmartFilterSource.Snippet);
     }
 

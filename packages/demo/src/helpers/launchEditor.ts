@@ -3,6 +3,7 @@ import {
     logCommands,
     type SerializedBlockDefinition,
     type SmartFilter,
+    type SmartFilterDeserializer,
     SmartFilterSerializer,
 } from "@babylonjs/smart-filters";
 import { hardcodedBlockEditorRegistrations } from "../configuration/editor/hardcodedBlockEditorRegistrations";
@@ -53,7 +54,11 @@ export function launchEditor(
             const blockDefinition = customBlockManager.getBlockDefinition(customBlockType);
             if (blockDefinition) {
                 customShaderBlockEditorRegistrations.push(
-                    createBlockEditorRegistration(customBlockManager, blockDefinition)
+                    createBlockEditorRegistration(
+                        customBlockManager,
+                        blockDefinition,
+                        smartFilterLoader.smartFilterDeserializer
+                    )
                 );
             }
         }
@@ -76,7 +81,7 @@ export function launchEditor(
     });
 
     // Create function to call the right factory for a block given the block type
-    const getBlockFromString = (blockType: string, smartFilter: SmartFilter): BaseBlock | null => {
+    const getBlockFromString = async (blockType: string, smartFilter: SmartFilter): Promise<BaseBlock | null> => {
         const registration = allBlockEditorRegistrations.find((r) => r.name === blockType);
         if (registration && registration.factory) {
             return registration.factory(smartFilter);
@@ -98,7 +103,13 @@ export function launchEditor(
     function addCustomShaderBlockToEditor(blockDefinition: SerializedBlockDefinition) {
         allBlockNames["Custom_Blocks"]?.push(blockDefinition.blockType);
         blockTooltips[blockDefinition.blockType] = blockDefinition.blockType;
-        allBlockEditorRegistrations.push(createBlockEditorRegistration(customBlockManager, blockDefinition));
+        allBlockEditorRegistrations.push(
+            createBlockEditorRegistration(
+                customBlockManager,
+                blockDefinition,
+                smartFilterLoader.smartFilterDeserializer
+            )
+        );
     }
     function removeCustomShaderBlockFromEditor(blockType: string) {
         const customBlockTypeNameList = allBlockNames["Custom_Blocks"];
@@ -207,13 +218,14 @@ export function launchEditor(
 
 function createBlockEditorRegistration(
     customBlockManager: CustomBlockManager,
-    blockDefinition: SerializedBlockDefinition
+    blockDefinition: SerializedBlockDefinition,
+    deserializer: SmartFilterDeserializer
 ): IBlockEditorRegistration {
     return {
         name: blockDefinition.blockType,
         category: "Custom_Blocks",
         factory: (smartFilter: SmartFilter) => {
-            return customBlockManager.createBlockFromBlockDefinition(smartFilter, blockDefinition);
+            return customBlockManager.createBlockFromBlockDefinition(smartFilter, blockDefinition, deserializer);
         },
         tooltip: blockDefinition.blockType,
     };

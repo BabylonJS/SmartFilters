@@ -5,6 +5,7 @@ import {
     type ISerializedBlockV1,
     type BaseBlock,
     CustomShaderBlock,
+    type SmartFilterDeserializer,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
@@ -17,12 +18,14 @@ import type { CustomBlockManager } from "../customBlockManager";
  * @param engine - The ThinEngine to use
  * @param serializedBlock - The serialized block to create
  * @param customBlockManager - The manager for custom blocks
+ * @param smartFilterDeserializer - The deserializer to use
  */
 export async function blockFactory(
     smartFilter: SmartFilter,
     engine: ThinEngine,
     serializedBlock: ISerializedBlockV1,
-    customBlockManager: CustomBlockManager
+    customBlockManager: CustomBlockManager,
+    smartFilterDeserializer: SmartFilterDeserializer
 ): Promise<Nullable<BaseBlock>> {
     let newBlock: Nullable<BaseBlock> = null;
 
@@ -33,7 +36,11 @@ export async function blockFactory(
     }
     if (!newBlock) {
         // Check if it's a custom block
-        newBlock = customBlockManager.createBlockFromBlockType(smartFilter, serializedBlock.blockType);
+        newBlock = await customBlockManager.createBlockFromBlockType(
+            smartFilter,
+            serializedBlock.blockType,
+            smartFilterDeserializer
+        );
     }
 
     return newBlock;

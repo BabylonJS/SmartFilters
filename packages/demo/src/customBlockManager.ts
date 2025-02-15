@@ -1,3 +1,4 @@
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import {
     type SmartFilter,
@@ -7,6 +8,7 @@ import {
     importCustomBlockDefinition,
     type SerializedBlockDefinition,
     CustomAggregateBlock,
+    type SmartFilterDeserializer,
 } from "@babylonjs/smart-filters";
 
 const SavedCustomBlockListKey = "Custom-Block-List";
@@ -18,8 +20,10 @@ const SavedCustomBlockDefinitionKeySuffix = "-Definition";
  */
 export class CustomBlockManager {
     private _customBlockDefinitions = new Map<string, SerializedBlockDefinition>();
+    private readonly _engine: ThinEngine;
 
-    constructor() {
+    constructor(engine: ThinEngine) {
+        this._engine = engine;
         this.loadBlockDefinitions();
     }
 
@@ -36,32 +40,45 @@ export class CustomBlockManager {
      * Instantiates a block from a block type.
      * @param smartFilter - The smart filter to create the block for
      * @param blockType - The block type to create
+     * @param smartFilterDeserializer - The deserializer to use
      * @returns The instantiated block, or null if the block type is not registered
      */
-    public createBlockFromBlockType(smartFilter: SmartFilter, blockType: string): Nullable<BaseBlock> {
+    public async createBlockFromBlockType(
+        smartFilter: SmartFilter,
+        blockType: string,
+        smartFilterDeserializer: SmartFilterDeserializer
+    ): Promise<Nullable<BaseBlock>> {
         const blockDefinition = this.getBlockDefinition(blockType);
         if (!blockDefinition) {
             return null;
         }
 
-        return this.createBlockFromBlockDefinition(smartFilter, blockDefinition);
+        return this.createBlockFromBlockDefinition(smartFilter, blockDefinition, smartFilterDeserializer);
     }
 
     /**
      * Instantiates a block from a saved block definition.
      * @param smartFilter - The smart filter to create the block for
      * @param blockDefinition - The serialized block definition
+     * @param smartFilterDeserializer - The deserializer to use
      * @returns The instantiated block, or null if the block type is not registered
      */
-    public createBlockFromBlockDefinition(
+    public async createBlockFromBlockDefinition(
         smartFilter: SmartFilter,
-        blockDefinition: SerializedBlockDefinition
-    ): BaseBlock {
+        blockDefinition: SerializedBlockDefinition,
+        smartFilterDeserializer: SmartFilterDeserializer
+    ): Promise<BaseBlock> {
         switch (blockDefinition.format) {
             case "shaderBlockDefinition":
                 return CustomShaderBlock.Create(smartFilter, blockDefinition.blockType, blockDefinition);
             case "smartFilter":
-                return CustomAggregateBlock.Create(smartFilter, blockDefinition.blockType, blockDefinition);
+                return await CustomAggregateBlock.Create(
+                    smartFilter,
+                    this._engine,
+                    blockDefinition.blockType,
+                    blockDefinition,
+                    smartFilterDeserializer
+                );
         }
     }
 
