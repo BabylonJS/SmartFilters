@@ -31,12 +31,25 @@ export class CustomAggregateBlock extends AggregateBlock {
     private constructor(
         smartFilter: SmartFilter,
         name: string,
-        _innerSmartFilter: SmartFilter,
+        innerSmartFilter: SmartFilter,
         disableOptimization: boolean
     ) {
         super(smartFilter, name, disableOptimization);
 
-        // TODO: register the inputs
+        // TODO: add way for input block to be marked as should be exposed on aggregate block, and consider how that works with the metadata system that apps need for inputs as well
+        for (const block of innerSmartFilter.attachedBlocks) {
+            if (block.isInput && block.outputs[0]) {
+                for (const endpoint of block.outputs[0].endpoints) {
+                    this._registerSubfilterInput(block.name, endpoint);
+                }
+            }
+        }
+
+        if (!innerSmartFilter.output.connectedTo) {
+            throw new Error("The inner smart filter must have an output connected to something");
+        }
+
+        this._registerSubfilterOutput("output", innerSmartFilter.output.connectedTo);
     }
 
     /**
