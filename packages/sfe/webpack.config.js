@@ -38,6 +38,9 @@ var buildConfig = function (env) {
         ],
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss", ".svg"],
+            extensionAlias: {
+                '.js': ['.js', '.ts'],
+            },
             alias: {
                 // "core": path.resolve("node_modules/@babylonjs/core"),
                 // "shared-ui-components": path.resolve("node_modules/@dev/shared-ui-components"),

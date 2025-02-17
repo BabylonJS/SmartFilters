@@ -1,3 +1,7 @@
+// TODO: Fix version number in UI
+// TODO: Fix doc link
+// TODO: dedupe between demo and here (loader, renderer, etc)
+
 import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
@@ -8,6 +12,8 @@ import {
     type BlockRegistration,
     type SmartFilterEditorOptions,
 } from "@babylonjs/smart-filters-editor-control";
+import { SmartFilterLoader } from "./smartFilterLoader";
+import { SmartFilterRenderer } from "./smartFilterRenderer";
 
 const hostElement = document.getElementById("container");
 if (!hostElement) {
@@ -40,17 +46,23 @@ const blockRegistration: BlockRegistration = {
     blockTooltips: {},
 };
 
-const options: SmartFilterEditorOptions = {
-    engine,
-    blockRegistration,
-    hostElement,
-    downloadSmartFilter: () => {},
-    loadSmartFilter: async (_file: File): Promise<SmartFilter> => {
-        throw new Error("Not implemented");
-    },
-    beforeRenderObservable: new Observable<void>(),
-    rebuildRuntime: () => {},
-    reloadAssets: () => {},
-};
+const renderer = new SmartFilterRenderer(engine, false);
+const smartFilterLoader = new SmartFilterLoader(renderer);
 
-SmartFilterEditorControl.Show(options);
+smartFilterLoader.loadDefault().then((smartFilter: SmartFilter) => {
+    const options: SmartFilterEditorOptions = {
+        engine,
+        filter: smartFilter,
+        blockRegistration,
+        hostElement,
+        downloadSmartFilter: () => {},
+        loadSmartFilter: async (_file: File): Promise<SmartFilter> => {
+            throw new Error("Not implemented");
+        },
+        beforeRenderObservable: new Observable<void>(),
+        rebuildRuntime: () => {},
+        reloadAssets: () => {},
+    };
+
+    SmartFilterEditorControl.Show(options);
+});

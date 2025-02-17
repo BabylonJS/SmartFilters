@@ -8,7 +8,7 @@ import {
     DisableableShaderBinding,
     DisableStrategy,
 } from "@babylonjs/smart-filters";
-import { shaderProgram, uniforms } from "./pixelateBlock.shader.js";
+import { shaderProgram, uniforms } from "../pixelateBlock.shader.js";
 
 /**
  * The shader bindings for the Pixelate block.
