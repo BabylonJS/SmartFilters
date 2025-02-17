@@ -11,6 +11,12 @@ export type UniformMetadataProperties = {
      * If supplied, the default value to use for the corresponding input connection point
      */
     default?: any;
+
+    /**
+     * If supplied, the input will be automatically bound to this value, instead of creating an input connection point
+     * @see InputAutoBindV1 for possible values.
+     */
+    autoBind?: string;
 };
 
 /**
