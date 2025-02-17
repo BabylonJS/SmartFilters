@@ -8,7 +8,7 @@ import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
-import type { BlockRegistration } from "./smartFilterEditor";
+import type { BlockRegistration } from "./smartFilterEditorControl.js";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
 
 export type TexturePreset = {

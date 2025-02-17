@@ -3,7 +3,7 @@ import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
-import { SmartFilterEditor } from "@babylonjs/smart-filters-editor-control";
+import { SmartFilterEditorControl } from "@babylonjs/smart-filters-editor-control";
 import { createThinEngine } from "./helpers/createThinEngine";
 import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
@@ -73,7 +73,7 @@ if (textureRenderHelper) {
 
 function renderCurrentSmartFilter(hideEditor: boolean = true) {
     if (hideEditor) {
-        SmartFilterEditor.Hide();
+        SmartFilterEditorControl.Hide();
     }
 
     const smartFilterState = currentSmartFilterState;

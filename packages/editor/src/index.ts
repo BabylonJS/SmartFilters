@@ -1,4 +1,4 @@
-export * from "./smartFilterEditor.js";
+export * from "./smartFilterEditorControl.js";
 export * from "./graphSystem/properties/genericNodePropertyComponent.js";
 export * from "./sharedComponents/lineContainerComponent.js";
 export * from "./globalState.js";

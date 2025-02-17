@@ -136,9 +136,9 @@ export type SmartFilterEditorOptions = {
 };
 
 /**
- * Class used to create a node editor
+ * Class used to create the Smart Filter Editor control
  */
-export class SmartFilterEditor {
+export class SmartFilterEditorControl {
     private static _CurrentState: GlobalState;
     private static _PopupWindow: Window | null;
 
