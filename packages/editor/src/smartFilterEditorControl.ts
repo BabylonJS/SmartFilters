@@ -62,9 +62,23 @@ export type BlockRegistration = {
  */
 export type SmartFilterEditorOptions = {
     /**
-     * The ThinEngine to use
+     * The ThinEngine to use if the host is controlling the engine.
+     * If this is not supplied, the editor will draw a preview and support a popup window,
+     * and will expect onNewEngine and onSmartFilterLoadedObservable to be supplied.
      */
-    engine: ThinEngine;
+    engine?: ThinEngine;
+
+    /**
+     * If supplied, this will be called when the editor creates a new engine, such as when the preview is created,
+     * or a preview popup window is opened
+     * @param engine - The new engine
+     */
+    onNewEngine?: (engine: ThinEngine) => void;
+
+    /**
+     * If supplied, the editor will subscribe to this observable to be notified when a new Smart Filter should be displayed
+     */
+    onSmartFilterLoadedObservable?: Observable<SmartFilter>;
 
     /**
      * A BlockRegistration object which is responsible for providing the information
@@ -165,7 +179,7 @@ export class SmartFilterEditorControl {
         }
 
         const globalState = new GlobalState(
-            options.engine,
+            options.engine ?? null,
             options.filter ?? null,
             options.blockRegistration,
             hostElement,
@@ -197,7 +211,7 @@ export class SmartFilterEditorControl {
         });
 
         // Close the popup window when the page is refreshed or scene is disposed
-        if (globalState.smartFilter && this._PopupWindow) {
+        if (globalState.smartFilter && options.engine && this._PopupWindow) {
             options.engine.onDisposeObservable.addOnce(() => {
                 if (this._PopupWindow) {
                     this._PopupWindow.close();

@@ -17,7 +17,7 @@ export type TexturePreset = {
 };
 
 export class GlobalState {
-    engine: ThinEngine;
+    engine: Nullable<ThinEngine>;
 
     smartFilter: SmartFilter;
 
@@ -68,7 +68,7 @@ export class GlobalState {
     deleteCustomShaderBlock?: (blockType: string) => void;
 
     public constructor(
-        engine: ThinEngine,
+        engine: Nullable<ThinEngine>,
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,

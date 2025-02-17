@@ -131,6 +131,25 @@ export class SmartFilterRenderer {
     }
 
     /**
+     * Disposes the renderer and stops rendering.
+     */
+    public dispose(): void {
+        this.engine.stopRenderLoop();
+        this.beforeRenderObservable.clear();
+        this.afterRenderObservable.clear();
+
+        if (this.runtime) {
+            this.runtime.dispose();
+            this.runtime = null;
+        }
+
+        if (this._animationDisposeWork) {
+            this._animationDisposeWork();
+            this._animationDisposeWork = null;
+        }
+    }
+
+    /**
      * Sets the runtime to render.
      * @param runtime - The runtime to render
      */

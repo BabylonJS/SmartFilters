@@ -32,6 +32,13 @@ export class SmartFilterLoader {
     }
 
     /**
+     * Disposes the SmartFilterLoader
+     */
+    public dispose() {
+        this.onSmartFilterLoadedObservable.clear();
+    }
+
+    /**
      * Internal method to reuse common loading logic
      * @param loader - Function that loads the SmartFilter from some source
      * @returns The loaded SmartFilter
