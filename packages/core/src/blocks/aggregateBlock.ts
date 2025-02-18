@@ -1,4 +1,5 @@
-import type { ConnectionPoint } from "../connection/connectionPoint";
+import type { Nullable } from "@babylonjs/core/types";
+import type { ConnectionPoint, RuntimeData } from "../connection/connectionPoint";
 import type { ConnectionPointType } from "../connection/connectionPointType";
 
 import { BaseBlock } from "../blocks/baseBlock.js";
@@ -98,13 +99,15 @@ export abstract class AggregateBlock extends BaseBlock {
      * Registers an input connection from the internal graph as an input of the aggregated graph.
      * @param name - The name of the exposed input connection point
      * @param internalConnectionPoint - The input connection point in the inner graph to expose as an input on the aggregate block
+     * @param defaultValue - The default value to use for the input connection point
      * @returns the connection point referencing the input block
      */
     protected _registerSubfilterInput<U extends ConnectionPointType>(
         name: string,
-        internalConnectionPoint: ConnectionPoint<U>
+        internalConnectionPoint: ConnectionPoint<U>,
+        defaultValue: Nullable<RuntimeData<U>> = null
     ): ConnectionPoint<U> {
-        const externalInputConnectionPoint = this._registerInput(name, internalConnectionPoint.type);
+        const externalInputConnectionPoint = this._registerInput(name, internalConnectionPoint.type, defaultValue);
 
         this._aggregatedInputs.push([internalConnectionPoint, externalInputConnectionPoint]);
         return externalInputConnectionPoint;

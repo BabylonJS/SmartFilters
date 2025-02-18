@@ -1,7 +1,7 @@
 import { Component, createRef } from "react";
 import type { Observable, Observer } from "@babylonjs/core/Misc/observable";
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable";
-import type { Nullable } from "@babylonjs/core";
+import type { Nullable } from "@babylonjs/core/types";
 import { type IOptionsLineProps, OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 
 /**

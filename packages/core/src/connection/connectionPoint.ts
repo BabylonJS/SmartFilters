@@ -185,7 +185,7 @@ export class ConnectionPoint<U extends ConnectionPointType = ConnectionPointType
 
         // Connections are double-linked - remove the reference back to this connection point from the one we just disconnected from
         endpoint._connectedTo = null;
-        endpoint.runtimeData = null;
+        endpoint.runtimeData = endpoint.defaultRuntimeData;
     }
 
     /**
