@@ -70,16 +70,20 @@ export class CustomBlockManager {
     ): Promise<BaseBlock> {
         switch (blockDefinition.format) {
             case "shaderBlockDefinition":
-                return CustomShaderBlock.Create(smartFilter, blockDefinition.blockType, blockDefinition);
+                return CustomShaderBlock.Create(smartFilter, this._getDefaultName(blockDefinition), blockDefinition);
             case "smartFilter":
                 return await CustomAggregateBlock.Create(
                     smartFilter,
                     this._engine,
-                    blockDefinition.blockType,
+                    this._getDefaultName(blockDefinition),
                     blockDefinition,
                     smartFilterDeserializer
                 );
         }
+    }
+
+    private _getDefaultName(blockDefinition: SerializedBlockDefinition): string {
+        return blockDefinition.blockType.replace("Block", "");
     }
 
     /**
