@@ -12,6 +12,7 @@ import type {
     SerializedSmartFilterV1,
 } from "./v1/smartFilterSerialization.types";
 import { CustomShaderBlock } from "../blocks/customShaderBlock.js";
+import { CustomAggregateBlock } from "../blocks/customAggregateBlock.js";
 
 /**
  * Determines if two serialized connection points are equivalent to each other
@@ -62,8 +63,9 @@ export class SmartFilterSerializer {
 
         const blocks = smartFilter.attachedBlocks.map((block: BaseBlock) => {
             // Serialize the block itself
+            const blockClassName = block.getClassName();
             const serializeFn =
-                block.getClassName() === CustomShaderBlock.ClassName
+                blockClassName === CustomShaderBlock.ClassName || blockClassName === CustomAggregateBlock.ClassName
                     ? defaultBlockSerializer
                     : this._blockSerializers.get(block.blockType);
             if (!serializeFn) {
