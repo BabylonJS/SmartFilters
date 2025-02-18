@@ -16,11 +16,13 @@ import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
-import { BaseBlock } from "@babylonjs/smart-filters";
+import { BaseBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { setEditorData } from "./helpers/serializationTools.js";
 import { SplitContainer } from "@babylonjs/shared-ui-components/split/splitContainer.js";
 import { Splitter } from "@babylonjs/shared-ui-components/split/splitter.js";
 import { ControlledSize, SplitDirection } from "@babylonjs/shared-ui-components/split/splitContext.js";
+import { PreviewAreaComponent } from "./components/preview/previewAreaComponent.js";
+import { initializePreview } from "./initializePreview.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -86,6 +88,21 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         if (this.props.globalState.hostDocument) {
             this._graphCanvas = this._graphCanvasRef.current!;
             this._diagramContainer = this._diagramContainerRef.current!;
+            const canvas = this.props.globalState.hostDocument.getElementById(
+                "sfe-preview-canvas"
+            ) as HTMLCanvasElement;
+            if (canvas && this.props.globalState.onNewEngine) {
+                const engine = initializePreview(canvas);
+                this.props.globalState.onNewEngine(engine);
+                // TODO: don't leak
+                const resizeObserver = new ResizeObserver(() => {
+                    // TODO: resize the smart filter
+                    // TODO: figure out way to not require assets to be same aspect ratio - maybe a zoom to fit block?
+                    engine.resize();
+                    this.props.globalState.onNewEngine && this.props.globalState.onNewEngine(engine);
+                });
+                resizeObserver.observe(canvas);
+            }
         }
 
         if (navigator.userAgent.indexOf("Mobile") !== -1) {
@@ -96,6 +113,12 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
         this.props.globalState.onPopupClosedObservable.addOnce(() => {
             this.componentWillUnmount();
+        });
+
+        this.props.globalState.onSmartFilterLoadedObservable?.add((smartFilter: SmartFilter) => {
+            this.props.globalState.smartFilter = smartFilter;
+            this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+            this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
         });
 
         this.build();
@@ -404,12 +427,20 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                     />
 
                     {/* Property tab */}
-                    <div className="right-panel">
+                    <SplitContainer className="right-panel" direction={SplitDirection.Vertical}>
                         <PropertyTabComponent
                             lockObject={this.props.globalState.lockObject}
                             globalState={this.props.globalState}
                         />
-                    </div>
+                        <Splitter
+                            size={8}
+                            minSize={200}
+                            initialSize={300}
+                            maxSize={500}
+                            controlledSide={ControlledSize.Second}
+                        />
+                        <PreviewAreaComponent globalState={this.props.globalState} />
+                    </SplitContainer>
                 </SplitContainer>
                 <MessageDialog
                     message={this.state.message}

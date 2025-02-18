@@ -180,6 +180,8 @@ export class SmartFilterEditorControl {
 
         const globalState = new GlobalState(
             options.engine ?? null,
+            options.onNewEngine ?? null,
+            options.onSmartFilterLoadedObservable ?? null,
             options.filter ?? null,
             options.blockRegistration,
             hostElement,

@@ -19,6 +19,10 @@ export type TexturePreset = {
 export class GlobalState {
     engine: Nullable<ThinEngine>;
 
+    onNewEngine: Nullable<(engine: ThinEngine) => void>;
+
+    onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>;
+
     smartFilter: SmartFilter;
 
     blockRegistration: BlockRegistration;
@@ -69,6 +73,8 @@ export class GlobalState {
 
     public constructor(
         engine: Nullable<ThinEngine>,
+        onNewEngine: Nullable<(engine: ThinEngine) => void>,
+        onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
@@ -91,6 +97,8 @@ export class GlobalState {
         RegisterDefaultInput(this.stateManager);
 
         this.engine = engine;
+        this.onNewEngine = onNewEngine;
+        this.onSmartFilterLoadedObservable = onSmartFilterLoadedObservable;
         this.smartFilter = smartFilter ?? new SmartFilter("New Filter");
         this.blockRegistration = blockRegistration;
         this.hostElement = hostElement;
