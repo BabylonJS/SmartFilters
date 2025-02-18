@@ -36,10 +36,10 @@ export class CustomAggregateBlock extends AggregateBlock {
     ) {
         super(smartFilter, name, disableOptimization);
 
-        // TODO: add way for input block to be marked as should be exposed on aggregate block, and consider how that works with the metadata system that apps need for inputs as well
         for (const block of innerSmartFilter.attachedBlocks) {
             if (block.isInput && block.outputs[0]) {
                 for (const endpoint of block.outputs[0].endpoints) {
+                    // TODO: set default values
                     this._registerSubfilterInput(block.name, endpoint);
                 }
             }
