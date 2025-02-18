@@ -1,5 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
-import type { SmartFilterDeserializer, SerializedSmartFilterV1 } from "../serialization/index.js";
+import type { SmartFilterDeserializer, SerializedBlockDefinition } from "../serialization/index.js";
 import type { SmartFilter } from "../smartFilter.js";
 import { AggregateBlock } from "./aggregateBlock.js";
 import type { BaseBlock } from "./baseBlock.js";
@@ -21,20 +21,37 @@ export class CustomAggregateBlock extends AggregateBlock {
         smartFilter: SmartFilter,
         engine: ThinEngine,
         name: string,
-        serializedSmartFilter: SerializedSmartFilterV1,
+        serializedSmartFilter: SerializedBlockDefinition,
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<BaseBlock> {
         const innerSmartFilter = await smartFilterDeserializer.deserialize(engine, serializedSmartFilter);
-        return new CustomAggregateBlock(smartFilter, name, innerSmartFilter, false);
+        return new CustomAggregateBlock(smartFilter, name, serializedSmartFilter.blockType, innerSmartFilter, false);
+    }
+
+    /**
+     * The class name of the block.
+     */
+    public static override ClassName = "CustomAggregateBlock";
+
+    private readonly _blockType: string;
+
+    /**
+     * The type of the block - used when serializing / deserializing the block, and in the editor.
+     */
+    public override get blockType(): string {
+        return this._blockType;
     }
 
     private constructor(
         smartFilter: SmartFilter,
         name: string,
+        blockType: string,
         innerSmartFilter: SmartFilter,
         disableOptimization: boolean
     ) {
         super(smartFilter, name, disableOptimization);
+
+        this._blockType = blockType;
 
         const attachedBlocks = innerSmartFilter.attachedBlocks;
         for (let index = 0; index < attachedBlocks.length; index++) {
@@ -59,9 +76,4 @@ export class CustomAggregateBlock extends AggregateBlock {
 
         this._registerSubfilterOutput("output", innerSmartFilter.output.connectedTo);
     }
-
-    /**
-     * The class name of the block.
-     */
-    public static override ClassName = "CustomAggregateBlock";
 }
