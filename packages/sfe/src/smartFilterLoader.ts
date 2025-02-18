@@ -1,5 +1,4 @@
 import { type SmartFilter } from "@babylonjs/smart-filters";
-import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
 import { createDefaultSmartFilter } from "./defaultSmartFilter.js";
 
@@ -7,7 +6,10 @@ import { createDefaultSmartFilter } from "./defaultSmartFilter.js";
  * Manges loading SmartFilters for the demo app
  */
 export class SmartFilterLoader {
-    private readonly _renderer: SmartFilterRenderer;
+    /**
+     * Observable that is triggered before a SmartFilter is loaded.
+     */
+    public readonly beforeSmartFilterLoadedObservable = new Observable<void>();
 
     /**
      * Observable that is triggered when a SmartFilter is loaded.
@@ -16,10 +18,9 @@ export class SmartFilterLoader {
 
     /**
      * Creates a new SmartFilterLoader
-     * @param renderer - The renderer to use to render the filter
      */
-    constructor(renderer: SmartFilterRenderer) {
-        this._renderer = renderer;
+    constructor() {
+        this.beforeSmartFilterLoadedObservable = new Observable<void>();
         this.onSmartFilterLoadedObservable = new Observable<SmartFilter>();
     }
 
@@ -44,7 +45,7 @@ export class SmartFilterLoader {
      * @returns The loaded SmartFilter
      */
     private async _loadSmartFilter(loader: () => Promise<SmartFilter>): Promise<SmartFilter> {
-        this._renderer.beforeRenderObservable.clear();
+        this.beforeSmartFilterLoadedObservable.notifyObservers();
 
         // Load the SmartFilter using the provided function.
         const smartFilter = await loader();

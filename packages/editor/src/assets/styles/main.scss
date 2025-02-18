@@ -299,6 +299,7 @@
         display: grid;
         outline: 0 !important;
         padding: 0 !important;
+        -webkit-user-select: none;
         user-select: none;
         overflow: hidden;
 
@@ -349,6 +350,7 @@
         align-content: center;
         justify-content: center;
 
+        -webkit-user-select: none;
         user-select: none;
 
         padding: 20px;

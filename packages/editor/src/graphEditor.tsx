@@ -96,10 +96,8 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                 this.props.globalState.onNewEngine(engine);
                 // TODO: don't leak
                 const resizeObserver = new ResizeObserver(() => {
-                    // TODO: resize the smart filter
                     // TODO: figure out way to not require assets to be same aspect ratio - maybe a zoom to fit block?
                     engine.resize();
-                    this.props.globalState.onNewEngine && this.props.globalState.onNewEngine(engine);
                 });
                 resizeObserver.observe(canvas);
             }

@@ -23,6 +23,7 @@ export class PreviewAreaComponent extends react.Component<IPreviewAreaComponentP
     }
 
     override render() {
+        // TODO: add pop out window
         return (
             <>
                 <div id="preview">
