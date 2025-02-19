@@ -33,7 +33,8 @@
         "webgpu",
         "glsl",
         "SAMPLINGMODE",
-        "spritesheet"
+        "spritesheet",
+        "Premultiplies"
     ],
     "files.exclude": {
         "**/node_modules": true,

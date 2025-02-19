@@ -72,7 +72,7 @@ export class CustomBlockManager {
             case "shaderBlockDefinition":
                 return CustomShaderBlock.Create(smartFilter, this._getDefaultName(blockDefinition), blockDefinition);
             case "smartFilter":
-                return await CustomAggregateBlock.Create(
+                return CustomAggregateBlock.Create(
                     smartFilter,
                     this._engine,
                     this._getDefaultName(blockDefinition),

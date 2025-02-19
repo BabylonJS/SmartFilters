@@ -5,7 +5,7 @@ import { AggregateBlock } from "./aggregateBlock.js";
 import type { BaseBlock } from "./baseBlock.js";
 
 /**
- * The custom aggregate block class loads a serialized SmartFilter graph into a block which can be used in another SmartFilter.
+ * Loads a serialized SmartFilter into a block which can be used in another SmartFilter.
  */
 export class CustomAggregateBlock extends AggregateBlock {
     /**

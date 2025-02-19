@@ -300,14 +300,12 @@ export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
     {
         name: "PixelateAndDesaturateBlock",
         factory: (smartFilter: SmartFilter, engine: ThinEngine, smartFilterDeserializer: SmartFilterDeserializer) =>
-            Promise.resolve(
-                CustomAggregateBlock.Create(
-                    smartFilter,
-                    engine,
-                    "PixelateAndDesaturate",
-                    pixelateAndDesaturateBlockDefinition,
-                    smartFilterDeserializer
-                )
+            CustomAggregateBlock.Create(
+                smartFilter,
+                engine,
+                "PixelateAndDesaturate",
+                pixelateAndDesaturateBlockDefinition,
+                smartFilterDeserializer
             ),
         category: "Effects",
         tooltip: "Adds colored tint to the input texture",

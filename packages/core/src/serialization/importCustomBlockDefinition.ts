@@ -11,7 +11,7 @@ import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/sha
  * CustomShaderBlock definitions can be supplied either as serialized SerializedBlockDefinition object
  * or a glsl shader with the required annotations (see readme.md for details).
  *
- * CustomAggregateBlock definitions can be supplied as serialized SerializedBlockDefinition object.
+ * CustomAggregateBlock definitions must be supplied as serialized SerializedBlockDefinition object.
  *
  * @param serializedData - The serialized data
  * @returns The serialized block definition
