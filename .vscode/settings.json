@@ -32,63 +32,13 @@
         "webgl",
         "webgpu",
         "glsl",
-        "SAMPLINGMODE"
+        "SAMPLINGMODE",
+        "spritesheet"
     ],
     "files.exclude": {
         "**/node_modules": true,
         "**/dist": false,
         "**/*.shader.ts": true
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "search.exclude": {
-        "**/.git": true,
-        "**/node_modules": true,
-        "**/tmp": true,
-        "**/dist": true,
-        "**/.temp": true,
-        "**/*.tsbuildinfo": true,
-        "**/stats.json": true,
-        "**/www/scripts": true,
-        "junit.xml": true
-    },
-    "cmake.configureOnOpen": false
-}
-{
-    "cSpell.words": [
-        "acumin",
-        "ADDRESSMODE",
-        "babylonjs",
-        "Consts",
-        "dmax",
-        "dmin",
-        "fontawesome",
-        "fortawesome",
-        "fract",
-        "hintrc",
-        "htpasswd",
-        "imgs",
-        "minifiers",
-        "multilines",
-        "NPOT",
-        "runtimes",
-        "Sebastien",
-        "smartfilter",
-        "smax",
-        "smin",
-        "Spector",
-        "tsbuildinfo",
-        "tsdoc",
-        "Undecorates",
-        "unmerge",
-        "VANDENBERGHE",
-        "webgl",
-        "webgpu"
-    ],
-    "files.exclude": {
-        "**/node_modules": true,
-        "**/dist": false
     },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

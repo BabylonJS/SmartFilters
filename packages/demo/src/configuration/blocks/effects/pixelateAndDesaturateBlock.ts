@@ -1,13 +1,14 @@
-import { type SerializedSmartFilterV1 } from "@babylonjs/smart-filters";
+import { type SerializedBlockDefinition } from "@babylonjs/smart-filters";
 
 /**
  * This is included to show how a serialized aggregate block definition can be loaded and used.
  * This object could have been deserialized from a JSON file, for example.
  */
-export const deserializedTintBlockDefinition: SerializedSmartFilterV1 = {
+export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
     format: "smartFilter",
     formatVersion: 1,
-    name: "Pixelate And Desaturate",
+    name: "PixelateAndDesaturate",
+    blockType: "PixelateAndDesaturateBlock",
     comments: null,
     editorData: {
         locations: [
@@ -82,7 +83,7 @@ export const deserializedTintBlockDefinition: SerializedSmartFilterV1 = {
             data: null,
         },
         {
-            name: "Intensity",
+            name: "Pixelate",
             uniqueId: 5,
             blockType: "InputBlock",
             comments: null,
@@ -103,7 +104,7 @@ export const deserializedTintBlockDefinition: SerializedSmartFilterV1 = {
             data: null,
         },
         {
-            name: "Intensity",
+            name: "Desaturate",
             uniqueId: 35,
             blockType: "InputBlock",
             comments: null,

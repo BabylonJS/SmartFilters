@@ -6,6 +6,7 @@ import {
     type BaseBlock,
     CustomShaderBlock,
     type SmartFilterDeserializer,
+    CustomAggregateBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
@@ -32,7 +33,7 @@ export async function blockFactory(
     // See if it's in our list of hardcoded blocks
     const deserializer = deserializers.get(serializedBlock.blockType);
     if (deserializer) {
-        newBlock = await deserializer(smartFilter, serializedBlock, engine);
+        newBlock = await deserializer(smartFilter, serializedBlock, engine, smartFilterDeserializer);
     }
     if (!newBlock) {
         // Check if it's a custom block
@@ -58,14 +59,34 @@ export async function blockFactory(
  */
 const deserializers = new Map<string, DeserializeBlockV1>();
 
-// Deserializing a block defined by a serialized definition
-// --------------------------------------------------------
+// Deserializing blocks defined by serialized definitions
+// ------------------------------------------------------
 deserializers.set(BlockNames.tint, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { deserializedTintBlockDefinition } = await import(
         /* webpackChunkName: "tintBlock" */ "./blocks/effects/tintBlock"
     );
     return CustomShaderBlock.Create(smartFilter, serializedBlock.name, deserializedTintBlockDefinition);
 });
+deserializers.set(
+    BlockNames.pixelateAndDesaturate,
+    async (
+        smartFilter: SmartFilter,
+        serializedBlock: ISerializedBlockV1,
+        engine: ThinEngine,
+        smartFilterDeserializer: SmartFilterDeserializer
+    ) => {
+        const { pixelateAndDesaturateBlockDefinition } = await import(
+            /* webpackChunkName: "pixelateAndDesaturateBlock" */ "./blocks/effects/pixelateAndDesaturateBlock"
+        );
+        return CustomAggregateBlock.Create(
+            smartFilter,
+            engine,
+            serializedBlock.name,
+            pixelateAndDesaturateBlockDefinition,
+            smartFilterDeserializer
+        );
+    }
+);
 
 // Trivial deserializers of hardcoded blocks
 // -----------------------------------------

@@ -12,7 +12,7 @@ export class CustomAggregateBlock extends AggregateBlock {
      * Creates a new CustomAggregateBlock
      * @param smartFilter - The SmartFilter to create the block for
      * @param engine - The ThinEngine to use
-     * @param name - The name of the block
+     * @param name - The friendly name of the block
      * @param serializedSmartFilter - The serialized SmartFilter to load into the block
      * @param smartFilterDeserializer - The deserializer to use
      * @returns A promise that resolves to the new CustomAggregateBlock

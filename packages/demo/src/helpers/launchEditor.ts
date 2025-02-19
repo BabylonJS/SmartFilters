@@ -84,7 +84,7 @@ export function launchEditor(
     const getBlockFromString = async (blockType: string, smartFilter: SmartFilter): Promise<BaseBlock | null> => {
         const registration = allBlockEditorRegistrations.find((r) => r.name === blockType);
         if (registration && registration.factory) {
-            return registration.factory(smartFilter);
+            return registration.factory(smartFilter, engine, smartFilterLoader.smartFilterDeserializer);
         }
         return null;
     };

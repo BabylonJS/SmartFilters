@@ -25,13 +25,22 @@ import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
 import { PremultiplyAlphaBlock } from "../blocks/utility/premultiplyAlphaBlock";
 import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
-import { ConnectionPointType, CustomShaderBlock, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    CustomAggregateBlock,
+    CustomShaderBlock,
+    InputBlock,
+    type SmartFilterDeserializer,
+    type SmartFilter,
+} from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
 import { ParticleBlock } from "../blocks/generators/particleBlock";
 import { HeartsBlock } from "../blocks/generators/heartsBlock";
 import { NeonHeartBlock } from "../blocks/generators/neonHeartBlock";
 import { SpritesheetBlock } from "../blocks/effects/spritesheetBlock";
 import { deserializedTintBlockDefinition } from "../blocks/effects/tintBlock";
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import { pixelateAndDesaturateBlockDefinition } from "../blocks/effects/pixelateAndDesaturateBlock";
 
 /**
  * Extends the default block editor registrations with registrations for the hardcoded blocks
@@ -285,6 +294,21 @@ export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
         name: "TintBlock",
         factory: (smartFilter: SmartFilter) =>
             Promise.resolve(CustomShaderBlock.Create(smartFilter, "Tint", deserializedTintBlockDefinition)),
+        category: "Effects",
+        tooltip: "Adds colored tint to the input texture",
+    },
+    {
+        name: "PixelateAndDesaturateBlock",
+        factory: (smartFilter: SmartFilter, engine: ThinEngine, smartFilterDeserializer: SmartFilterDeserializer) =>
+            Promise.resolve(
+                CustomAggregateBlock.Create(
+                    smartFilter,
+                    engine,
+                    "PixelateAndDesaturate",
+                    pixelateAndDesaturateBlockDefinition,
+                    smartFilterDeserializer
+                )
+            ),
         category: "Effects",
         tooltip: "Adds colored tint to the input texture",
     },

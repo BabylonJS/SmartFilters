@@ -3,6 +3,7 @@ import type { BaseBlock } from "../../blocks/baseBlock.js";
 import type { SmartFilter } from "../../smartFilter.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo.js";
+import type { SmartFilterDeserializer } from "../smartFilterDeserializer.js";
 
 /**
  * ----------------------------------------------------------------------------
@@ -108,7 +109,8 @@ export interface IBlockSerializerV1 {
 export type DeserializeBlockV1 = (
     smartFilter: SmartFilter,
     serializedBlock: ISerializedBlockV1,
-    engine: ThinEngine
+    engine: ThinEngine,
+    smartFilterDeserializer: SmartFilterDeserializer
 ) => Promise<BaseBlock>;
 
 /**
