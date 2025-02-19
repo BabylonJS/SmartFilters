@@ -5,35 +5,43 @@ import {
     type ISerializedBlockV1,
     type BaseBlock,
     CustomShaderBlock,
+    type SmartFilterDeserializer,
+    CustomAggregateBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "./blocks/blockNames";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { CustomShaderBlockManager } from "../customShaderBlockManager";
+import type { CustomBlockManager } from "../customBlockManager";
 
 /**
  * Creates instances of blocks upon request
  * @param smartFilter - The SmartFilter the block will belong to
  * @param engine - The ThinEngine to use
  * @param serializedBlock - The serialized block to create
- * @param customShaderBlockManager - The manager for custom shader blocks
+ * @param customBlockManager - The manager for custom blocks
+ * @param smartFilterDeserializer - The deserializer to use
  */
 export async function blockFactory(
     smartFilter: SmartFilter,
     engine: ThinEngine,
     serializedBlock: ISerializedBlockV1,
-    customShaderBlockManager: CustomShaderBlockManager
+    customBlockManager: CustomBlockManager,
+    smartFilterDeserializer: SmartFilterDeserializer
 ): Promise<Nullable<BaseBlock>> {
     let newBlock: Nullable<BaseBlock> = null;
 
     // See if it's in our list of hardcoded blocks
     const deserializer = deserializers.get(serializedBlock.blockType);
     if (deserializer) {
-        newBlock = await deserializer(smartFilter, serializedBlock, engine);
+        newBlock = await deserializer(smartFilter, serializedBlock, engine, smartFilterDeserializer);
     }
     if (!newBlock) {
-        // Check if it's a custom shader block
-        newBlock = customShaderBlockManager.createBlock(smartFilter, serializedBlock);
+        // Check if it's a custom block
+        newBlock = await customBlockManager.createBlockFromBlockType(
+            smartFilter,
+            serializedBlock.blockType,
+            smartFilterDeserializer
+        );
     }
 
     return newBlock;
@@ -51,14 +59,34 @@ export async function blockFactory(
  */
 const deserializers = new Map<string, DeserializeBlockV1>();
 
-// Deserializing a block defined by a serialized definition
-// --------------------------------------------------------
+// Deserializing blocks defined by serialized definitions
+// ------------------------------------------------------
 deserializers.set(BlockNames.tint, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { deserializedTintBlockDefinition } = await import(
         /* webpackChunkName: "tintBlock" */ "./blocks/effects/tintBlock"
     );
     return CustomShaderBlock.Create(smartFilter, serializedBlock.name, deserializedTintBlockDefinition);
 });
+deserializers.set(
+    BlockNames.pixelateAndDesaturate,
+    async (
+        smartFilter: SmartFilter,
+        serializedBlock: ISerializedBlockV1,
+        engine: ThinEngine,
+        smartFilterDeserializer: SmartFilterDeserializer
+    ) => {
+        const { pixelateAndDesaturateBlockDefinition } = await import(
+            /* webpackChunkName: "pixelateAndDesaturateBlock" */ "./blocks/effects/pixelateAndDesaturateBlock"
+        );
+        return CustomAggregateBlock.Create(
+            smartFilter,
+            engine,
+            serializedBlock.name,
+            pixelateAndDesaturateBlockDefinition,
+            smartFilterDeserializer
+        );
+    }
+);
 
 // Trivial deserializers of hardcoded blocks
 // -----------------------------------------

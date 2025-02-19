@@ -11,9 +11,9 @@ import { blockFactory } from "./configuration/blockFactory";
 import { inputBlockDeserializer } from "./configuration/inputBlockDeserializer";
 import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
-import type { ISerializedBlockV1, SmartFilter } from "@babylonjs/smart-filters";
+import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import { hookupBackgroundOption } from "./backgroundOption";
-import { CustomShaderBlockManager } from "./customShaderBlockManager";
+import { CustomBlockManager } from "./customBlockManager";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 
 type CurrentSmartFilterState = {
@@ -49,15 +49,24 @@ hookupBackgroundOption();
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine, localStorage.getItem(LocalStorageOptimizeName) === "true");
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
-const customShaderBlockManager = new CustomShaderBlockManager();
+const customBlockManager = new CustomBlockManager(engine);
+const smartFilterDeserializer = new SmartFilterDeserializer(
+    (
+        smartFilter: SmartFilter,
+        engine: ThinEngine,
+        serializedBlock: ISerializedBlockV1,
+        smartFilterDeserializer: SmartFilterDeserializer
+    ) => {
+        return blockFactory(smartFilter, engine, serializedBlock, customBlockManager, smartFilterDeserializer);
+    },
+    inputBlockDeserializer
+);
+
 const smartFilterLoader = new SmartFilterLoader(
     engine,
     renderer,
     smartFilterManifests,
-    (smartFilter: SmartFilter, engine: ThinEngine, serializedBlock: ISerializedBlockV1) => {
-        return blockFactory(smartFilter, engine, serializedBlock, customShaderBlockManager);
-    },
-    inputBlockDeserializer,
+    smartFilterDeserializer,
     textureRenderHelper
 );
 
@@ -190,7 +199,7 @@ editActionLink.onclick = async () => {
             smartFilterLoader,
             showError,
             closeError,
-            customShaderBlockManager
+            customBlockManager
         );
     }
 };

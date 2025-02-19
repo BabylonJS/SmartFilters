@@ -30,4 +30,5 @@ export const BlockNames = {
     spritesheet: "SpritesheetBlock",
     tint: "TintBlock",
     premultiplyAlpha: "PremultiplyAlphaBlock",
+    pixelateAndDesaturate: "PixelateAndDesaturateBlock",
 };

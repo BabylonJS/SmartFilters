@@ -20,7 +20,8 @@ import type { Nullable } from "@babylonjs/core/types";
 export type BlockFactory = (
     smartFilter: SmartFilter,
     engine: ThinEngine,
-    serializedBlock: ISerializedBlockV1
+    serializedBlock: ISerializedBlockV1,
+    smartFilterDeserializer: SmartFilterDeserializer
 ) => Promise<Nullable<BaseBlock>>;
 
 /**
@@ -182,7 +183,7 @@ export class SmartFilterDeserializer {
                 break;
             default: {
                 // If it's not an input or output block, use the provided block factory
-                newBlock = await this._blockFactory(smartFilter, engine, serializedBlock);
+                newBlock = await this._blockFactory(smartFilter, engine, serializedBlock, this);
                 if (!newBlock) {
                     blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
                     return;

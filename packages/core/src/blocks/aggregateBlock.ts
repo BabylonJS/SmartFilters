@@ -1,4 +1,5 @@
-import type { ConnectionPoint } from "../connection/connectionPoint";
+import type { Nullable } from "@babylonjs/core/types";
+import type { ConnectionPoint, RuntimeData } from "../connection/connectionPoint";
 import type { ConnectionPointType } from "../connection/connectionPointType";
 
 import { BaseBlock } from "../blocks/baseBlock.js";
@@ -25,7 +26,7 @@ export abstract class AggregateBlock extends BaseBlock {
     /**
      * The list of relationships between the internal graph inputs and the outside ones.
      */
-    private readonly _aggregatedInputs: [ConnectionPoint, ConnectionPoint][] = [];
+    private readonly _aggregatedInputs: [ConnectionPoint[], ConnectionPoint][] = [];
 
     /**
      * Do not override prepareForRuntime for aggregate blocks. It is not supported.
@@ -49,11 +50,13 @@ export abstract class AggregateBlock extends BaseBlock {
         }
 
         // Rewire input connections
-        for (const [internalConnectionPoint, externalConnectionPoint] of this._aggregatedInputs) {
+        for (const [internalConnectionPoints, externalConnectionPoint] of this._aggregatedInputs) {
             const connectedToExternalConnectionPoint = externalConnectionPoint.connectedTo;
             if (connectedToExternalConnectionPoint) {
                 connectedToExternalConnectionPoint.disconnectFrom(externalConnectionPoint);
-                connectedToExternalConnectionPoint.connectTo(internalConnectionPoint);
+                for (const internalConnectionPoint of internalConnectionPoints) {
+                    connectedToExternalConnectionPoint.connectTo(internalConnectionPoint);
+                }
             }
         }
 
@@ -85,11 +88,15 @@ export abstract class AggregateBlock extends BaseBlock {
             }
         }
 
-        for (const [internalConnectionPoint, externalConnectionPoint] of this._aggregatedInputs) {
-            const connectedToInternalConnectionPoint = internalConnectionPoint.connectedTo;
-            if (connectedToInternalConnectionPoint) {
-                connectedToInternalConnectionPoint.disconnectFrom(internalConnectionPoint);
-                connectedToInternalConnectionPoint.connectTo(externalConnectionPoint);
+        for (const [internalConnectionPoints, externalConnectionPoint] of this._aggregatedInputs) {
+            if (internalConnectionPoints[0]) {
+                const connectedToInternalConnectionPoint = internalConnectionPoints[0].connectedTo;
+                if (connectedToInternalConnectionPoint) {
+                    for (const internalConnectionPoint of internalConnectionPoints) {
+                        connectedToInternalConnectionPoint.disconnectFrom(internalConnectionPoint);
+                    }
+                    connectedToInternalConnectionPoint.connectTo(externalConnectionPoint);
+                }
             }
         }
     }
@@ -97,16 +104,23 @@ export abstract class AggregateBlock extends BaseBlock {
     /**
      * Registers an input connection from the internal graph as an input of the aggregated graph.
      * @param name - The name of the exposed input connection point
-     * @param internalConnectionPoint - The input connection point in the inner graph to expose as an input on the aggregate block
+     * @param internalConnectionPoints - The input connection points in the inner graph to wire up to the new subfilter input
+     * @param defaultValue - The default value to use for the input connection point
      * @returns the connection point referencing the input block
      */
     protected _registerSubfilterInput<U extends ConnectionPointType>(
         name: string,
-        internalConnectionPoint: ConnectionPoint<U>
+        internalConnectionPoints: ConnectionPoint<U>[],
+        defaultValue: Nullable<RuntimeData<U>> = null
     ): ConnectionPoint<U> {
-        const externalInputConnectionPoint = this._registerInput(name, internalConnectionPoint.type);
+        const type = internalConnectionPoints[0]?.type;
+        if (type === undefined) {
+            throw new Error("Cannot register an input connection point with no internal connection points");
+        }
+        const externalInputConnectionPoint = this._registerInput(name, type, defaultValue);
 
-        this._aggregatedInputs.push([internalConnectionPoint, externalInputConnectionPoint]);
+        this._aggregatedInputs.push([internalConnectionPoints, externalInputConnectionPoint]);
+
         return externalInputConnectionPoint;
     }
 

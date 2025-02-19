@@ -1,22 +1,34 @@
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { hasGlslHeader, parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
 import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
-import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/blockSerialization.types.js";
+import type { SerializedShaderBlockDefinition } from "./serializedShaderBlockDefinition.js";
+import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/shaderBlockSerialization.types.js";
 
 /**
- * Imports a serialized custom shader block definition. Supports importing a JSON string
- * of an SerializedBlockDefinition object, or a glsl shader with the required annotations
- * so it can be converted to a SerializedBlockDefinition object.
- * See readme.md for more information.
- * @param serializedBlockDefinition - The serialized block definition - either a SerializedBlockDefinition object in a JSON string, or an annotated glsl shader
+ * Imports a serialized custom block definition. Supports either serialized CustomShaderBlock definitions or
+ * CustomAggregateBlock definitions.
+ *
+ * CustomShaderBlock definitions can be supplied either as serialized SerializedBlockDefinition object
+ * or a glsl shader with the required annotations (see readme.md for details).
+ *
+ * CustomAggregateBlock definitions must be supplied as serialized SerializedBlockDefinition object.
+ *
+ * @param serializedData - The serialized data
  * @returns The serialized block definition
  */
-export function importCustomShaderBlockDefinition(serializedBlockDefinition: string): SerializedBlockDefinition {
-    if (hasGlslHeader(serializedBlockDefinition)) {
-        return importAnnotatedGlsl(serializedBlockDefinition);
+export function importCustomBlockDefinition(serializedData: string): SerializedBlockDefinition {
+    if (hasGlslHeader(serializedData)) {
+        return importAnnotatedGlsl(serializedData);
     } else {
-        // Assume this is a serialized SerializedBlockDefinition object
-        return JSON.parse(serializedBlockDefinition);
+        // Assume this is a serialized JSON object
+        const blockDefinition = JSON.parse(serializedData);
+
+        // SmartFilters can be serialized without a blockType
+        // By convention, we use the SmartFilter name as the blockType when importing them as SerializedBlockDefinitions
+        if (blockDefinition.format === "smartFilter" && blockDefinition.name && !blockDefinition.blockType) {
+            blockDefinition.blockType = blockDefinition.name;
+        }
+        return blockDefinition;
     }
 }
 
@@ -27,7 +39,7 @@ export function importCustomShaderBlockDefinition(serializedBlockDefinition: str
  * @param fragmentShader - The contents of the .glsl fragment shader file
  * @returns The serialized block definition
  */
-function importAnnotatedGlsl(fragmentShader: string): SerializedBlockDefinition {
+function importAnnotatedGlsl(fragmentShader: string): SerializedShaderBlockDefinition {
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
 
     if (!fragmentShaderInfo.blockType) {
@@ -75,6 +87,7 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedBlockDefinition 
     }
 
     return {
+        format: "shaderBlockDefinition",
         formatVersion: 1,
         blockType: fragmentShaderInfo.blockType,
         shaderProgram: {
