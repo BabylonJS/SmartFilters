@@ -75,5 +75,8 @@ export class CustomAggregateBlock extends AggregateBlock {
         }
 
         this._registerSubfilterOutput("output", innerSmartFilter.output.connectedTo);
+
+        // Disconnect the inner smart filter output from the inner smart filter
+        innerSmartFilter.output.connectedTo.disconnectFrom(innerSmartFilter.output);
     }
 }
