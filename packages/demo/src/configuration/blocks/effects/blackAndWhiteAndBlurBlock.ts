@@ -42,7 +42,7 @@ export class BlackAndWhiteAndBlurBlock extends AggregateBlock {
 
         this._blackAndWhiteBlock.output.connectTo(this._blurBlock.input);
 
-        this.input = this._registerSubfilterInput("input", this._blackAndWhiteBlock.input);
+        this.input = this._registerSubfilterInput("input", [this._blackAndWhiteBlock.input]);
         this.output = this._registerSubfilterOutput("output", this._blurBlock.output);
     }
 }

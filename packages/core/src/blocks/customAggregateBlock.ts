@@ -57,10 +57,13 @@ export class CustomAggregateBlock extends AggregateBlock {
         for (let index = 0; index < attachedBlocks.length; index++) {
             const block = attachedBlocks[index];
             if (block && block.isInput && block.outputs[0]) {
-                // Create an input connection point on this CustomAggregateBlock for each input connection point
-                // this input block is connected to
-                for (const endpoint of block.outputs[0].endpoints) {
-                    this._registerSubfilterInput(block.name, endpoint, block.outputs[0].runtimeData ?? null);
+                // If this input block is connected to anything (has any endpoints), create an input connection point for it
+                if (block.outputs[0].endpoints.length > 0) {
+                    this._registerSubfilterInput(
+                        block.name,
+                        block.outputs[0].endpoints.slice(),
+                        block.outputs[0].runtimeData ?? null
+                    );
                 }
 
                 // Remove this input block from the smart filter graph - this will reset the runtimeData to the

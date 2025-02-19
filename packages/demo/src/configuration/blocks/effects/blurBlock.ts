@@ -97,7 +97,7 @@ export class BlurBlock extends AggregateBlock {
         this._intermediateBlurH.output.connectTo(this._finalBlurV.input);
         this._finalBlurV.output.connectTo(this._finalBlurH.input);
 
-        this.input = this._registerSubfilterInput("input", this._intermediateBlurV.input);
+        this.input = this._registerSubfilterInput("input", [this._intermediateBlurV.input]);
         this.output = this._registerSubfilterOutput("output", this._finalBlurH.output);
 
         this.blurSize = defaultBlurSize;
