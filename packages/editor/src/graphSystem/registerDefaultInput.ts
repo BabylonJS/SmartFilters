@@ -24,6 +24,8 @@ export function createDefaultValue<U extends ConnectionPointType>(type: U, engin
             return createStrongRef(0) as RuntimeData<U>;
         case ConnectionPointType.Color3:
             return createStrongRef({ r: 0, g: 0, b: 0 }) as RuntimeData<U>;
+        case ConnectionPointType.Color4:
+            return createStrongRef({ r: 0, g: 0, b: 0, a: 0 }) as RuntimeData<U>;
         case ConnectionPointType.Vector2:
             return createStrongRef({ x: 0, y: 0 }) as RuntimeData<U>;
         case ConnectionPointType.Texture:
@@ -53,7 +55,9 @@ export function createDefaultInputForConnectionPoint<U extends ConnectionPointTy
         smartFilter,
         name,
         point.type,
-        point.defaultRuntimeData ?? createDefaultValue(point.type, engine)
+        point.defaultRuntimeData
+            ? createStrongRef(structuredClone(point.defaultRuntimeData.value))
+            : createDefaultValue(point.type, engine)
     );
     return inputBlock;
 }
