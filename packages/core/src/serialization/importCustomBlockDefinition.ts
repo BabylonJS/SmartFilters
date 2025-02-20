@@ -23,6 +23,11 @@ export function importCustomBlockDefinition(serializedData: string): SerializedB
         // Assume this is a serialized JSON object
         const blockDefinition = JSON.parse(serializedData);
 
+        // Some old SmartFilters didn't have a format property - default to smartFilter if missing
+        if (blockDefinition.format === undefined) {
+            blockDefinition.format = "smartFilter";
+        }
+
         // SmartFilters can be serialized without a blockType
         // By convention, we use the SmartFilter name as the blockType when importing them as SerializedBlockDefinitions
         if (blockDefinition.format === "smartFilter" && blockDefinition.name && !blockDefinition.blockType) {
