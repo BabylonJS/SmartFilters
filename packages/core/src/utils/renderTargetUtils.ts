@@ -5,6 +5,7 @@ import type { BaseBlock } from "../blocks/baseBlock";
 import type { ShaderRuntime } from "../runtime/shaderRuntime";
 import type { InternalSmartFilterRuntime } from "../runtime/smartFilterRuntime";
 import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture.js";
+import type { StrongRef } from "../runtime/strongRef.js";
 
 /**
  * Tries to get a renderTargetWrapper from a ThinRenderTargetTexture, and throws an error if it fails.
@@ -33,7 +34,7 @@ export function getRenderTargetWrapper(
  * @param shaderBlockRuntime - The shader block runtime to use.
  */
 export function registerFinalRenderCommand(
-    renderTargetWrapper: Nullable<RenderTargetWrapper>,
+    renderTargetWrapper: Nullable<StrongRef<RenderTargetWrapper>>,
     runtime: InternalSmartFilterRuntime,
     commandOwner: BaseBlock,
     shaderBlockRuntime: ShaderRuntime
@@ -42,7 +43,7 @@ export function registerFinalRenderCommand(
     if (renderTargetWrapper) {
         runtime.registerCommand(
             createCommand(`${commandOwnerBlockType}.renderToFinalTexture`, commandOwner, () => {
-                shaderBlockRuntime.renderToTexture(renderTargetWrapper);
+                shaderBlockRuntime.renderToStrongRefTexture(renderTargetWrapper);
             })
         );
     } else {

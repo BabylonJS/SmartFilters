@@ -8,6 +8,7 @@ import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import type { RuntimeData } from "../connection/connectionPoint";
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import { shaderProgram, uniforms } from "./outputBlock.shader.js";
+import type { StrongRef } from "../runtime/strongRef";
 
 /**
  * The output block of a smart filter.
@@ -31,7 +32,7 @@ export class OutputBlock extends BaseBlock {
      * If supplied, the Smart Filter will render into this RenderTargetWrapper. Otherwise, it renders
      * into the the canvas or WebGL context the ThinEngine is using for rendering.
      */
-    public renderTargetWrapper: Nullable<RenderTargetWrapper> = null;
+    public renderTargetWrapper: Nullable<StrongRef<RenderTargetWrapper>> = null;
 
     /**
      * Create a new output block.

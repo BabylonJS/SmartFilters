@@ -120,6 +120,17 @@ export class ShaderRuntime implements IDisposable {
 
     /**
      * Renders the full screen effect into a texture.
+     * @param renderTargetWrapperStrongRef - A strong ref to the render target wrapper to render into
+     */
+    public renderToStrongRefTexture(renderTargetWrapperStrongRef: StrongRef<RenderTargetWrapper>): void {
+        const renderTargetWrapper = renderTargetWrapperStrongRef.value;
+        this._engine.bindFramebuffer(renderTargetWrapper);
+        this._draw(renderTargetWrapper.width, renderTargetWrapper.height);
+        this._engine.unBindFramebuffer(renderTargetWrapper);
+    }
+
+    /**
+     * Renders the full screen effect into a texture.
      * @param renderTargetWrapper - The render target wrapper to render into
      */
     public renderToTexture(renderTargetWrapper: RenderTargetWrapper): void {

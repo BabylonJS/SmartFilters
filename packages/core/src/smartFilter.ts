@@ -10,6 +10,9 @@ import { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
 import { AggregateBlock } from "./blocks/aggregateBlock.js";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { IDisposable } from "./IDisposable";
+import { ShaderBlock } from "./blocks/shaderBlock.js";
+import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
+import { getBlockOutputTextureSize } from "./utils/textureUtils.js";
 
 /**
  * How long to wait for shader compilation and texture loading to complete before erroring out.
@@ -201,6 +204,35 @@ export class SmartFilter {
         initializationData.disposableResources.forEach((resource) => runtime.registerResource(resource));
 
         return runtime;
+    }
+
+    /**
+     * Resizes any intermediate textures according to the new size of the render target
+     * @param engine - The engine used to render the smart filter
+     */
+    public resize(engine: ThinEngine): void {
+        const newOutputSize = { width: 0, height: 0 };
+        const renderTargetWrapper = this.outputBlock.renderTargetWrapper?.value;
+        if (renderTargetWrapper) {
+            newOutputSize.width = renderTargetWrapper.width;
+            newOutputSize.height = renderTargetWrapper.height;
+        } else {
+            newOutputSize.width = engine.getRenderWidth();
+            newOutputSize.height = engine.getRenderHeight();
+        }
+
+        this._workWithAggregateFreeGraph(() => {
+            this.outputBlock.visit({}, (block: BaseBlock) => {
+                if (!(block instanceof ShaderBlock)) {
+                    return;
+                }
+
+                if (block.output.runtimeData?.value) {
+                    const size = getBlockOutputTextureSize(this, engine, block.outputTextureOptions);
+                    (block.output.runtimeData.value as ThinRenderTargetTexture).resize(size);
+                }
+            });
+        });
     }
 
     /**
