@@ -19,9 +19,9 @@ export class BlockTools {
                 color = "#b786cb";
                 break;
             // case NodeMaterialBlockConnectionPointTypes.Vector4:
-            // case NodeMaterialBlockConnectionPointTypes.Color4:
-            //     color = "#be5126";
-            //     break;
+            case ConnectionPointType.Color4:
+                color = "#be5126";
+                break;
             // case NodeMaterialBlockConnectionPointTypes.Matrix:
             //     color = "#591990";
             //     break;
@@ -41,6 +41,8 @@ export class BlockTools {
                 return ConnectionPointType.Texture;
             case "Color3":
                 return ConnectionPointType.Color3;
+            case "Color4":
+                return ConnectionPointType.Color4;
             case "Vector2":
                 return ConnectionPointType.Vector2;
             case "WebCam":
@@ -57,6 +59,8 @@ export class BlockTools {
                 return "Float";
             case ConnectionPointType.Color3:
                 return "Color3";
+            case ConnectionPointType.Color4:
+                return "Color4";
             case ConnectionPointType.Texture:
                 return "Texture";
             case ConnectionPointType.Vector2:

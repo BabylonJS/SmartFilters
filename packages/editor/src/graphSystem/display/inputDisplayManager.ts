@@ -4,7 +4,7 @@ import type { IDisplayManager } from "@babylonjs/shared-ui-components/nodeGraphS
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import styles from "../../assets/styles/graphSystem/display/inputDisplayManager.module.scss";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
-import { Color3 } from "@babylonjs/core/Maths/math.color.js";
+import { Color3, Color4 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";
 import { getTextureInputBlockEditorData } from "../getEditorData.js";
 
@@ -48,6 +48,12 @@ export class InputDisplayManager implements IDisplayManager {
                 const inputColor = inputBlock.runtimeValue.value;
                 const color3 = new Color3(inputColor.r, inputColor.g, inputColor.b);
                 color = color3.toHexString();
+                break;
+            }
+            case ConnectionPointType.Color4: {
+                const inputColor = inputBlock.runtimeValue.value;
+                const color4 = new Color4(inputColor.r, inputColor.g, inputColor.b, inputColor.a);
+                color = color4.toHexString();
                 break;
             }
             default:
