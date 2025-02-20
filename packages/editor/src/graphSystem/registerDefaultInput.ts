@@ -55,7 +55,9 @@ export function createDefaultInputForConnectionPoint<U extends ConnectionPointTy
         smartFilter,
         name,
         point.type,
-        point.defaultRuntimeData ?? createDefaultValue(point.type, engine)
+        point.defaultRuntimeData
+            ? createStrongRef(structuredClone(point.defaultRuntimeData.value))
+            : createDefaultValue(point.type, engine)
     );
     return inputBlock;
 }
