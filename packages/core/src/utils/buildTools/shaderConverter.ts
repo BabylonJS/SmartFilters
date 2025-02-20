@@ -146,8 +146,8 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     const mainInputs = [...fragmentShaderWithRenamedSymbols.matchAll(/\S*uniform.*\s(\w*);\s*\/\/\s*main/gm)].map(
         (match) => match[1]
     );
-    if (mainInputs.length !== 1 || !mainInputs[0]) {
-        throw new Error("Exactly one main input must be defined in the shader");
+    if (mainInputs.length > 1) {
+        throw new Error("Shaders may have no more than 1 main input");
     }
     const mainInputTexture = mainInputs[0];
 

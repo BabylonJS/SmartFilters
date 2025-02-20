@@ -6,6 +6,7 @@ import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineCo
 import type { IInspectableOptions } from "@babylonjs/core/Misc/iInspectable.js";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
 import { Color3PropertyTabComponent } from "../../components/propertyTab/properties/color3PropertyTabComponent.js";
+import { Color4PropertyTabComponent } from "../../components/propertyTab/properties/color4PropertyTabComponent.js";
 import { ImageSourcePropertyTabComponent } from "../../components/propertyTab/properties/imageSourcePropertyTabComponent.js";
 import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
@@ -140,46 +141,18 @@ export class InputPropertyTabComponent extends react.Component<InputPropertyComp
                             stateManager={this.props.stateManager}
                             inputBlock={inputBlock}
                         />
-                        {/* <CheckBoxLineComponent
-                            label="Convert to gamma space"
-                            propertyName="convertToGammaSpace"
-                            target={inputBlock}
-                            onValueChanged={() => {
-                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            }}
-                        />
-                        <CheckBoxLineComponent
-                            label="Convert to linear space"
-                            propertyName="convertToLinearSpace"
-                            target={inputBlock}
-                            onValueChanged={() => {
-                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-                            }}
-                        /> */}
                     </>
                 );
-            // case NodeMaterialBlockConnectionPointTypes.Color4:
-            //     return (
-            //         <>
-            //             <Color4PropertyTabComponent lockObject={globalState.lockObject} globalState={globalState} inputBlock={inputBlock} />
-            //             <CheckBoxLineComponent
-            //                 label="Convert to gamma space"
-            //                 propertyName="convertToGammaSpace"
-            //                 target={inputBlock}
-            //                 onValueChanged={() => {
-            //                     this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-            //                 }}
-            //             />
-            //             <CheckBoxLineComponent
-            //                 label="Convert to linear space"
-            //                 propertyName="convertToLinearSpace"
-            //                 target={inputBlock}
-            //                 onValueChanged={() => {
-            //                     this.props.stateManager.onUpdateRequiredObservable.notifyObservers(inputBlock);
-            //                 }}
-            //             />
-            //         </>
-            //     );
+            case ConnectionPointType.Color4:
+                return (
+                    <>
+                        <Color4PropertyTabComponent
+                            key={inputBlock.uniqueId}
+                            stateManager={this.props.stateManager}
+                            inputBlock={inputBlock}
+                        />
+                    </>
+                );
             // case NodeMaterialBlockConnectionPointTypes.Vector3:
             //     return <Vector3PropertyTabComponent lockObject={globalState.lockObject} globalState={globalState} inputBlock={inputBlock} />;
             // case NodeMaterialBlockConnectionPointTypes.Vector4:

@@ -7,10 +7,10 @@ import "../../assets/styles/components/propertyTab.scss";
 import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
 import { FloatSliderComponent } from "../../sharedComponents/floatSliderComponent.js";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
-import { Color3LineComponent } from "@babylonjs/shared-ui-components/lines/color3LineComponent.js";
-import { Color3 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";
 import { Vector2PropertyTabComponent } from "./properties/vector2PropertyTabComponent.js";
+import { Color3PropertyTabComponent } from "./properties/color3PropertyTabComponent.js";
+import { Color4PropertyTabComponent } from "./properties/color4PropertyTabComponent.js";
 
 interface IInputsPropertyTabComponentProps {
     globalState: GlobalState;
@@ -30,24 +30,21 @@ export class InputsPropertyTabComponent extends react.Component<IInputsPropertyT
     renderInputBlock(block: AnyInputBlock) {
         switch (block.type) {
             case ConnectionPointType.Color3: {
-                const target = block.runtimeValue.value;
-                const dummyTarget = {
-                    color: new Color3(target.r, target.g, target.b),
-                };
                 return (
-                    <Color3LineComponent
-                        lockObject={this.props.lockObject}
+                    <Color3PropertyTabComponent
                         key={block.uniqueId}
-                        label={block.name}
-                        target={dummyTarget}
-                        propertyName="color"
-                        onChange={() => {
-                            target.r = dummyTarget.color.r;
-                            target.g = dummyTarget.color.g;
-                            target.b = dummyTarget.color.b;
-                            this.processInputBlockUpdate(block);
-                        }}
-                    ></Color3LineComponent>
+                        stateManager={this.props.globalState.stateManager}
+                        inputBlock={block}
+                    ></Color3PropertyTabComponent>
+                );
+            }
+            case ConnectionPointType.Color4: {
+                return (
+                    <Color4PropertyTabComponent
+                        key={block.uniqueId}
+                        stateManager={this.props.globalState.stateManager}
+                        inputBlock={block}
+                    ></Color4PropertyTabComponent>
                 );
             }
             case ConnectionPointType.Float: {

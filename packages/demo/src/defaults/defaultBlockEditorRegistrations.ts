@@ -12,6 +12,11 @@ export const defaultBlockEditorRegistrations: IBlockEditorRegistration[] = [
         tooltip: "A set of 3 floating point numbers representing a color",
     },
     {
+        name: "Color4",
+        category: "Inputs",
+        tooltip: "A set of 4 floating point numbers representing a color",
+    },
+    {
         name: "Texture",
         category: "Inputs",
         tooltip: "A texture to be used as input",
