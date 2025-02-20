@@ -230,3 +230,12 @@ function showError(message: string) {
 function closeError() {
     errorContainer.style.display = "none";
 }
+
+// If the user presses "u", then increase the height of the canvas
+document.addEventListener("keydown", (event: KeyboardEvent) => {
+    if (event.key === "u") {
+        canvas.height = canvas.height + 10;
+        engine.resize();
+        currentSmartFilterState?.smartFilter.resize(engine);
+    }
+});
