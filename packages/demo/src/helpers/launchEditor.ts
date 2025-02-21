@@ -20,6 +20,7 @@ import { additionalBlockSerializers, blocksUsingDefaultSerialization } from "../
 import type { SmartFilterLoader } from "../smartFilterLoader";
 import { getSnippet, setSnippet } from "./hashFunctions";
 import type { CustomBlockManager } from "../customBlockManager";
+import { defaultBlockEditorRegistrations } from "../defaults/defaultBlockEditorRegistrations";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported, since it brings in code which
@@ -66,6 +67,7 @@ export function launchEditor(
 
     // Build the list of all block editor registrations
     const allBlockEditorRegistrations: IBlockEditorRegistration[] = [
+        ...defaultBlockEditorRegistrations,
         ...hardcodedBlockEditorRegistrations.sort((a, b) => (a.category || "").localeCompare(b.category || "")),
         ...customShaderBlockEditorRegistrations,
     ];

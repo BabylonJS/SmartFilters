@@ -1,4 +1,3 @@
-import { defaultBlockEditorRegistrations } from "../../defaults/defaultBlockEditorRegistrations";
 import { BlackAndWhiteAndBlurBlock } from "../blocks/effects/blackAndWhiteAndBlurBlock";
 import { BlackAndWhiteBlock } from "../blocks/effects/blackAndWhiteBlock";
 import { BlurBlock } from "../blocks/effects/blurBlock";
@@ -40,7 +39,6 @@ import { pixelateAndDesaturateBlockDefinition } from "../blocks/effects/pixelate
  * (those who are defined in code and included in this project)
  */
 export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
-    ...defaultBlockEditorRegistrations,
     {
         name: WebCamInputBlockName,
         category: "Inputs",
