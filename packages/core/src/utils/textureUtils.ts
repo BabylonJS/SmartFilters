@@ -17,9 +17,10 @@ export function getBlockOutputTextureSize(
 ): TextureSize {
     let outputWidth: number;
     let outputHeight: number;
-    if (smartFilter.outputBlock.renderTargetWrapper) {
-        outputWidth = smartFilter.outputBlock.renderTargetWrapper.value.width;
-        outputHeight = smartFilter.outputBlock.renderTargetWrapper.value.height;
+    const renderTargetWrapper = smartFilter.outputBlock.renderTargetWrapper;
+    if (renderTargetWrapper) {
+        outputWidth = renderTargetWrapper.value.width;
+        outputHeight = renderTargetWrapper.value.height;
     } else {
         outputWidth = engine.getRenderWidth(true);
         outputHeight = engine.getRenderHeight(true);

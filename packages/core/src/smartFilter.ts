@@ -211,16 +211,6 @@ export class SmartFilter {
      * @param engine - The engine used to render the smart filter
      */
     public resize(engine: ThinEngine): void {
-        const newOutputSize = { width: 0, height: 0 };
-        const renderTargetWrapper = this.outputBlock.renderTargetWrapper?.value;
-        if (renderTargetWrapper) {
-            newOutputSize.width = renderTargetWrapper.width;
-            newOutputSize.height = renderTargetWrapper.height;
-        } else {
-            newOutputSize.width = engine.getRenderWidth();
-            newOutputSize.height = engine.getRenderHeight();
-        }
-
         this._workWithAggregateFreeGraph(() => {
             this.outputBlock.visit({}, (block: BaseBlock) => {
                 if (!(block instanceof ShaderBlock)) {
