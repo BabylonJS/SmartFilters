@@ -11,6 +11,7 @@ import { ImageSourcePropertyTabComponent } from "../../components/propertyTab/pr
 import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
 import { Vector2PropertyTabComponent } from "../../components/propertyTab/properties/vector2PropertyTabComponent.js";
+import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
 
 const booleanOptions: IInspectableOptions[] = [
     {
@@ -43,6 +44,18 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
                         stateManager={this.props.stateManager}
                         inputBlock={this.props.nodeData.data}
                     ></InputPropertyTabComponent>
+                    <TextInputLineComponent
+                        lockObject={this.props.stateManager.lockObject}
+                        label="appMetadata"
+                        multilines={true}
+                        target={this.props.nodeData.data}
+                        propertyName="appMetadata"
+                        onChange={() => {
+                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
+                                this.props.nodeData.data
+                            );
+                        }}
+                    ></TextInputLineComponent>
                 </LineContainerComponent>
             </div>
         );
