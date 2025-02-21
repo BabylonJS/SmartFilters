@@ -132,6 +132,12 @@ export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
     public editorData: Nullable<InputBlockEditorData<U>> = null;
 
     /**
+     * Metadata the hosting app wants to track for this input. For example, a hint for what data to
+     * assign to this input, or hints about how to draw dynamic UI to allow users to control this value.
+     */
+    public appMetadata: Nullable<string> = null;
+
+    /**
      * Gets the current value of the input.
      */
     public get runtimeValue(): RuntimeData<U> {
