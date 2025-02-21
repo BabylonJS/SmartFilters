@@ -136,6 +136,7 @@ export const inputBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: InputBlockBase.ClassName,
+            namespace: null,
             comments: block.comments,
             data: serializeInputBlockData(block as unknown as InputBlockBase),
         };

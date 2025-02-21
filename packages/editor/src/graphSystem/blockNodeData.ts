@@ -6,6 +6,7 @@ import { ConnectionPointPortData } from "./connectionPointPortData.js";
 // import square from "../assets/imgs/square.svg";
 import styles from "../assets/styles/graphSystem/blockNodeData.module.scss";
 import type { BaseBlock } from "@babylonjs/smart-filters";
+import { getBlockNameForEditor } from "../helpers/blockNameConverters.js";
 
 export class BlockNodeData implements INodeData {
     private _inputs: IPortData[] = [];
@@ -20,7 +21,7 @@ export class BlockNodeData implements INodeData {
     }
 
     public getClassName() {
-        return this.data.getClassName();
+        return getBlockNameForEditor(this.data.getClassName(), this.data.namespace);
     }
 
     public get isInput() {

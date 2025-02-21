@@ -37,9 +37,10 @@ export async function blockFactory(
     }
     if (!newBlock) {
         // Check if it's a custom block
-        newBlock = await customBlockManager.createBlockFromBlockType(
+        newBlock = await customBlockManager.createBlockFromBlockTypeAndNamespace(
             smartFilter,
             serializedBlock.blockType,
+            serializedBlock.namespace,
             smartFilterDeserializer
         );
     }

@@ -164,6 +164,11 @@ export class SmartFilterDeserializer {
             serializedBlock.blockType = (serializedBlock as any).className;
         }
 
+        // Back compat for early Smart Filter V1 serialization where the namespace was not stored
+        if (serializedBlock.namespace === undefined) {
+            serializedBlock.namespace = null;
+        }
+
         // Get the instance of the block
         switch (serializedBlock.blockType) {
             case InputBlock.ClassName:
