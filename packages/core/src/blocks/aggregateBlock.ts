@@ -57,6 +57,15 @@ export abstract class AggregateBlock extends BaseBlock {
                 for (const internalConnectionPoint of internalConnectionPoints) {
                     connectedToExternalConnectionPoint.connectTo(internalConnectionPoint);
                 }
+            } else {
+                // If the external connection point is not connected to anything but has a default value,
+                // pass that default value along to the internal connection points it is associated with
+                const defaultValue = externalConnectionPoint.runtimeData;
+                if (defaultValue !== null) {
+                    for (const internalConnectionPoint of internalConnectionPoints) {
+                        internalConnectionPoint.runtimeData = defaultValue;
+                    }
+                }
             }
         }
 
