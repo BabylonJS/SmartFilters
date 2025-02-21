@@ -1,5 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { createStrongRef, type SmartFilter, type SmartFilterDeserializer } from "@babylonjs/smart-filters";
+import type { SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import type { TextureRenderHelper } from "./textureRenderHelper";
 import { Observable } from "@babylonjs/core/Misc/observable";
@@ -146,10 +146,8 @@ export class SmartFilterLoader {
         const smartFilter = await loader();
 
         // If the SmartFilter has a texture render helper, assign its input texture as the Smart Filter's output
-        if (this._textureRenderHelper?.renderTargetTexture.renderTarget) {
-            smartFilter.outputBlock.renderTargetWrapper = createStrongRef(
-                this._textureRenderHelper.renderTargetTexture.renderTarget
-            );
+        if (this._textureRenderHelper) {
+            smartFilter.outputBlock.renderTargetWrapper = this._textureRenderHelper.renderTargetTexture.renderTarget;
         }
 
         this.onSmartFilterLoadedObservable.notifyObservers({

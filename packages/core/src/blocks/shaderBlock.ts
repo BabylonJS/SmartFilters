@@ -144,12 +144,7 @@ export abstract class ShaderBlock extends BaseBlock {
         runtime.registerResource(shaderBlockRuntime);
 
         if (finalOutput) {
-            registerFinalRenderCommand(
-                initializationData.outputBlock.renderTargetWrapper,
-                runtime,
-                this,
-                shaderBlockRuntime
-            );
+            registerFinalRenderCommand(initializationData.outputBlock, runtime, this, shaderBlockRuntime);
         } else {
             const renderTargetTexture = this.output.runtimeData?.value as Nullable<ThinRenderTargetTexture>;
             if (!renderTargetTexture) {

@@ -10,6 +10,7 @@ import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
 import type { IDisableableBlock } from "../blocks/disableableShaderBlock";
 import { decorateSymbol, DisableUniform, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
+import type { OutputBlock } from "../blocks/outputBlock";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
@@ -121,10 +122,10 @@ export class ShaderRuntime implements IDisposable {
 
     /**
      * Renders the full screen effect into a render target.
-     * @param renderTargetWrapperStrongRef - A strong ref to the render target wrapper to render into
+     * @param outputBlock - The output block to render to - assumes it has a .renderTargetWrapper
      */
-    public renderToTargetWrapper(renderTargetWrapperStrongRef: StrongRef<RenderTargetWrapper>): void {
-        this._renderToTargetWrapper(renderTargetWrapperStrongRef.value);
+    public renderToTargetWrapper(outputBlock: OutputBlock): void {
+        this._renderToTargetWrapper(outputBlock.renderTargetWrapper!);
     }
 
     /**
