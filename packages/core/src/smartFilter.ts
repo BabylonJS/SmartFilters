@@ -60,6 +60,11 @@ export class SmartFilter {
     public readonly name: string;
 
     /**
+     * The namespace of the smart filter.
+     */
+    public readonly namespace: Nullable<string>;
+
+    /**
      * The smart filter output (input connection point of the output block...).
      *
      * This is where the smart filter final block should be connected to in order to be visible on screen.
@@ -85,9 +90,11 @@ export class SmartFilter {
     /**
      * Creates a new instance of a @see SmartFilter.
      * @param name - The friendly name of the smart filter
+     * @param namespace - The namespace of the smart filter
      */
-    constructor(name: string) {
+    constructor(name: string, namespace: Nullable<string> = null) {
         this.name = name;
+        this.namespace = namespace;
 
         this._attachedBlocks = new Array<BaseBlock>();
         this.outputBlock = new OutputBlock(this);

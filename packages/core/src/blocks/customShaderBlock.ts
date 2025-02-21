@@ -101,6 +101,7 @@ export class CustomShaderBlock extends ShaderBlock {
             name,
             blockDefinition.disableOptimization,
             blockDefinition.blockType,
+            blockDefinition.namespace,
             blockDefinition.inputConnectionPoints,
             blockDefinition.shaderProgram
         );
@@ -113,6 +114,7 @@ export class CustomShaderBlock extends ShaderBlock {
 
     private readonly _shaderProgram: ShaderProgram;
     private readonly _blockType: string;
+    private readonly _namespace: Nullable<string>;
     private _autoBoundInputs: Nullable<SerializedInputConnectionPointV1[]> = null;
 
     /**
@@ -123,11 +125,20 @@ export class CustomShaderBlock extends ShaderBlock {
     }
 
     /**
+     * The namespace of the block, which is used to reduce name collisions between blocks and also to group blocks in the editor UI.
+     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effect").
+     */
+    public override get namespace(): Nullable<string> {
+        return this._namespace;
+    }
+
+    /**
      * Instantiates a new custom shader block.
      * @param smartFilter - The smart filter this block belongs to
      * @param name - The name of the block
      * @param disableOptimization - If true, this optimizer will not attempt to optimize this block
      * @param blockType - The type of the block
+     * @param namespace - The namespace of the block
      * @param inputConnectionPoints - The input connection points of the
      * @param shaderProgram - The shader program for the block
      */
@@ -136,11 +147,13 @@ export class CustomShaderBlock extends ShaderBlock {
         name: string,
         disableOptimization: boolean,
         blockType: string,
+        namespace: Nullable<string>,
         inputConnectionPoints: SerializedInputConnectionPointV1[],
         shaderProgram: ShaderProgram
     ) {
         super(smartFilter, name, disableOptimization);
         this._blockType = blockType;
+        this._namespace = namespace;
 
         for (const input of inputConnectionPoints) {
             this._registerSerializedInputConnectionPointV1(input);

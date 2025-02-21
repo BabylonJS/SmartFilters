@@ -32,3 +32,7 @@ export const BlockNames = {
     premultiplyAlpha: "PremultiplyAlphaBlock",
     pixelateAndDesaturate: "PixelateAndDesaturateBlock",
 };
+
+export const BlockNamespaces = {
+    babylonDemoEffects: "Babylon.Demo.Effects",
+};

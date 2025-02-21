@@ -24,6 +24,9 @@ export type SerializedSmartFilterV1 = {
     /** The SmartFilter name */
     name: string;
 
+    /** The namespace of the SmartFilter */
+    namespace: Nullable<string>;
+
     /** The SmartFilter comments */
     comments: Nullable<string>;
 

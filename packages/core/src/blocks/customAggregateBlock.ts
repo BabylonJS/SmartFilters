@@ -3,6 +3,7 @@ import type { SmartFilterDeserializer, SerializedBlockDefinition } from "../seri
 import type { SmartFilter } from "../smartFilter.js";
 import { AggregateBlock } from "./aggregateBlock.js";
 import type { BaseBlock } from "./baseBlock.js";
+import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
  * Loads a serialized SmartFilter into a block which can be used in another SmartFilter.
@@ -25,7 +26,14 @@ export class CustomAggregateBlock extends AggregateBlock {
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<BaseBlock> {
         const innerSmartFilter = await smartFilterDeserializer.deserialize(engine, serializedSmartFilter);
-        return new CustomAggregateBlock(smartFilter, name, serializedSmartFilter.blockType, innerSmartFilter, false);
+        return new CustomAggregateBlock(
+            smartFilter,
+            name,
+            serializedSmartFilter.blockType,
+            serializedSmartFilter.namespace,
+            innerSmartFilter,
+            false
+        );
     }
 
     /**
@@ -34,6 +42,7 @@ export class CustomAggregateBlock extends AggregateBlock {
     public static override ClassName = "CustomAggregateBlock";
 
     private readonly _blockType: string;
+    private readonly _namespace: Nullable<string>;
 
     /**
      * The type of the block - used when serializing / deserializing the block, and in the editor.
@@ -42,16 +51,26 @@ export class CustomAggregateBlock extends AggregateBlock {
         return this._blockType;
     }
 
+    /**
+     * The namespace of the block, which is used to reduce name collisions between blocks and also to group blocks in the editor UI.
+     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effect").
+     */
+    public override get namespace(): Nullable<string> {
+        return this._namespace;
+    }
+
     private constructor(
         smartFilter: SmartFilter,
         name: string,
         blockType: string,
+        namespace: Nullable<string>,
         innerSmartFilter: SmartFilter,
         disableOptimization: boolean
     ) {
         super(smartFilter, name, disableOptimization);
 
         this._blockType = blockType;
+        this._namespace = namespace;
 
         const attachedBlocks = innerSmartFilter.attachedBlocks;
         for (let index = 0; index < attachedBlocks.length; index++) {

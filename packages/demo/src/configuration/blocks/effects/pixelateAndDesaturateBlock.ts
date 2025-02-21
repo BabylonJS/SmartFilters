@@ -9,6 +9,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
     formatVersion: 1,
     name: "PixelateAndDesaturate",
     blockType: "PixelateAndDesaturateBlock",
+    namespace: "Babylon.Demo.Effects",
     comments: null,
     editorData: {
         locations: [
