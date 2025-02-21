@@ -10,7 +10,8 @@ import {
     PropertyTypeForEdition,
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoTransitions } from "../blockNamespaces";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -123,7 +124,7 @@ export class WipeBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = BlockNamespaces.babylonDemoTransitions;
+    public static override Namespace = babylonDemoTransitions;
 
     /**
      * The first texture connection point.

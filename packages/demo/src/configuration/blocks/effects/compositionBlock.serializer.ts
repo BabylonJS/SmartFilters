@@ -1,6 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { CompositionBlock } from "./compositionBlock";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 /**
  * The V1 serializer for a Composition Block
@@ -17,7 +18,7 @@ export const compositionBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: BlockNames.composition,
-            namespace: BlockNamespaces.babylonDemoEffects,
+            namespace: babylonDemoEffects,
             comments: block.comments,
             data: {
                 alphaMode: compositionBlock.alphaMode,

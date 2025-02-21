@@ -1,6 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { BlurBlock } from "./blurBlock";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 /**
  * The V1 serializer for a Blur Block.
@@ -19,7 +20,7 @@ export const blurBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: BlockNames.blur,
-            namespace: BlockNamespaces.babylonDemoEffects,
+            namespace: babylonDemoEffects,
             comments: block.comments,
             data: {
                 blurTextureRatioPerPass: blurBlock.blurTextureRatioPerPass,

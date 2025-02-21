@@ -32,9 +32,3 @@ export const BlockNames = {
     premultiplyAlpha: "PremultiplyAlphaBlock",
     pixelateAndDesaturate: "PixelateAndDesaturateBlock",
 };
-
-export const BlockNamespaces = {
-    babylonDemoEffects: "Babylon.Demo.Effects",
-    babylonDemoUtilities: "Babylon.Demo.Utilities",
-    babylonDemoTransitions: "Babylon.Demo.Transitions",
-};

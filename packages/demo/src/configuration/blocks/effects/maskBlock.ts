@@ -7,7 +7,8 @@ import {
     DisableableShaderBinding,
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 import { uniforms, shaderProgram } from "./maskBlock.shader";
 
 /**
@@ -56,7 +57,7 @@ export class MaskBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = BlockNamespaces.babylonDemoEffects;
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point.

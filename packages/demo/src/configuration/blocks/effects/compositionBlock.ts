@@ -8,7 +8,8 @@ import {
     DisableableShaderBinding,
     DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
@@ -173,7 +174,7 @@ export class CompositionBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = BlockNamespaces.babylonDemoEffects;
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The background texture to composite on to.

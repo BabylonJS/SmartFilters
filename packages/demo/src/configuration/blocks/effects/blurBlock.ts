@@ -1,7 +1,8 @@
 import type { ConnectionPoint, ConnectionPointType } from "@babylonjs/smart-filters";
 import { AggregateBlock, SmartFilter, editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/smart-filters";
 import { DirectionalBlurBlock } from "./directionalBlurBlock";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 const defaultBlurTextureRatioPerPass = 0.5;
 const defaultBlurSize = 2;
@@ -20,7 +21,7 @@ export class BlurBlock extends AggregateBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = BlockNamespaces.babylonDemoEffects;
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point.

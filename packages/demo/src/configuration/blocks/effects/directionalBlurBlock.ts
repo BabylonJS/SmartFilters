@@ -7,7 +7,8 @@ import {
     editableInPropertyPage,
     PropertyTypeForEdition,
 } from "@babylonjs/smart-filters";
-import { BlockNames, BlockNamespaces } from "../blockNames";
+import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -118,7 +119,7 @@ export class DirectionalBlurBlock extends ShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = BlockNamespaces.babylonDemoEffects;
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point.
