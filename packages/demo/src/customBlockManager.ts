@@ -154,14 +154,15 @@ export class CustomBlockManager {
         }
 
         this.deleteBlockDefinition(blockType, blockDefinition.namespace);
+        const blockKey = this._getKey(blockType, blockDefinition.namespace);
 
         // Add to the stored list of block keys in local storage
         const blockKeyList = this._readBlockKeysFromLocalStorage();
-        blockKeyList.push(this._getKey(blockType, blockDefinition.namespace));
+        blockKeyList.push(blockKey);
         localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeyList));
 
         // Store the definition in local storage
-        localStorage.setItem(blockType + SavedCustomBlockDefinitionNameSuffix, JSON.stringify(blockDefinition));
+        localStorage.setItem(blockKey + SavedCustomBlockDefinitionNameSuffix, JSON.stringify(blockDefinition));
 
         // Store the definition in our map in memory
         this._customBlockDefinitions.set(blockType, blockDefinition);

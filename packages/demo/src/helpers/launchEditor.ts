@@ -49,15 +49,15 @@ export function launchEditor(
     // Set up block registration
     const allBlocks: { [key: string]: IBlockEditorRegistration[] } = {};
 
-    // Register custom shader blocks
+    // Register custom blocks
     const customBlockKeys = customBlockManager.getCustomBlockKeys();
-    const customShaderBlockEditorRegistrations: IBlockEditorRegistration[] = [];
+    const customBlockEditorRegistrations: IBlockEditorRegistration[] = [];
     allBlocks["Custom_Blocks"] = []; // This will be populated like the other categories below
     if (customBlockKeys.length > 0) {
         for (const customBlockKey of customBlockKeys) {
             const blockDefinition = customBlockManager.getBlockDefinition(customBlockKey);
             if (blockDefinition) {
-                customShaderBlockEditorRegistrations.push(
+                customBlockEditorRegistrations.push(
                     createBlockEditorRegistration(
                         customBlockManager,
                         blockDefinition,
@@ -71,6 +71,9 @@ export function launchEditor(
 
     // Add the default block editor registrations to the list of all blocks
     addBlockEditorRegistrations(allBlocks, defaultBlockEditorRegistrations);
+
+    // Add the custom block editor registrations to the list of all blocks
+    addBlockEditorRegistrations(allBlocks, customBlockEditorRegistrations);
 
     // Add the hardcoded block editor registrations to the list of all blocks
     addBlockEditorRegistrations(

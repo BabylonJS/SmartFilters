@@ -9,6 +9,9 @@ import type { Nullable } from "@babylonjs/core/types";
  * @returns - The block name for the editor
  */
 export function getBlockNameForEditor(blockType: string, namespace: Nullable<string>) {
+    if (namespace === null) {
+        return blockType;
+    }
     return `[${namespace}].[${blockType}]`;
 }
 
@@ -23,6 +26,10 @@ export function getBlockTypeAndNamespaceFromBlockNameForEditor(blockNameForEdito
     blockType: string;
     namespace: Nullable<string>;
 } {
+    if (blockNameForEditor.indexOf("].[") === -1) {
+        return { blockType: blockNameForEditor, namespace: null };
+    }
+
     const [namespace, blockType] = blockNameForEditor.slice(1, -1).split("].[");
 
     if (!blockType) {
