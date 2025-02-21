@@ -168,30 +168,6 @@ deserializers.set(BlockNames.mask, async (smartFilter: SmartFilter, serializedBl
     return new MaskBlock(smartFilter, serializedBlock.name);
 });
 
-deserializers.set(BlockNames.starryPlanes, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { StarryPlanesBlock } = await import(
-        /* webpackChunkName: "starryPlanesBlock" */ "./blocks/generators/starryPlanesBlock"
-    );
-    return new StarryPlanesBlock(smartFilter, serializedBlock.name);
-});
-
-deserializers.set(BlockNames.tunnel, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { TunnelBlock } = await import(/* webpackChunkName: "tunnelBlock" */ "./blocks/generators/tunnelBlock");
-    return new TunnelBlock(smartFilter, serializedBlock.name);
-});
-
-deserializers.set(BlockNames.fireworks, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { FireworksBlock } = await import(
-        /* webpackChunkName: "fireworksBlock" */ "./blocks/generators/fireworksBlock"
-    );
-    return new FireworksBlock(smartFilter, serializedBlock.name);
-});
-
-deserializers.set(BlockNames.aurora, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { AuroraBlock } = await import(/* webpackChunkName: "auroraBlock" */ "./blocks/generators/auroraBlock");
-    return new AuroraBlock(smartFilter, serializedBlock.name);
-});
-
 deserializers.set(BlockNames.vhsGlitch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { VhsGlitchBlock } = await import(/* webpackChunkName: "vhsGlitchBlock" */ "./blocks/effects/vhsGlitchBlock");
     return new VhsGlitchBlock(smartFilter, serializedBlock.name);
@@ -207,23 +183,6 @@ deserializers.set(BlockNames.softThreshold, async (smartFilter: SmartFilter, ser
 deserializers.set(BlockNames.sketch, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
     const { SketchBlock } = await import(/* webpackChunkName: "sketchBlock" */ "./blocks/effects/sketchBlock");
     return new SketchBlock(smartFilter, serializedBlock.name);
-});
-
-deserializers.set(BlockNames.particle, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { ParticleBlock } = await import(/* webpackChunkName: "particleBlock" */ "./blocks/generators/particleBlock");
-    return new ParticleBlock(smartFilter, serializedBlock.name);
-});
-
-deserializers.set(BlockNames.hearts, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { HeartsBlock } = await import(/* webpackChunkName: "heartsBlock" */ "./blocks/generators/heartsBlock");
-    return new HeartsBlock(smartFilter, serializedBlock.name);
-});
-
-deserializers.set(BlockNames.neonHeart, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {
-    const { NeonHeartBlock } = await import(
-        /* webpackChunkName: "neonHeartBlock" */ "./blocks/generators/neonHeartBlock"
-    );
-    return new NeonHeartBlock(smartFilter, serializedBlock.name);
 });
 
 deserializers.set(BlockNames.spritesheet, async (smartFilter: SmartFilter, serializedBlock: ISerializedBlockV1) => {

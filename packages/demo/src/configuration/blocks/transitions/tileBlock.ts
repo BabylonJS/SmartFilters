@@ -9,7 +9,7 @@ import {
     PropertyTypeForEdition,
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
+import { BlockNames, BlockNamespaces } from "../blockNames";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -110,6 +110,11 @@ export class TileBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.tile;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = BlockNamespaces.babylonDemoTransitions;
 
     /**
      * The first texture connection point.

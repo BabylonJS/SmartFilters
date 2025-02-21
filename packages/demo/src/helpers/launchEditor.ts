@@ -66,17 +66,18 @@ export function launchEditor(
 
     // Build the list of all block editor registrations
     const allBlockEditorRegistrations: IBlockEditorRegistration[] = [
-        ...hardcodedBlockEditorRegistrations,
+        ...hardcodedBlockEditorRegistrations.sort((a, b) => (a.category || "").localeCompare(b.category || "")),
         ...customShaderBlockEditorRegistrations,
     ];
 
     // Fill in block name and tooltip lists
     allBlockEditorRegistrations.forEach((registration: IBlockEditorRegistration) => {
         blockTooltips[registration.name] = registration.tooltip;
-        if (typeof allBlockNames[registration.category] === "object") {
-            allBlockNames[registration.category]!.push(registration.name);
+        const category = registration.category || "Other";
+        if (typeof allBlockNames[category] === "object") {
+            allBlockNames[category]!.push(registration.name);
         } else {
-            allBlockNames[registration.category] = [registration.name];
+            allBlockNames[category] = [registration.name];
         }
     });
 
@@ -223,7 +224,7 @@ function createBlockEditorRegistration(
 ): IBlockEditorRegistration {
     return {
         name: blockDefinition.blockType,
-        category: "Custom_Blocks",
+        category: blockDefinition.namespace || "Custom_Blocks",
         factory: (smartFilter: SmartFilter) => {
             return customBlockManager.createBlockFromBlockDefinition(smartFilter, blockDefinition, deserializer);
         },

@@ -9,7 +9,7 @@ import {
     DisableableShaderBinding,
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
+import { BlockNames, BlockNamespaces } from "../blockNames";
 import { shaderProgram, uniforms } from "./vhsGlitchBlock.shader";
 
 /**
@@ -57,6 +57,11 @@ export class VhsGlitchBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.vhsGlitch;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = BlockNamespaces.babylonDemoEffects;
 
     /**
      * The input texture connection point

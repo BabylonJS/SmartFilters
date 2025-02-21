@@ -9,7 +9,7 @@ import {
     type ShaderProgram,
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
+import { BlockNames, BlockNamespaces } from "../blockNames";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -134,6 +134,11 @@ export class GlassBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.glass;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = BlockNamespaces.babylonDemoEffects;
 
     /**
      * The input texture connection point.

@@ -35,4 +35,6 @@ export const BlockNames = {
 
 export const BlockNamespaces = {
     babylonDemoEffects: "Babylon.Demo.Effects",
+    babylonDemoUtilities: "Babylon.Demo.Utilities",
+    babylonDemoTransitions: "Babylon.Demo.Transitions",
 };

@@ -8,7 +8,7 @@ import {
     DisableableShaderBinding,
     DisableStrategy,
 } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
+import { BlockNames, BlockNamespaces } from "../blockNames";
 import { shaderProgram, uniforms } from "./pixelateBlock.shader";
 
 /**
@@ -53,6 +53,11 @@ export class PixelateBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.pixelate;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = BlockNamespaces.babylonDemoEffects;
 
     /**
      * The input texture connection point.

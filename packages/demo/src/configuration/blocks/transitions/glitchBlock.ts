@@ -2,7 +2,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBinding, DisableableShaderBlock } from "@babylonjs/smart-filters";
-import { BlockNames } from "../blockNames";
+import { BlockNames, BlockNamespaces } from "../blockNames";
 
 // Based on https://github.com/akella/webGLImageTransitions/blob/master/js/demo5.js
 
@@ -95,6 +95,11 @@ export class GlitchBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.glitch;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = BlockNamespaces.babylonDemoTransitions;
 
     /**
      * The first texture connection point.
