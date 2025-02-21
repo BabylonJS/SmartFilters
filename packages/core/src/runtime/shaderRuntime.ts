@@ -124,10 +124,7 @@ export class ShaderRuntime implements IDisposable {
      * @param renderTargetWrapperStrongRef - A strong ref to the render target wrapper to render into
      */
     public renderToTargetWrapper(renderTargetWrapperStrongRef: StrongRef<RenderTargetWrapper>): void {
-        const renderTargetWrapper = renderTargetWrapperStrongRef.value;
-        this._engine.bindFramebuffer(renderTargetWrapper);
-        this._draw(renderTargetWrapper.width, renderTargetWrapper.height);
-        this._engine.unBindFramebuffer(renderTargetWrapper);
+        this._renderToTargetWrapper(renderTargetWrapperStrongRef.value);
     }
 
     /**
@@ -137,10 +134,14 @@ export class ShaderRuntime implements IDisposable {
     public renderToTargetTexture(renderTargetTexture: ThinRenderTargetTexture): void {
         const renderTargetWrapper = renderTargetTexture.renderTarget;
         if (renderTargetWrapper) {
-            this._engine.bindFramebuffer(renderTargetWrapper);
-            this._draw(renderTargetWrapper.width, renderTargetWrapper.height);
-            this._engine.unBindFramebuffer(renderTargetWrapper);
+            this._renderToTargetWrapper(renderTargetWrapper);
         }
+    }
+
+    private _renderToTargetWrapper(renderTargetWrapper: RenderTargetWrapper): void {
+        this._engine.bindFramebuffer(renderTargetWrapper);
+        this._draw(renderTargetWrapper.width, renderTargetWrapper.height);
+        this._engine.unBindFramebuffer(renderTargetWrapper);
     }
 
     /**
