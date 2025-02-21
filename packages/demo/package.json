@@ -41,7 +41,7 @@
         "css-loader": "^6.4.0",
         "file-loader": "^6.2.0",
         "sass": "^1.85.0",
-        "sass-loader": "^13.0.2",
+        "sass-loader": "^16.0.5",
         "source-map-loader": "^3.0.0",
         "split.js": "^1.6.5",
         "style-loader": "^3.3.0",
