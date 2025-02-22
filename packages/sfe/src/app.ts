@@ -1,7 +1,5 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 
-// TODO: Fix version number in UI
-// TODO: Fix doc link
 // TODO: dedupe between demo and here (loader, renderer, etc)
 // TODO: UI for selecting aspect ratio of preview
 // TODO: preview popout
