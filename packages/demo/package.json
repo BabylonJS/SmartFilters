@@ -27,8 +27,7 @@
         "watch:shaders": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/watchShaders.js ./src/configuration/blocks @babylonjs/smart-filters",
         "clean": "rimraf .temp && rimraf www/scripts",
         "start": "npm run watch",
-        "analyze": "webpack --profile --json > www/scripts/stats.json && npx webpack-bundle-analyzer www/scripts/stats.json",
-        "preparePublish": "node build/preparePublish.js"
+        "analyze": "webpack --profile --json > www/scripts/stats.json && npx webpack-bundle-analyzer www/scripts/stats.json"
     },
     "devDependencies": {
         "@types/react": "^17.0.30",

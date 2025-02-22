@@ -36,7 +36,6 @@ const canvas = document.getElementById("renderCanvas")! as unknown as HTMLCanvas
 const inRepoSelection = document.getElementById("inRepoSelection")!;
 const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
 const sourceName = document.getElementById("sourceName")!;
-const version = document.getElementById("version")!;
 const optimizeCheckbox = document.getElementById("optimizeCheckbox") as HTMLInputElement;
 const errorContainer = document.getElementById("errorContainer")! as HTMLDivElement;
 const errorMessage = document.getElementById("errorMessage")! as HTMLDivElement;
@@ -211,14 +210,6 @@ optimizeCheckbox.onchange = () => {
     renderer.optimize = optimizeCheckbox.checked;
     renderCurrentSmartFilter(false);
 };
-
-// Display the current version by loading the version.json file
-fetch("./version.json").then((response: Response) => {
-    response.text().then((text: string) => {
-        const versionInfo = JSON.parse(text);
-        version.textContent = versionInfo.versionToDisplay;
-    });
-});
 
 // Error handling
 errorCloseButton.addEventListener("click", closeError);

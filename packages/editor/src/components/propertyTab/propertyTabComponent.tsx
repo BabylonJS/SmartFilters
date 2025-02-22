@@ -3,7 +3,6 @@ import { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graph
 import { NodePort } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodePort.js";
 import * as react from "react";
 import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
-import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
 import { FileButtonLineComponent } from "../../sharedComponents/fileButtonLineComponent.js";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
@@ -23,7 +22,7 @@ import type { FrameNodePort } from "@babylonjs/shared-ui-components/nodeGraphSys
 import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
 import type { GlobalState } from "../../globalState";
 import type { ISelectionChangedOptions } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/selectionChangedOptions";
-import type { AnyInputBlock } from "@babylonjs/smart-filters";
+import { SmartFilterCoreVersion, type AnyInputBlock } from "@babylonjs/smart-filters";
 
 interface IPropertyTabComponentProps {
     globalState: GlobalState;
@@ -223,7 +222,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                 </div>
                 <div>
                     <LineContainerComponent title="GENERAL">
-                        <TextLineComponent label="Version" value={ThinEngine.Version} />
+                        <TextLineComponent label="Version" value={SmartFilterCoreVersion} />
                         <TextLineComponent
                             label="Help"
                             value="doc.babylonjs.com"
