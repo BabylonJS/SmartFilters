@@ -4,6 +4,7 @@
  * ----------------------------------------------------------------------------
  */
 
+import type { Nullable } from "@babylonjs/core/types";
 import type { AllConnectionPointTypes, ConnectionPointValue } from "../../connection/connectionPointType";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils";
 
@@ -30,6 +31,12 @@ export type SerializedShaderBlockDefinitionV1 = {
      * (their results must be similar enough that the differences are not perceivable).
      */
     blockType: string;
+
+    /**
+     * The namespace of the block, which is used to reduce name collisions between blocks and also to group blocks in the editor UI.
+     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effect").
+     */
+    namespace: Nullable<string>;
 
     /**
      * The shader program for the block.

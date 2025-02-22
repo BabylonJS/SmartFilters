@@ -236,6 +236,20 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             }
                         />
                         <TextInputLineComponent
+                            label="Name"
+                            lockObject={this.props.globalState.lockObject}
+                            value={this.props.globalState.smartFilter!.name ?? ""}
+                            target={this.props.globalState.smartFilter}
+                            propertyName="name"
+                        />
+                        <TextInputLineComponent
+                            label="Namespace"
+                            lockObject={this.props.globalState.lockObject}
+                            value={this.props.globalState.smartFilter!.namespace ?? ""}
+                            target={this.props.globalState.smartFilter}
+                            propertyName="namespace"
+                        />
+                        <TextInputLineComponent
                             label="Comment"
                             multilines={true}
                             lockObject={this.props.globalState.lockObject}

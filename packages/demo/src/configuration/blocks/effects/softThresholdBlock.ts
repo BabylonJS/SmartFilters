@@ -10,6 +10,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 import { shaderProgram, uniforms } from "./softThresholdBlock.shader";
 
 /**
@@ -57,6 +58,11 @@ export class SoftThresholdBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.softThreshold;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point

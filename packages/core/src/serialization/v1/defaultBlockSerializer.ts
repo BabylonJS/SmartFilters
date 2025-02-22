@@ -12,6 +12,7 @@ export const defaultBlockSerializer: SerializeBlockV1 = (block: BaseBlock): ISer
         name: block.name,
         uniqueId: block.uniqueId,
         blockType: block.blockType,
+        namespace: block.namespace,
         comments: block.comments,
         data: undefined,
     };

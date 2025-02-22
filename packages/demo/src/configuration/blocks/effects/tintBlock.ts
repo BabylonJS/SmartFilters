@@ -8,6 +8,7 @@ export const deserializedTintBlockDefinition: SerializedShaderBlockDefinition = 
     format: "shaderBlockDefinition",
     formatVersion: 1,
     blockType: "TintBlock",
+    namespace: "Babylon.Demo.Effects",
     shaderProgram: {
         fragment: {
             uniform: `
