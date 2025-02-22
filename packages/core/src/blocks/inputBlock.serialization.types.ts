@@ -1,6 +1,7 @@
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { ConnectionPointType } from "../connection/connectionPointType.js";
 import type { IColor3Like, IColor4Like, IVector2Like } from "@babylonjs/core/Maths/math.like.js";
+import type { AppMetadata } from "./inputBlock.js";
 
 /**
  * Data that all serialized InputBlocks share
@@ -10,7 +11,7 @@ export type CommonInputBlockData = {
      * Metadata the hosting app wants to track for this input. For example, a hint for what data to
      * assign to this input, or hints about how to draw dynamic UI to allow users to control this value.
      */
-    appMetadata: Nullable<string>;
+    appMetadata: Nullable<AppMetadata>;
 };
 
 /**
