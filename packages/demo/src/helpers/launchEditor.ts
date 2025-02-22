@@ -81,14 +81,11 @@ export function launchEditor(
         hardcodedBlockEditorRegistrations.sort((a, b) => (a.namespace || "").localeCompare(b.namespace || ""))
     );
 
-    // Create function to call the right factory for a block given the block type
-    const getBlockFromString = async (
-        blockNameForEditor: string,
+    const getBlock = async (
+        blockType: string,
+        category: string,
         smartFilter: SmartFilter
     ): Promise<BaseBlock | null> => {
-        const { blockType, namespace } = getBlockTypeAndNamespaceFromBlockNameForEditor(blockNameForEditor);
-
-        const category = namespace || "Custom_Blocks";
         const allBlocksInCategory = allBlocks[category];
         if (!allBlocksInCategory) {
             return null;
@@ -99,6 +96,25 @@ export function launchEditor(
             return registration.factory(smartFilter, engine, smartFilterLoader.smartFilterDeserializer);
         }
         return null;
+    };
+
+    // Create function to call the right factory for a block given the block type
+    const getBlockFromString = async (
+        blockNameForEditor: string,
+        smartFilter: SmartFilter
+    ): Promise<BaseBlock | null> => {
+        const { blockType, namespace } = getBlockTypeAndNamespaceFromBlockNameForEditor(blockNameForEditor);
+
+        if (namespace !== null) {
+            return getBlock(blockType, namespace, smartFilter);
+        }
+
+        const block = await getBlock(blockType, "Custom_Blocks", smartFilter);
+        if (block) {
+            return block;
+        }
+
+        return getBlock(blockType, "Other", smartFilter);
     };
 
     // Create block registration object
@@ -122,7 +138,7 @@ export function launchEditor(
     }
 
     function removeCustomBlockFromEditor(blockEditorRegistration: IBlockEditorRegistration) {
-        const { blockType: blockType, namespace: namespace } = blockEditorRegistration;
+        const { blockType: blockType, namespace } = blockEditorRegistration;
 
         const category = namespace || "Custom_Blocks";
 
@@ -240,7 +256,7 @@ function createBlockEditorRegistration(
 ): IBlockEditorRegistration {
     return {
         blockType: blockDefinition.blockType,
-        namespace: blockDefinition.namespace || "Custom_Blocks",
+        namespace: blockDefinition.namespace,
         factory: (smartFilter: SmartFilter) => {
             return customBlockManager.createBlockFromBlockDefinition(smartFilter, blockDefinition, deserializer);
         },
@@ -254,7 +270,8 @@ function addBlockEditorRegistrations(
     registrations: IBlockEditorRegistration[]
 ) {
     for (const blockEditorRegistration of registrations) {
-        const category = blockEditorRegistration.namespace || "Other";
+        const category =
+            blockEditorRegistration.namespace || (blockEditorRegistration.isCustom ? "Custom_Blocks" : "Other");
         if (typeof allBlocks[category] === "object") {
             allBlocks[category]!.push(blockEditorRegistration);
         } else {
