@@ -65,7 +65,7 @@ export class InternalSmartFilterRuntime implements SmartFilterRuntime {
     }
 
     /**
-     * Reference a resource to be disposed when the runtime is disposed.
+     * Register a resource to be disposed when the runtime is disposed.
      * @param resource - defines the resource to dispose once the runtime is disposed
      */
     public registerResource(resource: IDisposable): void {

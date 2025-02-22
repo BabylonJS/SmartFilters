@@ -33,6 +33,8 @@
         "webgpu",
         "glsl",
         "SAMPLINGMODE",
+        "spritesheet",
+        "Premultiplies",
         "resizer"
     ],
     "files.exclude": {

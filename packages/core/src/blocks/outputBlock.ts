@@ -86,7 +86,7 @@ export class OutputBlock extends BaseBlock {
             initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
             runtime.registerResource(shaderBlockRuntime);
 
-            registerFinalRenderCommand(this.renderTargetWrapper, runtime, this, shaderBlockRuntime);
+            registerFinalRenderCommand(this, runtime, this, shaderBlockRuntime);
 
             super.generateCommandsAndGatherInitPromises(initializationData, finalOutput);
         }

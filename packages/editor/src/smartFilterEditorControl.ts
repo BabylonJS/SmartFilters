@@ -31,7 +31,7 @@ export type BlockRegistration = {
      * @param smartFilter - The Smart Filter to create the block for
      * @returns A new instance of the block, or null if the block name is not recognized
      */
-    getBlockFromString(blockType: string, smartFilter: SmartFilter): Nullable<BaseBlock>;
+    getBlockFromString(blockType: string, smartFilter: SmartFilter): Promise<Nullable<BaseBlock>>;
 
     /**
      * Intercepts the creation of an input block and can return specialized input blocks.

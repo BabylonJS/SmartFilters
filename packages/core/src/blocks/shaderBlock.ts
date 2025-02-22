@@ -9,10 +9,11 @@ import { ShaderRuntime } from "../runtime/shaderRuntime.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { createCommand } from "../command/command.js";
 import { undecorateSymbol } from "../utils/shaderCodeUtils.js";
-import { getRenderTargetWrapper, registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
+import { registerFinalRenderCommand } from "../utils/renderTargetUtils.js";
 import { BaseBlock } from "./baseBlock.js";
 import { TextureFormat, TextureType, type OutputTextureOptions } from "./textureOptions.js";
 import { editableInPropertyPage, PropertyTypeForEdition } from "../editorUtils/editableInPropertyPage.js";
+import type { Nullable } from "@babylonjs/core/types";
 
 const OutputTexturePropertiesGroupName = "OUTPUT TEXTURE PROPERTIES";
 
@@ -143,21 +144,16 @@ export abstract class ShaderBlock extends BaseBlock {
         runtime.registerResource(shaderBlockRuntime);
 
         if (finalOutput) {
-            registerFinalRenderCommand(
-                initializationData.outputBlock.renderTargetWrapper,
-                runtime,
-                this,
-                shaderBlockRuntime
-            );
+            registerFinalRenderCommand(initializationData.outputBlock, runtime, this, shaderBlockRuntime);
         } else {
-            const renderTarget = getRenderTargetWrapper(
-                this.output.runtimeData?.value as ThinRenderTargetTexture,
-                this.blockType
-            );
+            const renderTargetTexture = this.output.runtimeData?.value as Nullable<ThinRenderTargetTexture>;
+            if (!renderTargetTexture) {
+                throw new Error(`${this.blockType} did not have a render target texture.`);
+            }
 
             runtime.registerCommand(
                 createCommand(`${this.blockType}.render`, this, () => {
-                    shaderBlockRuntime.renderToTexture(renderTarget);
+                    shaderBlockRuntime.renderToTargetTexture(renderTargetTexture);
                 })
             );
         }

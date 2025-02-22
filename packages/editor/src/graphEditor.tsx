@@ -309,16 +309,22 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         }
     };
 
-    emitNewBlock(blockType: string, targetX: number, targetY: number) {
+    async emitNewBlock(blockType: string, targetX: number, targetY: number) {
         let newNode: GraphNode;
 
         if (blockType.indexOf("Block") === -1) {
             newNode = this.addValueNode(blockType);
         } else {
-            const block = this.props.globalState.blockRegistration.getBlockFromString(
+            const block = await this.props.globalState.blockRegistration.getBlockFromString(
                 blockType,
                 this.props.globalState.smartFilter
-            )!;
+            );
+            if (!block) {
+                this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
+                    `Could not create a block of type ${blockType}`
+                );
+                return;
+            }
             if (this.props.globalState.blockRegistration.getIsUniqueBlock(block)) {
                 const className = block.getClassName();
                 for (const other of this._graphCanvas.getCachedData()) {
