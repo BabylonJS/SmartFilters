@@ -4,6 +4,7 @@ import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 // TODO: Fix doc link
 // TODO: dedupe between demo and here (loader, renderer, etc)
 // TODO: UI for selecting aspect ratio of preview
+// TODO: preview popout
 
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
@@ -29,7 +30,8 @@ async function main(): Promise<void> {
 
     const blockRegistration: BlockRegistration = {
         getIsUniqueBlock: (block: BaseBlock) => block.getClassName() === "OutputBlock",
-        getBlockFromString: (_blockType: string, _smartFilter: SmartFilter): Nullable<BaseBlock> => null,
+        getBlockFromString: (_blockType: string, _smartFilter: SmartFilter): Promise<Nullable<BaseBlock>> =>
+            Promise.resolve(null),
         createInputBlock: (_globalState: GlobalState, _type: string): Nullable<BaseBlock> => null,
         allBlockNames: {},
         blockTooltips: {},

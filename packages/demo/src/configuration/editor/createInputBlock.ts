@@ -11,8 +11,12 @@ import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/inputs/webCamI
  */
 export function createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock> {
     switch (type) {
-        case WebCamInputBlockName:
+        case WebCamInputBlockName: {
+            if (!globalState.engine) {
+                return null;
+            }
             return new WebCamInputBlock(globalState.smartFilter, globalState.engine);
+        }
     }
     return null;
 }
