@@ -56,6 +56,7 @@ function serializeTextureInputBlock(inputBlock: InputBlock<ConnectionPointType.T
         flipY: internalTexture?.invertY ?? null,
         anisotropicFilteringLevel: internalTexture?.anisotropicFilteringLevel ?? null,
         forcedExtension: forcedExtension !== "" ? forcedExtension : null,
+        appMetadata: inputBlock.appMetadata,
     };
 }
 
@@ -68,6 +69,7 @@ function serializeBooleanInputBlock(inputBlock: InputBlock<ConnectionPointType.B
     return {
         inputType: ConnectionPointType.Boolean,
         value: inputBlock.runtimeValue.value,
+        appMetadata: inputBlock.appMetadata,
     };
 }
 
@@ -84,6 +86,7 @@ function serializeFloatInputBlock(inputBlock: InputBlock<ConnectionPointType.Flo
         valueDeltaPerMs: inputBlock.editorData?.valueDeltaPerMs ?? null,
         min: inputBlock.editorData?.min ?? null,
         max: inputBlock.editorData?.max ?? null,
+        appMetadata: inputBlock.appMetadata,
     };
 }
 
@@ -96,6 +99,7 @@ function serializeColor3InputBlock(inputBlock: InputBlock<ConnectionPointType.Co
     return {
         inputType: ConnectionPointType.Color3,
         value: inputBlock.runtimeValue.value,
+        appMetadata: inputBlock.appMetadata,
     };
 }
 
@@ -108,6 +112,7 @@ function serializeColor4InputBlock(inputBlock: InputBlock<ConnectionPointType.Co
     return {
         inputType: ConnectionPointType.Color4,
         value: inputBlock.runtimeValue.value,
+        appMetadata: inputBlock.appMetadata,
     };
 }
 
@@ -120,6 +125,7 @@ function serializeVector2InputBlock(inputBlock: InputBlock<ConnectionPointType.V
     return {
         inputType: ConnectionPointType.Vector2,
         value: inputBlock.runtimeValue.value,
+        appMetadata: inputBlock.appMetadata,
     };
 }
 

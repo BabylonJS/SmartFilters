@@ -176,7 +176,7 @@
             .label {
                 grid-column: 1;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
             }
 
             textarea {
