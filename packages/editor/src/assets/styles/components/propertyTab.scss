@@ -193,6 +193,13 @@
             }
         }
 
+        #appMetadata {
+            textarea {
+                height: 100px;
+                margin-top: 5px;
+            }
+        }
+
         .paneContainer {
             margin-top: 3px;
             display: grid;

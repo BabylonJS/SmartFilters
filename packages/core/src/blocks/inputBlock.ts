@@ -109,21 +109,6 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
       : {};
 
 /**
- * Captures the app id and metadata specific to the app.
- */
-export type AppMetadata<V = unknown> = {
-    /**
-     * The id of the app that knows about the schema of this metadata.
-     */
-    appId: string;
-
-    /**
-     * The metadata specific to the app.
-     */
-    metadata: V;
-};
-
-/**
  * This represents any inputs used in the graph.
  *
  * This is used to provide a way to connect the graph to the outside world.
@@ -150,7 +135,7 @@ export class InputBlock<U extends ConnectionPointType, V = unknown> extends Inpu
      * Metadata the hosting app wants to track for this input. For example, a hint for what data to
      * assign to this input, or hints about how to draw dynamic UI to allow users to control this value.
      */
-    public appMetadata: Nullable<AppMetadata<V>> = null;
+    public appMetadata: Nullable<V> = null;
 
     /**
      * Gets the current value of the input.

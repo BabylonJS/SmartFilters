@@ -37,10 +37,7 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
         }
 
         const appMetadataTarget = {
-            appId: this.props.nodeData.data.appMetadata?.appId || "",
-            metadata: this.props.nodeData.data.appMetadata?.metadata
-                ? JSON.stringify(this.props.nodeData.data.appMetadata.metadata)
-                : "",
+            metadata: this.props.nodeData.data.appMetadata ? JSON.stringify(this.props.nodeData.data.appMetadata) : "",
         };
 
         return (
@@ -53,58 +50,39 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
                     ></InputPropertyTabComponent>
                 </LineContainerComponent>
                 <LineContainerComponent title="APP METADATA">
-                    <TextInputLineComponent
-                        lockObject={this.props.stateManager.lockObject}
-                        label="appId"
-                        target={appMetadataTarget}
-                        propertyName="appId"
-                        onChange={() => {
-                            if (!this.props.nodeData.data.appMetadata) {
-                                this.props.nodeData.data.appMetadata = { appId: appMetadataTarget.appId };
-                            } else {
-                                this.props.nodeData.data.appMetadata.appId = appMetadataTarget.appId;
-                            }
-                            this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
-                                this.props.nodeData.data
-                            );
-                        }}
-                    ></TextInputLineComponent>
-                    <TextInputLineComponent
-                        lockObject={this.props.stateManager.lockObject}
-                        label="appMetadata"
-                        allowEditingDuringFailedValidation={true}
-                        multilines={true}
-                        target={appMetadataTarget}
-                        propertyName="metadata"
-                        validator={(value: string) => {
-                            try {
-                                JSON.parse(value);
-                                return true;
-                            } catch (e) {
-                                return false;
-                            }
-                        }}
-                        onChange={() => {
-                            try {
-                                const objectData = appMetadataTarget.metadata
-                                    ? JSON.parse(appMetadataTarget.metadata)
-                                    : undefined;
-
-                                if (!this.props.nodeData.data.appMetadata) {
-                                    this.props.nodeData.data.appMetadata = { appId: "", metadata: objectData };
-                                } else {
-                                    this.props.nodeData.data.appMetadata.metadata = objectData;
+                    <div id="appMetadata">
+                        <TextInputLineComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            label="appMetadata"
+                            allowEditingDuringFailedValidation={true}
+                            multilines={true}
+                            target={appMetadataTarget}
+                            propertyName="metadata"
+                            validator={(value: string) => {
+                                try {
+                                    JSON.parse(value);
+                                    return true;
+                                } catch (e) {
+                                    return false;
                                 }
-                                this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
-                                    this.props.nodeData.data
-                                );
-                            } catch (e) {
-                                this.props.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
-                                    "Invalid JSON"
-                                );
-                            }
-                        }}
-                    ></TextInputLineComponent>
+                            }}
+                            onChange={() => {
+                                try {
+                                    const objectData = appMetadataTarget.metadata
+                                        ? JSON.parse(appMetadataTarget.metadata)
+                                        : null;
+                                    this.props.nodeData.data.appMetadata = objectData;
+                                    this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
+                                        this.props.nodeData.data
+                                    );
+                                } catch (e) {
+                                    this.props.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
+                                        "Invalid JSON"
+                                    );
+                                }
+                            }}
+                        ></TextInputLineComponent>
+                    </div>
                 </LineContainerComponent>
             </div>
         );
