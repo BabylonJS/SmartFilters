@@ -23,8 +23,8 @@ export function getBlockRegistrationsForEditor(
     const allBlockNames: { [key: string]: string[] } = {};
 
     const allBlockEditorRegistrations: IBlockEditorRegistration[] = [
-        ...builtInBlockEditorRegistrations,
         ...customBlockEditorRegistrations,
+        ...builtInBlockEditorRegistrations,
     ];
 
     // Fill in block name and tooltip lists
