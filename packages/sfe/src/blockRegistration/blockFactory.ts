@@ -32,7 +32,7 @@ export async function blockFactory(
 
     // See if it's in our list of hardcoded blocks
     const registration = builtInBlockRegistrations.find(
-        (registration) => registration.name === serializedBlock.blockType
+        (registration) => registration.blockType === serializedBlock.blockType
     );
     if (registration && registration.factory) {
         newBlock = await registration.factory(smartFilter, engine, smartFilterDeserializer, serializedBlock);

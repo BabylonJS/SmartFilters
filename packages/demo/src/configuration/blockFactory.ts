@@ -28,7 +28,7 @@ export async function blockFactory(
     let newBlock: Nullable<BaseBlock> = null;
 
     const registration = builtInBlockRegistrations.find(
-        (registration) => registration.name === serializedBlock.blockType
+        (registration) => registration.blockType === serializedBlock.blockType
     );
     if (registration && registration.factory) {
         newBlock = await registration.factory(smartFilter, engine, smartFilterDeserializer, serializedBlock);

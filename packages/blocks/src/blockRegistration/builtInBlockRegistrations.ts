@@ -25,7 +25,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
     // Special input blocks
     // --------------------
     {
-        name: BlockNames.webCam,
+        blockType: BlockNames.webCam,
         category: "Inputs",
         tooltip: "Supplies a texture from a webcam",
         factory: async (smartFilter: SmartFilter, engine: ThinEngine) => {
@@ -36,7 +36,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         },
     },
     {
-        name: BlockNames.time,
+        blockType: BlockNames.time,
         category: "Inputs",
         tooltip: "Supplies a float value representing the current time",
         factory: (smartFilter: SmartFilter) => {
@@ -55,7 +55,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
     // Note that some choose to predefine corresponding input blocks if not being deserialized
     // ---------------------------------------------------------------------------------------
     {
-        name: BlockNames.blackAndWhite,
+        blockType: BlockNames.blackAndWhite,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -71,7 +71,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Transform the input texture to black and white",
     },
     {
-        name: BlockNames.frame,
+        blockType: BlockNames.frame,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -85,7 +85,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Green screen like effect",
     },
     {
-        name: BlockNames.glass,
+        blockType: BlockNames.glass,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -99,7 +99,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Creates a glass like effect",
     },
     {
-        name: BlockNames.kaleidoscope,
+        blockType: BlockNames.kaleidoscope,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -120,7 +120,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Kaleidoscope effect",
     },
     {
-        name: BlockNames.posterize,
+        blockType: BlockNames.posterize,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -139,7 +139,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Posterize to the input texture",
     },
     {
-        name: BlockNames.desaturate,
+        blockType: BlockNames.desaturate,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -160,7 +160,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Applies a desaturated effect to the input texture",
     },
     {
-        name: BlockNames.contrast,
+        blockType: BlockNames.contrast,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -179,7 +179,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Change the contrast of the input texture",
     },
     {
-        name: BlockNames.greenScreen,
+        blockType: BlockNames.greenScreen,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -206,7 +206,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Replaces a green screen background with a different texture",
     },
     {
-        name: BlockNames.glitch,
+        blockType: BlockNames.glitch,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -220,7 +220,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Funky glitch transition",
     },
     {
-        name: BlockNames.pixelate,
+        blockType: BlockNames.pixelate,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -239,7 +239,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Add pixelation to the input texture",
     },
     {
-        name: BlockNames.exposure,
+        blockType: BlockNames.exposure,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -258,7 +258,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Alters the exposure of the input texture",
     },
     {
-        name: BlockNames.mask,
+        blockType: BlockNames.mask,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -272,7 +272,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Applies mask in one texture to another texture",
     },
     {
-        name: BlockNames.sketch,
+        blockType: BlockNames.sketch,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -286,7 +286,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Adds a hand-drawn sketch effect to the input texture",
     },
     {
-        name: BlockNames.spritesheet,
+        blockType: BlockNames.spritesheet,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -302,7 +302,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Animates a sprite sheet texture",
     },
     {
-        name: BlockNames.premultiplyAlpha,
+        blockType: BlockNames.premultiplyAlpha,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -321,7 +321,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
     // Blocks with custom deserializers
     // --------------------------------
     {
-        name: BlockNames.blur,
+        blockType: BlockNames.blur,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -342,7 +342,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Blur the input texture",
     },
     {
-        name: BlockNames.composition,
+        blockType: BlockNames.composition,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -375,7 +375,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Composite the foreground texture over the background texture",
     },
     {
-        name: BlockNames.tile,
+        blockType: BlockNames.tile,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -396,7 +396,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Transition from one texture to another using tiles",
     },
     {
-        name: BlockNames.wipe,
+        blockType: BlockNames.wipe,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,
@@ -420,7 +420,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
     // Blocks defined by serialized definitions
     // ----------------------------------------
     {
-        name: BlockNames.tint,
+        blockType: BlockNames.tint,
         factory: async (
             smartFilter: SmartFilter,
             _engine: ThinEngine,

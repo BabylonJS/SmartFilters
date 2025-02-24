@@ -44,7 +44,7 @@ function createBlockRegistration(
     deserializer: SmartFilterDeserializer
 ): IBlockRegistration {
     return {
-        name: blockDefinition.blockType,
+        blockType: blockDefinition.blockType,
         category: "Custom_Blocks",
         factory: (smartFilter: SmartFilter, engine: ThinEngine) => {
             return customBlockManager.createBlockFromBlockDefinition(

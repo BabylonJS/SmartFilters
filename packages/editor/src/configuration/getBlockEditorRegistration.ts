@@ -21,11 +21,11 @@ export function getBlockEditorRegistration(
 
     // Fill in block name and tooltip lists
     allBlockRegistrations.forEach((registration: IBlockRegistration) => {
-        blockTooltips[registration.name] = registration.tooltip;
+        blockTooltips[registration.blockType] = registration.tooltip;
         if (typeof allBlockNames[registration.category] === "object") {
-            allBlockNames[registration.category]!.push(registration.name);
+            allBlockNames[registration.category]!.push(registration.blockType);
         } else {
-            allBlockNames[registration.category] = [registration.name];
+            allBlockNames[registration.category] = [registration.blockType];
         }
     });
 
@@ -35,7 +35,7 @@ export function getBlockEditorRegistration(
         smartFilter: SmartFilter,
         engine: ThinEngine
     ): Promise<BaseBlock | null> => {
-        const registration = allBlockRegistrations.find((r) => r.name === blockType);
+        const registration = allBlockRegistrations.find((r) => r.blockType === blockType);
         if (registration && registration.factory) {
             return registration.factory(smartFilter, engine, smartFilterDeserializer);
         }

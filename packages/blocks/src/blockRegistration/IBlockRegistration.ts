@@ -7,10 +7,9 @@ import type { BaseBlock, ISerializedBlockV1, SmartFilter, SmartFilterDeserialize
  */
 export interface IBlockRegistration {
     /**
-     * The name of the block
+     * The block type of the block
      */
-    //TODO: rename to blockType
-    name: string;
+    blockType: string;
 
     /**
      * Creates an instance of the block, either fresh or deserialized from a serialized block
