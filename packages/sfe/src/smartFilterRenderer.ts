@@ -9,8 +9,7 @@ import {
     type SmartFilterRuntime,
 } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
-import { TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
-import { registerAnimations } from "./registerAnimations.js";
+import { registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
 
 /**
  * Simple example of rendering a Smart Filter
@@ -177,7 +176,7 @@ export class SmartFilterRenderer {
             this._animationDisposeWork();
         }
 
-        this._animationDisposeWork = registerAnimations(smartFilter, this);
+        this._animationDisposeWork = registerAnimations(smartFilter, this.beforeRenderObservable);
     }
 
     private _optimize(smartFilter: SmartFilter): SmartFilter {

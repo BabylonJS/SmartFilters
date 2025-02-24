@@ -1,14 +1,14 @@
 import { ConnectionPointType, type SmartFilter, type InputBlock } from "@babylonjs/smart-filters";
-import type { SmartFilterRenderer } from "../smartFilterRenderer";
-import { WebCamInputBlock } from "@babylonjs/smart-filters-blocks";
+import { WebCamInputBlock } from "../configuration/editorBlocks/webCamInputBlock/webCamInputBlock.js";
+import type { Observable } from "@babylonjs/core/Misc/observable.js";
 
 /**
- * Registers animations for the Smart Filter.
+ * Registers animations for the Smart Filter Editor specific to the editor blocks, such as the time and webcam blocks.
  * @param smartFilter - The Smart Filter to register animations for
- * @param renderer - The Smart Filter renderer
+ * @param beforeRenderObservable - The before render observable to register animations to
  * @returns A function to unregister the animations
  */
-export function registerAnimations(smartFilter: SmartFilter, renderer: SmartFilterRenderer): () => void {
+export function registerAnimations(smartFilter: SmartFilter, beforeRenderObservable: Observable<void>): () => void {
     const disposeWork: (() => void)[] = [];
 
     for (const block of smartFilter.attachedBlocks) {
@@ -19,7 +19,7 @@ export function registerAnimations(smartFilter: SmartFilter, renderer: SmartFilt
                 let currentTime = performance.now();
                 let lastTime = performance.now();
 
-                const observer = renderer.beforeRenderObservable.add(() => {
+                const observer = beforeRenderObservable.add(() => {
                     currentTime = performance.now();
                     deltaPerMs = inputBlock.editorData?.valueDeltaPerMs ?? 0.001;
                     inputBlock.runtimeValue.value += (currentTime - lastTime) * deltaPerMs;
@@ -27,7 +27,7 @@ export function registerAnimations(smartFilter: SmartFilter, renderer: SmartFilt
                 });
 
                 disposeWork.push(() => {
-                    renderer.beforeRenderObservable.remove(observer);
+                    beforeRenderObservable.remove(observer);
                 });
             }
         } else if (block instanceof WebCamInputBlock) {

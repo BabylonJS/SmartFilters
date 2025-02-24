@@ -1,7 +1,8 @@
-import { WebCamInputBlock, BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-blocks";
+import { BlackAndWhiteBlock, PixelateBlock } from "@babylonjs/smart-filters-blocks";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { ConnectionPointType, InputBlock, SmartFilter } from "@babylonjs/smart-filters";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
+import { WebCamInputBlock } from "@babylonjs/smart-filters-editor-control";
 
 export function createSimpleWebcamSmartFilter(engine: ThinEngine): SmartFilter {
     const smartFilter = new SmartFilter(HardCodedSmartFilterNames.simpleWebcam);

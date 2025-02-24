@@ -13,3 +13,5 @@ export * from "./configuration/getBlockEditorRegistration.js";
 export * from "./configuration/blockEditorRegistration.js";
 export * from "./configuration/editorBlocks/editorBlockRegistrations.js";
 export * from "./configuration/editorBlocks/inputBlockDeserializer.js";
+export * from "./configuration/editorBlocks/webCamInputBlock/webCamInputBlock.js";
+export * from "./helpers/registerAnimations.js";
