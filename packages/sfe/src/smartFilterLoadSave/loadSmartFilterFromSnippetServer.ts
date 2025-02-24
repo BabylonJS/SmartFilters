@@ -19,7 +19,7 @@ export async function loadSmartFilterFromSnippetServer(
     const response = await fetch(`${SnippetUrl}/${snippetToken}/${version || ""}`);
 
     if (!response.ok) {
-        throw new Error(`Could not fetch snippet ${snippetToken}. Response was: ${response.statusText}`);
+        throw new Error(`Could not fetch snippet ${snippetToken}. Response was: ${response.status}`);
     }
 
     const data = await response.json();

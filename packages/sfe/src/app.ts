@@ -21,7 +21,7 @@ import { SmartFilterRenderer } from "./smartFilterRenderer.js";
 import { CustomBlockManager } from "./customBlockManager.js";
 import { generateCustomBlockEditorRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
 import { blockFactory } from "./blockRegistration/blockFactory.js";
-import { loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
+import { loadFromUrl, loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
 import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
 import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/removeCustomBlockFromBlockRegistration.js";
 import { addCustomBlockToBlockRegistration } from "./blockRegistration/addCustomBlockToBlockRegistration.js";
@@ -76,6 +76,7 @@ async function main(): Promise<void> {
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
     const onLogRequiredObservable = new Observable<LogEntry>();
+    let engine: Nullable<ThinEngine> = null;
 
     const afterEngineResize = (): void => {
         if (smartFilter && renderer) {
@@ -85,20 +86,24 @@ async function main(): Promise<void> {
 
     /**
      * Called when the editor has created a canvas and its associated engine
-     * @param engine - The new engine
+     * @param newEngine - The new engine
      */
-    const onNewEngine = async (engine: ThinEngine) => {
+    const onNewEngine = async (newEngine: ThinEngine) => {
         if (renderer) {
             renderer.dispose();
-            renderer.engine.dispose();
             afterEngineResizerObserver?.remove();
         }
-        afterEngineResizerObserver = engine.onResizeObservable.add(afterEngineResize);
+        if (engine) {
+            engine.dispose();
+        }
+        engine = newEngine;
+
+        afterEngineResizerObserver = newEngine.onResizeObservable.add(afterEngineResize);
 
         let justLoadedSmartFilter = false;
         if (!smartFilter) {
             try {
-                smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, engine);
+                smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, newEngine);
                 justLoadedSmartFilter = true;
             } catch (err) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load Smart Filter:\n${err}`, true));
@@ -106,7 +111,7 @@ async function main(): Promise<void> {
             }
         }
 
-        renderer = new SmartFilterRenderer(engine, optimize);
+        renderer = new SmartFilterRenderer(newEngine, optimize);
         renderer.startRendering(smartFilter);
 
         if (justLoadedSmartFilter) {
@@ -125,8 +130,20 @@ async function main(): Promise<void> {
             });
     };
 
-    //TODO: respond to hash changes
-    // window.addEventListener("hashchange", loadFromHash);
+    window.addEventListener("hashchange", async () => {
+        if (renderer && engine) {
+            smartFilter = await loadFromUrl(smartFilterDeserializer, engine);
+            if (smartFilter) {
+                renderer.startRendering(smartFilter);
+                onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from unique URL", false));
+                onSmartFilterLoadedObservable.notifyObservers(smartFilter);
+            } else {
+                onLogRequiredObservable.notifyObservers(
+                    new LogEntry("Could not load Smart Filter with that unique URL", true)
+                );
+            }
+        }
+    });
 
     const options: SmartFilterEditorOptions = {
         onNewEngine,

@@ -13,16 +13,16 @@ import { loadSmartFilterFromSnippetServer } from "./loadSmartFilterFromSnippetSe
  * @param engine - ThinEngine to use
  * @returns Promise that resolves with the loaded SmartFilter
  */
-export function loadStartingSmartFilter(
+export async function loadStartingSmartFilter(
     smartFilterDeserializer: SmartFilterDeserializer,
     engine: ThinEngine
 ): Promise<SmartFilter> {
-    const smartFilterPromiseFromUrl = loadFromUrl(smartFilterDeserializer, engine);
-    if (smartFilterPromiseFromUrl) {
-        return smartFilterPromiseFromUrl;
+    const smartFilterFromUrl = await loadFromUrl(smartFilterDeserializer, engine);
+    if (smartFilterFromUrl) {
+        return smartFilterFromUrl;
     }
 
-    return Promise.resolve(createDefaultSmartFilter());
+    return createDefaultSmartFilter();
 }
 
 /**
@@ -32,16 +32,20 @@ export function loadStartingSmartFilter(
  * @param engine - ThinEngine to use
  * @returns Promise that resolves with the loaded SmartFilter, or null if no SmartFilter was loaded
  */
-function loadFromUrl(
+export async function loadFromUrl(
     smartFilterDeserializer: SmartFilterDeserializer,
     engine: ThinEngine
-): Nullable<Promise<SmartFilter>> {
+): Promise<Nullable<SmartFilter>> {
     const [snippetToken, version] = getSnippet();
 
     if (snippetToken) {
-        // Reset hash with our formatting to keep it looking consistent
-        setSnippet(snippetToken, version, false);
-        return loadSmartFilterFromSnippetServer(smartFilterDeserializer, engine, snippetToken, version);
+        try {
+            // Reset hash with our formatting to keep it looking consistent
+            setSnippet(snippetToken, version, false);
+            return await loadSmartFilterFromSnippetServer(smartFilterDeserializer, engine, snippetToken, version);
+        } catch (e) {
+            console.error("Error loading SmartFilter from snippet server:", e);
+        }
     }
     return null;
 }
