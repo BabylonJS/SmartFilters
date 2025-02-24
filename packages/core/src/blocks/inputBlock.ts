@@ -130,7 +130,7 @@ export type AppMetadata<V = unknown> = {
  *
  * The value is dynamically set by the user.
  */
-export class InputBlock<U extends ConnectionPointType, V = any> extends InputBlockBase {
+export class InputBlock<U extends ConnectionPointType, V = unknown> extends InputBlockBase {
     /**
      * The output connection point of the block.
      */
