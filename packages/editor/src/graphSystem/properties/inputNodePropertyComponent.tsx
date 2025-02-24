@@ -11,6 +11,7 @@ import { ImageSourcePropertyTabComponent } from "../../components/propertyTab/pr
 import { FloatPropertyTabComponent } from "../../components/propertyTab/properties/floatPropertyTabComponent.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager";
 import { Vector2PropertyTabComponent } from "../../components/propertyTab/properties/vector2PropertyTabComponent.js";
+import { TextInputLineComponent } from "../../sharedComponents/textInputLineComponent.js";
 
 const booleanOptions: IInspectableOptions[] = [
     {
@@ -35,6 +36,10 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
             return <GenericPropertyComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />;
         }
 
+        const appMetadataTarget = {
+            metadata: this.props.nodeData.data.appMetadata ? JSON.stringify(this.props.nodeData.data.appMetadata) : "",
+        };
+
         return (
             <div>
                 <GeneralPropertyTabComponent stateManager={this.props.stateManager} nodeData={this.props.nodeData} />
@@ -43,6 +48,41 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
                         stateManager={this.props.stateManager}
                         inputBlock={this.props.nodeData.data}
                     ></InputPropertyTabComponent>
+                </LineContainerComponent>
+                <LineContainerComponent title="APP METADATA">
+                    <div id="appMetadata">
+                        <TextInputLineComponent
+                            lockObject={this.props.stateManager.lockObject}
+                            label="appMetadata"
+                            allowEditingDuringFailedValidation={true}
+                            multilines={true}
+                            target={appMetadataTarget}
+                            propertyName="metadata"
+                            validator={(value: string) => {
+                                try {
+                                    JSON.parse(value);
+                                    return true;
+                                } catch (e) {
+                                    return false;
+                                }
+                            }}
+                            onChange={() => {
+                                try {
+                                    const objectData = appMetadataTarget.metadata
+                                        ? JSON.parse(appMetadataTarget.metadata)
+                                        : null;
+                                    this.props.nodeData.data.appMetadata = objectData;
+                                    this.props.stateManager.onUpdateRequiredObservable.notifyObservers(
+                                        this.props.nodeData.data
+                                    );
+                                } catch (e) {
+                                    this.props.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
+                                        "Invalid JSON"
+                                    );
+                                }
+                            }}
+                        ></TextInputLineComponent>
+                    </div>
                 </LineContainerComponent>
             </div>
         );

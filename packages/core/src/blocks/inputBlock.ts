@@ -115,7 +115,7 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
  *
  * The value is dynamically set by the user.
  */
-export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
+export class InputBlock<U extends ConnectionPointType, V = unknown> extends InputBlockBase {
     /**
      * The output connection point of the block.
      */
@@ -130,6 +130,12 @@ export class InputBlock<U extends ConnectionPointType> extends InputBlockBase {
      * Data used by the Editor to store options required for instantiating the block in the Editor.
      */
     public editorData: Nullable<InputBlockEditorData<U>> = null;
+
+    /**
+     * Metadata the hosting app wants to track for this input. For example, a hint for what data to
+     * assign to this input, or hints about how to draw dynamic UI to allow users to control this value.
+     */
+    public appMetadata: Nullable<V> = null;
 
     /**
      * Gets the current value of the input.
