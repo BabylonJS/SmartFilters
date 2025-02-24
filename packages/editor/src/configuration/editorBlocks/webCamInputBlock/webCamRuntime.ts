@@ -1,7 +1,7 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { ConnectionPointType, IDisposable, RuntimeData } from "@babylonjs/smart-filters";
-import { WebCamSession } from "./webCamSession.js";
 import type { Nullable } from "@babylonjs/core/types";
+import { WebCamSession } from "./webCamSession.js";
 
 /**
  * Manages the runtime of WebCam input block, hooking it up to a texture, responding to changes in source,
@@ -54,7 +54,7 @@ export class WebCamRuntime implements IDisposable {
 
         if (this._deviceId !== null) {
             this._currentSession = new WebCamSession(this._engine, this._textureOutput, this._deviceId);
-            this._currentSession.load().catch((e) => {
+            this._currentSession.load().catch((e: unknown) => {
                 console.error("Failed to load webcam", e);
             });
         }

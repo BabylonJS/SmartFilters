@@ -22,35 +22,6 @@ import type { IBlockRegistration } from "./IBlockRegistration.js";
  *      in the form blockClassName.deserializer.ts
  */
 export const builtInBlockRegistrations: IBlockRegistration[] = [
-    // Special input blocks
-    // --------------------
-    {
-        blockType: BlockNames.webCam,
-        category: "Inputs",
-        tooltip: "Supplies a texture from a webcam",
-        factory: async (smartFilter: SmartFilter, engine: ThinEngine) => {
-            const module = await import(
-                /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/inputs/webCamInputBlock.js"
-            );
-            return new module.WebCamInputBlock(smartFilter, engine);
-        },
-    },
-    {
-        blockType: BlockNames.time,
-        category: "Inputs",
-        tooltip: "Supplies a float value representing the current time",
-        factory: (smartFilter: SmartFilter) => {
-            const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
-            inputBlock.editorData = {
-                animationType: "time",
-                valueDeltaPerMs: 0.001,
-                min: null,
-                max: null,
-            };
-            return Promise.resolve(inputBlock);
-        },
-    },
-
     // Blocks with trivial deserializers
     // Note that some choose to predefine corresponding input blocks if not being deserialized
     // ---------------------------------------------------------------------------------------

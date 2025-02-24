@@ -1,8 +1,8 @@
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
-import type { WebCamInputBlock } from "@babylonjs/smart-filters-blocks";
-import { BlockNames } from "@babylonjs/smart-filters-blocks";
 import { InputDisplayManager } from "../graphSystem/display/inputDisplayManager.js";
+import { WebCamInputBlockName } from "./editorBlocks/blockNames.js";
+import type { WebCamInputBlock } from "./editorBlocks/webCamInputBlock/webCamInputBlock.js";
 
 /**
  * Optional override of the InputDisplayManager to provide custom display for particular blocks if desired.
@@ -20,7 +20,7 @@ export class CustomInputDisplayManager extends InputDisplayManager {
         let value = "";
         const inputBlock = nodeData.data as AnyInputBlock;
 
-        if (inputBlock.type === ConnectionPointType.Texture && inputBlock.name === BlockNames.webCam) {
+        if (inputBlock.type === ConnectionPointType.Texture && inputBlock.name === WebCamInputBlockName) {
             const webCamInputBlock = inputBlock as WebCamInputBlock;
             value = webCamInputBlock.webcamSource?.label ?? "Default";
             contentArea.innerHTML = value;

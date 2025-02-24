@@ -11,8 +11,8 @@ export type LoadResult = {
 };
 
 /**
- * Loads the texture for a texture InputBlock for use in the demo app.
- * Note: this must not be used in production code, it is intended only for the demo app.
+ * Loads the texture for a texture InputBlock for use in the editor app.
+ * Note: this must not be used in a production application using Smart Filters.
  * @param inputBlock - The InputBlock to load the texture for
  * @param engine - The ThinEngine to create the texture with
  * @param beforeRenderObservable - Observable which is notified before rendering each frame
@@ -83,7 +83,7 @@ export type EditorLoadedVideoTexture = {
 
 /**
  * A helper for the editor which creates a texture from a video file using an HTMLVideoElement.
- * This approach would not be suitable for production use, but is handy for prototyping and demos.
+ * Note: this must not be used in a production application using Smart Filters.
  *
  * @param engine - The ThinEngine to create the texture with
  * @param url - The URL of the video file to create a texture from

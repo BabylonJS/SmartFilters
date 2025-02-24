@@ -3,7 +3,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { ConnectionPointType, InputBlock, SmartFilter, createImageTexture } from "@babylonjs/smart-filters";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
 import type { SmartFilterRenderer } from "../../../smartFilterRenderer";
-import { createVideoTextureAsync } from "../../../../../editor/src/helpers/demoTextureLoaders";
+import { createVideoTextureAsync } from "../../../../../editor/src/helpers/editorTextureLoaders";
 
 export async function createVideoWithFrameSmartFilter(
     engine: ThinEngine,

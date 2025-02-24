@@ -5,14 +5,12 @@ import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
-import {
-    builtInBlockRegistrations,
-    inputBlockDeserializer,
-    type IBlockRegistration,
-} from "@babylonjs/smart-filters-blocks";
+import { builtInBlockRegistrations, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import {
+    editorBlockRegistrations,
     getBlockEditorRegistration,
+    inputBlockDeserializer,
     LogEntry,
     SmartFilterEditorControl,
     type SmartFilterEditorOptions,
@@ -68,7 +66,11 @@ async function main(): Promise<void> {
     );
 
     // Create the block editor registration
-    const allBlockRegistrations: IBlockRegistration[] = [...customBlockRegistrations, ...builtInBlockRegistrations];
+    const allBlockRegistrations: IBlockRegistration[] = [
+        ...customBlockRegistrations,
+        ...editorBlockRegistrations,
+        ...builtInBlockRegistrations,
+    ];
     const blockEditorRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations);
 
     const optimize = false;

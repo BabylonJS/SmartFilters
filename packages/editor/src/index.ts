@@ -11,3 +11,5 @@ export { LogEntry } from "./components/log/logComponent.js";
 export * from "./helpers/textureAssetCache.js";
 export * from "./configuration/getBlockEditorRegistration.js";
 export * from "./configuration/blockEditorRegistration.js";
+export * from "./configuration/editorBlocks/editorBlockRegistrations.js";
+export * from "./configuration/editorBlocks/inputBlockDeserializer.js";

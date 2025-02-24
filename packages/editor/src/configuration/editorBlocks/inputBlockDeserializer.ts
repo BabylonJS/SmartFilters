@@ -1,7 +1,7 @@
 import type { SmartFilter, ISerializedBlockV1, BaseBlock } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { BlockNames } from "../blocks/blockNames.js";
+import { WebCamInputBlockName } from "./blockNames.js";
 
 /**
  * Custom input block deserializer to provide special behavior for input blocks in this library.
@@ -16,8 +16,8 @@ export async function inputBlockDeserializer(
     serializedBlock: ISerializedBlockV1,
     engine: ThinEngine
 ): Promise<Nullable<BaseBlock>> {
-    if (serializedBlock.name === BlockNames.webCam) {
-        const module = await import(/* webpackChunkName: "webCamBlock" */ "../blocks/inputs/webCamInputBlock.js");
+    if (serializedBlock.name === WebCamInputBlockName) {
+        const module = await import(/* webpackChunkName: "webCamBlock" */ "./webCamInputBlock/webCamInputBlock.js");
         return new module.WebCamInputBlock(smartFilter, engine);
     }
     return null;
