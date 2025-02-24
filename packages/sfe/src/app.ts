@@ -7,7 +7,11 @@ import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
-import { builtInBlockEditorRegistrations, getBlockRegistrationsForEditor } from "@babylonjs/smart-filters-blocks";
+import {
+    builtInBlockEditorRegistrations,
+    getBlockRegistrationsForEditor,
+    inputBlockDeserializer,
+} from "@babylonjs/smart-filters-blocks";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterEditorControl, type SmartFilterEditorOptions } from "@babylonjs/smart-filters-editor-control";
 import { SmartFilterRenderer } from "./smartFilterRenderer.js";
@@ -43,7 +47,8 @@ async function main(): Promise<void> {
                 smartFilterDeserializer,
                 builtInBlockEditorRegistrations
             );
-        }
+        },
+        inputBlockDeserializer
     );
 
     // Create the custom block manager

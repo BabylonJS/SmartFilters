@@ -1,3 +1,4 @@
+// TODO: delete this copy
 import type { SmartFilter, ISerializedBlockV1, BaseBlock } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
