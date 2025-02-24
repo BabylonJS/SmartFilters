@@ -16,7 +16,8 @@ import { generateCustomBlockEditorRegistrations } from "./blockRegistration/gene
 import { blockFactory } from "./blockRegistration/blockFactory.js";
 import { loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
 import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
-
+import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/removeCustomBlockFromBlockRegistration.js";
+import { addCustomBlockToBlockRegistration } from "./blockRegistration/addCustomBlockToBlockRegistration.js";
 /**
  * The main entry point for the smart filter editor.
  */
@@ -83,8 +84,13 @@ async function main(): Promise<void> {
 
         let justLoadedSmartFilter = false;
         if (!smartFilter) {
-            smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, engine);
-            justLoadedSmartFilter = true;
+            try {
+                smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, engine);
+                justLoadedSmartFilter = true;
+            } catch (err) {
+                errorHandler(`Could not load starting smart filter\n${err}`);
+                return;
+            }
         }
 
         renderer = new SmartFilterRenderer(engine, optimize);
@@ -93,6 +99,12 @@ async function main(): Promise<void> {
         if (justLoadedSmartFilter) {
             onSmartFilterLoadedObservable.notifyObservers(smartFilter);
         }
+    };
+
+    const rebuildRuntime = () => {
+        renderer?.rebuildRuntime().catch((err: unknown) => {
+            errorHandler(`Could not start rendering\n${err}`);
+        });
     };
 
     const options: SmartFilterEditorOptions = {
@@ -112,12 +124,22 @@ async function main(): Promise<void> {
             }
         },
         beforeRenderObservable: new Observable<void>(),
-        rebuildRuntime: () => {
-            renderer?.rebuildRuntime().catch((err: unknown) => {
-                errorHandler(`Could not start rendering\n${err}`);
-            });
-        },
+        rebuildRuntime,
         reloadAssets: () => {},
+        addCustomShaderBlock: (serializedData: string) => {
+            try {
+                const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
+                removeCustomBlockFromBlockRegistration(blockRegistration, blockDefinition.blockType);
+                addCustomBlockToBlockRegistration(blockRegistration, blockDefinition);
+                rebuildRuntime();
+            } catch (err) {
+                errorHandler(`Could not load custom block:\n${err}`);
+            }
+        },
+        deleteCustomShaderBlock: (blockType: string) => {
+            customBlockManager.deleteBlockDefinition(blockType);
+            removeCustomBlockFromBlockRegistration(blockRegistration, blockType);
+        },
     };
 
     SmartFilterEditorControl.Show(options);
