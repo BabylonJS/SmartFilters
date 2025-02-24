@@ -12,6 +12,5 @@ export * from "./kaleidoscopeBlock.js";
 export * from "./maskBlock.js";
 export * from "./pixelateBlock.js";
 export * from "./posterizeBlock.js";
-export * from "./sketchBlock.js";
 export * from "./spritesheetBlock.js";
 export * from "./tintBlock.js";

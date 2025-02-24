@@ -2,7 +2,7 @@
     "name": "@babylonjs/smart-filters-editor",
     "private": true,
     "version": "0.0.0",
-    "description": "Demo usage of Smart Filters, as well as dev inner loop for working on the core.",
+    "description": "The Smart Filters Editor tool is a web-based tool that allows you to create and edit Smart Filters for Babylon.js.",
     "author": {
         "name": "Sebastien VANDENBERGHE"
     },
