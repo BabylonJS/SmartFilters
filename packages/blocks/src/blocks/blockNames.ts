@@ -18,7 +18,6 @@ export const BlockNames = {
     tile: "TileBlock",
     wipe: "WipeBlock",
     mask: "MaskBlock",
-    sketch: "SketchBlock",
     particle: "ParticleBlock",
     spritesheet: "SpritesheetBlock",
     tint: "TintBlock",

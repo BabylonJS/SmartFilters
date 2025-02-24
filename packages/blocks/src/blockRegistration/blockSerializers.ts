@@ -24,7 +24,6 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.frame,
     BlockNames.glitch,
     BlockNames.mask,
-    BlockNames.sketch,
     BlockNames.particle,
     BlockNames.spritesheet,
     BlockNames.tint,

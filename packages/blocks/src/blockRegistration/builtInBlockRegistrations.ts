@@ -272,20 +272,6 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         tooltip: "Applies mask in one texture to another texture",
     },
     {
-        blockType: BlockNames.sketch,
-        factory: async (
-            smartFilter: SmartFilter,
-            _engine: ThinEngine,
-            _smartFilterDeserializer: SmartFilterDeserializer,
-            serializedBlock: ISerializedBlockV1 | undefined
-        ) => {
-            const module = await import(/* webpackChunkName: "sketchBlock" */ "../blocks/effects/sketchBlock.js");
-            return new module.SketchBlock(smartFilter, serializedBlock?.name || "Sketch");
-        },
-        category: "Effects",
-        tooltip: "Adds a hand-drawn sketch effect to the input texture",
-    },
-    {
         blockType: BlockNames.spritesheet,
         factory: async (
             smartFilter: SmartFilter,
