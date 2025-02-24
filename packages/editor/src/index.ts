@@ -10,3 +10,4 @@ export * from "./helpers/serializationTools.js";
 export { LogEntry } from "./components/log/logComponent.js";
 export * from "./helpers/textureAssetCache.js";
 export * from "./configuration/getBlockEditorRegistration.js";
+export * from "./configuration/blockEditorRegistration.js";

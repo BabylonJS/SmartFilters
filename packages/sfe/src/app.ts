@@ -149,7 +149,7 @@ async function main(): Promise<void> {
     const options: SmartFilterEditorOptions = {
         onNewEngine,
         onSmartFilterLoadedObservable,
-        blockRegistration: blockEditorRegistration,
+        blockEditorRegistration: blockEditorRegistration,
         hostElement,
         downloadSmartFilter: () => {
             if (smartFilter) {

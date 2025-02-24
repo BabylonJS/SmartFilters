@@ -11,6 +11,7 @@ import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { LogEntry } from "./components/log/logComponent.js";
+import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
 
 /**
  * Options to configure the Smart Filter Editor
@@ -36,12 +37,12 @@ export type SmartFilterEditorOptions = {
     onSmartFilterLoadedObservable?: Observable<SmartFilter>;
 
     /**
-     * A BlockRegistration object which is responsible for providing the information
+     * A BlockEditorRegistration object which is responsible for providing the information
      * required for the Editor to be able to display and work with the Smart Filter
      * blocks the application uses. Note that each application may have its own set
      * of blocks, so this information must be passed in and not baked into the editor.
      */
-    blockRegistration: BlockRegistration;
+    blockEditorRegistration: BlockEditorRegistration;
 
     /**
      * The Smart Filter to edit
@@ -145,7 +146,7 @@ export class SmartFilterEditorControl {
             options.onNewEngine ?? null,
             options.onSmartFilterLoadedObservable ?? null,
             options.filter ?? null,
-            options.blockRegistration,
+            options.blockEditorRegistration,
             hostElement,
             options.beforeRenderObservable,
             options.rebuildRuntime,

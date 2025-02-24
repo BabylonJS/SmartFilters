@@ -7,7 +7,7 @@ import {
 } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor-control";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
  * Creates instances of blocks upon request
@@ -15,7 +15,7 @@ import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor-c
  * @param engine - The ThinEngine to use
  * @param serializedBlock - The serialized block to create
  * @param smartFilterDeserializer - The deserializer to use
- * @param builtInBlockEditorRegistrations - The built-in block editor registrations
+ * @param builtInBlockRegistrations - The built-in block editor registrations
  * @returns The created block or null if the block type is not recognized
  */
 export async function blockFactory(
@@ -23,11 +23,11 @@ export async function blockFactory(
     engine: ThinEngine,
     serializedBlock: ISerializedBlockV1,
     smartFilterDeserializer: SmartFilterDeserializer,
-    builtInBlockEditorRegistrations: IBlockEditorRegistration[]
+    builtInBlockRegistrations: IBlockRegistration[]
 ): Promise<Nullable<BaseBlock>> {
     let newBlock: Nullable<BaseBlock> = null;
 
-    const registration = builtInBlockEditorRegistrations.find(
+    const registration = builtInBlockRegistrations.find(
         (registration) => registration.name === serializedBlock.blockType
     );
     if (registration && registration.factory) {

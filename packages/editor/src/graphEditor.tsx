@@ -85,10 +85,15 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     addValueNode(type: string) {
         const nodeType = BlockTools.GetConnectionNodeTypeFromString(type);
 
-        let newInputBlock: Nullable<BaseBlock> = this.props.globalState.blockEditorRegistration.createInputBlock(
-            this.props.globalState,
-            type
-        );
+        let newInputBlock: Nullable<BaseBlock> = null;
+
+        if (this.props.globalState.engine) {
+            newInputBlock = this.props.globalState.blockEditorRegistration.createInputBlock(
+                this.props.globalState.smartFilter,
+                this.props.globalState.engine,
+                type
+            );
+        }
 
         if (!newInputBlock) {
             newInputBlock = createDefaultInput(
