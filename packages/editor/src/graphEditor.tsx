@@ -121,7 +121,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         this.props.globalState.onSmartFilterLoadedObservable?.add((smartFilter: SmartFilter) => {
             this.props.globalState.smartFilter = smartFilter;
             this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-            this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
         });
 
         this.build();

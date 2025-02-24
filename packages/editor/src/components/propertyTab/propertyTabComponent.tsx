@@ -116,11 +116,14 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     async load(_file: File) {
-        this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
-
-        this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
-        this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-        this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
+        if (this.props.globalState.engine) {
+            const newSmartFilter = await this.props.globalState.loadSmartFilter(_file, this.props.globalState.engine);
+            if (newSmartFilter) {
+                this.props.globalState.smartFilter = newSmartFilter;
+                this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
+                this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+            }
+        }
     }
 
     loadFrame(_file: File) {

@@ -59,7 +59,7 @@ export class GlobalState {
 
     downloadSmartFilter: () => void;
 
-    loadSmartFilter: (file: File) => Promise<SmartFilter>;
+    loadSmartFilter: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
     saveToSnippetServer?: (() => void) | undefined;
 
@@ -79,7 +79,7 @@ export class GlobalState {
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
         downloadSmartFilter: () => void,
-        loadSmartFilter: (file: File) => Promise<SmartFilter>,
+        loadSmartFilter: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         beforeRenderObservable: Observable<void>,
         rebuildRuntime: () => void,
         reloadAssets: () => void,

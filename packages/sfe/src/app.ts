@@ -22,6 +22,9 @@ import { loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmart
 import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
 import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/removeCustomBlockFromBlockRegistration.js";
 import { addCustomBlockToBlockRegistration } from "./blockRegistration/addCustomBlockToBlockRegistration.js";
+import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
+import { loadFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
+
 /**
  * The main entry point for the smart filter editor.
  */
@@ -117,9 +120,18 @@ async function main(): Promise<void> {
         onSmartFilterLoadedObservable,
         blockRegistration,
         hostElement,
-        downloadSmartFilter: () => {},
-        loadSmartFilter: async (_file: File): Promise<SmartFilter> => {
-            throw new Error("Not implemented");
+        downloadSmartFilter: () => {
+            if (smartFilter) {
+                downloadSmartFilter(smartFilter);
+            }
+        },
+        loadSmartFilter: async (file: File, engine: ThinEngine) => {
+            if (renderer) {
+                smartFilter = await loadFromFile(smartFilterDeserializer, engine, file);
+                renderer.startRendering(smartFilter);
+                return smartFilter;
+            }
+            return null;
         },
         saveToSnippetServer: () => {
             if (smartFilter) {

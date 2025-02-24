@@ -109,7 +109,7 @@ export type SmartFilterEditorOptions = {
      * A callback that is responsible for loading a serialized Smart Filter from the provided file,
      * and should then call SmartFilterEditor.Show with the loaded Smart Filter.
      */
-    loadSmartFilter: (file: File) => Promise<SmartFilter>;
+    loadSmartFilter: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
     /**
      * An optional callback to save the current Smart Filter to the snippet server.

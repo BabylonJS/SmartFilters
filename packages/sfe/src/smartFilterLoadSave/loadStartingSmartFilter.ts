@@ -6,8 +6,8 @@ import { getSnippet, setSnippet } from "./hashFunctions.js";
 import { loadSmartFilterFromSnippetServer } from "./loadSmartFilterFromSnippetServer.js";
 
 /**
- * Loads the starting SmartFilter for this session, consulting the URL first, then local storage,
- * and finally loading a default SmartFilter if neither of those are available.
+ * Loads the starting SmartFilter for this session, consulting the URL first, and if
+ * there isn't a snippet on the URL, loads a default SmartFilter.
  *
  * @param smartFilterDeserializer - SmartFilterDeserializer to use
  * @param engine - ThinEngine to use
@@ -20,11 +20,6 @@ export function loadStartingSmartFilter(
     const smartFilterPromiseFromUrl = loadFromUrl(smartFilterDeserializer, engine);
     if (smartFilterPromiseFromUrl) {
         return smartFilterPromiseFromUrl;
-    }
-
-    const smartFilterPromiseFromLocalStorage = loadFromLocalStorage(smartFilterDeserializer, engine);
-    if (smartFilterPromiseFromLocalStorage) {
-        return smartFilterPromiseFromLocalStorage;
     }
 
     return Promise.resolve(createDefaultSmartFilter());
@@ -47,29 +42,6 @@ function loadFromUrl(
         // Reset hash with our formatting to keep it looking consistent
         setSnippet(snippetToken, version, false);
         return loadSmartFilterFromSnippetServer(smartFilterDeserializer, engine, snippetToken, version);
-    }
-    return null;
-}
-
-const LocalStorageSmartFilterName = "LoadedSmartFilter";
-
-// TODO: save to local storage after load from JSON
-
-/**
- * Checks local storage for a SmartFilter to load, and loads it if found.
- * @param smartFilterDeserializer - SmartFilterDeserializer to use
- * @param engine - ThinEngine to use
- * @returns Promise that resolves with the loaded SmartFilter, or null if no SmartFilter was loaded
- */
-function loadFromLocalStorage(
-    smartFilterDeserializer: SmartFilterDeserializer,
-    engine: ThinEngine
-): Nullable<Promise<SmartFilter>> {
-    const serializedLocalStorageSmartFilter = localStorage.getItem(LocalStorageSmartFilterName);
-    if (serializedLocalStorageSmartFilter) {
-        return Promise.resolve(
-            smartFilterDeserializer.deserialize(engine, JSON.parse(serializedLocalStorageSmartFilter))
-        );
     }
     return null;
 }

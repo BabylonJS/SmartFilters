@@ -1,21 +1,14 @@
-import { type SmartFilter, SmartFilterSerializer } from "@babylonjs/smart-filters";
+import { type SmartFilter } from "@babylonjs/smart-filters";
 import { getSnippet, setSnippet } from "./hashFunctions.js";
 import { SnippetUrl } from "./constants.js";
+import { serializeSmartFilter } from "./serializeSmartFilter.js";
 
 /**
  * Saves the provided SmartFilter to the snippet server
  * @param smartFilter - SmartFilter to save
  */
 export async function saveToSnippetServer(smartFilter: SmartFilter): Promise<void> {
-    const serializerModule = await import(
-        /* webpackChunkName: "serializers" */ "@babylonjs/smart-filters-blocks/dist/blockRegistration/blockSerializers.js"
-    );
-    const serializer = new SmartFilterSerializer(
-        serializerModule.blocksUsingDefaultSerialization,
-        serializerModule.additionalBlockSerializers
-    );
-
-    const smartFilterJson = JSON.stringify(serializer.serialize(smartFilter));
+    const smartFilterJson = await serializeSmartFilter(smartFilter);
 
     const dataToSend = {
         payload: JSON.stringify({
