@@ -165,6 +165,8 @@ export class TextInputLineComponent extends react.Component<
             } else {
                 this.setState({ validationFailedButUserStillAllowedToEdit: false });
             }
+        } else {
+            this.setState({ validationFailedButUserStillAllowedToEdit: false });
         }
 
         this.setState({ value: value });
@@ -246,7 +248,9 @@ export class TextInputLineComponent extends react.Component<
                     <>
                         <textarea
                             className={this.props.disabled ? "disabled" : ""}
-                            style={{ color: this.state.validationFailedButUserStillAllowedToEdit ? "red" : "" }}
+                            style={{
+                                background: this.state.validationFailedButUserStillAllowedToEdit ? "lightpink" : "",
+                            }}
                             value={this.state.value}
                             onFocus={() => {
                                 if (this.props.lockObject) {
