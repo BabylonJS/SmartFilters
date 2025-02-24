@@ -8,6 +8,13 @@
         "resolveJsonModule": true
     },
 
-    "include": ["./src/**/*.ts", "../core/**/*.ts", "../core/**/*.tsx", "../editor/**/*.ts", "../editor/**/*.tsx"],
+    "include": [
+        "./src/**/*.ts",
+        "../core/**/*.ts",
+        "../core/**/*.tsx",
+        "../editor/**/*.ts",
+        "../editor/**/*.tsx",
+        "../blocks/**/*.ts"
+    ],
     "exclude": ["**/node_modules", "**/.temp"]
 }

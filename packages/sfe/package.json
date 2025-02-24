@@ -20,8 +20,7 @@
     ],
     "license": "MIT",
     "scripts": {
-        "build": "npm run build:runTools && webpack --env=prod",
-        "build:runTools": "node ../../node_modules/@babylonjs/smart-filters/dist/utils/buildTools/buildShaders.js ./src/blocks @babylonjs/smart-filters",
+        "build": "webpack --env=prod",
         "watch": "concurrently \"npm run watch:demo\" \"npm run watch:shaders -w @babylonjs/smart-filters\"",
         "watch:demo": "npx webpack-dev-server",
         "clean": "rimraf .temp && rimraf www/scripts",

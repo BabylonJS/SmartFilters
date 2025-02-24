@@ -7,6 +7,7 @@ export * from "./directionalBlurBlock.js";
 export * from "./exposureBlock.js";
 export * from "./frameBlock.js";
 export * from "./glassBlock.js";
+export * from "./greenScreenBlock.js";
 export * from "./kaleidoscopeBlock.js";
 export * from "./maskBlock.js";
 export * from "./pixelateBlock.js";

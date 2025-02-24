@@ -7,15 +7,14 @@ import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
-import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
-import {
-    type GlobalState,
-    SmartFilterEditorControl,
-    type BlockRegistration,
-    type SmartFilterEditorOptions,
-} from "@babylonjs/smart-filters-editor-control";
+import { builtInBlockEditorRegistrations, getBlockRegistrationsForEditor } from "@babylonjs/smart-filters-blocks";
+import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
+import { SmartFilterEditorControl, type SmartFilterEditorOptions } from "@babylonjs/smart-filters-editor-control";
 import { SmartFilterLoader } from "./smartFilterLoader.js";
 import { SmartFilterRenderer } from "./smartFilterRenderer.js";
+import { CustomBlockManager } from "./customBlockManager.js";
+import { generateCustomBlockEditorRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
+import { blockFactory } from "./blockRegistration/blockFactory.js";
 
 /**
  * The main entry point for the smart filter editor.
@@ -26,14 +25,35 @@ async function main(): Promise<void> {
         throw new Error("Could not find the container element");
     }
 
-    const blockRegistration: BlockRegistration = {
-        getIsUniqueBlock: (block: BaseBlock) => block.getClassName() === "OutputBlock",
-        getBlockFromString: (_blockType: string, _smartFilter: SmartFilter): Promise<Nullable<BaseBlock>> =>
-            Promise.resolve(null),
-        createInputBlock: (_globalState: GlobalState, _type: string): Nullable<BaseBlock> => null,
-        allBlockNames: {},
-        blockTooltips: {},
-    };
+    // Create the smart filter deserializer
+    const smartFilterDeserializer = new SmartFilterDeserializer(
+        (
+            smartFilter: SmartFilter,
+            engine: ThinEngine,
+            serializedBlock: ISerializedBlockV1,
+            smartFilterDeserializer: SmartFilterDeserializer
+        ) => {
+            return blockFactory(
+                smartFilter,
+                engine,
+                serializedBlock,
+                customBlockManager,
+                smartFilterDeserializer,
+                builtInBlockEditorRegistrations
+            );
+        }
+    );
+
+    // Create the custom block manager
+    const customBlockManager = new CustomBlockManager();
+    const customBlockTypeNames = customBlockManager.getCustomBlockTypeNames();
+    const customBlockEditorRegistrations = generateCustomBlockEditorRegistrations(
+        customBlockManager,
+        smartFilterDeserializer,
+        customBlockTypeNames
+    );
+
+    const blockRegistration = getBlockRegistrationsForEditor(smartFilterDeserializer, customBlockEditorRegistrations);
 
     const smartFilterLoader: Nullable<SmartFilterLoader> = new SmartFilterLoader();
 
@@ -66,14 +86,19 @@ async function main(): Promise<void> {
 
         renderer = new SmartFilterRenderer(engine, optimize);
 
+        let justLoadedSmartFilter = false;
         if (smartFilterLoadPromise) {
             smartFilter = await smartFilterLoadPromise;
             smartFilterLoadPromise = null;
-            onSmartFilterLoadedObservable.notifyObservers(smartFilter);
+            justLoadedSmartFilter = true;
         }
 
         if (smartFilter && renderer) {
             renderer.startRendering(smartFilter);
+        }
+
+        if (smartFilter && justLoadedSmartFilter) {
+            onSmartFilterLoadedObservable.notifyObservers(smartFilter);
         }
     };
 
@@ -87,11 +112,24 @@ async function main(): Promise<void> {
             throw new Error("Not implemented");
         },
         beforeRenderObservable: new Observable<void>(),
-        rebuildRuntime: () => {},
+        rebuildRuntime: () => {
+            renderer?.rebuildRuntime().catch((err: unknown) => {
+                errorHandler(`Could not start rendering\n${err}`);
+            });
+        },
         reloadAssets: () => {},
     };
 
     SmartFilterEditorControl.Show(options);
+}
+
+/**
+ * Logs an error message to the console
+ * @param message - The error message to log
+ */
+function errorHandler(message: string): void {
+    // TODO: route to the editor console instead
+    console.error(message);
 }
 
 main().catch((error) => {

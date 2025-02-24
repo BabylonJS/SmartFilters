@@ -93,6 +93,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             ) as HTMLCanvasElement;
             if (canvas && this.props.globalState.onNewEngine) {
                 const engine = initializePreview(canvas);
+                this.props.globalState.engine = engine;
                 this.props.globalState.onNewEngine(engine);
                 // TODO: don't leak
                 const resizeObserver = new ResizeObserver(() => {
@@ -315,10 +316,14 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         if (blockType.indexOf("Block") === -1) {
             newNode = this.addValueNode(blockType);
         } else {
-            const block = await this.props.globalState.blockRegistration.getBlockFromString(
-                blockType,
-                this.props.globalState.smartFilter
-            );
+            let block: Nullable<BaseBlock> = null;
+            if (this.props.globalState.engine) {
+                block = await this.props.globalState.blockRegistration.getBlockFromString(
+                    blockType,
+                    this.props.globalState.smartFilter,
+                    this.props.globalState.engine
+                );
+            }
             if (!block) {
                 this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
                     `Could not create a block of type ${blockType}`

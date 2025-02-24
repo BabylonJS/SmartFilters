@@ -29,9 +29,10 @@ export type BlockRegistration = {
      * the block name is not recognized.
      * @param blockType - The name of the block to create
      * @param smartFilter - The Smart Filter to create the block for
+     * @param engine - The engine to use for creating blocks
      * @returns A new instance of the block, or null if the block name is not recognized
      */
-    getBlockFromString(blockType: string, smartFilter: SmartFilter): Promise<Nullable<BaseBlock>>;
+    getBlockFromString(blockType: string, smartFilter: SmartFilter, engine: ThinEngine): Promise<Nullable<BaseBlock>>;
 
     /**
      * Intercepts the creation of an input block and can return specialized input blocks.
