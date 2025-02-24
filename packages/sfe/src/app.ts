@@ -160,7 +160,11 @@ async function main(): Promise<void> {
         texturePresets,
         beforeRenderObservable: new Observable<void>(),
         rebuildRuntime,
-        reloadAssets: () => {},
+        reloadAssets: () => {
+            renderer?.reloadAssets().catch((err: unknown) => {
+                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not reload assets:\n${err}`, true));
+            });
+        },
         addCustomShaderBlock: (serializedData: string) => {
             try {
                 const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);

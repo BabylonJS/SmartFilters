@@ -1,6 +1,6 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { InternalTexture } from "@babylonjs/core/Materials/Textures/internalTexture";
-import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
+import { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture.js";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import type { Nullable } from "@babylonjs/core/types";
 import { createImageTexture, type ConnectionPointType, type InputBlock } from "@babylonjs/smart-filters";
