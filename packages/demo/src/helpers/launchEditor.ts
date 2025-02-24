@@ -41,6 +41,8 @@ export function launchEditor(
         return;
     }
 
+    // TODO: delete all blocks and registration and call into blocks package instead
+
     // Set up block registration
     const blockTooltips: { [key: string]: string } = {};
     const allBlockNames: { [key: string]: string[] } = {};
