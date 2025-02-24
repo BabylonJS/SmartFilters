@@ -3,7 +3,9 @@ import type { BlockRegistration, GlobalState, IBlockEditorRegistration } from "@
 import { builtInBlockEditorRegistrations } from "./builtInBlockEditorRegistrations.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { Nullable } from "@babylonjs/core/types.js";
-import { WebCamInputBlock, WebCamInputBlockName } from "../blocks/index.js";
+import { WebCamInputBlock } from "../blocks/index.js";
+import { BlockNames } from "../blocks/blockNames.js";
+import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
 
 // TODO: does this belong in this package or another new shared package between demo and SFE?
 
@@ -54,6 +56,7 @@ export function getBlockRegistrationsForEditor(
         createInputBlock,
         allBlockNames,
         blockTooltips,
+        inputDisplayManager: CustomInputDisplayManager,
     };
 
     return blockRegistration;
@@ -77,7 +80,7 @@ function getIsUniqueBlock(block: BaseBlock): boolean {
  */
 function createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock> {
     switch (type) {
-        case WebCamInputBlockName: {
+        case BlockNames.webCam: {
             if (!globalState.engine) {
                 return null;
             }

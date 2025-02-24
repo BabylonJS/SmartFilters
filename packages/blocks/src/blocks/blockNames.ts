@@ -1,4 +1,5 @@
 export const BlockNames = {
+    webCam: "WebCamInputBlock",
     pixelate: "PixelateBlock",
     blackAndWhite: "BlackAndWhiteBlock",
     exposure: "ExposureBlock",

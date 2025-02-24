@@ -8,11 +8,17 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
  * The block registrations for the built in blocks
  */
 export const builtInBlockEditorRegistrations: IBlockEditorRegistration[] = [
-    // {
-    //     name: WebCamInputBlockName,
-    //     category: "Inputs",
-    //     tooltip: "Supplies a texture from a webcam",
-    // },
+    {
+        name: BlockNames.webCam,
+        category: "Inputs",
+        tooltip: "Supplies a texture from a webcam",
+        factory: async (smartFilter: SmartFilter, engine: ThinEngine) => {
+            const module = await import(
+                /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/inputs/webCamInputBlock.js"
+            );
+            return new module.WebCamInputBlock(smartFilter, engine);
+        },
+    },
     // {
     //     name: "TimeBlock",
     //     category: "Inputs",

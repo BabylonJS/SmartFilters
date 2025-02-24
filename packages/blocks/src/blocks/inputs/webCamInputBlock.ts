@@ -11,6 +11,7 @@ import {
     type IEditablePropertyListOption,
 } from "@babylonjs/smart-filters";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
+import { BlockNames } from "../blockNames.js";
 
 /**
  * The source of a webcam
@@ -21,8 +22,6 @@ export type WebCamSource = {
     /** The deviceId */
     value: string;
 };
-
-export const WebCamInputBlockName = "WebCam";
 
 const LocalStorageWebcamIdKey = "webCamDeviceId";
 const LocalStorageNameKey = "webCamName";
@@ -141,7 +140,7 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
      * @param engine - the engine
      */
     constructor(smartFilter: SmartFilter, engine: ThinEngine) {
-        super(smartFilter, WebCamInputBlockName, ConnectionPointType.Texture, createStrongRef(null));
+        super(smartFilter, BlockNames.webCam, ConnectionPointType.Texture, createStrongRef(null));
         this._engine = engine;
 
         // Load the last used webcam source
