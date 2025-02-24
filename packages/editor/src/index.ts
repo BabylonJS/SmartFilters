@@ -9,3 +9,4 @@ export type { TexturePreset } from "./globalState.js";
 export * from "./helpers/serializationTools.js";
 export * from "./helpers/IBlockEditorRegistration.js";
 export { LogEntry } from "./components/log/logComponent.js";
+export * from "./helpers/textureAssetCache.js";

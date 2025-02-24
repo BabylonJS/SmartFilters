@@ -102,15 +102,17 @@ export type SmartFilterEditorOptions = {
 
     /**
      * A callback that is responsible for doing the work of initiating a download of the
-     * serialized version of the Smart Filter.
+     * serialized version of the Smart Filter. If not supplied, the save button will not appear
+     * in the editor.
      */
-    downloadSmartFilter: () => void;
+    downloadSmartFilter?: () => void;
 
     /**
      * A callback that is responsible for loading a serialized Smart Filter from the provided file,
-     * and should then call SmartFilterEditor.Show with the loaded Smart Filter.
+     * and should then call SmartFilterEditor.Show with the loaded Smart Filter. If not supplied,
+     * the load button will not appear in the editor.
      */
-    loadSmartFilter: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
+    loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
     /**
      * An optional callback to save the current Smart Filter to the snippet server.
@@ -192,11 +194,11 @@ export class SmartFilterEditorControl {
             options.filter ?? null,
             options.blockRegistration,
             hostElement,
-            options.downloadSmartFilter,
-            options.loadSmartFilter,
             options.beforeRenderObservable,
             options.rebuildRuntime,
             options.reloadAssets,
+            options.downloadSmartFilter,
+            options.loadSmartFilter,
             options.saveToSnippetServer,
             options.texturePresets,
             options.addCustomShaderBlock,

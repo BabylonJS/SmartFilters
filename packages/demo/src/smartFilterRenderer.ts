@@ -9,8 +9,8 @@ import {
     type SmartFilterRuntime,
 } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
+import { TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
 import { registerAnimations } from "./helpers/registerAnimations";
-import { TextureAssetCache } from "./configuration/textureAssetCache";
 
 /**
  * Simple example of rendering a Smart Filter

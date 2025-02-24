@@ -57,9 +57,9 @@ export class GlobalState {
 
     texturePresets: TexturePreset[];
 
-    downloadSmartFilter: () => void;
+    downloadSmartFilter?: () => void;
 
-    loadSmartFilter: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
+    loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
     saveToSnippetServer?: (() => void) | undefined;
 
@@ -78,11 +78,11 @@ export class GlobalState {
         smartFilter: Nullable<SmartFilter>,
         blockRegistration: BlockRegistration,
         hostElement: HTMLElement,
-        downloadSmartFilter: () => void,
-        loadSmartFilter: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         beforeRenderObservable: Observable<void>,
         rebuildRuntime: () => void,
         reloadAssets: () => void,
+        downloadSmartFilter?: () => void,
+        loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
         addCustomShaderBlock?: (serializedData: string) => void,

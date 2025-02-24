@@ -1,7 +1,7 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture";
 import type { ConnectionPointType, InputBlock, InputBlockEditorData } from "@babylonjs/smart-filters";
-import { loadTextureInputBlockAsset } from "./demoTextureLoaders.js";
+import { loadTextureInputBlockAsset } from "../../../sfe/src/demoTextureLoaders.js";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 
 /**

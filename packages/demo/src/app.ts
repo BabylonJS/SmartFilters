@@ -5,21 +5,18 @@ import "@babylonjs/core/Misc/fileTools";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { SmartFilterEditorControl } from "@babylonjs/smart-filters-editor-control";
 import { createThinEngine } from "./helpers/createThinEngine";
-import { SmartFilterLoader, SmartFilterSource, type SmartFilterLoadedEvent } from "./smartFilterLoader";
+import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { blockFactory } from "./configuration/blockFactory";
-import { inputBlockDeserializer } from "./configuration/inputBlockDeserializer";
-import { getSnippet, setSnippet } from "./helpers/hashFunctions";
 import { TextureRenderHelper } from "./textureRenderHelper";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import { hookupBackgroundOption } from "./backgroundOption";
-import { CustomBlockManager } from "./customBlockManager";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import { builtInBlockEditorRegistrations, inputBlockDeserializer } from "@babylonjs/smart-filters-blocks";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;
     optimizedSmartFilter?: SmartFilter;
-    source: SmartFilterSource;
 };
 
 // Hardcoded options there is no UI for
@@ -33,9 +30,6 @@ const LocalStorageOptimizeName = "OptimizeSmartFilter";
 const editActionLink = document.getElementById("editActionLink")!;
 const smartFilterSelect = document.getElementById("smartFilterSelect")! as HTMLSelectElement;
 const canvas = document.getElementById("renderCanvas")! as unknown as HTMLCanvasElement;
-const inRepoSelection = document.getElementById("inRepoSelection")!;
-const snippetAndFileFooter = document.getElementById("snippetAndFileFooter")!;
-const sourceName = document.getElementById("sourceName")!;
 const optimizeCheckbox = document.getElementById("optimizeCheckbox") as HTMLInputElement;
 const errorContainer = document.getElementById("errorContainer")! as HTMLDivElement;
 const errorMessage = document.getElementById("errorMessage")! as HTMLDivElement;
@@ -48,7 +42,6 @@ hookupBackgroundOption();
 const engine = createThinEngine(canvas);
 const renderer = new SmartFilterRenderer(engine, localStorage.getItem(LocalStorageOptimizeName) === "true");
 const textureRenderHelper = renderToTextureInsteadOfCanvas ? new TextureRenderHelper(engine, renderer) : null;
-const customBlockManager = new CustomBlockManager(engine);
 const smartFilterDeserializer = new SmartFilterDeserializer(
     (
         smartFilter: SmartFilter,
@@ -56,7 +49,13 @@ const smartFilterDeserializer = new SmartFilterDeserializer(
         serializedBlock: ISerializedBlockV1,
         smartFilterDeserializer: SmartFilterDeserializer
     ) => {
-        return blockFactory(smartFilter, engine, serializedBlock, customBlockManager, smartFilterDeserializer);
+        return blockFactory(
+            smartFilter,
+            engine,
+            serializedBlock,
+            smartFilterDeserializer,
+            builtInBlockEditorRegistrations
+        );
     },
     inputBlockDeserializer
 );
@@ -103,70 +102,20 @@ function renderCurrentSmartFilter(hideEditor: boolean = true) {
             showError(`Could not start rendering: ${err}`);
         });
 
-    // Ensure hash is empty if we're not loading from a snippet
-    if (smartFilterState.source !== SmartFilterSource.Snippet) {
-        history.replaceState(null, "", window.location.pathname);
-    }
-
-    // In case we fell back to the default (in-repo) SmartFilter, update the <select>
-    if (
-        smartFilterState.source === SmartFilterSource.InRepo &&
-        smartFilterSelect.value !== smartFilterState.smartFilter.name
-    ) {
+    // In case we fell back to the default SmartFilter, update the <select>
+    if (smartFilterSelect.value !== smartFilterState.smartFilter.name) {
         localStorage.setItem(LocalStorageSmartFilterName, smartFilterState.smartFilter.name);
         smartFilterSelect.value = smartFilterState.smartFilter.name;
     }
-
-    // Set appropriate footer elements based on source
-    switch (smartFilterState.source) {
-        case SmartFilterSource.InRepo:
-            sourceName.textContent = "";
-            inRepoSelection.style.display = "block";
-            snippetAndFileFooter.style.display = "none";
-            break;
-        case SmartFilterSource.Snippet:
-            sourceName.textContent = "snippet server";
-            inRepoSelection.style.display = "none";
-            snippetAndFileFooter.style.display = "block";
-            break;
-        case SmartFilterSource.File:
-            sourceName.textContent = "local file";
-            inRepoSelection.style.display = "none";
-            snippetAndFileFooter.style.display = "block";
-            break;
-    }
 }
+
 // Whenever a new SmartFilter is loaded, update currentSmartFilter and start rendering
-smartFilterLoader.onSmartFilterLoadedObservable.add((loadResult: SmartFilterLoadedEvent) => {
-    currentSmartFilterState = loadResult;
+smartFilterLoader.onSmartFilterLoadedObservable.add((smartFilter: SmartFilter) => {
+    currentSmartFilterState = {
+        smartFilter,
+    };
     renderCurrentSmartFilter();
 });
-
-/**
- * Checks the hash for a snippet token and loads the SmartFilter if one is found.
- * Otherwise, loads the last in-repo SmartFilter or the default.
- */
-async function loadFromHash() {
-    const [snippetToken, version] = getSnippet();
-
-    try {
-        if (snippetToken) {
-            // Reset hash with our formatting to keep it looking consistent
-            setSnippet(snippetToken, version, false);
-            await smartFilterLoader.loadFromSnippet(snippetToken, version);
-        } else {
-            const smartFilterName =
-                localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName;
-            await smartFilterLoader.loadFromManifest(smartFilterName);
-        }
-    } catch (e) {
-        showError(`Could not load SmartFilter: ${e}`);
-    }
-}
-
-// Initial load and hashchange listener
-loadFromHash();
-window.addEventListener("hashchange", loadFromHash);
 
 // Populate the smart filter <select> list
 smartFilterLoader.manifests.forEach((manifest) => {
@@ -195,10 +144,9 @@ editActionLink.onclick = async () => {
             currentSmartFilterState.smartFilter,
             engine,
             renderer,
-            smartFilterLoader,
             showError,
             closeError,
-            customBlockManager
+            smartFilterDeserializer
         );
     }
 };
@@ -221,3 +169,8 @@ function showError(message: string) {
 function closeError() {
     errorContainer.style.display = "none";
 }
+
+// Load the most recently selected SmartFilter
+smartFilterLoader.loadFromManifest(
+    localStorage.getItem(LocalStorageSmartFilterName) || smartFilterLoader.defaultSmartFilterName
+);

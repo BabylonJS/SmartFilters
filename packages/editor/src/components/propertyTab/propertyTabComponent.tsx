@@ -116,7 +116,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     async load(_file: File) {
-        if (this.props.globalState.engine) {
+        if (this.props.globalState.engine && this.props.globalState.loadSmartFilter) {
             const newSmartFilter = await this.props.globalState.loadSmartFilter(_file, this.props.globalState.engine);
             if (newSmartFilter) {
                 this.props.globalState.smartFilter = newSmartFilter;
@@ -141,8 +141,10 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     downloadSmartFilter() {
-        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-        this.props.globalState.downloadSmartFilter();
+        if (this.props.globalState.downloadSmartFilter) {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            this.props.globalState.downloadSmartFilter();
+        }
     }
 
     async saveToSnippetServer() {
@@ -292,13 +294,17 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         />
                     </LineContainerComponent>
                     <LineContainerComponent title="FILE">
-                        <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
-                        <ButtonLineComponent
-                            label="Save"
-                            onClick={() => {
-                                this.downloadSmartFilter();
-                            }}
-                        />
+                        {this.props.globalState.loadSmartFilter && (
+                            <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
+                        )}
+                        {this.props.globalState.downloadSmartFilter && (
+                            <ButtonLineComponent
+                                label="Save"
+                                onClick={() => {
+                                    this.downloadSmartFilter();
+                                }}
+                            />
+                        )}
                         {this.props.globalState.saveToSnippetServer && (
                             <ButtonLineComponent
                                 label="Save to unique URL"

@@ -1,6 +1,5 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 
-// TODO: dedupe between demo and here (loader, renderer, etc)
 // TODO: UI for selecting aspect ratio of preview
 // TODO: preview popout
 
@@ -28,6 +27,7 @@ import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/remo
 import { addCustomBlockToBlockRegistration } from "./blockRegistration/addCustomBlockToBlockRegistration.js";
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
 import { loadFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
+import { texturePresets } from "./texturePresets.js";
 
 /**
  * The main entry point for the Smart Filter editor.
@@ -125,6 +125,9 @@ async function main(): Promise<void> {
             });
     };
 
+    //TODO: respond to hash changes
+    // window.addEventListener("hashchange", loadFromHash);
+
     const options: SmartFilterEditorOptions = {
         onNewEngine,
         onSmartFilterLoadedObservable,
@@ -154,6 +157,7 @@ async function main(): Promise<void> {
                 });
             }
         },
+        texturePresets,
         beforeRenderObservable: new Observable<void>(),
         rebuildRuntime,
         reloadAssets: () => {},

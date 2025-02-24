@@ -24,7 +24,7 @@
     "esnext": "dist/index",
     "types": "dist/index",
     "type": "module",
-    "sideEffects": true,
+    "sideEffects": false,
     "files": [
         "dist",
         "src",
