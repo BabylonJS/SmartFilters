@@ -10,11 +10,12 @@ import type { Nullable } from "@babylonjs/core/types";
 import { builtInBlockEditorRegistrations, getBlockRegistrationsForEditor } from "@babylonjs/smart-filters-blocks";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import { SmartFilterEditorControl, type SmartFilterEditorOptions } from "@babylonjs/smart-filters-editor-control";
-import { SmartFilterLoader } from "./smartFilterLoader.js";
 import { SmartFilterRenderer } from "./smartFilterRenderer.js";
 import { CustomBlockManager } from "./customBlockManager.js";
 import { generateCustomBlockEditorRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
 import { blockFactory } from "./blockRegistration/blockFactory.js";
+import { loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
+import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
 
 /**
  * The main entry point for the smart filter editor.
@@ -55,10 +56,6 @@ async function main(): Promise<void> {
 
     const blockRegistration = getBlockRegistrationsForEditor(smartFilterDeserializer, customBlockEditorRegistrations);
 
-    const smartFilterLoader: Nullable<SmartFilterLoader> = new SmartFilterLoader();
-
-    // TODO: load from URL
-    let smartFilterLoadPromise: Nullable<Promise<SmartFilter>> = smartFilterLoader.loadDefault();
     let smartFilter: Nullable<SmartFilter> = null;
 
     let renderer: Nullable<SmartFilterRenderer> = null;
@@ -84,20 +81,16 @@ async function main(): Promise<void> {
         }
         afterEngineResizerObserver = engine.onResizeObservable.add(afterEngineResize);
 
-        renderer = new SmartFilterRenderer(engine, optimize);
-
         let justLoadedSmartFilter = false;
-        if (smartFilterLoadPromise) {
-            smartFilter = await smartFilterLoadPromise;
-            smartFilterLoadPromise = null;
+        if (!smartFilter) {
+            smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, engine);
             justLoadedSmartFilter = true;
         }
 
-        if (smartFilter && renderer) {
-            renderer.startRendering(smartFilter);
-        }
+        renderer = new SmartFilterRenderer(engine, optimize);
+        renderer.startRendering(smartFilter);
 
-        if (smartFilter && justLoadedSmartFilter) {
+        if (justLoadedSmartFilter) {
             onSmartFilterLoadedObservable.notifyObservers(smartFilter);
         }
     };
@@ -110,6 +103,13 @@ async function main(): Promise<void> {
         downloadSmartFilter: () => {},
         loadSmartFilter: async (_file: File): Promise<SmartFilter> => {
             throw new Error("Not implemented");
+        },
+        saveToSnippetServer: () => {
+            if (smartFilter) {
+                saveToSnippetServer(smartFilter).catch((err: unknown) => {
+                    errorHandler(`Could not save to snippet server\n${err}`);
+                });
+            }
         },
         beforeRenderObservable: new Observable<void>(),
         rebuildRuntime: () => {

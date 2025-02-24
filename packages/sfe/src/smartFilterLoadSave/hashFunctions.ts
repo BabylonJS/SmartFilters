@@ -1,6 +1,5 @@
-// TODO: delete this file from demo
 // Constants
-const DELIMITER = "#"; // TODO: Pick another delimiter?
+const DELIMITER = "#";
 const SAFARI_DELIMITER = "%23";
 const DELIMITER_REGEX = new RegExp(`(?:${DELIMITER}|${SAFARI_DELIMITER})`);
 

@@ -1,56 +1,136 @@
-import { type SmartFilter } from "@babylonjs/smart-filters";
+import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import type { SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
+import type { SmartFilterRenderer } from "./smartFilterRenderer";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
-import { createDefaultSmartFilter } from "./defaultSmartFilter.js";
+import { ReadFile } from "@babylonjs/core/Misc/fileTools.js";
+
+/**
+ * Indicates the source of a SmartFilter
+ */
+export enum SmartFilterSource {
+    /**
+     * The SmartFilter was loaded from the snippet server
+     */
+    Snippet,
+
+    /**
+     * The SmartFilter was loaded from a JSON file
+     */
+    File,
+}
+
+/**
+ * Data for the onSmartFilterLoadedObservable event
+ */
+export type SmartFilterLoadedEvent = {
+    /**
+     * The loaded SmartFilter
+     */
+    smartFilter: SmartFilter;
+
+    /**
+     * The source of the SmartFilter
+     */
+    source: SmartFilterSource;
+};
 
 /**
  * Manges loading SmartFilters for the demo app
  */
 export class SmartFilterLoader {
-    /**
-     * Observable that is triggered before a SmartFilter is loaded.
-     */
-    public readonly beforeSmartFilterLoadedObservable = new Observable<void>();
+    private readonly _engine: ThinEngine;
+    private readonly _renderer: SmartFilterRenderer;
 
     /**
-     * Observable that is triggered when a SmartFilter is loaded.
+     * The SmartFilterDeserializer used to deserialize SmartFilters
      */
-    public readonly onSmartFilterLoadedObservable: Observable<SmartFilter>;
+    public readonly smartFilterDeserializer: SmartFilterDeserializer;
+
+    /**
+     * The URL of the snippet server
+     */
+    public readonly snippetUrl = "https://snippet.babylonjs.com";
+
+    /**
+     * Observable that notifies when a SmartFilter has been loaded
+     */
+    public readonly onSmartFilterLoadedObservable: Observable<SmartFilterLoadedEvent>;
 
     /**
      * Creates a new SmartFilterLoader
+     * @param engine - The ThinEngine to use
+     * @param renderer - The SmartFilterRenderer to use
+     * @param smartFilterDeserializer - The SmartFilterDeserializer to use
      */
-    constructor() {
-        this.beforeSmartFilterLoadedObservable = new Observable<void>();
-        this.onSmartFilterLoadedObservable = new Observable<SmartFilter>();
+    constructor(engine: ThinEngine, renderer: SmartFilterRenderer, smartFilterDeserializer: SmartFilterDeserializer) {
+        this._engine = engine;
+        this._renderer = renderer;
+        this.onSmartFilterLoadedObservable = new Observable<SmartFilterLoadedEvent>();
+        this.smartFilterDeserializer = smartFilterDeserializer;
     }
 
     /**
-     * Loads a SmartFilter from the manifest registered with the given name.
-     * @returns The loaded SmartFilter
+     * Loads a SmartFilter from the provided file.
+     * @param file - File object to load from
+     * @returns Promise that resolves with the loaded SmartFilter
      */
-    public async loadDefault(): Promise<SmartFilter> {
-        return this._loadSmartFilter(async () => createDefaultSmartFilter());
+    public async loadFromFile(file: File): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            // Await (data)
+            const data = await new Promise<string>((resolve, reject) => {
+                ReadFile(
+                    file,
+                    (data) => resolve(data),
+                    undefined,
+                    false,
+                    (error) => reject(error)
+                );
+            });
+            return this.smartFilterDeserializer.deserialize(this._engine, JSON.parse(data));
+        }, SmartFilterSource.File);
     }
 
     /**
-     * Disposes the SmartFilterLoader
+     * Loads a SmartFilter from the snippet server.
+     * @param snippetToken - Snippet token to load
+     * @param version - Version of the snippet to load
+     * @returns Promise that resolves with the loaded SmartFilter
      */
-    public dispose() {
-        this.onSmartFilterLoadedObservable.clear();
+    public async loadFromSnippet(snippetToken: string, version: string | undefined): Promise<SmartFilter> {
+        return this._loadSmartFilter(async () => {
+            const response = await fetch(`${this.snippetUrl}/${snippetToken}/${version || ""}`);
+
+            if (!response.ok) {
+                throw new Error(`Could not fetch snippet ${snippetToken}. Response was: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const snippet = JSON.parse(data.jsonPayload);
+            const serializedSmartFilter = JSON.parse(snippet.smartFilter);
+
+            return this.smartFilterDeserializer.deserialize(this._engine, serializedSmartFilter);
+        }, SmartFilterSource.Snippet);
     }
 
     /**
      * Internal method to reuse common loading logic
      * @param loader - Function that loads the SmartFilter from some source
-     * @returns The loaded SmartFilter
+     * @param source - Source of the SmartFilter (see SmartFilterSource)
+     * @returns Promise that resolves with the loaded SmartFilter
      */
-    private async _loadSmartFilter(loader: () => Promise<SmartFilter>): Promise<SmartFilter> {
-        this.beforeSmartFilterLoadedObservable.notifyObservers();
+    private async _loadSmartFilter(
+        loader: () => Promise<SmartFilter>,
+        source: SmartFilterSource
+    ): Promise<SmartFilter> {
+        this._renderer.beforeRenderObservable.clear();
 
         // Load the SmartFilter using the provided function.
         const smartFilter = await loader();
 
-        this.onSmartFilterLoadedObservable.notifyObservers(smartFilter);
+        this.onSmartFilterLoadedObservable.notifyObservers({
+            smartFilter,
+            source,
+        });
 
         return smartFilter;
     }
