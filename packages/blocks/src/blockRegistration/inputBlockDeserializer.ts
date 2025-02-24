@@ -17,9 +17,7 @@ export async function inputBlockDeserializer(
     engine: ThinEngine
 ): Promise<Nullable<BaseBlock>> {
     if (serializedBlock.name === BlockNames.webCam) {
-        const module = await import(
-            /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/inputs/webCamInputBlock.js"
-        );
+        const module = await import(/* webpackChunkName: "webCamBlock" */ "../blocks/inputs/webCamInputBlock.js");
         return new module.WebCamInputBlock(smartFilter, engine);
     }
     return null;

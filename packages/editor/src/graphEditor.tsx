@@ -85,7 +85,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     addValueNode(type: string) {
         const nodeType = BlockTools.GetConnectionNodeTypeFromString(type);
 
-        let newInputBlock: Nullable<BaseBlock> = this.props.globalState.blockRegistration.createInputBlock(
+        let newInputBlock: Nullable<BaseBlock> = this.props.globalState.blockEditorRegistration.createInputBlock(
             this.props.globalState,
             type
         );
@@ -341,7 +341,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         } else {
             let block: Nullable<BaseBlock> = null;
             if (this.props.globalState.engine) {
-                block = await this.props.globalState.blockRegistration.getBlockFromString(
+                block = await this.props.globalState.blockEditorRegistration.getBlockFromString(
                     blockType,
                     this.props.globalState.smartFilter,
                     this.props.globalState.engine
@@ -353,7 +353,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                 );
                 return;
             }
-            if (this.props.globalState.blockRegistration.getIsUniqueBlock(block)) {
+            if (this.props.globalState.blockEditorRegistration.getIsUniqueBlock(block)) {
                 const className = block.getClassName();
                 for (const other of this._graphCanvas.getCachedData()) {
                     if (other !== block && other.getClassName() === className) {

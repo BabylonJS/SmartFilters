@@ -8,8 +8,8 @@ import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
-import type { BlockRegistration } from "./smartFilterEditorControl.js";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
+import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
 
 export type TexturePreset = {
     name: string;
@@ -29,7 +29,7 @@ export class GlobalState {
 
     smartFilter: SmartFilter;
 
-    blockRegistration: BlockRegistration;
+    blockEditorRegistration: BlockEditorRegistration;
 
     hostElement: HTMLElement;
 
@@ -91,7 +91,7 @@ export class GlobalState {
         onNewEngine: Nullable<(engine: ThinEngine) => void>,
         onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
         smartFilter: Nullable<SmartFilter>,
-        blockRegistration: BlockRegistration,
+        blockEditorRegistration: BlockEditorRegistration,
         hostElement: HTMLElement,
         beforeRenderObservable: Observable<void>,
         rebuildRuntime: () => void,
@@ -116,7 +116,7 @@ export class GlobalState {
         this.onNewEngine = onNewEngine;
         this.onSmartFilterLoadedObservable = onSmartFilterLoadedObservable;
         this.smartFilter = smartFilter ?? new SmartFilter("New Filter");
-        this.blockRegistration = blockRegistration;
+        this.blockEditorRegistration = blockEditorRegistration;
         this.hostElement = hostElement;
         this.hostDocument = hostElement.ownerDocument!;
         this.hostWindow = hostElement.ownerDocument!.defaultView!;

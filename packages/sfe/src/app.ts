@@ -1,25 +1,25 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 
 // TODO: UI for selecting aspect ratio of preview
-// TODO: preview popout
 
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
 import {
-    builtInBlockEditorRegistrations,
-    getBlockRegistrationsForEditor,
+    builtInBlockRegistrations,
     inputBlockDeserializer,
+    type IBlockRegistration,
 } from "@babylonjs/smart-filters-blocks";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import {
+    getBlockEditorRegistration,
     LogEntry,
     SmartFilterEditorControl,
     type SmartFilterEditorOptions,
 } from "@babylonjs/smart-filters-editor-control";
 import { SmartFilterRenderer } from "./smartFilterRenderer.js";
 import { CustomBlockManager } from "./customBlockManager.js";
-import { generateCustomBlockEditorRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
+import { generateCustomBlockRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
 import { blockFactory } from "./blockRegistration/blockFactory.js";
 import { loadFromUrl, loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
 import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
@@ -52,7 +52,7 @@ async function main(): Promise<void> {
                 serializedBlock,
                 customBlockManager,
                 smartFilterDeserializer,
-                builtInBlockEditorRegistrations
+                builtInBlockRegistrations
             );
         },
         inputBlockDeserializer
@@ -61,18 +61,19 @@ async function main(): Promise<void> {
     // Create the custom block manager
     const customBlockManager = new CustomBlockManager();
     const customBlockTypeNames = customBlockManager.getCustomBlockTypeNames();
-    const customBlockEditorRegistrations = generateCustomBlockEditorRegistrations(
+    const customBlockRegistrations = generateCustomBlockRegistrations(
         customBlockManager,
         smartFilterDeserializer,
         customBlockTypeNames
     );
 
-    const blockRegistration = getBlockRegistrationsForEditor(smartFilterDeserializer, customBlockEditorRegistrations);
+    // Create the block editor registration
+    const allBlockRegistrations: IBlockRegistration[] = [...customBlockRegistrations, ...builtInBlockRegistrations];
+    const blockEditorRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations);
 
-    let smartFilter: Nullable<SmartFilter> = null;
-
-    let renderer: Nullable<SmartFilterRenderer> = null;
     const optimize = false;
+    let smartFilter: Nullable<SmartFilter> = null;
+    let renderer: Nullable<SmartFilterRenderer> = null;
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
     const onLogRequiredObservable = new Observable<LogEntry>();
@@ -148,7 +149,7 @@ async function main(): Promise<void> {
     const options: SmartFilterEditorOptions = {
         onNewEngine,
         onSmartFilterLoadedObservable,
-        blockRegistration,
+        blockRegistration: blockEditorRegistration,
         hostElement,
         downloadSmartFilter: () => {
             if (smartFilter) {
@@ -185,8 +186,8 @@ async function main(): Promise<void> {
         addCustomShaderBlock: (serializedData: string) => {
             try {
                 const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
-                removeCustomBlockFromBlockRegistration(blockRegistration, blockDefinition.blockType);
-                addCustomBlockToBlockRegistration(blockRegistration, blockDefinition);
+                removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockDefinition.blockType);
+                addCustomBlockToBlockRegistration(blockEditorRegistration, blockDefinition);
                 rebuildRuntime();
             } catch (err) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
@@ -194,7 +195,7 @@ async function main(): Promise<void> {
         },
         deleteCustomShaderBlock: (blockType: string) => {
             customBlockManager.deleteBlockDefinition(blockType);
-            removeCustomBlockFromBlockRegistration(blockRegistration, blockType);
+            removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockType);
         },
         onLogRequiredObservable,
     };

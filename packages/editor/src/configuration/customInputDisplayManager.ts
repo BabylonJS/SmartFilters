@@ -1,8 +1,8 @@
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import { ConnectionPointType, type AnyInputBlock } from "@babylonjs/smart-filters";
-import { InputDisplayManager } from "@babylonjs/smart-filters-editor-control";
-import type { WebCamInputBlock } from "../blocks/inputs/webCamInputBlock";
-import { BlockNames } from "../blocks/blockNames.js";
+import type { WebCamInputBlock } from "@babylonjs/smart-filters-blocks/src/blocks/inputs/webCamInputBlock";
+import { BlockNames } from "@babylonjs/smart-filters-blocks/src/blocks/blockNames";
+import { InputDisplayManager } from "../graphSystem/display/inputDisplayManager";
 
 /**
  * Optional override of the InputDisplayManager to provide custom display for particular blocks if desired.

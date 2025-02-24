@@ -1,9 +1,9 @@
 import { logCommands, type SmartFilterDeserializer, type SmartFilter } from "@babylonjs/smart-filters";
-import { SmartFilterEditorControl } from "@babylonjs/smart-filters-editor-control";
+import { getBlockEditorRegistration, SmartFilterEditorControl } from "@babylonjs/smart-filters-editor-control";
 import { texturePresets } from "../configuration/texturePresets";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
-import { getBlockRegistrationsForEditor } from "@babylonjs/smart-filters-blocks";
+import { builtInBlockRegistrations } from "@babylonjs/smart-filters-blocks";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported
@@ -24,7 +24,7 @@ export function launchEditor(
     }
 
     // Set up block registration
-    const blockRegistration = getBlockRegistrationsForEditor(smartFilterDeserializer, []);
+    const blockRegistration = getBlockEditorRegistration(smartFilterDeserializer, builtInBlockRegistrations);
 
     // Function to rebuild the runtime
     function rebuildRuntime() {

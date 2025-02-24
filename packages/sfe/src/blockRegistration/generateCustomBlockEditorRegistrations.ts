@@ -1,48 +1,48 @@
-import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor-control";
 import type { CustomBlockManager } from "../customBlockManager";
 import type { SerializedBlockDefinition, SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
- * Generates the block editor registrations for custom blocks.
+ * Generates the block registrations for custom blocks.
  * @param customBlockManager - The custom block manager.
  * @param smartFilterDeserializer - The Smart Filter deserializer.
  * @param customBlockTypeNames - The names of the custom block types.
- * @returns
+ * @returns - The block registrations.
  */
-export function generateCustomBlockEditorRegistrations(
+export function generateCustomBlockRegistrations(
     customBlockManager: CustomBlockManager,
     smartFilterDeserializer: SmartFilterDeserializer,
     customBlockTypeNames: string[]
-): IBlockEditorRegistration[] {
-    const blockEditorRegistrations: IBlockEditorRegistration[] = [];
+): IBlockRegistration[] {
+    const blockRegistrations: IBlockRegistration[] = [];
 
     if (customBlockTypeNames.length > 0) {
         for (const customBlockType of customBlockTypeNames) {
             const blockDefinition = customBlockManager.getBlockDefinition(customBlockType);
             if (blockDefinition) {
-                blockEditorRegistrations.push(
-                    createBlockEditorRegistration(customBlockManager, blockDefinition, smartFilterDeserializer)
+                blockRegistrations.push(
+                    createBlockRegistration(customBlockManager, blockDefinition, smartFilterDeserializer)
                 );
             }
         }
     }
 
-    return blockEditorRegistrations;
+    return blockRegistrations;
 }
 
 /**
- * Creates a block editor registration for a custom block
+ * Creates a block registration for a custom block
  * @param customBlockManager - The custom block manager.
  * @param blockDefinition - The serialized block definition.
  * @param deserializer - The Smart Filter deserializer.
- * @returns - The block editor registration.
+ * @returns - The block registration.
  */
-function createBlockEditorRegistration(
+function createBlockRegistration(
     customBlockManager: CustomBlockManager,
     blockDefinition: SerializedBlockDefinition,
     deserializer: SmartFilterDeserializer
-): IBlockEditorRegistration {
+): IBlockRegistration {
     return {
         name: blockDefinition.blockType,
         category: "Custom_Blocks",

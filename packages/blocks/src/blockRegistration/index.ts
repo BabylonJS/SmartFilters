@@ -1,3 +1,3 @@
-export * from "./getBlockRegistration.js";
-export * from "./builtInBlockEditorRegistrations.js";
+export * from "./builtInBlockRegistrations.js";
 export * from "./inputBlockDeserializer.js";
+export * from "./IBlockRegistration.js";

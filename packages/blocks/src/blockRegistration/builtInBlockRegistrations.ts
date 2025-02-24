@@ -8,11 +8,11 @@ import {
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blocks/blockNames.js";
 
-import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor-control";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import type { IBlockRegistration } from "./IBlockRegistration.js";
 
 /**
- * The list of block editor registrations.
+ * The list of block registrations.
  *
  * Important notes:
  *   1. Do not import the block code directly in this file. Instead, use dynamic imports to ensure that the block code
@@ -21,7 +21,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
  *   3. If the deserializer is non-trivial (needs serializedBlock.data), implement it in a separate file alongside the block
  *      in the form blockClassName.deserializer.ts
  */
-export const builtInBlockEditorRegistrations: IBlockEditorRegistration[] = [
+export const builtInBlockRegistrations: IBlockRegistration[] = [
     // Special input blocks
     // --------------------
     {

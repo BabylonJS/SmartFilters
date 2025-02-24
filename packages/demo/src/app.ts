@@ -12,7 +12,7 @@ import { TextureRenderHelper } from "./textureRenderHelper";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
 import { hookupBackgroundOption } from "./backgroundOption";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { builtInBlockEditorRegistrations, inputBlockDeserializer } from "@babylonjs/smart-filters-blocks";
+import { builtInBlockRegistrations, inputBlockDeserializer } from "@babylonjs/smart-filters-blocks";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;
@@ -49,13 +49,7 @@ const smartFilterDeserializer = new SmartFilterDeserializer(
         serializedBlock: ISerializedBlockV1,
         smartFilterDeserializer: SmartFilterDeserializer
     ) => {
-        return blockFactory(
-            smartFilter,
-            engine,
-            serializedBlock,
-            smartFilterDeserializer,
-            builtInBlockEditorRegistrations
-        );
+        return blockFactory(smartFilter, engine, serializedBlock, smartFilterDeserializer, builtInBlockRegistrations);
     },
     inputBlockDeserializer
 );
