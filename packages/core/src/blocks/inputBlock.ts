@@ -111,7 +111,7 @@ export type InputBlockEditorData<T extends ConnectionPointType> = T extends Conn
 /**
  * Captures the app id and metadata specific to the app.
  */
-export type AppMetadata<V = any> = {
+export type AppMetadata<V = unknown> = {
     /**
      * The id of the app that knows about the schema of this metadata.
      */
