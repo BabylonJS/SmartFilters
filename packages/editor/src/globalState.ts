@@ -16,7 +16,11 @@ export type TexturePreset = {
     url: string;
 };
 
+const PreviewBackgroundStorageKey = "PreviewBackground";
+
 export class GlobalState {
+    private _previewBackground: string;
+
     engine: Nullable<ThinEngine>;
 
     onNewEngine: Nullable<(engine: ThinEngine) => void>;
@@ -53,6 +57,8 @@ export class GlobalState {
 
     onResetRequiredObservable = new Observable<boolean>();
 
+    onPreviewResetRequiredObservable = new Observable<void>();
+
     onSaveEditorDataRequiredObservable = new Observable<void>();
 
     texturePresets: TexturePreset[];
@@ -70,6 +76,15 @@ export class GlobalState {
     addCustomShaderBlock?: (serializedData: string) => void;
 
     deleteCustomShaderBlock?: (blockType: string) => void;
+
+    public get previewBackground(): string {
+        return this._previewBackground;
+    }
+
+    public set previewBackground(value: string) {
+        this._previewBackground = value;
+        localStorage.setItem(PreviewBackgroundStorageKey, value);
+    }
 
     public constructor(
         engine: Nullable<ThinEngine>,
@@ -117,5 +132,7 @@ export class GlobalState {
         this.deleteCustomShaderBlock = deleteCustomShaderBlock;
 
         this.onLogRequiredObservable = onLogRequiredObservable ?? new Observable<LogEntry>();
+
+        this._previewBackground = localStorage.getItem(PreviewBackgroundStorageKey) ?? "grid";
     }
 }

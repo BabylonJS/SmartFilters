@@ -9,6 +9,7 @@ interface IPreviewAreaComponentProps {
 
 export class PreviewAreaComponent extends react.Component<IPreviewAreaComponentProps, { isLoading: boolean }> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
+    private _onPreviewResetRequiredObserver: Nullable<Observer<void>>;
 
     constructor(props: IPreviewAreaComponentProps) {
         super(props);
@@ -16,17 +17,20 @@ export class PreviewAreaComponent extends react.Component<IPreviewAreaComponentP
         this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable.add(() => {
             this.forceUpdate();
         });
+        this._onPreviewResetRequiredObserver = this.props.globalState.onPreviewResetRequiredObservable.add(() => {
+            this.forceUpdate();
+        });
     }
 
     override componentWillUnmount() {
         this.props.globalState.onResetRequiredObservable.remove(this._onResetRequiredObserver);
+        this.props.globalState.onPreviewResetRequiredObservable.remove(this._onPreviewResetRequiredObserver);
     }
 
     override render() {
-        // TODO: add pop out window
         return (
             <>
-                <div id="preview">
+                <div id="preview" className={"preview-background-" + this.props.globalState.previewBackground}>
                     <canvas id="sfe-preview-canvas" />
                     {!this.props.globalState.smartFilter ? (
                         <div className={"waitPanel" + (this.state.isLoading ? "" : " hidden")}>

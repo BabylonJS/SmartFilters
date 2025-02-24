@@ -141,6 +141,10 @@
                     width: 115px;
                 }
             }
+
+            .copy {
+                display: none;
+            }
         }
 
         .button {
@@ -291,6 +295,21 @@
         }
     }
 
+    .preview-background-grid {
+        background: conic-gradient(#cccccc 90deg, #ffffff 90deg 180deg, #cccccc 180deg 270deg, #ffffff 270deg);
+        background-repeat: repeat;
+        background-size: 100px 100px;
+        background-position: top left;
+    }
+
+    .preview-background-black {
+        background-color: black;
+    }
+
+    .preview-background-white {
+        background-color: white;
+    }
+
     #preview {
         border-top: 1px solid rgb(85, 85, 85);
         grid-row: 3;
@@ -302,6 +321,7 @@
         -webkit-user-select: none;
         user-select: none;
         overflow: hidden;
+        aspect-ratio: 1.462857142857143;
 
         #sfe-preview-canvas {
             width: 100%;
