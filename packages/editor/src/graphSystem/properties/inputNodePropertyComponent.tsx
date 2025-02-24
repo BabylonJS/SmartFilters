@@ -86,7 +86,9 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
                         }}
                         onChange={() => {
                             try {
-                                const objectData = JSON.parse(appMetadataTarget.metadata);
+                                const objectData = appMetadataTarget.metadata
+                                    ? JSON.parse(appMetadataTarget.metadata)
+                                    : undefined;
 
                                 if (!this.props.nodeData.data.appMetadata) {
                                     this.props.nodeData.data.appMetadata = { appId: "", metadata: objectData };

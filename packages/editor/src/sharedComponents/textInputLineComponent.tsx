@@ -254,12 +254,6 @@ export class TextInputLineComponent extends react.Component<
                                 }
                             }}
                             onChange={(evt) => this.updateValue(evt.target.value, evt.target.value)}
-                            onKeyDown={(evt) => {
-                                if (evt.keyCode !== 13) {
-                                    return;
-                                }
-                                this.updateValue(this.state.value);
-                            }}
                             onBlur={(evt) => {
                                 this.updateValue(evt.target.value, evt.target.value);
                                 if (this.props.lockObject) {
