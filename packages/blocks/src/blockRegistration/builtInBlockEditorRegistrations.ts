@@ -1,4 +1,10 @@
-import type { SmartFilterDeserializer, ISerializedBlockV1, SmartFilter } from "@babylonjs/smart-filters";
+import {
+    type SmartFilterDeserializer,
+    type ISerializedBlockV1,
+    type SmartFilter,
+    InputBlock,
+    ConnectionPointType,
+} from "@babylonjs/smart-filters";
 import { BlockNames } from "../blocks/blockNames.js";
 
 import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor-control";
@@ -19,21 +25,21 @@ export const builtInBlockEditorRegistrations: IBlockEditorRegistration[] = [
             return new module.WebCamInputBlock(smartFilter, engine);
         },
     },
-    // {
-    //     name: "TimeBlock",
-    //     category: "Inputs",
-    //     tooltip: "Supplies a float value representing the current time",
-    //     factory: (smartFilter: SmartFilter) => {
-    //         const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
-    //         inputBlock.editorData = {
-    //             animationType: "time",
-    //             valueDeltaPerMs: 0.001,
-    //             min: null,
-    //             max: null,
-    //         };
-    //         return Promise.resolve(inputBlock);
-    //     },
-    // },
+    {
+        name: BlockNames.time,
+        category: "Inputs",
+        tooltip: "Supplies a float value representing the current time",
+        factory: (smartFilter: SmartFilter) => {
+            const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
+            inputBlock.editorData = {
+                animationType: "time",
+                valueDeltaPerMs: 0.001,
+                min: null,
+                max: null,
+            };
+            return Promise.resolve(inputBlock);
+        },
+    },
     {
         name: BlockNames.blackAndWhite,
         factory: async (
