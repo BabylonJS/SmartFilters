@@ -42,9 +42,6 @@ var buildConfig = function (env) {
                 '.js': ['.js', '.ts'],
             },
             alias: {
-                // "core": path.resolve("node_modules/@babylonjs/core"),
-                // "shared-ui-components": path.resolve("node_modules/@dev/shared-ui-components"),
-                // TODO. React not understood as a module
                 react: path.resolve("../../node_modules/react"),
                 "react-dom": path.resolve("../../node_modules/react-dom"),
             },
