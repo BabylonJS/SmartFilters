@@ -34,7 +34,7 @@ export class LogComponent extends react.Component<ILogComponentProps, { logs: Lo
     }
 
     override componentDidUpdate() {
-        const logConsole = reactDOM.findDOMNode(this.refs["nme-log-console"]) as HTMLElement;
+        const logConsole = reactDOM.findDOMNode(this.refs["sfe-log-console"]) as HTMLElement;
         if (!logConsole) {
             return;
         }
@@ -44,7 +44,7 @@ export class LogComponent extends react.Component<ILogComponentProps, { logs: Lo
 
     override render() {
         return (
-            <div id="nme-log-console" ref={"log-console"}>
+            <div id="sfe-log-console" ref={"log-console"}>
                 {this.state.logs.map((l, i) => {
                     return (
                         <div key={i} className={"log" + (l.isError ? " error" : "")}>

@@ -47,7 +47,7 @@ export class SmartFilterRenderer {
     public optimize: boolean = false;
 
     /**
-     * Creates a new smart filter renderer.
+     * Creates a new Smart Filter renderer.
      * @param engine - the engine to use to render the filter
      * @param optimize - if true, Smart Filters rendered with this renderer will be optimized
      */

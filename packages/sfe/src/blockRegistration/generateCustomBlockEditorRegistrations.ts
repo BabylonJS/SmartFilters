@@ -6,7 +6,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 /**
  * Generates the block editor registrations for custom blocks.
  * @param customBlockManager - The custom block manager.
- * @param smartFilterDeserializer - The smart filter deserializer.
+ * @param smartFilterDeserializer - The Smart Filter deserializer.
  * @param customBlockTypeNames - The names of the custom block types.
  * @returns
  */
@@ -35,7 +35,7 @@ export function generateCustomBlockEditorRegistrations(
  * Creates a block editor registration for a custom block
  * @param customBlockManager - The custom block manager.
  * @param blockDefinition - The serialized block definition.
- * @param deserializer - The smart filter deserializer.
+ * @param deserializer - The Smart Filter deserializer.
  * @returns - The block editor registration.
  */
 function createBlockEditorRegistration(

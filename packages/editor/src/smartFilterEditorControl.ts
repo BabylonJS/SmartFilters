@@ -10,6 +10,7 @@ import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
+import type { LogEntry } from "./components/log/logComponent.js";
 
 /**
  * An object that contains all of the information the Editor needs to display and
@@ -148,6 +149,11 @@ export type SmartFilterEditorOptions = {
      * @param blockType - The type of the custom shader block to delete
      */
     deleteCustomShaderBlock?: (blockType: string) => void;
+
+    /**
+     * An observable that is called when the editor needs to log a message
+     */
+    onLogRequiredObservable?: Observable<LogEntry>;
 };
 
 /**
@@ -194,7 +200,8 @@ export class SmartFilterEditorControl {
             options.saveToSnippetServer,
             options.texturePresets,
             options.addCustomShaderBlock,
-            options.deleteCustomShaderBlock
+            options.deleteCustomShaderBlock,
+            options.onLogRequiredObservable
         );
 
         RegisterToDisplayManagers(globalState);

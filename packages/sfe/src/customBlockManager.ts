@@ -39,7 +39,7 @@ export class CustomBlockManager {
 
     /**
      * Instantiates a block from a block type.
-     * @param smartFilter - The smart filter to create the block for
+     * @param smartFilter - The Smart Filter to create the block for
      * @param engine - The engine to use
      * @param blockType - The block type to create
      * @param smartFilterDeserializer - The deserializer to use
@@ -61,7 +61,7 @@ export class CustomBlockManager {
 
     /**
      * Instantiates a block from a saved block definition.
-     * @param smartFilter - The smart filter to create the block for
+     * @param smartFilter - The Smart Filter to create the block for
      * @param engine - The engine to use
      * @param blockDefinition - The serialized block definition
      * @param smartFilterDeserializer - The deserializer to use

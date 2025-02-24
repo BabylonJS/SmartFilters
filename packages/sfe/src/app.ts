@@ -13,7 +13,11 @@ import {
     inputBlockDeserializer,
 } from "@babylonjs/smart-filters-blocks";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
-import { SmartFilterEditorControl, type SmartFilterEditorOptions } from "@babylonjs/smart-filters-editor-control";
+import {
+    LogEntry,
+    SmartFilterEditorControl,
+    type SmartFilterEditorOptions,
+} from "@babylonjs/smart-filters-editor-control";
 import { SmartFilterRenderer } from "./smartFilterRenderer.js";
 import { CustomBlockManager } from "./customBlockManager.js";
 import { generateCustomBlockEditorRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
@@ -26,7 +30,7 @@ import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.j
 import { loadFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 
 /**
- * The main entry point for the smart filter editor.
+ * The main entry point for the Smart Filter editor.
  */
 async function main(): Promise<void> {
     const hostElement = document.getElementById("container");
@@ -34,7 +38,7 @@ async function main(): Promise<void> {
         throw new Error("Could not find the container element");
     }
 
-    // Create the smart filter deserializer
+    // Create the Smart Filter deserializer
     const smartFilterDeserializer = new SmartFilterDeserializer(
         (
             smartFilter: SmartFilter,
@@ -71,6 +75,7 @@ async function main(): Promise<void> {
     const optimize = false;
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
+    const onLogRequiredObservable = new Observable<LogEntry>();
 
     const afterEngineResize = (): void => {
         if (smartFilter && renderer) {
@@ -96,7 +101,7 @@ async function main(): Promise<void> {
                 smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, engine);
                 justLoadedSmartFilter = true;
             } catch (err) {
-                errorHandler(`Could not load starting smart filter\n${err}`);
+                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load Smart Filter:\n${err}`, true));
                 return;
             }
         }
@@ -110,9 +115,14 @@ async function main(): Promise<void> {
     };
 
     const rebuildRuntime = () => {
-        renderer?.rebuildRuntime().catch((err: unknown) => {
-            errorHandler(`Could not start rendering\n${err}`);
-        });
+        renderer
+            ?.rebuildRuntime()
+            .then(() => {
+                onLogRequiredObservable.notifyObservers(new LogEntry("Smart Filter rebuilt successfully", false));
+            })
+            .catch((err: unknown) => {
+                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not start rendering:\n${err}`, true));
+            });
     };
 
     const options: SmartFilterEditorOptions = {
@@ -123,12 +133,14 @@ async function main(): Promise<void> {
         downloadSmartFilter: () => {
             if (smartFilter) {
                 downloadSmartFilter(smartFilter);
+                onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter JSON downloaded", false));
             }
         },
         loadSmartFilter: async (file: File, engine: ThinEngine) => {
             if (renderer) {
                 smartFilter = await loadFromFile(smartFilterDeserializer, engine, file);
                 renderer.startRendering(smartFilter);
+                onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
                 return smartFilter;
             }
             return null;
@@ -136,7 +148,9 @@ async function main(): Promise<void> {
         saveToSnippetServer: () => {
             if (smartFilter) {
                 saveToSnippetServer(smartFilter).catch((err: unknown) => {
-                    errorHandler(`Could not save to snippet server\n${err}`);
+                    onLogRequiredObservable.notifyObservers(
+                        new LogEntry(`Could not save to snippet server:\n${err}`, true)
+                    );
                 });
             }
         },
@@ -150,25 +164,17 @@ async function main(): Promise<void> {
                 addCustomBlockToBlockRegistration(blockRegistration, blockDefinition);
                 rebuildRuntime();
             } catch (err) {
-                errorHandler(`Could not load custom block:\n${err}`);
+                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
             }
         },
         deleteCustomShaderBlock: (blockType: string) => {
             customBlockManager.deleteBlockDefinition(blockType);
             removeCustomBlockFromBlockRegistration(blockRegistration, blockType);
         },
+        onLogRequiredObservable,
     };
 
     SmartFilterEditorControl.Show(options);
-}
-
-/**
- * Logs an error message to the console
- * @param message - The error message to log
- */
-function errorHandler(message: string): void {
-    // TODO: route to the editor console instead
-    console.error(message);
 }
 
 main().catch((error) => {

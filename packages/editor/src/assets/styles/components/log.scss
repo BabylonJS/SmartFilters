@@ -1,5 +1,5 @@
-#nme-log-console {
-    background: #333333;
+#sfe-log-console {
+    background: #333;
     height: 120px;
     box-sizing: border-box;
     margin: 0;
@@ -14,9 +14,9 @@
         color: white;
         font-size: 14px;
         font-family: "Courier New", Courier, monospace;
+    }
 
-        &.error {
-            color: red;
-        }
+    .error {
+        color: red;
     }
 }

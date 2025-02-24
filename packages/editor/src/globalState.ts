@@ -43,7 +43,7 @@ export class GlobalState {
 
     onGetNodeFromBlock: (block: BaseBlock) => Nullable<GraphNode> = () => null;
 
-    onLogRequiredObservable = new Observable<LogEntry>();
+    onLogRequiredObservable: Observable<LogEntry>;
 
     onPopupClosedObservable = new Observable<void>();
 
@@ -86,7 +86,8 @@ export class GlobalState {
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
         addCustomShaderBlock?: (serializedData: string) => void,
-        deleteCustomShaderBlock?: (blockType: string) => void
+        deleteCustomShaderBlock?: (blockType: string) => void,
+        onLogRequiredObservable?: Observable<LogEntry>
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
@@ -114,5 +115,7 @@ export class GlobalState {
         this.reloadAssets = reloadAssets;
         this.addCustomShaderBlock = addCustomShaderBlock;
         this.deleteCustomShaderBlock = deleteCustomShaderBlock;
+
+        this.onLogRequiredObservable = onLogRequiredObservable ?? new Observable<LogEntry>();
     }
 }

@@ -1,9 +1,9 @@
 import { SmartFilterSerializer, type SmartFilter } from "@babylonjs/smart-filters";
 
 /**
- * Serializes the provided smart filter to a JSON string.
- * @param smartFilter - The smart filter to serialize
- * @returns The serialized smart filter
+ * Serializes the provided Smart Filter to a JSON string.
+ * @param smartFilter - The Smart Filter to serialize
+ * @returns The serialized Smart Filter
  */
 export async function serializeSmartFilter(smartFilter: SmartFilter): Promise<string> {
     const serializerModule = await import(
