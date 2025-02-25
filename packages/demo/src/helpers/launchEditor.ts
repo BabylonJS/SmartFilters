@@ -43,7 +43,9 @@ export function launchEditor(
 
     // Display the editor
     SmartFilterEditorControl.Show({
+    SmartFilterEditorControl.Show({
         engine,
+        blockEditorRegistration: blockRegistration,
         blockEditorRegistration: blockRegistration,
         filter: currentSmartFilter,
         rebuildRuntime,
