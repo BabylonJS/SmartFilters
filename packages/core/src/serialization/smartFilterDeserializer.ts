@@ -189,7 +189,9 @@ export class SmartFilterDeserializer {
                 // If it's not an input or output block, use the provided block factory
                 newBlock = await this._blockFactory(smartFilter, engine, serializedBlock, this);
                 if (!newBlock) {
-                    blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
+                    if (blockTypesWhichCouldNotBeDeserialized.indexOf(serializedBlock.blockType) === -1) {
+                        blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
+                    }
                     return;
                 }
             }
