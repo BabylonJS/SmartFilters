@@ -28,7 +28,6 @@ import { initializePreview } from "./initializePreview.js";
 import { PreviewAreaControlComponent } from "./components/preview/previewAreaControlComponent.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
-import { PreviewManager } from "./components/preview/previewManager.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -55,7 +54,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     private _diagramContainer!: HTMLDivElement;
     private _canvasResizeObserver: Nullable<ResizeObserver> = null;
 
-    private _previewManager: Nullable<PreviewManager> = null;
     private _mouseLocationX = 0;
     private _mouseLocationY = 0;
     private _onWidgetKeyUpPointer: any;
@@ -407,9 +405,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     };
 
     handleClosingPopUp = () => {
-        if (this._previewManager) {
-            this._previewManager.dispose();
-        }
         this._popUpWindow?.close();
         this.setState(
             {
@@ -424,7 +419,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             "sfe-preview-canvas"
         ) as HTMLCanvasElement
     ) => {
-        this._previewManager = new PreviewManager(canvas, this.props.globalState);
         if (canvas && this.props.globalState.onNewEngine) {
             const engine = initializePreview(canvas);
             this.props.globalState.engine = engine;
