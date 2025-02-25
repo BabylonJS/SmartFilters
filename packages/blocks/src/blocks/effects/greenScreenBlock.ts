@@ -8,6 +8,7 @@ import {
     DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -95,6 +96,11 @@ export class GreenScreenBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.greenScreen;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point.

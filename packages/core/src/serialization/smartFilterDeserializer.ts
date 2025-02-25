@@ -67,7 +67,7 @@ export class SmartFilterDeserializer {
         engine: ThinEngine,
         serializedSmartFilter: SerializedSmartFilterV1
     ): Promise<SmartFilter> {
-        const smartFilter = new SmartFilter(serializedSmartFilter.name);
+        const smartFilter = new SmartFilter(serializedSmartFilter.name, serializedSmartFilter.namespace);
         const blockIdMap = new Map<number, BaseBlock>();
 
         // Only needed for smart filters saved before we started using uniqueIds for the maps, didn't warrant new version
@@ -161,6 +161,11 @@ export class SmartFilterDeserializer {
         // Not worth creating a new version for this, as it's only used in the deserializer
         if ((serializedBlock as any).className && !serializedBlock.blockType) {
             serializedBlock.blockType = (serializedBlock as any).className;
+        }
+
+        // Back compat for early Smart Filter V1 serialization where the namespace was not stored
+        if (serializedBlock.namespace === undefined) {
+            serializedBlock.namespace = null;
         }
 
         // Get the instance of the block

@@ -95,14 +95,14 @@ export type SmartFilterEditorOptions = {
     reloadAssets: () => void;
 
     /**
-     * If supplied, the editor will call this function when the user tries to add a custom shader block
-     * @param serializedData - The serialized data of the custom shader block
+     * If supplied, the editor will call this function when the user tries to add a custom block
+     * @param serializedData - The serialized data of the custom block
      */
-    addCustomShaderBlock?: (serializedData: string) => void;
+    addCustomBlock?: (serializedData: string) => void;
 
     /**
-     * If supplied, the editor will call this function when the user tries to delete a custom shader block
-     * @param blockType - The type of the custom shader block to delete
+     * If supplied, the editor will call this function when the user tries to delete a custom block
+     * @param blockEditorRegistration - The block editor registration of the custom block to delete
      */
     deleteCustomShaderBlock?: (blockType: string) => void;
 

@@ -73,18 +73,9 @@ export class GlobalState {
 
     reloadAssets: () => void;
 
-    addCustomShaderBlock?: (serializedData: string) => void;
+    addCustomBlock?: (serializedData: string) => void;
 
-    deleteCustomShaderBlock?: (blockType: string) => void;
-
-    public get previewBackground(): string {
-        return this._previewBackground;
-    }
-
-    public set previewBackground(value: string) {
-        this._previewBackground = value;
-        localStorage.setItem(PreviewBackgroundStorageKey, value);
-    }
+    deleteCustomBlock?: (blockType: string) => void;
 
     public constructor(
         engine: Nullable<ThinEngine>,
@@ -100,9 +91,8 @@ export class GlobalState {
         loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
-        addCustomShaderBlock?: (serializedData: string) => void,
-        deleteCustomShaderBlock?: (blockType: string) => void,
-        onLogRequiredObservable?: Observable<LogEntry>
+        addCustomBlock?: (serializedData: string) => void,
+        deleteCustomBlock?: (blockType: string) => void
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;

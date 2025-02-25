@@ -1,6 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { DirectionalBlurBlock } from "./directionalBlurBlock";
 import { BlockNames } from "../blockNames.js";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 /**
  * The V1 serializer for a Directional Blur Block
@@ -17,6 +18,7 @@ export const directionalBlurBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: BlockNames.directionalBlur,
+            namespace: babylonDemoEffects,
             comments: block.comments,
             data: {
                 blurTextureRatio: directionalBlurBlock.blurTextureRatio,

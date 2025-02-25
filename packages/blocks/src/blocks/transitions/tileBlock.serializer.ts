@@ -1,6 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { TileBlock } from "./tileBlock";
 import { BlockNames } from "../blockNames.js";
+import { babylonDemoTransitions } from "../blockNamespaces";
 
 /**
  * The V1 serializer for a tile Block
@@ -17,6 +18,7 @@ export const tileBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: BlockNames.tile,
+            namespace: babylonDemoTransitions,
             comments: block.comments,
             data: {
                 tileCount: tileBlock.tileCount,

@@ -7,6 +7,7 @@ export { createDefaultValue } from "./graphSystem/registerDefaultInput.js";
 
 export type { TexturePreset } from "./globalState.js";
 export * from "./helpers/serializationTools.js";
+export * from "./helpers/blockNameConverters.js";
 export { LogEntry } from "./components/log/logComponent.js";
 export * from "./helpers/textureAssetCache.js";
 export * from "./configuration/getBlockEditorRegistration.js";
