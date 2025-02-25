@@ -37,7 +37,7 @@
         "lint": "npm run lint:check && npm run lint:fix",
         "lint:check": "eslint \"./packages/**/src/**/*.{ts,tsx,js,json}\"",
         "lint:fix": "eslint \"./packages/**/src/**/*.{ts,tsx,js,json}\" --fix",
-        "preparePublish": "npm run preparePublish -w @babylonjs/smart-filters && npm run preparePublish -w @babylonjs/smart-filters-editor && npm run preparePublish -w @babylonjs/smart-filters-blocks"
+        "preparePublish": "npm run preparePublish -w @babylonjs/smart-filters && npm run preparePublish -w @babylonjs/smart-filters-blocks"
     },
     "workspaces": [
         "packages/core",
