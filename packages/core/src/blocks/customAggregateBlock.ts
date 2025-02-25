@@ -53,7 +53,7 @@ export class CustomAggregateBlock extends AggregateBlock {
 
     /**
      * The namespace of the block, which is used to reduce name collisions between blocks and also to group blocks in the editor UI.
-     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effect").
+     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effects").
      */
     public override get namespace(): Nullable<string> {
         return this._namespace;
