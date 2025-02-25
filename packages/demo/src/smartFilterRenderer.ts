@@ -151,7 +151,7 @@ export class SmartFilterRenderer {
             this._animationDisposeWork();
         }
 
-        this._animationDisposeWork = registerAnimations(smartFilter, this.beforeRenderObservable);
+        this._animationDisposeWork = registerAnimations(smartFilter, this.engine, this.beforeRenderObservable);
     }
 
     private _optimize(smartFilter: SmartFilter): SmartFilter {

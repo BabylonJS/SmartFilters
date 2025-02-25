@@ -107,4 +107,11 @@ export class TextureAssetCache {
             }
         }
     }
+
+    public dispose(): void {
+        for (const entry of this._cache) {
+            entry.dispose();
+        }
+        this._cache.length = 0;
+    }
 }

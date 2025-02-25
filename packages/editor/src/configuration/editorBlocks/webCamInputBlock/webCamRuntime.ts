@@ -61,7 +61,7 @@ export class WebCamRuntime implements IDisposable {
     }
 
     /**
-     * Disposes the block
+     * Disposes the webcam runtime.
      */
     public dispose(): void {
         if (this._currentSession) {

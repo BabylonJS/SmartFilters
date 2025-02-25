@@ -1,6 +1,5 @@
 import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { TimeInputBlockName, WebCamInputBlockName } from "./blockNames.js";
-import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
@@ -11,11 +10,11 @@ export const editorBlockRegistrations: IBlockRegistration[] = [
         blockType: WebCamInputBlockName,
         category: "Inputs",
         tooltip: "Supplies a texture from a webcam",
-        factory: async (smartFilter: SmartFilter, engine: ThinEngine) => {
+        factory: async (smartFilter: SmartFilter) => {
             const module = await import(
                 /* webpackChunkName: "blackAndWhiteBlock" */ "./webCamInputBlock/webCamInputBlock.js"
             );
-            return new module.WebCamInputBlock(smartFilter, engine);
+            return new module.WebCamInputBlock(smartFilter);
         },
     },
     {

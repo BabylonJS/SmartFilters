@@ -68,14 +68,14 @@ function getIsUniqueBlock(block: BaseBlock): boolean {
 /**
  * Intercepts the creation of an input block and can return specialized input blocks.
  * @param smartFilter - The SmartFilter the block will belong to
- * @param engine - The ThinEngine to use
+ * @param _engine - The ThinEngine to use
  * @param blockType - The type of input block to create.
  * @returns Optionally creates an InputBock and returns it, null otherwise
  */
-function createInputBlock(smartFilter: SmartFilter, engine: ThinEngine, blockType: string): Nullable<BaseBlock> {
+function createInputBlock(smartFilter: SmartFilter, _engine: ThinEngine, blockType: string): Nullable<BaseBlock> {
     switch (blockType) {
         case WebCamInputBlockName: {
-            return new WebCamInputBlock(smartFilter, engine);
+            return new WebCamInputBlock(smartFilter);
         }
     }
     return null;

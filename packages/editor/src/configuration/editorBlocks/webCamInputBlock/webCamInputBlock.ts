@@ -3,7 +3,6 @@ import { WebCamRuntime } from "./webCamRuntime.js";
 import {
     ConnectionPointType,
     type SmartFilter,
-    type InitializationData,
     InputBlock,
     createStrongRef,
     editableInPropertyPage,
@@ -89,7 +88,6 @@ class WebcamSourceManager {
  */
 export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     private static _WebCamSourceManager: WebcamSourceManager = new WebcamSourceManager();
-    private readonly _engine: ThinEngine;
     private _webCamRuntime: WebCamRuntime | undefined;
     private _webCamSource: WebCamSource;
 
@@ -137,11 +135,9 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
     /**
      * Creates a new WebCamInputBlock
      * @param smartFilter - the smart filter
-     * @param engine - the engine
      */
-    constructor(smartFilter: SmartFilter, engine: ThinEngine) {
+    constructor(smartFilter: SmartFilter) {
         super(smartFilter, WebCamInputBlockName, ConnectionPointType.Texture, createStrongRef(null));
-        this._engine = engine;
 
         // Load the last used webcam source
         const lastWebCamId = localStorage.getItem(LocalStorageWebcamIdKey);
@@ -158,24 +154,15 @@ export class WebCamInputBlock extends InputBlock<ConnectionPointType.Texture> {
 
     /**
      * Initializes the webcam runtime
+     * @param engine - the engine to use
      * @returns the initialized WebCamRuntime
      */
-    public initializeWebCamRuntime(): WebCamRuntime {
-        this._webCamRuntime = new WebCamRuntime(this._engine, this.runtimeValue);
+    public initializeWebCamRuntime(engine: ThinEngine): WebCamRuntime {
+        if (this._webCamRuntime) {
+            this._webCamRuntime.dispose();
+        }
+        this._webCamRuntime = new WebCamRuntime(engine, this.runtimeValue);
         this._webCamRuntime.deviceId = this._webCamSource.value;
         return this._webCamRuntime;
-    }
-
-    /**
-     * During Smart Filter initialization, this method is called to generate the commands and gather the promises
-     * required to initialize the block.
-     * @param initializationData - The initialization data
-     * @param _finalOutput - Whether this is the final output block
-     */
-    public override generateCommandsAndGatherInitPromises(
-        initializationData: InitializationData,
-        _finalOutput: boolean
-    ): void {
-        initializationData.disposableResources.push(this.initializeWebCamRuntime());
     }
 }

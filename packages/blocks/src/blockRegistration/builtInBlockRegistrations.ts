@@ -394,4 +394,32 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         category: "Effects",
         tooltip: "Adds colored tint to the input texture",
     },
+
+    // Standard input blocks
+    // ---------------------
+    {
+        blockType: "Float",
+        category: "Inputs",
+        tooltip: "A floating point number representing a value with a fractional component",
+    },
+    {
+        blockType: "Color3",
+        category: "Inputs",
+        tooltip: "A set of 3 floating point numbers representing a color",
+    },
+    {
+        blockType: "Color4",
+        category: "Inputs",
+        tooltip: "A set of 4 floating point numbers representing a color",
+    },
+    {
+        blockType: "Texture",
+        category: "Inputs",
+        tooltip: "A texture to be used as input",
+    },
+    {
+        blockType: "Vector2",
+        category: "Inputs",
+        tooltip: "A Vector2 to be used as input",
+    },
 ];
