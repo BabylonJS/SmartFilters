@@ -9,7 +9,7 @@ import {
     DisableStrategy,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./pixelateBlock.shader.js";
 
 /**

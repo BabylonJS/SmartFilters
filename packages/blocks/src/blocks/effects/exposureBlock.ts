@@ -3,7 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock, DisableableShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

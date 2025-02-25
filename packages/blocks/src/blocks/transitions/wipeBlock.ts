@@ -11,7 +11,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoTransitions } from "../blockNamespaces";
+import { babylonDemoTransitions } from "../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

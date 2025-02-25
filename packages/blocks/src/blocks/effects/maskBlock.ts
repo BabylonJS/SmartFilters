@@ -8,7 +8,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 import { uniforms, shaderProgram } from "./maskBlock.shader.js";
 
 /**

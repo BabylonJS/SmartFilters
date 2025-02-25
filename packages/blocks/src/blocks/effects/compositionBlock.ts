@@ -9,7 +9,7 @@ import {
     DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;

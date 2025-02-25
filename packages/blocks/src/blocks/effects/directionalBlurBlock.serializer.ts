@@ -1,7 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { DirectionalBlurBlock } from "./directionalBlurBlock";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 
 /**
  * The V1 serializer for a Directional Blur Block

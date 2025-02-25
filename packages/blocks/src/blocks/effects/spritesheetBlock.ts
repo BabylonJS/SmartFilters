@@ -10,7 +10,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./spritesheetBlock.shader.js";
 
 /**

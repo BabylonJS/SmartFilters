@@ -1,7 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { TileBlock } from "./tileBlock";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoTransitions } from "../blockNamespaces";
+import { babylonDemoTransitions } from "../blockNamespaces.js";
 
 /**
  * The V1 serializer for a tile Block

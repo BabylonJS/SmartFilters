@@ -8,7 +8,7 @@ import {
     DisableableShaderBlock,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

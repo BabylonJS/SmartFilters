@@ -1,7 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { WipeBlock } from "./wipeBlock";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoTransitions } from "../blockNamespaces";
+import { babylonDemoTransitions } from "../blockNamespaces.js";
 
 /**
  * The V1 serializer for a Wipe Block

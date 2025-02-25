@@ -34,14 +34,9 @@ export type BlockEditorRegistration = {
     createInputBlock(smartFilter: SmartFilter, engine: ThinEngine, blockType: string): Nullable<BaseBlock>;
 
     /**
-     * An object that contains the names of all of the blocks, organized by category.
+     * An object that contains all of the blocks to display, organized by category.
      */
-    allBlockNames: { [key: string]: string[] };
-
-    /**
-     * An object that contains the tooltips for all of the blocks, keyed by block name.
-     */
-    blockTooltips: { [key: string]: string };
+    allBlocks: { [key: string]: IBlockEditorRegistration[] };
 
     /**
      * Optional override of the InputDisplayManager to provide custom display for particular blocks if desired.
