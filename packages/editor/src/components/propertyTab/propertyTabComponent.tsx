@@ -23,6 +23,7 @@ import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGr
 import type { GlobalState } from "../../globalState";
 import type { ISelectionChangedOptions } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/selectionChangedOptions";
 import { SmartFilterCoreVersion, type AnyInputBlock } from "@babylonjs/smart-filters";
+import type { Observer } from "@babylonjs/core/Misc/observable.js";
 
 interface IPropertyTabComponentProps {
     globalState: GlobalState;
@@ -38,7 +39,7 @@ interface IPropertyTabComponentState {
 }
 
 export class PropertyTabComponent extends react.Component<IPropertyTabComponentProps, IPropertyTabComponentState> {
-    // private _onBuiltObserver: Nullable<Observer<void>>;
+    private _onResetRequiredObserver?: Observer<boolean>;
     // private _modeSelect: React.RefObject<OptionsLineComponent>;
 
     constructor(props: IPropertyTabComponentProps) {
@@ -98,13 +99,15 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             }
         );
 
-        // this._onBuiltObserver = this.props.globalState.onBuiltObservable.add(() => {
-        //     this.forceUpdate();
-        // });
+        this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable?.add(() => {
+            this.forceUpdate();
+        });
     }
 
     override componentWillUnmount() {
-        // this.props.globalState.onBuiltObservable.remove(this._onBuiltObserver);
+        if (this._onResetRequiredObserver) {
+            this._onResetRequiredObserver.remove();
+        }
     }
 
     processInputBlockUpdate(ib: AnyInputBlock) {
@@ -242,14 +245,12 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         <TextInputLineComponent
                             label="Name"
                             lockObject={this.props.globalState.lockObject}
-                            value={this.props.globalState.smartFilter!.name ?? ""}
                             target={this.props.globalState.smartFilter}
                             propertyName="name"
                         />
                         <TextInputLineComponent
                             label="Namespace"
                             lockObject={this.props.globalState.lockObject}
-                            value={this.props.globalState.smartFilter!.namespace ?? ""}
                             target={this.props.globalState.smartFilter}
                             propertyName="namespace"
                         />
@@ -257,7 +258,6 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             label="Comment"
                             multilines={true}
                             lockObject={this.props.globalState.lockObject}
-                            value={this.props.globalState.smartFilter!.comments ?? ""}
                             target={this.props.globalState.smartFilter}
                             propertyName="comments"
                         />
