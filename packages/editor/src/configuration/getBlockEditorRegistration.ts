@@ -23,10 +23,10 @@ export function getBlockEditorRegistration(
     // Fill in block name and tooltip lists
     allBlockRegistrations.forEach((registration: IBlockRegistration) => {
         blockTooltips[registration.blockType] = registration.tooltip;
-        if (typeof allBlockNames[registration.category] === "object") {
-            allBlockNames[registration.category]!.push(registration.blockType);
+        if (typeof allBlockNames[registration.namespace] === "object") {
+            allBlockNames[registration.namespace]!.push(registration.blockType);
         } else {
-            allBlockNames[registration.category] = [registration.blockType];
+            allBlockNames[registration.namespace] = [registration.blockType];
         }
     });
 

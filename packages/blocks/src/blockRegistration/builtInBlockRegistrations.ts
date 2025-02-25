@@ -10,6 +10,7 @@ import { BlockNames } from "../blocks/blockNames.js";
 
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { IBlockRegistration } from "./IBlockRegistration.js";
+import { babylonDemoEffects, babylonDemoTransitions, babylonDemoUtilities } from "../blocks/blockNamespaces.js";
 
 /**
  * The list of block registrations.
@@ -38,7 +39,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             );
             return new module.BlackAndWhiteBlock(smartFilter, serializedBlock?.name || "BlackAndWhite");
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Transform the input texture to black and white",
     },
     {
@@ -52,7 +53,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             const module = await import(/* webpackChunkName: "frameBlock" */ "../blocks/effects/frameBlock.js");
             return new module.FrameBlock(smartFilter, serializedBlock?.name || "Frame");
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Green screen like effect",
     },
     {
@@ -66,7 +67,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             const module = await import(/* webpackChunkName: "glassBlock" */ "../blocks/effects/glassBlock.js");
             return new module.GlassBlock(smartFilter, serializedBlock?.name || "Glass");
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Creates a glass like effect",
     },
     {
@@ -87,7 +88,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Kaleidoscope effect",
     },
     {
@@ -106,7 +107,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Posterize to the input texture",
     },
     {
@@ -127,7 +128,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Applies a desaturated effect to the input texture",
     },
     {
@@ -146,7 +147,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Change the contrast of the input texture",
     },
     {
@@ -173,7 +174,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Replaces a green screen background with a different texture",
     },
     {
@@ -187,7 +188,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             const module = await import(/* webpackChunkName: "glitchBlock" */ "../blocks/transitions/glitchBlock.js");
             return new module.GlitchBlock(smartFilter, serializedBlock?.name || "Glitch");
         },
-        category: "Transitions",
+        namespace: babylonDemoEffects,
         tooltip: "Funky glitch transition",
     },
     {
@@ -206,7 +207,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Add pixelation to the input texture",
     },
     {
@@ -225,7 +226,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             }
             return block;
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Alters the exposure of the input texture",
     },
     {
@@ -239,7 +240,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             const module = await import(/* webpackChunkName: "maskBlock" */ "../blocks/effects/maskBlock.js");
             return new module.MaskBlock(smartFilter, serializedBlock?.name || "Mask");
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Applies mask in one texture to another texture",
     },
     {
@@ -255,7 +256,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             );
             return new module.SpritesheetBlock(smartFilter, serializedBlock?.name || "Spritesheet");
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Animates a sprite sheet texture",
     },
     {
@@ -271,7 +272,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             );
             return new module.PremultiplyAlphaBlock(smartFilter, serializedBlock?.name || "PremultiplyAlpha");
         },
-        category: "Utility",
+        namespace: babylonDemoUtilities,
         tooltip: "Premultiplies the input texture's color against its alpha",
     },
 
@@ -295,7 +296,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
                 return new module.BlurBlock(smartFilter, "Blur");
             }
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Blur the input texture",
     },
     {
@@ -328,7 +329,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
                 return block;
             }
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Composite the foreground texture over the background texture",
     },
     {
@@ -349,7 +350,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
                 return new module.TileBlock(smartFilter, "Tile");
             }
         },
-        category: "Transitions",
+        namespace: babylonDemoTransitions,
         tooltip: "Transition from one texture to another using tiles",
     },
     {
@@ -370,7 +371,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
                 return new module.WipeBlock(smartFilter, "Wipe");
             }
         },
-        category: "Transitions",
+        namespace: babylonDemoEffects,
         tooltip: "Transition from one texture to another using a wipe",
     },
 
@@ -391,7 +392,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
                 module.deserializedTintBlockDefinition
             );
         },
-        category: "Effects",
+        namespace: babylonDemoEffects,
         tooltip: "Adds colored tint to the input texture",
     },
 
@@ -399,27 +400,27 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
     // ---------------------
     {
         blockType: "Float",
-        category: "Inputs",
+        namespace: "Inputs",
         tooltip: "A floating point number representing a value with a fractional component",
     },
     {
         blockType: "Color3",
-        category: "Inputs",
+        namespace: "Inputs",
         tooltip: "A set of 3 floating point numbers representing a color",
     },
     {
         blockType: "Color4",
-        category: "Inputs",
+        namespace: "Inputs",
         tooltip: "A set of 4 floating point numbers representing a color",
     },
     {
         blockType: "Texture",
-        category: "Inputs",
+        namespace: "Inputs",
         tooltip: "A texture to be used as input",
     },
     {
         blockType: "Vector2",
-        category: "Inputs",
+        namespace: "Inputs",
         tooltip: "A Vector2 to be used as input",
     },
 ];

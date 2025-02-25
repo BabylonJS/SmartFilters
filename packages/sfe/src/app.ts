@@ -195,7 +195,7 @@ async function main(): Promise<void> {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
             }
         },
-        deleteCustomShaderBlock: (blockType: string) => {
+        deleteCustomBlock: (blockType: string) => {
             customBlockManager.deleteBlockDefinition(blockType);
             removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockType);
         },

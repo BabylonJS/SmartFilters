@@ -104,7 +104,7 @@ export type SmartFilterEditorOptions = {
      * If supplied, the editor will call this function when the user tries to delete a custom block
      * @param blockEditorRegistration - The block editor registration of the custom block to delete
      */
-    deleteCustomShaderBlock?: (blockType: string) => void;
+    deleteCustomBlock?: (blockType: string) => void;
 
     /**
      * An observable that is called when the editor needs to log a message
@@ -155,8 +155,8 @@ export class SmartFilterEditorControl {
             options.loadSmartFilter,
             options.saveToSnippetServer,
             options.texturePresets,
-            options.addCustomShaderBlock,
-            options.deleteCustomShaderBlock,
+            options.addCustomBlock,
+            options.deleteCustomBlock,
             options.onLogRequiredObservable
         );
 

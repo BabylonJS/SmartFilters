@@ -77,6 +77,15 @@ export class GlobalState {
 
     deleteCustomBlock?: (blockType: string) => void;
 
+    public get previewBackground(): string {
+        return this._previewBackground;
+    }
+
+    public set previewBackground(value: string) {
+        this._previewBackground = value;
+        localStorage.setItem(PreviewBackgroundStorageKey, value);
+    }
+
     public constructor(
         engine: Nullable<ThinEngine>,
         onNewEngine: Nullable<(engine: ThinEngine) => void>,
@@ -92,7 +101,8 @@ export class GlobalState {
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
         addCustomBlock?: (serializedData: string) => void,
-        deleteCustomBlock?: (blockType: string) => void
+        deleteCustomBlock?: (blockType: string) => void,
+        onLogRequiredObservable?: Observable<LogEntry>
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
@@ -118,8 +128,8 @@ export class GlobalState {
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
         this.reloadAssets = reloadAssets;
-        this.addCustomShaderBlock = addCustomShaderBlock;
-        this.deleteCustomShaderBlock = deleteCustomShaderBlock;
+        this.addCustomBlock = addCustomBlock;
+        this.deleteCustomBlock = deleteCustomBlock;
 
         this.onLogRequiredObservable = onLogRequiredObservable ?? new Observable<LogEntry>();
 

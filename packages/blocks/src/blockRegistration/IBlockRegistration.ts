@@ -27,9 +27,9 @@ export interface IBlockRegistration {
     ) => Promise<BaseBlock>;
 
     /**
-     * The category of the block
+     * The namespace of the block
      */
-    category: string;
+    namespace: string;
 
     /**
      * A tooltip for the block if displayed in an editor, for instance

@@ -45,7 +45,7 @@ function createBlockRegistration(
 ): IBlockRegistration {
     return {
         blockType: blockDefinition.blockType,
-        category: "Custom_Blocks",
+        namespace: "Custom_Blocks",
         factory: (smartFilter: SmartFilter, engine: ThinEngine) => {
             return customBlockManager.createBlockFromBlockDefinition(
                 smartFilter,
