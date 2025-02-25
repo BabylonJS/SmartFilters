@@ -31,18 +31,22 @@ export async function blockFactory(
     let newBlock: Nullable<BaseBlock> = null;
 
     // See if it's in our list of hardcoded blocks
+    // If the serialized block doesn't specify a namespace, find the first match by block type
     const registration = builtInBlockRegistrations.find(
-        (registration) => registration.blockType === serializedBlock.blockType
+        (registration) =>
+            registration.blockType === serializedBlock.blockType &&
+            (!serializedBlock.namespace || serializedBlock.namespace === registration.namespace)
     );
     if (registration && registration.factory) {
         newBlock = await registration.factory(smartFilter, engine, smartFilterDeserializer, serializedBlock);
     }
     if (!newBlock) {
         // Check if it's a custom block
-        newBlock = await customBlockManager.createBlockFromBlockType(
+        newBlock = await customBlockManager.createBlockFromBlockTypeAndNamespace(
             smartFilter,
             engine,
             serializedBlock.blockType,
+            serializedBlock.namespace,
             smartFilterDeserializer
         );
     }

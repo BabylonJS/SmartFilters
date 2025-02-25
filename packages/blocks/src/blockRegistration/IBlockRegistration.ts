@@ -35,4 +35,9 @@ export interface IBlockRegistration {
      * A tooltip for the block if displayed in an editor, for instance
      */
     tooltip: string;
+
+    /**
+     * If true, this represents a custom block (not one that was programmatically included)
+     */
+    isCustom?: boolean;
 }

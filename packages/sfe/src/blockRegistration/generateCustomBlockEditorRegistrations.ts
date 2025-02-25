@@ -2,29 +2,27 @@ import type { CustomBlockManager } from "../customBlockManager";
 import type { SerializedBlockDefinition, SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { CustomBlocksNamespace } from "@babylonjs/smart-filters-editor-control";
 
 /**
  * Generates the block registrations for custom blocks.
  * @param customBlockManager - The custom block manager.
  * @param smartFilterDeserializer - The Smart Filter deserializer.
- * @param customBlockTypeNames - The names of the custom block types.
+ * @param customBlockDefinitions - The custom block definitions.
  * @returns - The block registrations.
  */
 export function generateCustomBlockRegistrations(
     customBlockManager: CustomBlockManager,
     smartFilterDeserializer: SmartFilterDeserializer,
-    customBlockTypeNames: string[]
+    customBlockDefinitions: SerializedBlockDefinition[]
 ): IBlockRegistration[] {
     const blockRegistrations: IBlockRegistration[] = [];
 
-    if (customBlockTypeNames.length > 0) {
-        for (const customBlockType of customBlockTypeNames) {
-            const blockDefinition = customBlockManager.getBlockDefinition(customBlockType);
-            if (blockDefinition) {
-                blockRegistrations.push(
-                    createBlockRegistration(customBlockManager, blockDefinition, smartFilterDeserializer)
-                );
-            }
+    if (customBlockDefinitions.length > 0) {
+        for (const customBlockDefinition of customBlockDefinitions) {
+            blockRegistrations.push(
+                createBlockRegistration(customBlockManager, customBlockDefinition, smartFilterDeserializer)
+            );
         }
     }
 
@@ -38,14 +36,14 @@ export function generateCustomBlockRegistrations(
  * @param deserializer - The Smart Filter deserializer.
  * @returns - The block registration.
  */
-function createBlockRegistration(
+export function createBlockRegistration(
     customBlockManager: CustomBlockManager,
     blockDefinition: SerializedBlockDefinition,
     deserializer: SmartFilterDeserializer
 ): IBlockRegistration {
     return {
         blockType: blockDefinition.blockType,
-        namespace: "Custom_Blocks",
+        namespace: blockDefinition.namespace || CustomBlocksNamespace,
         factory: (smartFilter: SmartFilter, engine: ThinEngine) => {
             return customBlockManager.createBlockFromBlockDefinition(
                 smartFilter,
@@ -55,5 +53,6 @@ function createBlockRegistration(
             );
         },
         tooltip: blockDefinition.blockType,
+        isCustom: true,
     };
 }

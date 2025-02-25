@@ -12,8 +12,9 @@ import { DraggableBlockLineComponent } from "../../sharedComponents/draggableBlo
 import deleteButton from "../../assets/imgs/delete.svg";
 import addButton from "../../assets/imgs/add.svg";
 import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
-import type { IBlockEditorRegistration } from "../../smartFilterEditor";
-import { getBlockNameForEditor } from "../../helpers/blockNameConverters.js";
+import { getBlockKeyForEditor } from "../../helpers/blockKeyConverters.js";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { CustomBlocksNamespace } from "../../configuration/constants.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -58,7 +59,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         );
     }
 
-    deleteCustomBlock(block: IBlockEditorRegistration) {
+    deleteCustomBlock(block: IBlockRegistration) {
         if (!this.props.globalState.deleteCustomBlock) {
             return;
         }
@@ -71,21 +72,19 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
     override render() {
         // Create node menu
         const blockMenu = [];
-        const allBlocks = this.props.globalState.blockRegistration.allBlocks;
+        const allBlocks = this.props.globalState.blockEditorRegistration.allBlocks;
 
         for (const key in allBlocks) {
             const blockList = allBlocks[key]!.filter(
-                (block: IBlockEditorRegistration) =>
+                (block: IBlockRegistration) =>
                     !this.state.filter || block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
             )
-                .sort((a: IBlockEditorRegistration, b: IBlockEditorRegistration) =>
-                    a.blockType.localeCompare(b.blockType)
-                )
-                .map((block: IBlockEditorRegistration) => {
+                .sort((a: IBlockRegistration, b: IBlockRegistration) => a.blockType.localeCompare(b.blockType))
+                .map((block: IBlockRegistration) => {
                     if (block.isCustom) {
                         return (
                             <DraggableBlockLineComponent
-                                key={getBlockNameForEditor(block.blockType, block.namespace)}
+                                key={getBlockKeyForEditor(block.blockType, block.namespace)}
                                 block={block}
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
@@ -97,13 +96,13 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                     }
                     return (
                         <DraggableBlockLineComponent
-                            key={getBlockNameForEditor(block.blockType, block.namespace)}
+                            key={getBlockKeyForEditor(block.blockType, block.namespace)}
                             block={block}
                         />
                     );
                 });
 
-            if (key === "Custom_Blocks") {
+            if (key === CustomBlocksNamespace) {
                 const line = (
                     <LineWithFileButtonComponent
                         key="add..."
@@ -139,7 +138,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
             const blocks = allBlocks[key];
             if (blocks && blocks.length) {
                 for (const block of blocks) {
-                    const blockNameForEditor = getBlockNameForEditor(block.blockType, block.namespace);
+                    const blockNameForEditor = getBlockKeyForEditor(block.blockType, block.namespace);
                     if (!ledger.includes(blockNameForEditor)) {
                         ledger.push(blockNameForEditor);
                     }

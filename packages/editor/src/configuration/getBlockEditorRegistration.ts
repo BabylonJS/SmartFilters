@@ -6,37 +6,51 @@ import type { BlockEditorRegistration } from "./blockEditorRegistration";
 import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
 import { WebCamInputBlockName } from "./editorBlocks/blockNames.js";
 import { WebCamInputBlock } from "./editorBlocks/webCamInputBlock/webCamInputBlock.js";
+import { CustomBlocksNamespace } from "./constants.js";
 
 /**
  * Creates the block editor registration for the editor.
  * @param smartFilterDeserializer - The smart filter deserializer to use
  * @param allBlockRegistrations - All block registrations to use
+ * @param includeCustomBlocksCategory - If true, includes the custom blocks category even if there are no blocks in that category
  * @returns The block registration
  */
 export function getBlockEditorRegistration(
     smartFilterDeserializer: SmartFilterDeserializer,
-    allBlockRegistrations: IBlockRegistration[]
+    allBlockRegistrations: IBlockRegistration[],
+    includeCustomBlocksCategory: boolean
 ): BlockEditorRegistration {
-    const blockTooltips: { [key: string]: string } = {};
-    const allBlockNames: { [key: string]: string[] } = {};
+    const allBlocks: { [key: string]: IBlockRegistration[] } = {};
 
-    // Fill in block name and tooltip lists
-    allBlockRegistrations.forEach((registration: IBlockRegistration) => {
-        blockTooltips[registration.blockType] = registration.tooltip;
-        if (typeof allBlockNames[registration.namespace] === "object") {
-            allBlockNames[registration.namespace]!.push(registration.blockType);
+    // Include the custom blocks category first if desired
+    if (includeCustomBlocksCategory) {
+        allBlocks[CustomBlocksNamespace] = [];
+    }
+
+    // Next always have the inputs
+    allBlocks["Inputs"] = [];
+
+    // Create the map of blocks by namespace now in alphabetical order
+    const allBlockRegistrationsSortedByNamespace = allBlockRegistrations.sort((a, b) =>
+        a.namespace.localeCompare(b.namespace)
+    );
+
+    allBlockRegistrationsSortedByNamespace.forEach((registration: IBlockRegistration) => {
+        if (allBlocks[registration.namespace]) {
+            allBlocks[registration.namespace]!.push(registration);
         } else {
-            allBlockNames[registration.namespace] = [registration.blockType];
+            allBlocks[registration.namespace] = [registration];
         }
     });
 
-    // Create function to call the right factory for a block given the block type
-    const getBlockFromString = async (
+    // Create function to call the right factory for a block given the block type and namespace
+    const getBlock = async (
         blockType: string,
+        namespace: Nullable<string>,
         smartFilter: SmartFilter,
         engine: ThinEngine
-    ): Promise<BaseBlock | null> => {
-        const registration = allBlockRegistrations.find((r) => r.blockType === blockType);
+    ): Promise<Nullable<BaseBlock>> => {
+        const registration = allBlockRegistrations.find((r) => r.blockType === blockType && r.namespace === namespace);
         if (registration && registration.factory) {
             return registration.factory(smartFilter, engine, smartFilterDeserializer);
         }
@@ -45,10 +59,9 @@ export function getBlockEditorRegistration(
 
     const blockEditorRegistration: BlockEditorRegistration = {
         getIsUniqueBlock,
-        getBlockFromString,
+        getBlock,
         createInputBlock,
-        allBlockNames,
-        blockTooltips,
+        allBlocks,
         inputDisplayManager: CustomInputDisplayManager,
     };
 

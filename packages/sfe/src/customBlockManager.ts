@@ -10,6 +10,7 @@ import {
     CustomAggregateBlock,
     type SmartFilterDeserializer,
 } from "@babylonjs/smart-filters";
+import { CustomBlocksNamespace } from "@babylonjs/smart-filters-editor-control";
 
 const SavedCustomBlockKeysName = "Custom-Block-List";
 const SavedCustomBlockDefinitionNameSuffix = "-Definition";
@@ -20,9 +21,16 @@ const SavedCustomBlockDefinitionNameSuffix = "-Definition";
  */
 export class CustomBlockManager {
     /**
-     * Map of encoded namespace, block type pairs to block definitions.
+     * List of the custom block definitions.
      */
-    private _customBlockDefinitions = new Map<string, SerializedBlockDefinition>();
+    private readonly _customBlockDefinitions: SerializedBlockDefinition[] = [];
+
+    /**
+     * Gets the custom block definitions.
+     */
+    public get customBlockDefinitions(): SerializedBlockDefinition[] {
+        return this._customBlockDefinitions;
+    }
 
     /**
      * Creates a new CustomBlockManager.
@@ -32,12 +40,17 @@ export class CustomBlockManager {
     }
 
     /**
-     * Gets a block definition for a given block type.
-     * @param customBlockKey - The namespace and type of the block to get the definition for
-     * @returns The block definition, or null if it doesn't exist
+     * Gets a block definition from the custom block definitions.
+     * @param blockType - The block type to get
+     * @param namespace - The namespace of the block to get
+     * @returns - The block definition, or null if it does not exist
      */
-    public getBlockDefinition(customBlockKey: string): Nullable<SerializedBlockDefinition> {
-        return this._customBlockDefinitions.get(customBlockKey) || null;
+    public getBlockDefinition(blockType: string, namespace: Nullable<string>): Nullable<SerializedBlockDefinition> {
+        return (
+            this._customBlockDefinitions.find(
+                (definition) => definition.blockType === blockType && definition.namespace === namespace
+            ) || null
+        );
     }
 
     /**
@@ -56,7 +69,9 @@ export class CustomBlockManager {
         namespace: Nullable<string>,
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<Nullable<BaseBlock>> {
-        const blockDefinition = this.getBlockDefinition(this._getKey(blockType, namespace));
+        const blockDefinition = this._customBlockDefinitions.find(
+            (definition) => definition.blockType === blockType && definition.namespace === namespace
+        );
         if (!blockDefinition) {
             return null;
         }
@@ -97,18 +112,10 @@ export class CustomBlockManager {
     }
 
     /**
-     * Returns a list of all the loaded custom block type keys.
-     * @returns The list of custom block keys
-     */
-    public getCustomBlockKeys(): string[] {
-        return Array.from(this._customBlockDefinitions.keys());
-    }
-
-    /**
      * Loads all block definitions from local storage.
      */
     public loadBlockDefinitions() {
-        this._customBlockDefinitions.clear();
+        this._customBlockDefinitions.length = 0;
 
         const blockKeys = this._readBlockKeysFromLocalStorage();
 
@@ -116,7 +123,11 @@ export class CustomBlockManager {
             const blockDefinitionJson = localStorage.getItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
             if (blockDefinitionJson) {
                 const blockDefinition: SerializedShaderBlockDefinition = JSON.parse(blockDefinitionJson);
-                this._customBlockDefinitions.set(blockKey, blockDefinition);
+                // If the block definition doesn't include a namespace, add it to the CustomBlocksNamespace
+                if (!blockDefinition.namespace) {
+                    blockDefinition.namespace = CustomBlocksNamespace;
+                }
+                this._customBlockDefinitions.push(blockDefinition);
             }
         }
     }
@@ -127,14 +138,21 @@ export class CustomBlockManager {
      * @param namespace - The namespace of the block to delete
      */
     public deleteBlockDefinition(blockType: string, namespace: Nullable<string>) {
-        const blockTypeList = this._readBlockKeysFromLocalStorage();
+        const blockKeyList = this._readBlockKeysFromLocalStorage();
+        const blockKey = this._getKey(blockType, namespace);
 
-        const index = blockTypeList.indexOf(this._getKey(blockType, namespace));
+        let index = this._customBlockDefinitions.findIndex(
+            (definition) => definition.blockType === blockType && definition.namespace === namespace
+        );
         if (index > -1) {
-            blockTypeList.splice(index, 1);
-            this._customBlockDefinitions.delete(blockType);
-            localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockTypeList));
-            localStorage.removeItem(blockType + SavedCustomBlockDefinitionNameSuffix);
+            this._customBlockDefinitions.splice(index, 1);
+        }
+
+        index = blockKeyList.indexOf(blockKey);
+        if (index > -1) {
+            blockKeyList.splice(index, 1);
+            localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeyList));
+            localStorage.removeItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
         }
     }
 
@@ -158,6 +176,10 @@ export class CustomBlockManager {
             }
         }
 
+        if (!blockDefinition.namespace) {
+            blockDefinition.namespace = CustomBlocksNamespace;
+        }
+
         this.deleteBlockDefinition(blockType, blockDefinition.namespace);
         const blockKey = this._getKey(blockType, blockDefinition.namespace);
 
@@ -169,8 +191,8 @@ export class CustomBlockManager {
         // Store the definition in local storage
         localStorage.setItem(blockKey + SavedCustomBlockDefinitionNameSuffix, JSON.stringify(blockDefinition));
 
-        // Store the definition in our map in memory
-        this._customBlockDefinitions.set(blockType, blockDefinition);
+        // Store the definition in memory
+        this._customBlockDefinitions.push(blockDefinition);
 
         return blockDefinition;
     }
@@ -186,10 +208,29 @@ export class CustomBlockManager {
             }
         }
 
+        // Back compat - if the list has any entries that don't have a namespace, add them to the Custom_Blocks namespace
+        let updatedAnyKeys = false;
+        blockKeysList = blockKeysList.map((blockKey) => {
+            if (blockKey.indexOf(":") === -1) {
+                updatedAnyKeys = true;
+                const key = this._getKey(blockKey, CustomBlocksNamespace);
+                const oldDefinition = localStorage.getItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+                if (oldDefinition) {
+                    localStorage.setItem(key + SavedCustomBlockDefinitionNameSuffix, oldDefinition);
+                    localStorage.removeItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+                }
+                return key;
+            }
+            return blockKey;
+        });
+        if (updatedAnyKeys) {
+            localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeysList));
+        }
+
         return blockKeysList;
     }
 
     private _getKey(blockType: string, namespace: Nullable<string>): string {
-        return namespace ? `${namespace}:${blockType}` : blockType;
+        return `${namespace}:${blockType}`;
     }
 }

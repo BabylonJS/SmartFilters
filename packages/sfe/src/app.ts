@@ -15,12 +15,15 @@ import {
 } from "@babylonjs/smart-filters-editor-control";
 import { SmartFilterRenderer } from "./smartFilterRenderer.js";
 import { CustomBlockManager } from "./customBlockManager.js";
-import { generateCustomBlockRegistrations } from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
+import {
+    createBlockRegistration,
+    generateCustomBlockRegistrations,
+} from "./blockRegistration/generateCustomBlockEditorRegistrations.js";
 import { blockFactory } from "./blockRegistration/blockFactory.js";
 import { loadFromUrl, loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
 import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
 import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/removeCustomBlockFromBlockRegistration.js";
-import { addCustomBlockToBlockRegistration } from "./blockRegistration/addCustomBlockToBlockRegistration.js";
+import { addCustomBlockToBlockEditorRegistration } from "./blockRegistration/addCustomBlockToBlockEditorRegistration.js";
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 import { texturePresets } from "./texturePresets.js";
@@ -56,11 +59,11 @@ async function main(): Promise<void> {
 
     // Create the custom block manager
     const customBlockManager = new CustomBlockManager();
-    const customBlockTypeNames = customBlockManager.getCustomBlockTypeNames();
+    const customBlockDefinitions = customBlockManager.customBlockDefinitions;
     const customBlockRegistrations = generateCustomBlockRegistrations(
         customBlockManager,
         smartFilterDeserializer,
-        customBlockTypeNames
+        customBlockDefinitions
     );
 
     // Create the block editor registration
@@ -69,7 +72,7 @@ async function main(): Promise<void> {
         ...editorBlockRegistrations,
         ...builtInBlockRegistrations,
     ];
-    const blockEditorRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations);
+    const blockEditorRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations, true);
 
     const optimize = false;
     let currentSmartFilter: Nullable<SmartFilter> = null;
@@ -185,19 +188,25 @@ async function main(): Promise<void> {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not reload assets:\n${err}`, true));
             });
         },
-        addCustomShaderBlock: (serializedData: string) => {
+        addCustomBlock: (serializedData: string) => {
             try {
                 const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
-                removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockDefinition.blockType);
-                addCustomBlockToBlockRegistration(blockEditorRegistration, blockDefinition);
+                const blockRegistration = createBlockRegistration(
+                    customBlockManager,
+                    blockDefinition,
+                    smartFilterDeserializer
+                );
+                removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockRegistration);
+                addCustomBlockToBlockEditorRegistration(blockEditorRegistration, blockRegistration);
+                allBlockRegistrations.push(blockRegistration);
                 startRendering();
             } catch (err) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
             }
         },
-        deleteCustomBlock: (blockType: string) => {
-            customBlockManager.deleteBlockDefinition(blockType);
-            removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockType);
+        deleteCustomBlock: (blockRegistration: IBlockRegistration) => {
+            customBlockManager.deleteBlockDefinition(blockRegistration.blockType, blockRegistration.namespace);
+            removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockRegistration);
         },
         onLogRequiredObservable,
     };

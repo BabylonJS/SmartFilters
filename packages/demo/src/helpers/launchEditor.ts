@@ -29,7 +29,7 @@ export function launchEditor(
 
     // Set up block registration
     const allBlockRegistrations = [...editorBlockRegistrations, ...builtInBlockRegistrations];
-    const blockRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations);
+    const blockRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations, false);
 
     // Function to rebuild the runtime
     function rebuildRuntime() {
