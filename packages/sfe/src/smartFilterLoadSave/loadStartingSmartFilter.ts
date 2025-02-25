@@ -4,6 +4,8 @@ import { createDefaultSmartFilter } from "../defaultSmartFilter.js";
 import type { Nullable } from "@babylonjs/core/types";
 import { getSnippet, setSnippet } from "./hashFunctions.js";
 import { loadSmartFilterFromSnippetServer } from "./loadSmartFilterFromSnippetServer.js";
+import type { Observable } from "@babylonjs/core";
+import { LogEntry } from "@babylonjs/smart-filters-editor-control";
 
 /**
  * Loads the starting SmartFilter for this session, consulting the URL first, and if
@@ -11,17 +13,21 @@ import { loadSmartFilterFromSnippetServer } from "./loadSmartFilterFromSnippetSe
  *
  * @param smartFilterDeserializer - SmartFilterDeserializer to use
  * @param engine - ThinEngine to use
+ * @param onLogRequiredObservable - Observable that will be called when a log is required
  * @returns Promise that resolves with the loaded SmartFilter
  */
 export async function loadStartingSmartFilter(
     smartFilterDeserializer: SmartFilterDeserializer,
-    engine: ThinEngine
+    engine: ThinEngine,
+    onLogRequiredObservable: Observable<LogEntry>
 ): Promise<SmartFilter> {
-    const smartFilterFromUrl = await loadFromUrl(smartFilterDeserializer, engine);
+    const smartFilterFromUrl = await loadFromUrl(smartFilterDeserializer, engine, onLogRequiredObservable);
     if (smartFilterFromUrl) {
+        onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from unique URL", false));
         return smartFilterFromUrl;
     }
 
+    onLogRequiredObservable.notifyObservers(new LogEntry("Loaded default Smart Filter", false));
     return createDefaultSmartFilter();
 }
 
@@ -30,11 +36,13 @@ export async function loadStartingSmartFilter(
  * Otherwise, loads the last in-repo SmartFilter or the default.
  * @param smartFilterDeserializer - SmartFilterDeserializer to use
  * @param engine - ThinEngine to use
+ * @param onLogRequiredObservable - Observable that will be called when a log is required
  * @returns Promise that resolves with the loaded SmartFilter, or null if no SmartFilter was loaded
  */
 export async function loadFromUrl(
     smartFilterDeserializer: SmartFilterDeserializer,
-    engine: ThinEngine
+    engine: ThinEngine,
+    onLogRequiredObservable: Observable<LogEntry>
 ): Promise<Nullable<SmartFilter>> {
     const [snippetToken, version] = getSnippet();
 
@@ -43,8 +51,10 @@ export async function loadFromUrl(
             // Reset hash with our formatting to keep it looking consistent
             setSnippet(snippetToken, version, false);
             return await loadSmartFilterFromSnippetServer(smartFilterDeserializer, engine, snippetToken, version);
-        } catch (e) {
-            console.error("Error loading SmartFilter from snippet server:", e);
+        } catch (err) {
+            onLogRequiredObservable.notifyObservers(
+                new LogEntry(`Could not load Smart Filter from snippet server:\n${err}`, true)
+            );
         }
     }
     return null;

@@ -293,42 +293,50 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             }}
                         />
                     </LineContainerComponent>
-                    <LineContainerComponent title="FILE">
-                        {this.props.globalState.loadSmartFilter && (
-                            <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
-                        )}
-                        {this.props.globalState.downloadSmartFilter && (
-                            <ButtonLineComponent
-                                label="Save"
-                                onClick={() => {
-                                    this.downloadSmartFilter();
-                                }}
-                            />
-                        )}
-                        {this.props.globalState.saveToSnippetServer && (
-                            <ButtonLineComponent
-                                label="Save to unique URL"
-                                isDisabled={this.state.uploadInProgress}
-                                onClick={() => {
-                                    this.saveToSnippetServer();
-                                }}
-                            />
-                        )}
-                        {/*<ButtonLineComponent
-                            label="Generate code"
-                            onClick={() => {
-                                StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
-                            }}
-                        />
-                        <ButtonLineComponent
-                            label="Export shaders"
-                            onClick={() => {
-                                this.props.globalState.nodeMaterial.build();
-                                StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
-                            }}
-                        />
-                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
-                    </LineContainerComponent>
+                    {(this.props.globalState.loadSmartFilter ||
+                        this.props.globalState.downloadSmartFilter ||
+                        this.props.globalState.saveToSnippetServer) && (
+                        <LineContainerComponent title="FILE">
+                            {this.props.globalState.loadSmartFilter && (
+                                <FileButtonLineComponent
+                                    label="Load"
+                                    onClick={(file) => this.load(file)}
+                                    accept=".json"
+                                />
+                            )}
+                            {this.props.globalState.downloadSmartFilter && (
+                                <ButtonLineComponent
+                                    label="Save"
+                                    onClick={() => {
+                                        this.downloadSmartFilter();
+                                    }}
+                                />
+                            )}
+                            {this.props.globalState.saveToSnippetServer && (
+                                <ButtonLineComponent
+                                    label="Save to unique URL"
+                                    isDisabled={this.state.uploadInProgress}
+                                    onClick={() => {
+                                        this.saveToSnippetServer();
+                                    }}
+                                />
+                            )}
+                            {/*<ButtonLineComponent
+                        label="Generate code"
+                        onClick={() => {
+                            StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
+                        }}
+                    />
+                    <ButtonLineComponent
+                        label="Export shaders"
+                        onClick={() => {
+                            this.props.globalState.nodeMaterial.build();
+                            StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
+                        }}
+                    />
+                    <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
+                        </LineContainerComponent>
+                    )}
                     {/*
                     {!this.props.globalState.customSave && (
                         <LineContainerComponent title="SNIPPET">

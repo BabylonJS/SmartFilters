@@ -25,8 +25,8 @@ export type SmartFilterEditorOptions = {
     engine?: ThinEngine;
 
     /**
-     * If supplied, this will be called when the editor creates a new engine, such as when the preview is created,
-     * or a preview popup window is opened
+     * If supplied, the editor will host the preview, and this will be called when the editor creates a new engine connected
+     * to that canvas, or a preview popup window is opened or closed.
      * @param engine - The new engine
      */
     onNewEngine?: (engine: ThinEngine) => void;

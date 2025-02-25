@@ -106,7 +106,11 @@ async function main(): Promise<void> {
         let justLoadedSmartFilter = false;
         if (!smartFilter) {
             try {
-                smartFilter = await loadStartingSmartFilter(smartFilterDeserializer, newEngine);
+                smartFilter = await loadStartingSmartFilter(
+                    smartFilterDeserializer,
+                    newEngine,
+                    onLogRequiredObservable
+                );
                 justLoadedSmartFilter = true;
             } catch (err) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load Smart Filter:\n${err}`, true));
@@ -135,7 +139,7 @@ async function main(): Promise<void> {
 
     window.addEventListener("hashchange", async () => {
         if (renderer && engine) {
-            smartFilter = await loadFromUrl(smartFilterDeserializer, engine);
+            smartFilter = await loadFromUrl(smartFilterDeserializer, engine, onLogRequiredObservable);
             if (smartFilter) {
                 renderer.startRendering(smartFilter);
                 onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from unique URL", false));

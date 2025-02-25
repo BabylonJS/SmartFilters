@@ -618,24 +618,28 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                             lockObject={this.props.globalState.lockObject}
                             globalState={this.props.globalState}
                         />
-                        <Splitter
-                            size={8}
-                            minSize={200}
-                            initialSize={300}
-                            maxSize={500}
-                            controlledSide={ControlledSize.Second}
-                        />
-                        <div className="nme-preview-part">
-                            {!this.state.showPreviewPopUp ? (
-                                <PreviewAreaControlComponent
-                                    globalState={this.props.globalState}
-                                    togglePreviewAreaComponent={this.handlePopUp}
+                        {this.props.globalState.onNewEngine && (
+                            <>
+                                <Splitter
+                                    size={8}
+                                    minSize={200}
+                                    initialSize={300}
+                                    maxSize={500}
+                                    controlledSide={ControlledSize.Second}
                                 />
-                            ) : null}
-                            {!this.state.showPreviewPopUp ? (
-                                <PreviewAreaComponent globalState={this.props.globalState} />
-                            ) : null}
-                        </div>
+                                <div className="nme-preview-part">
+                                    {!this.state.showPreviewPopUp ? (
+                                        <PreviewAreaControlComponent
+                                            globalState={this.props.globalState}
+                                            togglePreviewAreaComponent={this.handlePopUp}
+                                        />
+                                    ) : null}
+                                    {!this.state.showPreviewPopUp ? (
+                                        <PreviewAreaComponent globalState={this.props.globalState} />
+                                    ) : null}
+                                </div>
+                            </>
+                        )}
                     </SplitContainer>
                 </SplitContainer>
                 <MessageDialog
