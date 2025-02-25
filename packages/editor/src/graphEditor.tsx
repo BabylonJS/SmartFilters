@@ -1,8 +1,6 @@
 import * as react from "react";
 import * as reactDOM from "react-dom";
 
-import * as reactDOM from "react-dom";
-
 import type { GlobalState } from "./globalState";
 import "./assets/styles/main.scss";
 

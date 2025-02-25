@@ -22,7 +22,7 @@ import {
 import { blockFactory } from "./blockRegistration/blockFactory.js";
 import { loadFromUrl, loadStartingSmartFilter } from "./smartFilterLoadSave/loadStartingSmartFilter.js";
 import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.js";
-import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/removeCustomBlockFromBlockRegistration.js";
+import { removeCustomBlockFromBlockEditorRegistration } from "./blockRegistration/removeCustomBlockFromBlockEditorRegistration.js";
 import { addCustomBlockToBlockEditorRegistration } from "./blockRegistration/addCustomBlockToBlockEditorRegistration.js";
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
@@ -196,7 +196,7 @@ async function main(): Promise<void> {
                     blockDefinition,
                     smartFilterDeserializer
                 );
-                removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockRegistration);
+                removeCustomBlockFromBlockEditorRegistration(blockEditorRegistration, blockRegistration);
                 addCustomBlockToBlockEditorRegistration(blockEditorRegistration, blockRegistration);
                 allBlockRegistrations.push(blockRegistration);
                 startRendering();
@@ -206,7 +206,7 @@ async function main(): Promise<void> {
         },
         deleteCustomBlock: (blockRegistration: IBlockRegistration) => {
             customBlockManager.deleteBlockDefinition(blockRegistration.blockType, blockRegistration.namespace);
-            removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockRegistration);
+            removeCustomBlockFromBlockEditorRegistration(blockEditorRegistration, blockRegistration);
         },
         onLogRequiredObservable,
     };
