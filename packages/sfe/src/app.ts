@@ -22,7 +22,7 @@ import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.j
 import { removeCustomBlockFromBlockRegistration } from "./blockRegistration/removeCustomBlockFromBlockRegistration.js";
 import { addCustomBlockToBlockRegistration } from "./blockRegistration/addCustomBlockToBlockRegistration.js";
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
-import { loadFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
+import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 import { texturePresets } from "./texturePresets.js";
 
 /**
@@ -157,7 +157,7 @@ async function main(): Promise<void> {
         },
         loadSmartFilter: async (file: File, engine: ThinEngine) => {
             if (renderer) {
-                currentSmartFilter = await loadFromFile(smartFilterDeserializer, engine, file);
+                currentSmartFilter = await loadSmartFilterFromFile(smartFilterDeserializer, engine, file);
                 if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
                     onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
                 }

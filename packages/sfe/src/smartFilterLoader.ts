@@ -5,16 +5,16 @@ import { Observable } from "@babylonjs/core/Misc/observable.js";
 import { ReadFile } from "@babylonjs/core/Misc/fileTools.js";
 
 /**
- * Indicates the source of a SmartFilter
+ * Indicates the source of a Smart Filter
  */
 export enum SmartFilterSource {
     /**
-     * The SmartFilter was loaded from the snippet server
+     * The Smart Filter was loaded from the snippet server
      */
     Snippet,
 
     /**
-     * The SmartFilter was loaded from a JSON file
+     * The Smart Filter was loaded from a JSON file
      */
     File,
 }
@@ -24,25 +24,25 @@ export enum SmartFilterSource {
  */
 export type SmartFilterLoadedEvent = {
     /**
-     * The loaded SmartFilter
+     * The loaded Smart Filter
      */
     smartFilter: SmartFilter;
 
     /**
-     * The source of the SmartFilter
+     * The source of the Smart Filter
      */
     source: SmartFilterSource;
 };
 
 /**
- * Manges loading SmartFilters for the demo app
+ * Manges loading Smart Filters for the demo app
  */
 export class SmartFilterLoader {
     private readonly _engine: ThinEngine;
     private readonly _renderer: SmartFilterRenderer;
 
     /**
-     * The SmartFilterDeserializer used to deserialize SmartFilters
+     * The SmartFilterDeserializer used to deserialize Smart Filters
      */
     public readonly smartFilterDeserializer: SmartFilterDeserializer;
 
@@ -52,7 +52,7 @@ export class SmartFilterLoader {
     public readonly snippetUrl = "https://snippet.babylonjs.com";
 
     /**
-     * Observable that notifies when a SmartFilter has been loaded
+     * Observable that notifies when a Smart Filter has been loaded
      */
     public readonly onSmartFilterLoadedObservable: Observable<SmartFilterLoadedEvent>;
 
@@ -70,9 +70,9 @@ export class SmartFilterLoader {
     }
 
     /**
-     * Loads a SmartFilter from the provided file.
+     * Loads a Smart Filter from the provided file.
      * @param file - File object to load from
-     * @returns Promise that resolves with the loaded SmartFilter
+     * @returns Promise that resolves with the loaded Smart Filter
      */
     public async loadFromFile(file: File): Promise<SmartFilter> {
         return this._loadSmartFilter(async () => {
@@ -91,10 +91,10 @@ export class SmartFilterLoader {
     }
 
     /**
-     * Loads a SmartFilter from the snippet server.
+     * Loads a Smart Filter from the snippet server.
      * @param snippetToken - Snippet token to load
      * @param version - Version of the snippet to load
-     * @returns Promise that resolves with the loaded SmartFilter
+     * @returns Promise that resolves with the loaded Smart Filter
      */
     public async loadFromSnippet(snippetToken: string, version: string | undefined): Promise<SmartFilter> {
         return this._loadSmartFilter(async () => {
@@ -114,9 +114,9 @@ export class SmartFilterLoader {
 
     /**
      * Internal method to reuse common loading logic
-     * @param loader - Function that loads the SmartFilter from some source
-     * @param source - Source of the SmartFilter (see SmartFilterSource)
-     * @returns Promise that resolves with the loaded SmartFilter
+     * @param loader - Function that loads the Smart Filter from some source
+     * @param source - Source of the Smart Filter (see SmartFilterSource)
+     * @returns Promise that resolves with the loaded Smart Filter
      */
     private async _loadSmartFilter(
         loader: () => Promise<SmartFilter>,
@@ -124,7 +124,7 @@ export class SmartFilterLoader {
     ): Promise<SmartFilter> {
         this._renderer.beforeRenderObservable.clear();
 
-        // Load the SmartFilter using the provided function.
+        // Load the Smart Filter using the provided function.
         const smartFilter = await loader();
 
         this.onSmartFilterLoadedObservable.notifyObservers({

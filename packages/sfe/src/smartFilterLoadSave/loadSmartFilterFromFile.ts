@@ -3,13 +3,13 @@ import { ReadFile } from "@babylonjs/core/Misc/fileTools.js";
 import type { SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 
 /**
- * Loads a SmartFilter from the provided file.
+ * Loads a Smart Filter from the provided file.
  * @param smartFilterDeserializer - SmartFilterDeserializer to use
  * @param engine - ThinEngine to use
  * @param file - File object to load from
- * @returns Promise that resolves with the loaded SmartFilter
+ * @returns Promise that resolves with the loaded Smart Filter
  */
-export async function loadFromFile(
+export async function loadSmartFilterFromFile(
     smartFilterDeserializer: SmartFilterDeserializer,
     engine: ThinEngine,
     file: File

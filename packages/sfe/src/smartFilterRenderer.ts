@@ -65,7 +65,7 @@ export class SmartFilterRenderer {
 
     /**
      * Starts rendering the filter. (won't stop until dispose is called)
-     * @param filter - The SmartFilter to render
+     * @param filter - The Smart Filter to render
      * @param onLogRequiredObservable - The observable to use to notify when a log entry is required
      * @returns A promise that resolves as true if the rendering started successfully, false otherwise
      */
@@ -94,10 +94,10 @@ export class SmartFilterRenderer {
     }
 
     /**
-     * If the SmartFilter had any assets, such as images or videos for input texture blocks,
+     * If the Smart Filter had any assets, such as images or videos for input texture blocks,
      * and the necessary information to rehydrate them is present in the editor data, load
      * those assets now.
-     * @param smartFilter - The SmartFilter to load assets for
+     * @param smartFilter - The Smart Filter to load assets for
      */
     public async loadAssets(smartFilter: SmartFilter): Promise<void> {
         const inputBlocks: InputBlock<ConnectionPointType.Texture>[] = [];
@@ -114,12 +114,12 @@ export class SmartFilterRenderer {
     }
 
     /**
-     * Reloads the assets for the most recently rendered SmartFilter.
+     * Reloads the assets for the most recently rendered Smart Filter.
      * @returns A promise that resolves when the assets are loaded
      */
     public reloadAssets(): Promise<void> {
         if (!this._lastRenderedSmartFilter) {
-            throw new Error("No SmartFilter has been rendered yet");
+            throw new Error("No Smart Filter has been rendered yet");
         }
         return this.loadAssets(this._lastRenderedSmartFilter);
     }
@@ -188,7 +188,7 @@ export class SmartFilterRenderer {
         const optimizedSmartFilter = optimizer.optimize();
 
         if (optimizedSmartFilter === null) {
-            throw new Error("Failed to optimize SmartFilter");
+            throw new Error("Failed to optimize Smart Filter");
         }
         return optimizedSmartFilter;
     }

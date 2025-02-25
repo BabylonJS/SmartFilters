@@ -4,8 +4,8 @@ import { SnippetUrl } from "./constants.js";
 import { serializeSmartFilter } from "./serializeSmartFilter.js";
 
 /**
- * Saves the provided SmartFilter to the snippet server
- * @param smartFilter - SmartFilter to save
+ * Saves the provided Smart Filter to the snippet server
+ * @param smartFilter - Smart Filter to save
  */
 export async function saveToSnippetServer(smartFilter: SmartFilter): Promise<void> {
     const smartFilterJson = await serializeSmartFilter(smartFilter);

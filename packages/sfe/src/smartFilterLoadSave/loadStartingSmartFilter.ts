@@ -8,13 +8,13 @@ import type { Observable } from "@babylonjs/core";
 import { LogEntry } from "@babylonjs/smart-filters-editor-control";
 
 /**
- * Loads the starting SmartFilter for this session, consulting the URL first, and if
- * there isn't a snippet on the URL, loads a default SmartFilter.
+ * Loads the starting Smart Filter for this session, consulting the URL first, and if
+ * there isn't a snippet on the URL, loads a default Smart Filter.
  *
  * @param smartFilterDeserializer - SmartFilterDeserializer to use
  * @param engine - ThinEngine to use
  * @param onLogRequiredObservable - Observable that will be called when a log is required
- * @returns Promise that resolves with the loaded SmartFilter
+ * @returns Promise that resolves with the loaded Smart Filter
  */
 export async function loadStartingSmartFilter(
     smartFilterDeserializer: SmartFilterDeserializer,
@@ -31,12 +31,12 @@ export async function loadStartingSmartFilter(
 }
 
 /**
- * Checks the hash for a snippet token and loads the SmartFilter if one is found.
- * Otherwise, loads the last in-repo SmartFilter or the default.
+ * Checks the hash for a snippet token and loads the Smart Filter if one is found.
+ * Otherwise, loads the last in-repo Smart Filter or the default.
  * @param smartFilterDeserializer - SmartFilterDeserializer to use
  * @param engine - ThinEngine to use
  * @param onLogRequiredObservable - Observable that will be called when a log is required
- * @returns Promise that resolves with the loaded SmartFilter, or null if no SmartFilter was loaded
+ * @returns Promise that resolves with the loaded Smart Filter, or null if no Smart Filter was loaded
  */
 export async function loadFromUrl(
     smartFilterDeserializer: SmartFilterDeserializer,

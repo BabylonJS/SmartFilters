@@ -11,9 +11,7 @@ export const editorBlockRegistrations: IBlockRegistration[] = [
         category: "Inputs",
         tooltip: "Supplies a texture from a webcam",
         factory: async (smartFilter: SmartFilter) => {
-            const module = await import(
-                /* webpackChunkName: "blackAndWhiteBlock" */ "./webCamInputBlock/webCamInputBlock.js"
-            );
+            const module = await import(/* webpackChunkName: "webCamBlock" */ "./webCamInputBlock/webCamInputBlock.js");
             return new module.WebCamInputBlock(smartFilter);
         },
     },
