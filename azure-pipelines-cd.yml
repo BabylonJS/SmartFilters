@@ -17,6 +17,8 @@ jobs:
             displayName: "Jest Unit Tests"
           - script: "npm run preparePublish"
             displayName: "Npm preparePublish (version setting, cross-package dependency configuration)"
+          - script: "npm run build"
+            displayName: "Build again after preparePublish to pick up version number changes"
           - task: Npm@1
             displayName: "Npm publish"
             inputs:
