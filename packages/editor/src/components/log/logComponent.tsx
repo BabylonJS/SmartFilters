@@ -1,6 +1,5 @@
 import * as react from "react";
 import type { GlobalState } from "../../globalState";
-import * as reactDOM from "react-dom";
 
 import "../../assets/styles/components/log.scss";
 
@@ -18,10 +17,13 @@ export class LogEntry {
 }
 
 export class LogComponent extends react.Component<ILogComponentProps, { logs: LogEntry[] }> {
+    private _logConsoleRef: React.RefObject<HTMLDivElement>;
+
     constructor(props: ILogComponentProps) {
         super(props);
 
         this.state = { logs: [] };
+        this._logConsoleRef = react.createRef();
     }
 
     override componentDidMount() {
@@ -34,25 +36,24 @@ export class LogComponent extends react.Component<ILogComponentProps, { logs: Lo
     }
 
     override componentDidUpdate() {
-        const logConsole = reactDOM.findDOMNode(this.refs["nme-log-console"]) as HTMLElement;
-        if (!logConsole) {
+        if (!this._logConsoleRef.current) {
             return;
         }
 
-        logConsole.scrollTop = logConsole.scrollHeight;
+        this._logConsoleRef.current.scrollTop = this._logConsoleRef.current.scrollHeight;
     }
 
     override render() {
         return (
-            <div id="nme-log-console" ref={"log-console"}>
+            <div id="sfe-log-console" ref={this._logConsoleRef}>
                 {this.state.logs.map((l, i) => {
                     return (
                         <div key={i} className={"log" + (l.isError ? " error" : "")}>
                             {l.time.getHours() +
                                 ":" +
-                                l.time.getMinutes() +
+                                l.time.getMinutes().toLocaleString(undefined, { minimumIntegerDigits: 2 }) +
                                 ":" +
-                                l.time.getSeconds() +
+                                l.time.getSeconds().toLocaleString(undefined, { minimumIntegerDigits: 2 }) +
                                 ": " +
                                 l.message}
                         </div>

@@ -8,20 +8,28 @@ import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
-import type { BlockRegistration } from "./smartFilterEditor";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
+import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
 
 export type TexturePreset = {
     name: string;
     url: string;
 };
 
+const PreviewBackgroundStorageKey = "PreviewBackground";
+
 export class GlobalState {
-    engine: ThinEngine;
+    private _previewBackground: string;
+
+    engine: Nullable<ThinEngine>;
+
+    onNewEngine: Nullable<(engine: ThinEngine) => void>;
+
+    onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>;
 
     smartFilter: SmartFilter;
 
-    blockRegistration: BlockRegistration;
+    blockEditorRegistration: BlockEditorRegistration;
 
     hostElement: HTMLElement;
 
@@ -39,7 +47,7 @@ export class GlobalState {
 
     onGetNodeFromBlock: (block: BaseBlock) => Nullable<GraphNode> = () => null;
 
-    onLogRequiredObservable = new Observable<LogEntry>();
+    onLogRequiredObservable: Observable<LogEntry>;
 
     onPopupClosedObservable = new Observable<void>();
 
@@ -49,13 +57,15 @@ export class GlobalState {
 
     onResetRequiredObservable = new Observable<boolean>();
 
+    onPreviewResetRequiredObservable = new Observable<void>();
+
     onSaveEditorDataRequiredObservable = new Observable<void>();
 
     texturePresets: TexturePreset[];
 
-    downloadSmartFilter: () => void;
+    downloadSmartFilter?: () => void;
 
-    loadSmartFilter: (file: File) => Promise<SmartFilter>;
+    loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
     saveToSnippetServer?: (() => void) | undefined;
 
@@ -67,20 +77,32 @@ export class GlobalState {
 
     deleteCustomShaderBlock?: (blockType: string) => void;
 
+    public get previewBackground(): string {
+        return this._previewBackground;
+    }
+
+    public set previewBackground(value: string) {
+        this._previewBackground = value;
+        localStorage.setItem(PreviewBackgroundStorageKey, value);
+    }
+
     public constructor(
-        engine: ThinEngine,
+        engine: Nullable<ThinEngine>,
+        onNewEngine: Nullable<(engine: ThinEngine) => void>,
+        onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
         smartFilter: Nullable<SmartFilter>,
-        blockRegistration: BlockRegistration,
+        blockEditorRegistration: BlockEditorRegistration,
         hostElement: HTMLElement,
-        downloadSmartFilter: () => void,
-        loadSmartFilter: (file: File) => Promise<SmartFilter>,
         beforeRenderObservable: Observable<void>,
         rebuildRuntime: () => void,
         reloadAssets: () => void,
+        downloadSmartFilter?: () => void,
+        loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
         addCustomShaderBlock?: (serializedData: string) => void,
-        deleteCustomShaderBlock?: (blockType: string) => void
+        deleteCustomShaderBlock?: (blockType: string) => void,
+        onLogRequiredObservable?: Observable<LogEntry>
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
@@ -91,8 +113,10 @@ export class GlobalState {
         RegisterDefaultInput(this.stateManager);
 
         this.engine = engine;
+        this.onNewEngine = onNewEngine;
+        this.onSmartFilterLoadedObservable = onSmartFilterLoadedObservable;
         this.smartFilter = smartFilter ?? new SmartFilter("New Filter");
-        this.blockRegistration = blockRegistration;
+        this.blockEditorRegistration = blockEditorRegistration;
         this.hostElement = hostElement;
         this.hostDocument = hostElement.ownerDocument!;
         this.hostWindow = hostElement.ownerDocument!.defaultView!;
@@ -106,5 +130,9 @@ export class GlobalState {
         this.reloadAssets = reloadAssets;
         this.addCustomShaderBlock = addCustomShaderBlock;
         this.deleteCustomShaderBlock = deleteCustomShaderBlock;
+
+        this.onLogRequiredObservable = onLogRequiredObservable ?? new Observable<LogEntry>();
+
+        this._previewBackground = localStorage.getItem(PreviewBackgroundStorageKey) ?? "grid";
     }
 }

@@ -1,7 +1,8 @@
 {
-    "name": "@babylonjs/smart-filters-editor",
+    "name": "@babylonjs/smart-filters-editor-control",
+    "private": true,
     "version": "0.0.0",
-    "description": "An editor for the smart filters.",
+    "description": "The editor control used in Smart Filters applications.",
     "author": {
         "name": "Sebastien VANDENBERGHE"
     },

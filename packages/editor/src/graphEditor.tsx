@@ -1,4 +1,6 @@
 import * as react from "react";
+import * as reactDOM from "react-dom";
+
 import type { GlobalState } from "./globalState";
 import "./assets/styles/main.scss";
 
@@ -16,11 +18,16 @@ import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
-import { BaseBlock } from "@babylonjs/smart-filters";
+import { BaseBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { setEditorData } from "./helpers/serializationTools.js";
 import { SplitContainer } from "@babylonjs/shared-ui-components/split/splitContainer.js";
 import { Splitter } from "@babylonjs/shared-ui-components/split/splitter.js";
 import { ControlledSize, SplitDirection } from "@babylonjs/shared-ui-components/split/splitContext.js";
+import { PreviewAreaComponent } from "./components/preview/previewAreaComponent.js";
+import { initializePreview } from "./initializePreview.js";
+import { PreviewAreaControlComponent } from "./components/preview/previewAreaControlComponent.js";
+import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
+import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -32,15 +39,27 @@ interface IGraphEditorState {
     isError: boolean;
 }
 
+interface IInternalPreviewAreaOptions extends IInspectorOptions {
+    popup: boolean;
+    original: boolean;
+    explorerWidth?: string;
+    inspectorWidth?: string;
+    embedHostWidth?: string;
+}
+
 export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditorState> {
     private _graphCanvasRef: react.RefObject<GraphCanvasComponent>;
     private _diagramContainerRef: react.RefObject<HTMLDivElement>;
     private _graphCanvas!: GraphCanvasComponent;
     private _diagramContainer!: HTMLDivElement;
+    private _canvasResizeObserver: Nullable<ResizeObserver> = null;
 
     private _mouseLocationX = 0;
     private _mouseLocationY = 0;
     private _onWidgetKeyUpPointer: any;
+
+    private _previewHost: Nullable<HTMLElement> = null;
+    private _popUpWindow: Nullable<Window> = null;
 
     appendBlock(dataToAppend: BaseBlock | INodeData, recursion = true) {
         return this._graphCanvas.createNodeFromObject(
@@ -64,10 +83,15 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     addValueNode(type: string) {
         const nodeType = BlockTools.GetConnectionNodeTypeFromString(type);
 
-        let newInputBlock: Nullable<BaseBlock> = this.props.globalState.blockRegistration.createInputBlock(
-            this.props.globalState,
-            type
-        );
+        let newInputBlock: Nullable<BaseBlock> = null;
+
+        if (this.props.globalState.engine) {
+            newInputBlock = this.props.globalState.blockEditorRegistration.createInputBlock(
+                this.props.globalState.smartFilter,
+                this.props.globalState.engine,
+                type
+            );
+        }
 
         if (!newInputBlock) {
             newInputBlock = createDefaultInput(
@@ -83,9 +107,26 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     override componentDidMount() {
         window.addEventListener("wheel", this.onWheel, { passive: false });
 
+        this._canvasResizeObserver = new ResizeObserver(() => {
+            if (this.props.globalState.engine) {
+                setTimeout(() => {
+                    this.props.globalState.engine?.resize();
+                }, 0);
+            }
+        });
+
         if (this.props.globalState.hostDocument) {
             this._graphCanvas = this._graphCanvasRef.current!;
             this._diagramContainer = this._diagramContainerRef.current!;
+            const canvas = this.props.globalState.hostDocument.getElementById(
+                "sfe-preview-canvas"
+            ) as HTMLCanvasElement;
+            if (canvas && this.props.globalState.onNewEngine) {
+                const engine = initializePreview(canvas);
+                this.props.globalState.engine = engine;
+                this.props.globalState.onNewEngine(engine);
+                this._canvasResizeObserver.observe(canvas);
+            }
         }
 
         if (navigator.userAgent.indexOf("Mobile") !== -1) {
@@ -98,11 +139,18 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             this.componentWillUnmount();
         });
 
+        this.props.globalState.onSmartFilterLoadedObservable?.add((smartFilter: SmartFilter) => {
+            this.props.globalState.smartFilter = smartFilter;
+            this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+        });
+
         this.build();
     }
 
     override componentWillUnmount() {
         window.removeEventListener("wheel", this.onWheel);
+
+        this._canvasResizeObserver?.disconnect();
 
         if (this.props.globalState.hostDocument) {
             this.props.globalState.hostDocument!.removeEventListener("keyup", this._onWidgetKeyUpPointer, false);
@@ -294,17 +342,21 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         if (blockType.indexOf("Block") === -1) {
             newNode = this.addValueNode(blockType);
         } else {
-            const block = await this.props.globalState.blockRegistration.getBlockFromString(
-                blockType,
-                this.props.globalState.smartFilter
-            );
+            let block: Nullable<BaseBlock> = null;
+            if (this.props.globalState.engine) {
+                block = await this.props.globalState.blockEditorRegistration.getBlockFromString(
+                    blockType,
+                    this.props.globalState.smartFilter,
+                    this.props.globalState.engine
+                );
+            }
             if (!block) {
                 this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
                     `Could not create a block of type ${blockType}`
                 );
                 return;
             }
-            if (this.props.globalState.blockRegistration.getIsUniqueBlock(block)) {
+            if (this.props.globalState.blockEditorRegistration.getIsUniqueBlock(block)) {
                 const className = block.getClassName();
                 for (const other of this._graphCanvas.getCachedData()) {
                     if (other !== block && other.getClassName() === className) {
@@ -343,6 +395,151 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             event.clientY - this._diagramContainer.offsetTop
         );
     }
+
+    handlePopUp = () => {
+        this.setState({
+            showPreviewPopUp: true,
+        });
+        this.createPopUp();
+        this.props.globalState.hostWindow.addEventListener("beforeunload", this.handleClosingPopUp);
+    };
+
+    handleClosingPopUp = () => {
+        this._popUpWindow?.close();
+        this.setState(
+            {
+                showPreviewPopUp: false,
+            },
+            () => this.initiatePreviewArea()
+        );
+    };
+
+    initiatePreviewArea = (
+        canvas: HTMLCanvasElement = this.props.globalState.hostDocument.getElementById(
+            "sfe-preview-canvas"
+        ) as HTMLCanvasElement
+    ) => {
+        if (canvas && this.props.globalState.onNewEngine) {
+            const engine = initializePreview(canvas);
+            this.props.globalState.engine = engine;
+            this.props.globalState.onNewEngine(engine);
+        }
+    };
+
+    createPopUp = () => {
+        const userOptions = {
+            original: true,
+            popup: true,
+            overlay: false,
+            embedMode: false,
+            enableClose: true,
+            handleResize: true,
+            enablePopup: true,
+        };
+        const options = {
+            embedHostWidth: "100%",
+            ...userOptions,
+        };
+        let popUpWindow: Nullable<Window> = null;
+        CreatePopup("PREVIEW AREA", {
+            width: 500,
+            height: 500,
+            onParentControlCreateCallback: (parentControl) => {
+                if (parentControl) {
+                    parentControl.style.display = "grid";
+                    parentControl.style.gridTemplateRows = "40px auto";
+                    parentControl.id = "filter-editor-graph-root";
+                    parentControl.className = "nme-right-panel popup";
+                }
+            },
+            onWindowCreateCallback: (w) => {
+                popUpWindow = w;
+                if (popUpWindow) {
+                    popUpWindow.addEventListener("beforeunload", this.handleClosingPopUp);
+                    popUpWindow.addEventListener("resize", () => {
+                        this.props.globalState.engine?.resize();
+                    });
+                    const parentControl = popUpWindow.document.getElementById("filter-editor-graph-root");
+                    this.createPreviewAreaControlHost(options, parentControl);
+                    this.createPreviewHost(options, parentControl);
+                    if (parentControl) {
+                        this.fixPopUpStyles(parentControl.ownerDocument!);
+                        this.initiatePreviewArea(
+                            parentControl.ownerDocument!.getElementById("sfe-preview-canvas") as HTMLCanvasElement
+                        );
+                    }
+                }
+            },
+        });
+    };
+
+    createPreviewAreaControlHost = (options: IInternalPreviewAreaOptions, parentControl: Nullable<HTMLElement>) => {
+        // Prepare the preview control host
+        if (parentControl) {
+            const host = parentControl.ownerDocument!.createElement("div");
+
+            host.id = "PreviewAreaControl-host";
+            host.style.width = options.embedHostWidth || "auto";
+
+            parentControl.appendChild(host);
+            const previewAreaControlComponentHost = react.createElement(PreviewAreaControlComponent, {
+                globalState: this.props.globalState,
+                togglePreviewAreaComponent: this.handlePopUp,
+            });
+            reactDOM.render(previewAreaControlComponentHost, host);
+        }
+    };
+
+    createPreviewHost = (options: IInternalPreviewAreaOptions, parentControl: Nullable<HTMLElement>) => {
+        // Prepare the preview host
+        if (parentControl) {
+            const host = parentControl.ownerDocument!.createElement("div");
+
+            host.id = "PreviewAreaComponent-host";
+            host.style.width = options.embedHostWidth || "auto";
+            host.style.height = "100%";
+            host.style.overflow = "hidden";
+            host.style.display = "grid";
+            host.style.gridRow = "2";
+            host.style.gridTemplateRows = "auto 40px";
+            host.style.gridTemplateRows = "calc(100% - 40px) 40px";
+
+            parentControl.appendChild(host);
+
+            this._previewHost = host;
+
+            if (!options.overlay) {
+                this._previewHost.style.position = "relative";
+            }
+        }
+
+        if (this._previewHost) {
+            const previewAreaComponentHost = react.createElement(PreviewAreaComponent, {
+                globalState: this.props.globalState,
+            });
+            reactDOM.render(previewAreaComponentHost, this._previewHost);
+        }
+    };
+
+    fixPopUpStyles = (document: Document) => {
+        const previewContainer = document.getElementById("preview");
+        if (previewContainer) {
+            previewContainer.style.height = "auto";
+            previewContainer.style.gridRow = "1";
+        }
+        const previewConfigBar = document.getElementById("preview-config-bar");
+        if (previewConfigBar) {
+            previewConfigBar.style.gridRow = "2";
+        }
+        const newWindowButton = document.getElementById("preview-new-window");
+        if (newWindowButton) {
+            newWindowButton.style.display = "none";
+        }
+        const previewAreaBar = document.getElementById("preview-area-bar");
+        if (previewAreaBar) {
+            previewAreaBar.style.gridTemplateColumns = "auto 1fr 40px 40px";
+        }
+    };
 
     override render() {
         return (
@@ -410,12 +607,34 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                     />
 
                     {/* Property tab */}
-                    <div className="right-panel">
+                    <SplitContainer className="right-panel" direction={SplitDirection.Vertical}>
                         <PropertyTabComponent
                             lockObject={this.props.globalState.lockObject}
                             globalState={this.props.globalState}
                         />
-                    </div>
+                        {this.props.globalState.onNewEngine && (
+                            <>
+                                <Splitter
+                                    size={8}
+                                    minSize={200}
+                                    initialSize={300}
+                                    maxSize={500}
+                                    controlledSide={ControlledSize.Second}
+                                />
+                                <div className="nme-preview-part">
+                                    {!this.state.showPreviewPopUp ? (
+                                        <PreviewAreaControlComponent
+                                            globalState={this.props.globalState}
+                                            togglePreviewAreaComponent={this.handlePopUp}
+                                        />
+                                    ) : null}
+                                    {!this.state.showPreviewPopUp ? (
+                                        <PreviewAreaComponent globalState={this.props.globalState} />
+                                    ) : null}
+                                </div>
+                            </>
+                        )}
+                    </SplitContainer>
                 </SplitContainer>
                 <MessageDialog
                     message={this.state.message}

@@ -55,7 +55,6 @@ export class SmartFilterDeserializer {
         // Back-compat for the rename of version to formatVersion, didn't warrant a new version
         if ((serializedSmartFilter as any).version && serializedSmartFilter.formatVersion === undefined) {
             serializedSmartFilter.formatVersion = (serializedSmartFilter as any).version;
-            delete (serializedSmartFilter as any).version;
         }
 
         switch (serializedSmartFilter.formatVersion) {
