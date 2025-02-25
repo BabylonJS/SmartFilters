@@ -37,6 +37,15 @@ async function main(): Promise<void> {
         throw new Error("Could not find the container element");
     }
 
+    // Services and options to keep around for the lifetime of the page
+    const optimize = false;
+    let currentSmartFilter: Nullable<SmartFilter> = null;
+    let renderer: Nullable<SmartFilterRenderer> = null;
+    const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
+    let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
+    const onLogRequiredObservable = new Observable<LogEntry>();
+    let engine: Nullable<ThinEngine> = null;
+
     // Create the Smart Filter deserializer
     const smartFilterDeserializer = new SmartFilterDeserializer(
         (
@@ -72,15 +81,12 @@ async function main(): Promise<void> {
         ...editorBlockRegistrations,
         ...builtInBlockRegistrations,
     ];
-    const blockEditorRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations, true);
-
-    const optimize = false;
-    let currentSmartFilter: Nullable<SmartFilter> = null;
-    let renderer: Nullable<SmartFilterRenderer> = null;
-    const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
-    let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
-    const onLogRequiredObservable = new Observable<LogEntry>();
-    let engine: Nullable<ThinEngine> = null;
+    const blockEditorRegistration = getBlockEditorRegistration(
+        smartFilterDeserializer,
+        allBlockRegistrations,
+        true,
+        onLogRequiredObservable
+    );
 
     /**
      * Called when the editor has created a canvas and its associated engine

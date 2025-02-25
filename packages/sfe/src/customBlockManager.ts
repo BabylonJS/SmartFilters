@@ -39,6 +39,7 @@ export class CustomBlockManager {
      * @returns - The block definition, or null if it does not exist
      */
     public getBlockDefinition(blockType: string, namespace: Nullable<string>): Nullable<SerializedBlockDefinition> {
+        namespace = namespace || CustomBlocksNamespace;
         return this._customBlockDefinitions.get(getBlockKey(blockType, namespace)) || null;
     }
 
@@ -58,6 +59,7 @@ export class CustomBlockManager {
         namespace: Nullable<string>,
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<Nullable<BaseBlock>> {
+        namespace = namespace || CustomBlocksNamespace;
         const blockDefinition = this._customBlockDefinitions.get(getBlockKey(blockType, namespace));
         if (!blockDefinition) {
             return null;
@@ -141,6 +143,7 @@ export class CustomBlockManager {
      * @param namespace - The namespace of the block to delete
      */
     public deleteBlockDefinition(blockType: string, namespace: Nullable<string>) {
+        namespace = namespace || CustomBlocksNamespace;
         const blockKeyList = this._readBlockKeysFromLocalStorage();
         const blockKey = getBlockKey(blockType, namespace);
 

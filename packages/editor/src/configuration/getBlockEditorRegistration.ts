@@ -7,18 +7,22 @@ import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
 import { WebCamInputBlockName } from "./editorBlocks/blockNames.js";
 import { WebCamInputBlock } from "./editorBlocks/webCamInputBlock/webCamInputBlock.js";
 import { CustomBlocksNamespace } from "./constants.js";
+import type { Observable } from "@babylonjs/core/Misc/observable";
+import { LogEntry } from "../components/log/logComponent.js";
 
 /**
  * Creates the block editor registration for the editor.
  * @param smartFilterDeserializer - The smart filter deserializer to use
  * @param allBlockRegistrations - All block registrations to use
  * @param includeCustomBlocksCategory - If true, includes the custom blocks category even if there are no blocks in that category
+ * @param onLogRequiredObservable - If supplied, instead of console errors, log entries will be sent to this observable
  * @returns The block registration
  */
 export function getBlockEditorRegistration(
     smartFilterDeserializer: SmartFilterDeserializer,
     allBlockRegistrations: IBlockRegistration[],
-    includeCustomBlocksCategory: boolean
+    includeCustomBlocksCategory: boolean,
+    onLogRequiredObservable?: Observable<LogEntry>
 ): BlockEditorRegistration {
     const allBlocks: { [key: string]: IBlockRegistration[] } = {};
 
@@ -52,7 +56,16 @@ export function getBlockEditorRegistration(
     ): Promise<Nullable<BaseBlock>> => {
         const registration = allBlockRegistrations.find((r) => r.blockType === blockType && r.namespace === namespace);
         if (registration && registration.factory) {
-            return registration.factory(smartFilter, engine, smartFilterDeserializer);
+            try {
+                return await registration.factory(smartFilter, engine, smartFilterDeserializer);
+            } catch (err) {
+                const errorString = `Error creating block ${blockType} in namespace ${namespace}:\n ${err}`;
+                if (onLogRequiredObservable) {
+                    onLogRequiredObservable.notifyObservers(new LogEntry(errorString, true));
+                } else {
+                    console.error(errorString);
+                }
+            }
         }
         return null;
     };
