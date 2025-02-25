@@ -167,13 +167,16 @@ async function main(): Promise<void> {
             }
             return null;
         },
-        saveToSnippetServer: () => {
+        saveToSnippetServer: async () => {
             if (currentSmartFilter) {
-                saveToSnippetServer(currentSmartFilter).catch((err: unknown) => {
+                try {
+                    await saveToSnippetServer(currentSmartFilter);
+                    onLogRequiredObservable.notifyObservers(new LogEntry("Saved Smart Filter to unique URL", false));
+                } catch (err: unknown) {
                     onLogRequiredObservable.notifyObservers(
-                        new LogEntry(`Could not save to snippet server:\n${err}`, true)
+                        new LogEntry(`Could not save to unique URL:\n${err}`, true)
                     );
-                });
+                }
             }
         },
         texturePresets,

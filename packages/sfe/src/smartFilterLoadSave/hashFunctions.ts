@@ -16,15 +16,15 @@ export function getSnippet() {
  * Set the snippet info in the URL hash.
  * @param snippetToken - Snippet token to set
  * @param version - Version of the snippet to set
- * @param allowHashChange - Whether to trigger a hash change event
+ * @param triggerHashChangeEvent - Whether to trigger a hash change event
  */
-export function setSnippet(snippetToken: string, version: string | undefined, allowHashChange: boolean = true) {
+export function setSnippet(snippetToken: string, version: string | undefined, triggerHashChangeEvent: boolean = true) {
     let newHash = snippetToken;
     if (version && version != "0") {
         newHash += DELIMITER + version;
     }
 
-    if (allowHashChange) {
+    if (triggerHashChangeEvent) {
         location.hash = newHash;
     } else {
         history.replaceState(null, "", window.location.pathname + DELIMITER + newHash);

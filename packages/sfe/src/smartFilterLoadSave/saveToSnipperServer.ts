@@ -36,6 +36,6 @@ export async function saveToSnippetServer(smartFilter: SmartFilter): Promise<voi
 
     const snippet = await response.json();
 
-    // Update the location hash to trigger a hashchange event
-    setSnippet(snippet.id, snippet.version);
+    // Update the location in the address bar
+    setSnippet(snippet.id, snippet.version, false);
 }
