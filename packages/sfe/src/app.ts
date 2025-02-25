@@ -59,7 +59,7 @@ async function main(): Promise<void> {
 
     // Create the custom block manager
     const customBlockManager = new CustomBlockManager();
-    const customBlockDefinitions = customBlockManager.customBlockDefinitions;
+    const customBlockDefinitions = customBlockManager.getCustomBlockDefinitions();
     const customBlockRegistrations = generateCustomBlockRegistrations(
         customBlockManager,
         smartFilterDeserializer,

@@ -8,7 +8,7 @@ import type { Nullable } from "@babylonjs/core/types";
  * @param namespace - The namespace of the block
  * @returns - The block name for the editor
  */
-export function getBlockKeyForEditor(blockType: string, namespace: Nullable<string>) {
+export function getBlockKey(blockType: string, namespace: Nullable<string>) {
     if (namespace === null) {
         return blockType;
     }
@@ -22,7 +22,7 @@ export function getBlockKeyForEditor(blockType: string, namespace: Nullable<stri
  * @param blockKey - The block key used by the editor
  * @returns - The block type and namespace
  */
-export function getBlockTypeAndNamespaceFromBlockKeyForEditor(blockKey: string): {
+export function decodeBlockKey(blockKey: string): {
     blockType: string;
     namespace: Nullable<string>;
 } {

@@ -12,7 +12,7 @@ import { DraggableBlockLineComponent } from "../../sharedComponents/draggableBlo
 import deleteButton from "../../assets/imgs/delete.svg";
 import addButton from "../../assets/imgs/add.svg";
 import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
-import { getBlockKeyForEditor } from "../../helpers/blockKeyConverters.js";
+import { getBlockKey } from "../../helpers/blockKeyConverters.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import { CustomBlocksNamespace } from "../../configuration/constants.js";
 
@@ -84,7 +84,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                     if (block.isCustom) {
                         return (
                             <DraggableBlockLineComponent
-                                key={getBlockKeyForEditor(block.blockType, block.namespace)}
+                                key={getBlockKey(block.blockType, block.namespace)}
                                 block={block}
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
@@ -96,7 +96,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                     }
                     return (
                         <DraggableBlockLineComponent
-                            key={getBlockKeyForEditor(block.blockType, block.namespace)}
+                            key={getBlockKey(block.blockType, block.namespace)}
                             block={block}
                         />
                     );
@@ -138,7 +138,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
             const blocks = allBlocks[key];
             if (blocks && blocks.length) {
                 for (const block of blocks) {
-                    const blockNameForEditor = getBlockKeyForEditor(block.blockType, block.namespace);
+                    const blockNameForEditor = getBlockKey(block.blockType, block.namespace);
                     if (!ledger.includes(blockNameForEditor)) {
                         ledger.push(blockNameForEditor);
                     }

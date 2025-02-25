@@ -28,7 +28,7 @@ import { initializePreview } from "./initializePreview.js";
 import { PreviewAreaControlComponent } from "./components/preview/previewAreaControlComponent.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
-import { getBlockTypeAndNamespaceFromBlockKeyForEditor } from "./helpers/blockKeyConverters.js";
+import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -345,7 +345,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         } else {
             let block: Nullable<BaseBlock> = null;
             if (this.props.globalState.engine) {
-                const { blockType, namespace } = getBlockTypeAndNamespaceFromBlockKeyForEditor(blockTypeAndNamespace);
+                const { blockType, namespace } = decodeBlockKey(blockTypeAndNamespace);
                 block = await this.props.globalState.blockEditorRegistration.getBlock(
                     blockType,
                     namespace,

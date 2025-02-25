@@ -1,5 +1,5 @@
 import * as react from "react";
-import { getBlockKeyForEditor } from "../helpers/blockKeyConverters.js";
+import { getBlockKey } from "../helpers/blockKeyConverters.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 export interface IDraggableLineWithButtonComponent {
@@ -26,7 +26,7 @@ export class DraggableBlockLineComponent extends react.Component<IDraggableLineW
                 onDragStart={(event) => {
                     event.dataTransfer.setData(
                         "babylonjs-smartfilter-node",
-                        getBlockKeyForEditor(this.props.block.blockType, this.props.block.namespace)
+                        getBlockKey(this.props.block.blockType, this.props.block.namespace)
                     );
                 }}
             >
