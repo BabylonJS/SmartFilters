@@ -339,13 +339,13 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
     async emitNewBlock(blockTypeAndNamespace: string, targetX: number, targetY: number) {
         let newNode: GraphNode;
+        const { blockType, namespace } = decodeBlockKey(blockTypeAndNamespace);
 
-        if (blockTypeAndNamespace.indexOf("Block") === -1) {
+        if (namespace === "Inputs") {
             newNode = this.addValueNode(blockTypeAndNamespace);
         } else {
             let block: Nullable<BaseBlock> = null;
             if (this.props.globalState.engine) {
-                const { blockType, namespace } = decodeBlockKey(blockTypeAndNamespace);
                 block = await this.props.globalState.blockEditorRegistration.getBlock(
                     blockType,
                     namespace,

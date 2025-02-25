@@ -207,6 +207,10 @@ async function main(): Promise<void> {
         deleteCustomBlock: (blockRegistration: IBlockRegistration) => {
             customBlockManager.deleteBlockDefinition(blockRegistration.blockType, blockRegistration.namespace);
             removeCustomBlockFromBlockEditorRegistration(blockEditorRegistration, blockRegistration);
+            const index = allBlockRegistrations.indexOf(blockRegistration);
+            if (index !== -1) {
+                allBlockRegistrations.splice(index, 1);
+            }
         },
         onLogRequiredObservable,
     };

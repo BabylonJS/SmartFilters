@@ -134,13 +134,13 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
 
         // Register blocks
         const ledger = NodeLedger.RegisteredNodeNames;
-        for (const key in allBlocks) {
-            const blocks = allBlocks[key];
-            if (blocks && blocks.length) {
-                for (const block of blocks) {
-                    const blockNameForEditor = getBlockKey(block.blockType, block.namespace);
-                    if (!ledger.includes(blockNameForEditor)) {
-                        ledger.push(blockNameForEditor);
+        for (const namespace in allBlocks) {
+            const blockRegistrations = allBlocks[namespace];
+            if (blockRegistrations && blockRegistrations.length) {
+                for (const blockRegistration of blockRegistrations) {
+                    const blockKey = getBlockKey(blockRegistration.blockType, blockRegistration.namespace);
+                    if (!ledger.includes(blockKey)) {
+                        ledger.push(blockKey);
                     }
                 }
             }
