@@ -8,7 +8,7 @@ import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
 import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js";
 import type { LogEntry } from "./components/log/logComponent";
-import type { BlockRegistration } from "./smartFilterEditor";
+import type { BlockRegistration, IBlockEditorRegistration } from "./smartFilterEditor";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
 
 export type TexturePreset = {
@@ -63,9 +63,9 @@ export class GlobalState {
 
     reloadAssets: () => void;
 
-    addCustomShaderBlock?: (serializedData: string) => void;
+    addCustomBlock?: (serializedData: string) => void;
 
-    deleteCustomShaderBlock?: (blockType: string) => void;
+    deleteCustomBlock?: (blockEditorRegistration: IBlockEditorRegistration) => void;
 
     public constructor(
         engine: ThinEngine,
@@ -79,8 +79,8 @@ export class GlobalState {
         reloadAssets: () => void,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
-        addCustomShaderBlock?: (serializedData: string) => void,
-        deleteCustomShaderBlock?: (blockType: string) => void
+        addCustomBlock?: (serializedData: string) => void,
+        deleteCustomBlock?: (blockEditorRegistration: IBlockEditorRegistration) => void
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
@@ -104,7 +104,7 @@ export class GlobalState {
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
         this.reloadAssets = reloadAssets;
-        this.addCustomShaderBlock = addCustomShaderBlock;
-        this.deleteCustomShaderBlock = deleteCustomShaderBlock;
+        this.addCustomBlock = addCustomBlock;
+        this.deleteCustomBlock = deleteCustomBlock;
     }
 }

@@ -111,6 +111,7 @@ export class SmartFilterSerializer {
             format: "smartFilter",
             formatVersion: 1,
             name: smartFilter.name,
+            namespace: smartFilter.namespace,
             comments: smartFilter.comments,
             editorData: smartFilter.editorData,
             blocks,

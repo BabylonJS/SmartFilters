@@ -4,6 +4,7 @@ import { AggregateBlock, SmartFilter } from "@babylonjs/smart-filters";
 import { BlackAndWhiteBlock } from "./blackAndWhiteBlock";
 import { BlurBlock } from "./blurBlock";
 import { BlockNames } from "../blockNames";
+import { babylonDemoEffects } from "../blockNamespaces";
 
 /**
  * An example of an aggregate block that contains another aggregate block.
@@ -13,6 +14,11 @@ export class BlackAndWhiteAndBlurBlock extends AggregateBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.blackAndWhiteAndBlur;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point.

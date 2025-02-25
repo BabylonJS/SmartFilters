@@ -49,6 +49,11 @@ export type FragmentShaderInfo = {
     blockType?: string;
 
     /**
+     * If supplied, the namespace of the block
+     */
+    namespace: Nullable<string>;
+
+    /**
      * If true, optimization should be disabled for this shader
      */
     disableOptimization?: boolean;
@@ -73,6 +78,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     const { header, fragmentShaderWithoutHeader } = readHeader(fragmentShader);
     fragmentShader = fragmentShaderWithoutHeader;
     const blockType = header?.[SmartFilterBlockTypeKey] || undefined;
+    const namespace = header?.namespace || null;
 
     // Read the uniforms
     const uniforms: UniformMetadata[] = [];
@@ -167,6 +173,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
 
     return {
         blockType,
+        namespace,
         shaderCode,
         uniforms,
         disableOptimization: !!header?.disableOptimizer,
@@ -319,6 +326,11 @@ type GlslHeader = {
      * to be included in a hardcoded block definition
      */
     [SmartFilterBlockTypeKey]: string;
+
+    /**
+     * The namespace to use for the block
+     */
+    namespace?: string;
 
     /**
      * If true, optimization should be disabled for this shader

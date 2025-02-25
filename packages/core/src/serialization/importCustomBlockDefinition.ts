@@ -95,6 +95,7 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedShaderBlockDefin
         format: "shaderBlockDefinition",
         formatVersion: 1,
         blockType: fragmentShaderInfo.blockType,
+        namespace: fragmentShaderInfo.namespace,
         shaderProgram: {
             fragment: fragmentShaderInfo.shaderCode,
         },

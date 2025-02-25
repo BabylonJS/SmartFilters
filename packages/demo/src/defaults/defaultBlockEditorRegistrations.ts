@@ -1,29 +1,29 @@
-import type { IBlockEditorRegistration } from "../configuration/editor/IBlockEditorRegistration";
+import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor";
 
 export const defaultBlockEditorRegistrations: IBlockEditorRegistration[] = [
     {
-        name: "Float",
-        category: "Inputs",
+        blockType: "Float",
+        namespace: "Inputs",
         tooltip: "A floating point number representing a value with a fractional component",
     },
     {
-        name: "Color3",
-        category: "Inputs",
+        blockType: "Color3",
+        namespace: "Inputs",
         tooltip: "A set of 3 floating point numbers representing a color",
     },
     {
-        name: "Color4",
-        category: "Inputs",
+        blockType: "Color4",
+        namespace: "Inputs",
         tooltip: "A set of 4 floating point numbers representing a color",
     },
     {
-        name: "Texture",
-        category: "Inputs",
+        blockType: "Texture",
+        namespace: "Inputs",
         tooltip: "A texture to be used as input",
     },
     {
-        name: "Vector2",
-        category: "Inputs",
+        blockType: "Vector2",
+        namespace: "Inputs",
         tooltip: "A Vector2 to be used as input",
     },
 ];

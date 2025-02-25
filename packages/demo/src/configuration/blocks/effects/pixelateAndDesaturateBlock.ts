@@ -9,6 +9,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
     formatVersion: 1,
     name: "PixelateAndDesaturate",
     blockType: "PixelateAndDesaturateBlock",
+    namespace: "Babylon.Demo.Effects",
     comments: null,
     editorData: {
         locations: [
@@ -58,6 +59,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
             name: "output",
             uniqueId: 1,
             blockType: "OutputBlock",
+            namespace: null,
             comments: null,
             data: null,
         },
@@ -65,6 +67,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
             name: "logo",
             uniqueId: 2,
             blockType: "InputBlock",
+            namespace: null,
             comments: null,
             data: {
                 inputType: 2,
@@ -79,6 +82,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
             name: "pixelate",
             uniqueId: 4,
             blockType: "PixelateBlock",
+            namespace: null,
             comments: null,
             data: null,
         },
@@ -86,6 +90,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
             name: "Pixelate",
             uniqueId: 5,
             blockType: "InputBlock",
+            namespace: null,
             comments: null,
             data: {
                 inputType: 1,
@@ -100,6 +105,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
             name: "Desaturate",
             uniqueId: 34,
             blockType: "DesaturateBlock",
+            namespace: null,
             comments: null,
             data: null,
         },
@@ -107,6 +113,7 @@ export const pixelateAndDesaturateBlockDefinition: SerializedBlockDefinition = {
             name: "Desaturate",
             uniqueId: 35,
             blockType: "InputBlock",
+            namespace: null,
             comments: null,
             data: {
                 inputType: 1,

@@ -1,4 +1,3 @@
-import { defaultBlockEditorRegistrations } from "../../defaults/defaultBlockEditorRegistrations";
 import { BlackAndWhiteAndBlurBlock } from "../blocks/effects/blackAndWhiteAndBlurBlock";
 import { BlackAndWhiteBlock } from "../blocks/effects/blackAndWhiteBlock";
 import { BlurBlock } from "../blocks/effects/blurBlock";
@@ -13,10 +12,6 @@ import { KaleidoscopeBlock } from "../blocks/effects/kaleidoscopeBlock";
 import { MaskBlock } from "../blocks/effects/maskBlock";
 import { PixelateBlock } from "../blocks/effects/pixelateBlock";
 import { PosterizeBlock } from "../blocks/effects/posterizeBlock";
-import { StarryPlanesBlock } from "../blocks/generators/starryPlanesBlock";
-import { TunnelBlock } from "../blocks/generators/tunnelBlock";
-import { FireworksBlock } from "../blocks/generators/fireworksBlock";
-import { AuroraBlock } from "../blocks/generators/auroraBlock";
 import { VhsGlitchBlock } from "../blocks/effects/vhsGlitchBlock";
 import { SketchBlock } from "../blocks/effects/sketchBlock";
 import { SoftThresholdBlock } from "../blocks/effects/softThresholdBlock";
@@ -24,7 +19,7 @@ import { GlitchBlock } from "../blocks/transitions/glitchBlock";
 import { TileBlock } from "../blocks/transitions/tileBlock";
 import { WipeBlock } from "../blocks/transitions/wipeBlock";
 import { PremultiplyAlphaBlock } from "../blocks/utility/premultiplyAlphaBlock";
-import type { IBlockEditorRegistration } from "./IBlockEditorRegistration";
+import type { IBlockEditorRegistration } from "@babylonjs/smart-filters-editor";
 import {
     ConnectionPointType,
     CustomAggregateBlock,
@@ -34,9 +29,6 @@ import {
     type SmartFilter,
 } from "@babylonjs/smart-filters";
 import { WebCamInputBlockName } from "../blocks/inputs/webCamInputBlock";
-import { ParticleBlock } from "../blocks/generators/particleBlock";
-import { HeartsBlock } from "../blocks/generators/heartsBlock";
-import { NeonHeartBlock } from "../blocks/generators/neonHeartBlock";
 import { SpritesheetBlock } from "../blocks/effects/spritesheetBlock";
 import { deserializedTintBlockDefinition } from "../blocks/effects/tintBlock";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
@@ -47,15 +39,14 @@ import { pixelateAndDesaturateBlockDefinition } from "../blocks/effects/pixelate
  * (those who are defined in code and included in this project)
  */
 export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
-    ...defaultBlockEditorRegistrations,
     {
-        name: WebCamInputBlockName,
-        category: "Inputs",
+        blockType: WebCamInputBlockName,
+        namespace: "Inputs",
         tooltip: "Supplies a texture from a webcam",
     },
     {
-        name: "TimeBlock",
-        category: "Inputs",
+        blockType: "TimeBlock",
+        namespace: "Inputs",
         tooltip: "Supplies a float value representing the current time",
         factory: (smartFilter: SmartFilter) => {
             const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);
@@ -69,19 +60,19 @@ export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
         },
     },
     {
-        name: "BlackAndWhiteBlock",
+        blockType: BlackAndWhiteBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new BlackAndWhiteBlock(smartFilter, "BlackAndWhite")),
-        category: "Effects",
+        namespace: BlackAndWhiteBlock.Namespace,
         tooltip: "Transform the input texture to black and white",
     },
     {
-        name: "BlurBlock",
+        blockType: BlurBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new BlurBlock(smartFilter, "Blur")),
-        category: "Effects",
+        namespace: BlurBlock.Namespace,
         tooltip: "Blur the input texture",
     },
     {
-        name: "CompositionBlock",
+        blockType: CompositionBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new CompositionBlock(smartFilter, "Composition");
             const top = new InputBlock(smartFilter, "Top", ConnectionPointType.Float, 0.0);
@@ -95,67 +86,67 @@ export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
             height.output.connectTo(block.foregroundHeight);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: CompositionBlock.Namespace,
         tooltip: "Composite the foreground texture over the background texture",
     },
     {
-        name: "FrameBlock",
+        blockType: FrameBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new FrameBlock(smartFilter, "Frame")),
-        category: "Effects",
+        namespace: FrameBlock.Namespace,
         tooltip: "Green screen like effect",
     },
     {
-        name: "GlassBlock",
+        blockType: GlassBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new GlassBlock(smartFilter, "Glass")),
-        category: "Effects",
+        namespace: GlassBlock.Namespace,
         tooltip: "Creates a glass like effect",
     },
     {
-        name: "KaleidoscopeBlock",
+        blockType: KaleidoscopeBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new KaleidoscopeBlock(smartFilter, "Kaleidoscope");
             const input = new InputBlock(smartFilter, "Angle", ConnectionPointType.Float, 0);
             input.output.connectTo(block.time);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: KaleidoscopeBlock.Namespace,
         tooltip: "Kaleidoscope effect",
     },
     {
-        name: "PosterizeBlock",
+        blockType: PosterizeBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new PosterizeBlock(smartFilter, "Posterize");
             const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.5);
             input.output.connectTo(block.intensity);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: PosterizeBlock.Namespace,
         tooltip: "Posterize to the input texture",
     },
     {
-        name: "DesaturateBlock",
+        blockType: DesaturateBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new DesaturateBlock(smartFilter, "Desaturate");
             const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.5);
             input.output.connectTo(block.intensity);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: DesaturateBlock.Namespace,
         tooltip: "Applies a desaturated effect to the input texture",
     },
     {
-        name: "ContrastBlock",
+        blockType: ContrastBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new ContrastBlock(smartFilter, "Contrast");
             const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.5);
             input.output.connectTo(block.intensity);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: ContrastBlock.Namespace,
         tooltip: "Change the contrast of the input texture",
     },
     {
-        name: "GreenScreenBlock",
+        blockType: GreenScreenBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new GreenScreenBlock(smartFilter, "GreenScreen");
             const reference = new InputBlock(smartFilter, "Reference", ConnectionPointType.Color3, {
@@ -168,137 +159,95 @@ export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
             distance.output.connectTo(block.distance);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: GreenScreenBlock.Namespace,
         tooltip: "Replaces a green screen background with a different texture",
     },
     {
-        name: "BlackAndWhiteAndBlurBlock",
+        blockType: BlackAndWhiteAndBlurBlock.ClassName,
         factory: (smartFilter: SmartFilter) =>
             Promise.resolve(new BlackAndWhiteAndBlurBlock(smartFilter, "BlackAndWhiteAndBlurBlock")),
-        category: "Effects",
+        namespace: BlackAndWhiteAndBlurBlock.Namespace,
         tooltip: "Transforms the input texture to black and white and blurs it",
     },
     {
-        name: "GlitchBlock",
+        blockType: GlitchBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new GlitchBlock(smartFilter, "Glitch")),
-        category: "Transitions",
+        namespace: GlitchBlock.Namespace,
         tooltip: "Funky glitch transition",
     },
     {
-        name: "TileBlock",
+        blockType: TileBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new TileBlock(smartFilter, "Tile")),
-        category: "Transitions",
+        namespace: TileBlock.Namespace,
         tooltip: "Transition from one texture to another using tiles",
     },
     {
-        name: "WipeBlock",
+        blockType: WipeBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new WipeBlock(smartFilter, "Wipe")),
-        category: "Transitions",
+        namespace: WipeBlock.Namespace,
         tooltip: "Transition from one texture to another using a wipe",
     },
     {
-        name: "PixelateBlock",
+        blockType: PixelateBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new PixelateBlock(smartFilter, "Pixelate");
             const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.4);
             input.output.connectTo(block.intensity);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: PixelateBlock.Namespace,
         tooltip: "Add pixelation to the input texture",
     },
     {
-        name: "ExposureBlock",
+        blockType: ExposureBlock.ClassName,
         factory: (smartFilter: SmartFilter) => {
             const block = new ExposureBlock(smartFilter, "Exposure");
             const input = new InputBlock(smartFilter, "Amount", ConnectionPointType.Float, 0.7);
             input.output.connectTo(block.amount);
             return Promise.resolve(block);
         },
-        category: "Effects",
+        namespace: ExposureBlock.Namespace,
         tooltip: "Alters the exposure of the input texture",
     },
     {
-        name: "MaskBlock",
+        blockType: MaskBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new MaskBlock(smartFilter, "Mask")),
-        category: "Effects",
+        namespace: MaskBlock.Namespace,
         tooltip: "Applies mask in one texture to another texture",
     },
     {
-        name: "StarryPlanesBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new StarryPlanesBlock(smartFilter, "StarryPlanes")),
-        category: "Generators",
-        tooltip: "A mind-bending starry background effect",
-    },
-    {
-        name: "TunnelBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new TunnelBlock(smartFilter, "Tunnel")),
-        category: "Generators",
-        tooltip: "A hypnotic tunnel background effect",
-    },
-    {
-        name: "VhsGlitchBlock",
+        blockType: VhsGlitchBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new VhsGlitchBlock(smartFilter, "VhsGlitch")),
-        category: "Effects",
+        namespace: VhsGlitchBlock.Namespace,
         tooltip: "Adds a VHS glitch effect to the input texture",
     },
     {
-        name: "FireworksBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new FireworksBlock(smartFilter, "Fireworks")),
-        category: "Generators",
-        tooltip: "Adds a fireworks background effect to the input texture",
-    },
-    {
-        name: "AuroraBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new AuroraBlock(smartFilter, "Aurora")),
-        category: "Generators",
-        tooltip: "A Northern lights background effect",
-    },
-    {
-        name: "SketchBlock",
+        blockType: SketchBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new SketchBlock(smartFilter, "Sketch")),
-        category: "Effects",
+        namespace: SketchBlock.Namespace,
         tooltip: "Adds a hand-drawn sketch effect to the input texture",
     },
     {
-        name: "SoftThresholdBlock",
+        blockType: SoftThresholdBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new SoftThresholdBlock(smartFilter, "SoftThreshold")),
-        category: "Effects",
+        namespace: SoftThresholdBlock.Namespace,
         tooltip: "Adds a high contrast, softened black-and-white effect to the input texture",
     },
     {
-        name: "ParticleBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new ParticleBlock(smartFilter, "Particle")),
-        category: "Generators",
-        tooltip: "Animates a single particle texture.",
-    },
-    {
-        name: "HeartsBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new HeartsBlock(smartFilter, "Hearts")),
-        category: "Generators",
-        tooltip: "A tunnel of hearts background effect",
-    },
-    {
-        name: "NeonHeartBlock",
-        factory: (smartFilter: SmartFilter) => Promise.resolve(new NeonHeartBlock(smartFilter, "NeonHeart")),
-        category: "Generators",
-        tooltip: "A drawn, neon heart at the center of the input texture",
-    },
-    {
-        name: "SpritesheetBlock",
+        blockType: SpritesheetBlock.ClassName,
         factory: (smartFilter: SmartFilter) => Promise.resolve(new SpritesheetBlock(smartFilter, "Spritesheet")),
-        category: "Effects",
+        namespace: SpritesheetBlock.Namespace,
         tooltip: "Animates a sprite sheet texture",
     },
     {
-        name: "TintBlock",
+        blockType: deserializedTintBlockDefinition.blockType,
         factory: (smartFilter: SmartFilter) =>
             Promise.resolve(CustomShaderBlock.Create(smartFilter, "Tint", deserializedTintBlockDefinition)),
-        category: "Effects",
+        namespace: deserializedTintBlockDefinition.namespace,
         tooltip: "Adds colored tint to the input texture",
     },
     {
-        name: "PixelateAndDesaturateBlock",
+        blockType: pixelateAndDesaturateBlockDefinition.blockType,
         factory: (smartFilter: SmartFilter, engine: ThinEngine, smartFilterDeserializer: SmartFilterDeserializer) =>
             CustomAggregateBlock.Create(
                 smartFilter,
@@ -307,14 +256,14 @@ export const hardcodedBlockEditorRegistrations: IBlockEditorRegistration[] = [
                 pixelateAndDesaturateBlockDefinition,
                 smartFilterDeserializer
             ),
-        category: "Effects",
+        namespace: pixelateAndDesaturateBlockDefinition.namespace,
         tooltip: "Adds colored tint to the input texture",
     },
     {
-        name: "PremultiplyAlphaBlock",
+        blockType: PremultiplyAlphaBlock.ClassName,
         factory: (smartFilter: SmartFilter) =>
             Promise.resolve(new PremultiplyAlphaBlock(smartFilter, "PremultiplyAlpha")),
-        category: "Utility",
+        namespace: PremultiplyAlphaBlock.Namespace,
         tooltip: "Premultiplies the input texture's color against its alpha",
     },
 ];

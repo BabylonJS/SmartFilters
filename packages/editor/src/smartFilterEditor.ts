@@ -6,10 +6,25 @@ import { GraphEditor } from "./graphEditor.js";
 import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger.js";
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
-import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
+import type { BaseBlock, SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
+
+/**
+ * Represents a block to be displayed in the editor.
+ */
+export interface IBlockEditorRegistration {
+    blockType: string;
+    factory?: (
+        smartFilter: SmartFilter,
+        engine: ThinEngine,
+        smartFilterDeserializer: SmartFilterDeserializer
+    ) => Promise<BaseBlock>;
+    namespace: Nullable<string>;
+    tooltip: string;
+    isCustom?: boolean;
+}
 
 /**
  * An object that contains all of the information the Editor needs to display and
@@ -42,14 +57,9 @@ export type BlockRegistration = {
     createInputBlock(globalState: GlobalState, type: string): Nullable<BaseBlock>;
 
     /**
-     * An object that contains the names of all of the blocks, organized by category.
+     * An object that contains all of the blocks to display, organized by category.
      */
-    allBlockNames: { [key: string]: string[] };
-
-    /**
-     * An object that contains the tooltips for all of the blocks, keyed by block name.
-     */
-    blockTooltips: { [key: string]: string };
+    allBlocks: { [key: string]: IBlockEditorRegistration[] };
 
     /**
      * Optional override of the InputDisplayManager to provide custom display for particular blocks if desired.
@@ -123,16 +133,16 @@ export type SmartFilterEditorOptions = {
     reloadAssets: () => void;
 
     /**
-     * If supplied, the editor will call this function when the user tries to add a custom shader block
-     * @param serializedData - The serialized data of the custom shader block
+     * If supplied, the editor will call this function when the user tries to add a custom block
+     * @param serializedData - The serialized data of the custom block
      */
-    addCustomShaderBlock?: (serializedData: string) => void;
+    addCustomBlock?: (serializedData: string) => void;
 
     /**
-     * If supplied, the editor will call this function when the user tries to delete a custom shader block
-     * @param blockType - The type of the custom shader block to delete
+     * If supplied, the editor will call this function when the user tries to delete a custom block
+     * @param blockEditorRegistration - The block editor registration of the custom block to delete
      */
-    deleteCustomShaderBlock?: (blockType: string) => void;
+    deleteCustomBlock?: (blockEditorRegistration: IBlockEditorRegistration) => void;
 };
 
 /**
@@ -176,8 +186,8 @@ export class SmartFilterEditor {
             options.reloadAssets,
             options.saveToSnippetServer,
             options.texturePresets,
-            options.addCustomShaderBlock,
-            options.deleteCustomShaderBlock
+            options.addCustomBlock,
+            options.deleteCustomBlock
         );
 
         RegisterToDisplayManagers(globalState);
