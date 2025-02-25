@@ -1,7 +1,5 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 
-// TODO: UI for selecting aspect ratio of preview
-
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";

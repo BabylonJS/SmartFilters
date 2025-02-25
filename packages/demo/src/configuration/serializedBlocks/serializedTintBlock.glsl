@@ -1,4 +1,3 @@
-//TODO: Move this into a string and use it in an example filter, with an explanation that it could have been loaded from an storage.
 // { "smartFilterBlockType": "SerializedTintBlock" }
 
 uniform sampler2D input; // main
