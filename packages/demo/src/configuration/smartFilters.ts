@@ -19,9 +19,9 @@ export const smartFilterManifests: SmartFilterManifest[] = [
     {
         type: "HardCoded",
         name: HardCodedSmartFilterNames.simpleWebcam,
-        createSmartFilter: async (engine: ThinEngine) => {
+        createSmartFilter: async () => {
             const module = await import(/* webpackChunkName: "simpleWebcam" */ "./smartFilters/hardCoded/simpleWebcam");
-            return module.createSimpleWebcamSmartFilter(engine);
+            return module.createSimpleWebcamSmartFilter();
         },
     },
     {

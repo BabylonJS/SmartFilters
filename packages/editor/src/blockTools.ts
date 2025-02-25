@@ -71,7 +71,7 @@ export class BlockTools {
     }
 
     /**
-     * Gets the list of all input blocks attached to the smart filter.
+     * Gets the list of all input blocks attached to the Smart Filter.
      * @returns The list of input blocks
      */
     public static GetInputBlocks(smartFilter: SmartFilter): AnyInputBlock[] {

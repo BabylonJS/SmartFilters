@@ -1,3 +1,4 @@
+import { BlackAndWhiteBlock, PixelateBlock, PremultiplyAlphaBlock } from "@babylonjs/smart-filters-blocks";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import {
     ConnectionPointType,
@@ -7,9 +8,6 @@ import {
     createStrongRef,
 } from "@babylonjs/smart-filters";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
-import { BlackAndWhiteBlock } from "../../blocks/effects/blackAndWhiteBlock";
-import { PixelateBlock } from "../../blocks/effects/pixelateBlock";
-import { PremultiplyAlphaBlock } from "../../blocks/utility/premultiplyAlphaBlock";
 
 export function createSimpleLogoSmartFilter(engine: ThinEngine): SmartFilter {
     const smartFilter = new SmartFilter(HardCodedSmartFilterNames.simpleLogo);

@@ -34,7 +34,8 @@
         "glsl",
         "SAMPLINGMODE",
         "spritesheet",
-        "Premultiplies"
+        "Premultiplies",
+        "resizer"
     ],
     "files.exclude": {
         "**/node_modules": true,

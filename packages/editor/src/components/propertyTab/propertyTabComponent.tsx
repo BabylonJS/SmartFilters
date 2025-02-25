@@ -3,7 +3,6 @@ import { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graph
 import { NodePort } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodePort.js";
 import * as react from "react";
 import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
-import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
 import { FileButtonLineComponent } from "../../sharedComponents/fileButtonLineComponent.js";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
@@ -23,7 +22,7 @@ import type { FrameNodePort } from "@babylonjs/shared-ui-components/nodeGraphSys
 import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
 import type { GlobalState } from "../../globalState";
 import type { ISelectionChangedOptions } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/selectionChangedOptions";
-import type { AnyInputBlock } from "@babylonjs/smart-filters";
+import { SmartFilterCoreVersion, type AnyInputBlock } from "@babylonjs/smart-filters";
 
 interface IPropertyTabComponentProps {
     globalState: GlobalState;
@@ -117,11 +116,14 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     async load(_file: File) {
-        this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
-
-        this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
-        this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-        this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
+        if (this.props.globalState.engine && this.props.globalState.loadSmartFilter) {
+            const newSmartFilter = await this.props.globalState.loadSmartFilter(_file, this.props.globalState.engine);
+            if (newSmartFilter) {
+                this.props.globalState.smartFilter = newSmartFilter;
+                this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
+                this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+            }
+        }
     }
 
     loadFrame(_file: File) {
@@ -139,8 +141,10 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     downloadSmartFilter() {
-        this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
-        this.props.globalState.downloadSmartFilter();
+        if (this.props.globalState.downloadSmartFilter) {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            this.props.globalState.downloadSmartFilter();
+        }
     }
 
     async saveToSnippetServer() {
@@ -223,7 +227,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                 </div>
                 <div>
                     <LineContainerComponent title="GENERAL">
-                        <TextLineComponent label="Version" value={ThinEngine.Version} />
+                        <TextLineComponent label="Version" value={SmartFilterCoreVersion} />
                         <TextLineComponent
                             label="Help"
                             value="doc.babylonjs.com"
@@ -289,38 +293,50 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             }}
                         />
                     </LineContainerComponent>
-                    <LineContainerComponent title="FILE">
-                        <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
-                        <ButtonLineComponent
-                            label="Save"
-                            onClick={() => {
-                                this.downloadSmartFilter();
-                            }}
-                        />
-                        {this.props.globalState.saveToSnippetServer && (
-                            <ButtonLineComponent
-                                label="Save to unique URL"
-                                isDisabled={this.state.uploadInProgress}
-                                onClick={() => {
-                                    this.saveToSnippetServer();
-                                }}
-                            />
-                        )}
-                        {/*<ButtonLineComponent
-                            label="Generate code"
-                            onClick={() => {
-                                StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
-                            }}
-                        />
-                        <ButtonLineComponent
-                            label="Export shaders"
-                            onClick={() => {
-                                this.props.globalState.nodeMaterial.build();
-                                StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
-                            }}
-                        />
-                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
-                    </LineContainerComponent>
+                    {(this.props.globalState.loadSmartFilter ||
+                        this.props.globalState.downloadSmartFilter ||
+                        this.props.globalState.saveToSnippetServer) && (
+                        <LineContainerComponent title="FILE">
+                            {this.props.globalState.loadSmartFilter && (
+                                <FileButtonLineComponent
+                                    label="Load"
+                                    onClick={(file) => this.load(file)}
+                                    accept=".json"
+                                />
+                            )}
+                            {this.props.globalState.downloadSmartFilter && (
+                                <ButtonLineComponent
+                                    label="Save"
+                                    onClick={() => {
+                                        this.downloadSmartFilter();
+                                    }}
+                                />
+                            )}
+                            {this.props.globalState.saveToSnippetServer && (
+                                <ButtonLineComponent
+                                    label="Save to unique URL"
+                                    isDisabled={this.state.uploadInProgress}
+                                    onClick={() => {
+                                        this.saveToSnippetServer();
+                                    }}
+                                />
+                            )}
+                            {/*<ButtonLineComponent
+                        label="Generate code"
+                        onClick={() => {
+                            StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
+                        }}
+                    />
+                    <ButtonLineComponent
+                        label="Export shaders"
+                        onClick={() => {
+                            this.props.globalState.nodeMaterial.build();
+                            StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
+                        }}
+                    />
+                    <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
+                        </LineContainerComponent>
+                    )}
                     {/*
                     {!this.props.globalState.customSave && (
                         <LineContainerComponent title="SNIPPET">

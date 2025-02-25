@@ -84,7 +84,7 @@ export class InputDisplayManager implements IDisplayManager {
                             ? "transform: scaleY(-1); z-index: -1;"
                             : "";
                     const src = inputBlock.editorData?.url || inputBlock.runtimeValue.value?.getInternalTexture()?.url;
-                    value = `<img src="${src}" style="${style}"/>`;
+                    value = src ? `<img src="${src}" style="${style}"/>` : "";
                 }
                 break;
             }

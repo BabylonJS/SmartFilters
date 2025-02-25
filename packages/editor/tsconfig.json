@@ -7,6 +7,6 @@
         "composite": true
     },
 
-    "include": ["../**/*.ts", "../**/*.tsx"],
+    "include": ["./src/**/*.ts", "./src/**/*.tsx", "../core/**/*.ts", "../core/**/*.tsx", "../blocks/**/*.ts"],
     "exclude": ["**/node_modules", "**/dist"]
 }

@@ -70,9 +70,9 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
     override render() {
         // Create node menu
         const blockMenu = [];
-        const allBlocks = this.props.globalState.blockRegistration.allBlockNames;
+        const allBlocks = this.props.globalState.blockEditorRegistration.allBlockNames;
         for (const key in allBlocks) {
-            const blockList = (this.props.globalState.blockRegistration.allBlockNames as any)[key]
+            const blockList = (this.props.globalState.blockEditorRegistration.allBlockNames as any)[key]
                 .filter(
                     (b: string) => !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
                 )
@@ -83,7 +83,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                             <DraggableLineWithButtonComponent
                                 key={block}
                                 data={block}
-                                tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
+                                tooltip={this.props.globalState.blockEditorRegistration.blockTooltips[block] || ""}
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
                                 onIconClick={() => {
@@ -96,7 +96,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         <DraggableLineComponent
                             key={block}
                             data={block}
-                            tooltip={this.props.globalState.blockRegistration.blockTooltips[block] || ""}
+                            tooltip={this.props.globalState.blockEditorRegistration.blockTooltips[block] || ""}
                         />
                     );
                 });

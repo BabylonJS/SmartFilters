@@ -17,15 +17,17 @@ jobs:
             displayName: "Jest Unit Tests"
           - script: "npm run preparePublish"
             displayName: "Npm preparePublish (version setting, cross-package dependency configuration)"
+          - script: "npm run build"
+            displayName: "Build again after preparePublish to pick up version number changes"
           - task: Npm@1
             displayName: "Npm publish"
             inputs:
                 command: "custom"
-                customCommand: "publish --tag preview --access public -w @babylonjs/smart-filters && publish --tag preview --access public -w @babylonjs/smart-filters-editor"
+                customCommand: "publish --tag preview --access public -w @babylonjs/smart-filters"
                 customEndpoint: "NPMWithAccessToken"
           - script: |
                 # SFE
-                cd packages/demo/www
+                cd packages/sfe/www
                 zip -r ../../../dist.zip *
                 cd ../../..
                 curl $(DEPLOYMENT_SERVER)/upload -i -X POST -H "Content-Type: multipart/form-data" -H "Authorization: $(BASIC_AUTH)" -F "path=smartFiltersEditor" -F "storageAccount=babylontools"  -F "zip=@dist.zip"

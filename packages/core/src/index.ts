@@ -39,3 +39,4 @@ export * from "./utils/textureLoaders.js";
 export * from "./serialization/index.js";
 export * from "./editorUtils/editableInPropertyPage.js";
 export * from "./serialization/importCustomBlockDefinition.js";
+export * from "./version.js";
