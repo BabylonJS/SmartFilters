@@ -6,12 +6,12 @@ import type { BaseBlock } from "./baseBlock.js";
 import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
- * Loads a serialized SmartFilter into a block which can be used in another SmartFilter.
+ * Loads a serialized Smart Filter into a block which can be used in another SmartFilter.
  */
 export class CustomAggregateBlock extends AggregateBlock {
     /**
      * Creates a new CustomAggregateBlock
-     * @param smartFilter - The SmartFilter to create the block for
+     * @param smartFilter - The Smart Filter to create the block for
      * @param engine - The ThinEngine to use
      * @param name - The friendly name of the block
      * @param serializedSmartFilter - The serialized SmartFilter to load into the block
@@ -85,7 +85,7 @@ export class CustomAggregateBlock extends AggregateBlock {
                     );
                 }
 
-                // Remove this input block from the smart filter graph - this will reset the runtimeData to the
+                // Remove this input block from the Smart Filter graph - this will reset the runtimeData to the
                 // default for that connection point (which may be null)
                 innerSmartFilter.removeBlock(block);
                 index--;
@@ -98,7 +98,7 @@ export class CustomAggregateBlock extends AggregateBlock {
 
         this._registerSubfilterOutput("output", innerSmartFilter.output.connectedTo);
 
-        // Disconnect the inner smart filter output from the inner smart filter
+        // Disconnect the inner Smart Filter output from the inner Smart Filter
         innerSmartFilter.output.connectedTo.disconnectFrom(innerSmartFilter.output);
     }
 }
