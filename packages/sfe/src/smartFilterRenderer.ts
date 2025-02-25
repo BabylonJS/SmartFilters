@@ -9,7 +9,7 @@ import {
     type SmartFilterRuntime,
 } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
-import { registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
+import { LogEntry, registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
 
 /**
  * Simple example of rendering a Smart Filter
@@ -66,25 +66,31 @@ export class SmartFilterRenderer {
     /**
      * Starts rendering the filter. (won't stop until dispose is called)
      * @param filter - The SmartFilter to render
-     * @returns The SmartFilter that was rendered (which will be different than the one passed in if optimize is true)
+     * @param onLogRequiredObservable - The observable to use to notify when a log entry is required
+     * @returns A promise that resolves as true if the rendering started successfully, false otherwise
      */
-    public async startRendering(filter: SmartFilter) {
-        this._lastRenderedSmartFilter = filter;
-        const filterToRender = this.optimize ? this._optimize(filter) : filter;
+    public async startRendering(filter: SmartFilter, onLogRequiredObservable: Observable<LogEntry>): Promise<boolean> {
+        try {
+            this._lastRenderedSmartFilter = filter;
+            const filterToRender = this.optimize ? this._optimize(filter) : filter;
 
-        const rtg = new RenderTargetGenerator(this.optimize);
-        const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
+            const rtg = new RenderTargetGenerator(this.optimize);
+            const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
 
-        // NOTE: Always load assets and animations from the unoptimized filter because it has all the metadata needed to load assets and
-        //       shares runtime data with the optimized filter so loading assets for it will work for the optimized filter as well
-        await this.loadAssets(filter);
-        this._loadAnimations(filter);
+            // NOTE: Always load assets and animations from the unoptimized filter because it has all the metadata needed to load assets and
+            //       shares runtime data with the optimized filter so loading assets for it will work for the optimized filter as well
+            await this.loadAssets(filter);
+            this._loadAnimations(filter);
 
-        console.log("Number of render targets created: " + rtg.numTargetsCreated);
+            console.log("Number of render targets created: " + rtg.numTargetsCreated);
 
-        this._setRuntime(runtime);
+            this._setRuntime(runtime);
 
-        return filterToRender;
+            return true;
+        } catch (err) {
+            onLogRequiredObservable.notifyObservers(new LogEntry(`Could not render Smart Filter:\n${err}`, true));
+            return false;
+        }
     }
 
     /**
@@ -105,17 +111,6 @@ export class SmartFilterRenderer {
 
         // Load the assets for the input blocks
         await this._textureAssetCache.loadAssetsForInputBlocks(inputBlocks);
-    }
-
-    /**
-     * Rebuilds the most recently rendered runtime.
-     * @returns The SmartFilter that was rendered
-     */
-    public rebuildRuntime(): Promise<SmartFilter> {
-        if (!this._lastRenderedSmartFilter) {
-            throw new Error("No SmartFilter has been rendered yet");
-        }
-        return this.startRendering(this._lastRenderedSmartFilter);
     }
 
     /**

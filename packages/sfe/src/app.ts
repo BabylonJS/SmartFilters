@@ -74,18 +74,12 @@ async function main(): Promise<void> {
     const blockEditorRegistration = getBlockEditorRegistration(smartFilterDeserializer, allBlockRegistrations);
 
     const optimize = false;
-    let smartFilter: Nullable<SmartFilter> = null;
+    let currentSmartFilter: Nullable<SmartFilter> = null;
     let renderer: Nullable<SmartFilterRenderer> = null;
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
     const onLogRequiredObservable = new Observable<LogEntry>();
     let engine: Nullable<ThinEngine> = null;
-
-    const afterEngineResize = (): void => {
-        if (smartFilter && renderer) {
-            renderer.startRendering(smartFilter);
-        }
-    };
 
     /**
      * Called when the editor has created a canvas and its associated engine
@@ -101,12 +95,16 @@ async function main(): Promise<void> {
         }
         engine = newEngine;
 
-        afterEngineResizerObserver = newEngine.onResizeObservable.add(afterEngineResize);
+        afterEngineResizerObserver = newEngine.onResizeObservable.add(() => {
+            if (renderer && currentSmartFilter) {
+                renderer.startRendering(currentSmartFilter, onLogRequiredObservable);
+            }
+        });
 
         let justLoadedSmartFilter = false;
-        if (!smartFilter) {
+        if (!currentSmartFilter) {
             try {
-                smartFilter = await loadStartingSmartFilter(
+                currentSmartFilter = await loadStartingSmartFilter(
                     smartFilterDeserializer,
                     newEngine,
                     onLogRequiredObservable
@@ -119,31 +117,27 @@ async function main(): Promise<void> {
         }
 
         renderer = new SmartFilterRenderer(newEngine, optimize);
-        renderer.startRendering(smartFilter);
+        await startRendering();
 
         if (justLoadedSmartFilter) {
-            onSmartFilterLoadedObservable.notifyObservers(smartFilter);
+            onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
         }
     };
 
-    const rebuildRuntime = () => {
-        renderer
-            ?.rebuildRuntime()
-            .then(() => {
-                onLogRequiredObservable.notifyObservers(new LogEntry("Smart Filter rebuilt successfully", false));
-            })
-            .catch((err: unknown) => {
-                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not start rendering:\n${err}`, true));
-            });
+    const startRendering = async () => {
+        if (renderer && currentSmartFilter) {
+            if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
+                onLogRequiredObservable.notifyObservers(new LogEntry("Smart Filter built successfully", false));
+            }
+        }
     };
 
     window.addEventListener("hashchange", async () => {
         if (renderer && engine) {
-            smartFilter = await loadFromUrl(smartFilterDeserializer, engine, onLogRequiredObservable);
-            if (smartFilter) {
-                renderer.startRendering(smartFilter);
-                onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from unique URL", false));
-                onSmartFilterLoadedObservable.notifyObservers(smartFilter);
+            currentSmartFilter = await loadFromUrl(smartFilterDeserializer, engine, onLogRequiredObservable);
+            if (currentSmartFilter) {
+                await startRendering();
+                onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
             } else {
                 onLogRequiredObservable.notifyObservers(
                     new LogEntry("Could not load Smart Filter with that unique URL", true)
@@ -158,23 +152,24 @@ async function main(): Promise<void> {
         blockEditorRegistration: blockEditorRegistration,
         hostElement,
         downloadSmartFilter: () => {
-            if (smartFilter) {
-                downloadSmartFilter(smartFilter);
+            if (currentSmartFilter) {
+                downloadSmartFilter(currentSmartFilter);
                 onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter JSON downloaded", false));
             }
         },
         loadSmartFilter: async (file: File, engine: ThinEngine) => {
             if (renderer) {
-                smartFilter = await loadFromFile(smartFilterDeserializer, engine, file);
-                renderer.startRendering(smartFilter);
-                onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
-                return smartFilter;
+                currentSmartFilter = await loadFromFile(smartFilterDeserializer, engine, file);
+                if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
+                    onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
+                }
+                return currentSmartFilter;
             }
             return null;
         },
         saveToSnippetServer: () => {
-            if (smartFilter) {
-                saveToSnippetServer(smartFilter).catch((err: unknown) => {
+            if (currentSmartFilter) {
+                saveToSnippetServer(currentSmartFilter).catch((err: unknown) => {
                     onLogRequiredObservable.notifyObservers(
                         new LogEntry(`Could not save to snippet server:\n${err}`, true)
                     );
@@ -183,7 +178,7 @@ async function main(): Promise<void> {
         },
         texturePresets,
         beforeRenderObservable: new Observable<void>(),
-        rebuildRuntime,
+        rebuildRuntime: startRendering,
         reloadAssets: () => {
             renderer?.reloadAssets().catch((err: unknown) => {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not reload assets:\n${err}`, true));
@@ -194,7 +189,7 @@ async function main(): Promise<void> {
                 const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
                 removeCustomBlockFromBlockRegistration(blockEditorRegistration, blockDefinition.blockType);
                 addCustomBlockToBlockRegistration(blockEditorRegistration, blockDefinition);
-                rebuildRuntime();
+                startRendering();
             } catch (err) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
             }

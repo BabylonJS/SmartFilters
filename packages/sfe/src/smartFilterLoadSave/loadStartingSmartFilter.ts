@@ -23,7 +23,6 @@ export async function loadStartingSmartFilter(
 ): Promise<SmartFilter> {
     const smartFilterFromUrl = await loadFromUrl(smartFilterDeserializer, engine, onLogRequiredObservable);
     if (smartFilterFromUrl) {
-        onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from unique URL", false));
         return smartFilterFromUrl;
     }
 
@@ -50,7 +49,14 @@ export async function loadFromUrl(
         try {
             // Reset hash with our formatting to keep it looking consistent
             setSnippet(snippetToken, version, false);
-            return await loadSmartFilterFromSnippetServer(smartFilterDeserializer, engine, snippetToken, version);
+            const smartFilter = await loadSmartFilterFromSnippetServer(
+                smartFilterDeserializer,
+                engine,
+                snippetToken,
+                version
+            );
+            onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from unique URL", false));
+            return smartFilter;
         } catch (err) {
             onLogRequiredObservable.notifyObservers(
                 new LogEntry(`Could not load Smart Filter from snippet server:\n${err}`, true)
