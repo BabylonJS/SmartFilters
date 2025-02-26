@@ -28,6 +28,7 @@ import { initializePreview } from "./initializePreview.js";
 import { PreviewAreaControlComponent } from "./components/preview/previewAreaControlComponent.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
+import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -336,23 +337,25 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         }
     };
 
-    async emitNewBlock(blockType: string, targetX: number, targetY: number) {
+    async emitNewBlock(blockTypeAndNamespace: string, targetX: number, targetY: number) {
         let newNode: GraphNode;
+        const { blockType, namespace } = decodeBlockKey(blockTypeAndNamespace);
 
-        if (blockType.indexOf("Block") === -1) {
-            newNode = this.addValueNode(blockType);
+        if (namespace === "Inputs") {
+            newNode = this.addValueNode(blockTypeAndNamespace);
         } else {
             let block: Nullable<BaseBlock> = null;
             if (this.props.globalState.engine) {
-                block = await this.props.globalState.blockEditorRegistration.getBlockFromString(
+                block = await this.props.globalState.blockEditorRegistration.getBlock(
                     blockType,
+                    namespace,
                     this.props.globalState.smartFilter,
                     this.props.globalState.engine
                 );
             }
             if (!block) {
                 this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
-                    `Could not create a block of type ${blockType}`
+                    `Could not create a block of type ${blockTypeAndNamespace}`
                 );
                 return;
             }
@@ -375,7 +378,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         let offsetX = GraphCanvasComponent.NodeWidth;
         let offsetY = 20;
 
-        if (blockType === "ElbowBlock") {
+        if (blockTypeAndNamespace === "ElbowBlock") {
             offsetX = 10;
             offsetY = 10;
         }

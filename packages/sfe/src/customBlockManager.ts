@@ -10,16 +10,20 @@ import {
     CustomAggregateBlock,
     type SmartFilterDeserializer,
 } from "@babylonjs/smart-filters";
+import { CustomBlocksNamespace, getBlockKey } from "@babylonjs/smart-filters-editor-control";
 
-const SavedCustomBlockListKey = "Custom-Block-List";
-const SavedCustomBlockDefinitionKeySuffix = "-Definition";
+const SavedCustomBlockKeysName = "Custom-Block-List";
+const SavedCustomBlockDefinitionNameSuffix = "-Definition";
 
 /**
  * Loads and saves SerializedBlockDefinitions from local storage, and
  * creates CustomShaderBlocks and CustomAggregateBlocks from them.
  */
 export class CustomBlockManager {
-    private _customBlockDefinitions = new Map<string, SerializedBlockDefinition>();
+    /**
+     * Map of block keys to custom block definitions.
+     */
+    private readonly _customBlockDefinitions = new Map<string, SerializedBlockDefinition>();
 
     /**
      * Creates a new CustomBlockManager.
@@ -29,12 +33,14 @@ export class CustomBlockManager {
     }
 
     /**
-     * Gets a block definition for a given block type.
-     * @param blockType - The block type to get the definition for
-     * @returns The block definition, or null if it doesn't exist
+     * Gets a block definition from the custom block definitions.
+     * @param blockType - The block type to get
+     * @param namespace - The namespace of the block to get
+     * @returns - The block definition, or null if it does not exist
      */
-    public getBlockDefinition(blockType: string): Nullable<SerializedBlockDefinition> {
-        return this._customBlockDefinitions.get(blockType) || null;
+    public getBlockDefinition(blockType: string, namespace: Nullable<string>): Nullable<SerializedBlockDefinition> {
+        namespace = namespace || CustomBlocksNamespace;
+        return this._customBlockDefinitions.get(getBlockKey(blockType, namespace)) || null;
     }
 
     /**
@@ -42,16 +48,19 @@ export class CustomBlockManager {
      * @param smartFilter - The Smart Filter to create the block for
      * @param engine - The engine to use
      * @param blockType - The block type to create
+     * @param namespace - The namespace of the block to create
      * @param smartFilterDeserializer - The deserializer to use
      * @returns The instantiated block, or null if the block type is not registered
      */
-    public async createBlockFromBlockType(
+    public async createBlockFromBlockTypeAndNamespace(
         smartFilter: SmartFilter,
         engine: ThinEngine,
         blockType: string,
+        namespace: Nullable<string>,
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<Nullable<BaseBlock>> {
-        const blockDefinition = this.getBlockDefinition(blockType);
+        namespace = namespace || CustomBlocksNamespace;
+        const blockDefinition = this._customBlockDefinitions.get(getBlockKey(blockType, namespace));
         if (!blockDefinition) {
             return null;
         }
@@ -87,16 +96,21 @@ export class CustomBlockManager {
         }
     }
 
+    /**
+     * Given a BlockDefinition, returns a default name for the block.
+     * @param blockDefinition - The block definition
+     * @returns - The default name for the block
+     */
     private _getDefaultName(blockDefinition: SerializedBlockDefinition): string {
         return blockDefinition.blockType.replace("Block", "");
     }
 
     /**
-     * Returns a list of all the loaded custom block type names.
-     * @returns The list of block type names
+     * Returns a list of all the loaded custom block definitions.
+     * @returns The list of custom block definitions
      */
-    public getCustomBlockTypeNames(): string[] {
-        return Array.from(this._customBlockDefinitions.keys());
+    public getCustomBlockDefinitions(): SerializedBlockDefinition[] {
+        return Array.from(this._customBlockDefinitions.values());
     }
 
     /**
@@ -105,13 +119,20 @@ export class CustomBlockManager {
     public loadBlockDefinitions() {
         this._customBlockDefinitions.clear();
 
-        const blockTypeList = this._readBlockTypeListFromLocalStorage();
+        const blockKeys = this._readBlockKeysFromLocalStorage();
 
-        for (const blockType of blockTypeList) {
-            const blockDefinitionJson = localStorage.getItem(blockType + SavedCustomBlockDefinitionKeySuffix);
+        for (const blockKey of blockKeys) {
+            const blockDefinitionJson = localStorage.getItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
             if (blockDefinitionJson) {
                 const blockDefinition: SerializedShaderBlockDefinition = JSON.parse(blockDefinitionJson);
-                this._customBlockDefinitions.set(blockType, blockDefinition);
+                // If the block definition doesn't include a namespace, add it to the CustomBlocksNamespace
+                if (!blockDefinition.namespace) {
+                    blockDefinition.namespace = CustomBlocksNamespace;
+                }
+                this._customBlockDefinitions.set(
+                    getBlockKey(blockDefinition.blockType, blockDefinition.namespace),
+                    blockDefinition
+                );
             }
         }
     }
@@ -119,16 +140,20 @@ export class CustomBlockManager {
     /**
      * Deletes a block definition from local storage.
      * @param blockType - The block type to delete
+     * @param namespace - The namespace of the block to delete
      */
-    public deleteBlockDefinition(blockType: string) {
-        const blockTypeList = this._readBlockTypeListFromLocalStorage();
+    public deleteBlockDefinition(blockType: string, namespace: Nullable<string>) {
+        namespace = namespace || CustomBlocksNamespace;
+        const blockKeyList = this._readBlockKeysFromLocalStorage();
+        const blockKey = getBlockKey(blockType, namespace);
 
-        const index = blockTypeList.indexOf(blockType);
+        this._customBlockDefinitions.delete(getBlockKey(blockType, namespace));
+
+        const index = blockKeyList.indexOf(blockKey);
         if (index > -1) {
-            blockTypeList.splice(index, 1);
-            this._customBlockDefinitions.delete(blockType);
-            localStorage.setItem(SavedCustomBlockListKey, JSON.stringify(blockTypeList));
-            localStorage.removeItem(blockType + SavedCustomBlockDefinitionKeySuffix);
+            blockKeyList.splice(index, 1);
+            localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeyList));
+            localStorage.removeItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
         }
     }
 
@@ -152,33 +177,57 @@ export class CustomBlockManager {
             }
         }
 
-        this.deleteBlockDefinition(blockType);
+        if (!blockDefinition.namespace) {
+            blockDefinition.namespace = CustomBlocksNamespace;
+        }
 
-        // Add to the stored list of block definition names in local storage
-        const blockTypeList = this._readBlockTypeListFromLocalStorage();
-        blockTypeList.push(blockType);
-        localStorage.setItem(SavedCustomBlockListKey, JSON.stringify(blockTypeList));
+        this.deleteBlockDefinition(blockType, blockDefinition.namespace);
+        const blockKey = getBlockKey(blockType, blockDefinition.namespace);
+
+        // Add to the stored list of block keys in local storage
+        const blockKeyList = this._readBlockKeysFromLocalStorage();
+        blockKeyList.push(blockKey);
+        localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeyList));
 
         // Store the definition in local storage
-        localStorage.setItem(blockType + SavedCustomBlockDefinitionKeySuffix, JSON.stringify(blockDefinition));
+        localStorage.setItem(blockKey + SavedCustomBlockDefinitionNameSuffix, JSON.stringify(blockDefinition));
 
-        // Store the definition in our map in memory
-        this._customBlockDefinitions.set(blockType, blockDefinition);
+        // Store the definition in memory
+        this._customBlockDefinitions.set(blockKey, blockDefinition);
 
         return blockDefinition;
     }
 
-    private _readBlockTypeListFromLocalStorage(): string[] {
-        const blockTypeListJson = localStorage.getItem(SavedCustomBlockListKey);
-        let blockTypeList: string[] = [];
+    private _readBlockKeysFromLocalStorage(): string[] {
+        const blockTypeListJson = localStorage.getItem(SavedCustomBlockKeysName);
+        let blockKeysList: string[] = [];
         if (blockTypeListJson) {
             try {
-                blockTypeList = JSON.parse(blockTypeListJson);
+                blockKeysList = JSON.parse(blockTypeListJson);
             } catch {
                 console.warn("Failed to parse Custom Block list from local storage");
             }
         }
 
-        return blockTypeList;
+        // Back compat - if the list has any entries that don't have a namespace, add them to the Custom_Blocks namespace
+        let updatedAnyKeys = false;
+        blockKeysList = blockKeysList.map((blockKey) => {
+            if (blockKey.indexOf("].[") === -1) {
+                updatedAnyKeys = true;
+                const key = getBlockKey(blockKey, CustomBlocksNamespace);
+                const oldDefinition = localStorage.getItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+                if (oldDefinition) {
+                    localStorage.setItem(key + SavedCustomBlockDefinitionNameSuffix, oldDefinition);
+                    localStorage.removeItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+                }
+                return key;
+            }
+            return blockKey;
+        });
+        if (updatedAnyKeys) {
+            localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeysList));
+        }
+
+        return blockKeysList;
     }
 }

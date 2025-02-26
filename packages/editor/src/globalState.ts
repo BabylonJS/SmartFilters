@@ -10,6 +10,7 @@ import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js"
 import type { LogEntry } from "./components/log/logComponent";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 export type TexturePreset = {
     name: string;
@@ -73,9 +74,9 @@ export class GlobalState {
 
     reloadAssets: () => void;
 
-    addCustomShaderBlock?: (serializedData: string) => void;
+    addCustomBlock?: (serializedData: string) => void;
 
-    deleteCustomShaderBlock?: (blockType: string) => void;
+    deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void;
 
     public get previewBackground(): string {
         return this._previewBackground;
@@ -100,8 +101,8 @@ export class GlobalState {
         loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
-        addCustomShaderBlock?: (serializedData: string) => void,
-        deleteCustomShaderBlock?: (blockType: string) => void,
+        addCustomBlock?: (serializedData: string) => void,
+        deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void,
         onLogRequiredObservable?: Observable<LogEntry>
     ) {
         this.stateManager = new StateManager();
@@ -128,8 +129,8 @@ export class GlobalState {
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
         this.reloadAssets = reloadAssets;
-        this.addCustomShaderBlock = addCustomShaderBlock;
-        this.deleteCustomShaderBlock = deleteCustomShaderBlock;
+        this.addCustomBlock = addCustomBlock;
+        this.deleteCustomBlock = deleteCustomBlock;
 
         this.onLogRequiredObservable = onLogRequiredObservable ?? new Observable<LogEntry>();
 

@@ -10,6 +10,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
+import { babylonDemoEffects } from "../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./spritesheetBlock.shader.js";
 
 /**
@@ -74,6 +75,11 @@ export class SpritesheetBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.spritesheet;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = babylonDemoEffects;
 
     /**
      * The input texture connection point

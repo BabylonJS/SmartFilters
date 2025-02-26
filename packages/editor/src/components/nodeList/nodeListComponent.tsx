@@ -6,13 +6,15 @@ import { Tools } from "@babylonjs/core/Misc/tools.js";
 
 import type { GlobalState } from "../../globalState";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
-import { DraggableLineComponent } from "../../sharedComponents/draggableLineComponent.js";
 import { NodeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodeLedger.js";
 import "../../assets/styles/components/nodeList.scss";
-import { DraggableLineWithButtonComponent } from "../../sharedComponents/draggableLineWithButtonComponent.js";
+import { DraggableBlockLineComponent } from "../../sharedComponents/draggableBlockLineComponent.js";
 import deleteButton from "../../assets/imgs/delete.svg";
 import addButton from "../../assets/imgs/add.svg";
 import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
+import { getBlockKey } from "../../helpers/blockKeyConverters.js";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { CustomBlocksNamespace } from "../../configuration/constants.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -39,16 +41,16 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         this.setState({ filter: filter });
     }
 
-    loadCustomShaderBlock(file: File) {
+    loadCustomBlock(file: File) {
         Tools.ReadFile(
             file,
             async (data) => {
-                if (!this.props.globalState.addCustomShaderBlock) {
+                if (!this.props.globalState.addCustomBlock) {
                     return;
                 }
 
                 const decoder = new TextDecoder("utf-8");
-                this.props.globalState.addCustomShaderBlock(decoder.decode(data));
+                this.props.globalState.addCustomBlock(decoder.decode(data));
 
                 this.forceUpdate();
             },
@@ -57,12 +59,12 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         );
     }
 
-    deleteCustomShaderBlock(blockType: string) {
-        if (!this.props.globalState.deleteCustomShaderBlock) {
+    deleteCustomBlock(block: IBlockRegistration) {
+        if (!this.props.globalState.deleteCustomBlock) {
             return;
         }
 
-        this.props.globalState.deleteCustomShaderBlock(blockType);
+        this.props.globalState.deleteCustomBlock(block);
 
         this.forceUpdate();
     }
@@ -70,38 +72,37 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
     override render() {
         // Create node menu
         const blockMenu = [];
-        const allBlocks = this.props.globalState.blockEditorRegistration.allBlockNames;
+        const allBlocks = this.props.globalState.blockEditorRegistration.allBlocks;
+
         for (const key in allBlocks) {
-            const blockList = (this.props.globalState.blockEditorRegistration.allBlockNames as any)[key]
-                .filter(
-                    (b: string) => !this.state.filter || b.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
-                )
-                .sort((a: string, b: string) => a.localeCompare(b))
-                .map((block: string) => {
-                    if (key === "Custom_Blocks") {
+            const blockList = allBlocks[key]!.filter(
+                (block: IBlockRegistration) =>
+                    !this.state.filter || block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
+            )
+                .sort((a: IBlockRegistration, b: IBlockRegistration) => a.blockType.localeCompare(b.blockType))
+                .map((block: IBlockRegistration) => {
+                    if (block.isCustom) {
                         return (
-                            <DraggableLineWithButtonComponent
-                                key={block}
-                                data={block}
-                                tooltip={this.props.globalState.blockEditorRegistration.blockTooltips[block] || ""}
+                            <DraggableBlockLineComponent
+                                key={getBlockKey(block.blockType, block.namespace)}
+                                block={block}
                                 iconImage={deleteButton}
                                 iconTitle="Delete"
                                 onIconClick={() => {
-                                    this.deleteCustomShaderBlock(block);
+                                    this.deleteCustomBlock(block);
                                 }}
                             />
                         );
                     }
                     return (
-                        <DraggableLineComponent
-                            key={block}
-                            data={block}
-                            tooltip={this.props.globalState.blockEditorRegistration.blockTooltips[block] || ""}
+                        <DraggableBlockLineComponent
+                            key={getBlockKey(block.blockType, block.namespace)}
+                            block={block}
                         />
                     );
                 });
 
-            if (key === "Custom_Blocks") {
+            if (key === CustomBlocksNamespace) {
                 const line = (
                     <LineWithFileButtonComponent
                         key="add..."
@@ -112,7 +113,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
                         iconImage={addButton}
                         accept=".json, .glsl"
                         allowMultiple={true}
-                        onIconClick={(file) => this.loadCustomShaderBlock(file)}
+                        onIconClick={(file) => this.loadCustomBlock(file)}
                     />
                 );
                 blockList.push(line);
@@ -133,12 +134,13 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
 
         // Register blocks
         const ledger = NodeLedger.RegisteredNodeNames;
-        for (const key in allBlocks) {
-            const blocks = allBlocks[key] as string[];
-            if (blocks.length) {
-                for (const block of blocks) {
-                    if (!ledger.includes(block)) {
-                        ledger.push(block);
+        for (const namespace in allBlocks) {
+            const blockRegistrations = allBlocks[namespace];
+            if (blockRegistrations && blockRegistrations.length) {
+                for (const blockRegistration of blockRegistrations) {
+                    const blockKey = getBlockKey(blockRegistration.blockType, blockRegistration.namespace);
+                    if (!ledger.includes(blockKey)) {
+                        ledger.push(blockKey);
                     }
                 }
             }

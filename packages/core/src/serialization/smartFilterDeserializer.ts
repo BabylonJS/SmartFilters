@@ -67,7 +67,7 @@ export class SmartFilterDeserializer {
         engine: ThinEngine,
         serializedSmartFilter: SerializedSmartFilterV1
     ): Promise<SmartFilter> {
-        const smartFilter = new SmartFilter(serializedSmartFilter.name);
+        const smartFilter = new SmartFilter(serializedSmartFilter.name, serializedSmartFilter.namespace);
         const blockIdMap = new Map<number, BaseBlock>();
 
         // Only needed for smart filters saved before we started using uniqueIds for the maps, didn't warrant new version
@@ -163,6 +163,11 @@ export class SmartFilterDeserializer {
             serializedBlock.blockType = (serializedBlock as any).className;
         }
 
+        // Back compat for early Smart Filter V1 serialization where the namespace was not stored
+        if (serializedBlock.namespace === undefined) {
+            serializedBlock.namespace = null;
+        }
+
         // Get the instance of the block
         switch (serializedBlock.blockType) {
             case InputBlock.ClassName:
@@ -184,7 +189,9 @@ export class SmartFilterDeserializer {
                 // If it's not an input or output block, use the provided block factory
                 newBlock = await this._blockFactory(smartFilter, engine, serializedBlock, this);
                 if (!newBlock) {
-                    blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
+                    if (blockTypesWhichCouldNotBeDeserialized.indexOf(serializedBlock.blockType) === -1) {
+                        blockTypesWhichCouldNotBeDeserialized.push(serializedBlock.blockType);
+                    }
                     return;
                 }
             }

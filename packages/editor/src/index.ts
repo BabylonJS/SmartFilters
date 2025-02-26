@@ -7,6 +7,7 @@ export { createDefaultValue } from "./graphSystem/registerDefaultInput.js";
 
 export type { TexturePreset } from "./globalState.js";
 export * from "./helpers/serializationTools.js";
+export * from "./helpers/blockKeyConverters.js";
 export { LogEntry } from "./components/log/logComponent.js";
 export * from "./helpers/textureAssetCache.js";
 export * from "./configuration/getBlockEditorRegistration.js";
@@ -15,3 +16,4 @@ export * from "./configuration/editorBlocks/editorBlockRegistrations.js";
 export * from "./configuration/editorBlocks/inputBlockDeserializer.js";
 export * from "./configuration/editorBlocks/webCamInputBlock/webCamInputBlock.js";
 export * from "./helpers/registerAnimations.js";
+export * from "./configuration/constants.js";

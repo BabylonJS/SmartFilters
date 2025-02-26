@@ -30,6 +30,12 @@ export abstract class BaseBlock implements ICommandOwner {
     public static ClassName = "BaseBlock";
 
     /**
+     * The namespace of the block, which is used to reduce name collisions between blocks and also to group blocks in the editor UI.
+     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effects").
+     */
+    public static Namespace: Nullable<string> = null;
+
+    /**
      * The smart filter the block belongs to.
      */
     public readonly smartFilter: SmartFilter;
@@ -51,6 +57,15 @@ export abstract class BaseBlock implements ICommandOwner {
      */
     public get blockType(): string {
         return this.getClassName();
+    }
+
+    /**
+     * The namespace of the block, which is used to reduce name collisions between blocks and also to group blocks in the editor UI.
+     * By convention, sub namespaces are separated by a period (e.g. "Babylon.Demo.Effects").
+     */
+    public get namespace(): Nullable<string> {
+        // Note that we use a static property instead of doing this.constructor.name to avoid problems with minifiers that would change the name of the class
+        return (this.constructor as typeof BaseBlock).Namespace;
     }
 
     /**

@@ -2,6 +2,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock, DisableableShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
+import { babylonDemoUtilities } from "../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -62,6 +63,11 @@ export class PremultiplyAlphaBlock extends DisableableShaderBlock {
      * The class name of the block.
      */
     public static override ClassName = BlockNames.premultiplyAlpha;
+
+    /**
+     * The namespace of the block.
+     */
+    public static override Namespace = babylonDemoUtilities;
 
     /**
      * The input texture connection point.
