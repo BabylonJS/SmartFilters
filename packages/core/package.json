@@ -2,9 +2,6 @@
     "name": "@babylonjs/smart-filters",
     "version": "0.7.0",
     "description": "Babylon.js Smart Filter core",
-    "author": {
-        "name": "Sebastien VANDENBERGHE"
-    },
     "keywords": [
         "video",
         "composition",
@@ -19,26 +16,25 @@
     ],
     "license": "MIT",
     "readme": "README.md",
-    "main": "dist/index",
-    "module": "dist/index",
-    "esnext": "dist/index",
-    "types": "dist/index",
+    "main": "lib/index",
+    "module": "lib/index",
+    "esnext": "lib/index",
+    "types": "lib/index",
     "type": "module",
     "sideEffects": [
-        "./dist/utils/buildTools/**"
+        "./lib/utils/buildTools/**"
     ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/BabylonJS/SmartFilters.git"
     },
     "files": [
-        "dist",
-        "src",
+        "lib",
         "license.md",
         "readme.md"
     ],
     "scripts": {
-        "clean": "rimraf dist && rimraf buildTools && rimraf tsconfig.build.tsbuildinfo && rimraf ../../tsconfig.buildTools.build.tsbuildinfo",
+        "clean": "rimraf lib && rimraf buildTools && rimraf tsconfig.build.tsbuildinfo && rimraf ../../tsconfig.buildTools.build.tsbuildinfo",
         "preparePublish": "node buildTools/versionUp.js --alpha",
         "build": "npm run build:buildTools && npm run build:runTools && npm run build:core",
         "build:core": "tsc -p ./tsconfig.build.json",
