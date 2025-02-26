@@ -87,8 +87,9 @@ export class SmartFilterRenderer {
             this._setRuntime(runtime);
 
             return true;
-        } catch (err) {
-            onLogRequiredObservable.notifyObservers(new LogEntry(`Could not render Smart Filter:\n${err}`, true));
+        } catch (err: any) {
+            const message = err["message"] || err["_compilationError"] || err;
+            onLogRequiredObservable.notifyObservers(new LogEntry(`Could not render Smart Filter:\n${message}`, true));
             return false;
         }
     }
