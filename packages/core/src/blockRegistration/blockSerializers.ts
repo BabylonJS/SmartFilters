@@ -1,7 +1,6 @@
 import { blurBlockSerializer } from "../blocks/effects/blurBlock.serializer.js";
 import { directionalBlurBlockSerializer } from "../blocks/effects/directionalBlurBlock.serializer.js";
 import { compositionBlockSerializer } from "../blocks/effects/compositionBlock.serializer.js";
-import { wipeBlockSerializer } from "../blocks/transitions/wipeBlock.serializer.js";
 import { BlockNames } from "../blocks/blockNames.js";
 import type { IBlockSerializerV1 } from "../serialization/v1/smartFilterSerialization.types.js";
 
@@ -24,6 +23,7 @@ export const blocksUsingDefaultSerialization: string[] = [
     BlockNames.spritesheet,
     BlockNames.tint,
     BlockNames.premultiplyAlpha,
+    BlockNames.wipe,
 ];
 
 /**
@@ -34,5 +34,4 @@ export const additionalBlockSerializers: IBlockSerializerV1[] = [
     blurBlockSerializer,
     directionalBlurBlockSerializer,
     compositionBlockSerializer,
-    wipeBlockSerializer,
 ];

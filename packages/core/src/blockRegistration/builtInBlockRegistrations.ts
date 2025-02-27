@@ -230,6 +230,20 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         namespace: babylonDemoUtilities,
         tooltip: "Premultiplies the input texture's color against its alpha",
     },
+    {
+        blockType: BlockNames.wipe,
+        factory: async (
+            smartFilter: SmartFilter,
+            _engine: ThinEngine,
+            _smartFilterDeserializer: SmartFilterDeserializer,
+            serializedBlock: ISerializedBlockV1 | undefined
+        ) => {
+            const module = await import(/* webpackChunkName: "wipeBlock" */ "../blocks/transitions/wipeBlock.js");
+            return new module.WipeBlock(smartFilter, serializedBlock?.name || "Wipe");
+        },
+        namespace: babylonDemoTransitions,
+        tooltip: "Transition from one texture to another using a wipe",
+    },
 
     // Blocks with custom deserializers
     // --------------------------------
@@ -286,27 +300,6 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         },
         namespace: babylonDemoEffects,
         tooltip: "Composite the foreground texture over the background texture",
-    },
-    {
-        blockType: BlockNames.wipe,
-        factory: async (
-            smartFilter: SmartFilter,
-            _engine: ThinEngine,
-            _smartFilterDeserializer: SmartFilterDeserializer,
-            serializedBlock: ISerializedBlockV1 | undefined
-        ) => {
-            if (serializedBlock) {
-                const module = await import(
-                    /* webpackChunkName: "wipeBlockDeserializer" */ "../blocks/transitions/wipeBlock.deserializer.js"
-                );
-                return module.wipeDeserializer(smartFilter, serializedBlock);
-            } else {
-                const module = await import(/* webpackChunkName: "wipeBlock" */ "../blocks/transitions/wipeBlock.js");
-                return new module.WipeBlock(smartFilter, "Wipe");
-            }
-        },
-        namespace: babylonDemoTransitions,
-        tooltip: "Transition from one texture to another using a wipe",
     },
 
     // Blocks defined by serialized definitions

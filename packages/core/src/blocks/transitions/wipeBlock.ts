@@ -6,7 +6,6 @@ import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFound
 import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../smartFilter.js";
-import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
 
 import { BlockNames } from "../blockNames.js";
 import { babylonDemoTransitions } from "../blockNamespaces.js";
@@ -36,15 +35,33 @@ const shaderProgram: ShaderProgram = {
                 code: `
                 vec4 _wipe_(vec2 vUV)
                 {
-                    vec2 flippedUV = vec2(vUV.x, 1. - vUV.y);
+                    float radians = radians(_angle_);
                     vec4 colorA = texture2D(_textureA_, vUV);
                     vec4 colorB = texture2D(_textureB_, vUV);
 
-                    // float isAboveLine = step(1.0 - _mix_, flippedUV.y);// step(vUV.x * tan(_angle_), vUV.y);
-                    float isAboveLine = step(vUV.x * tan(_angle_), vUV.y);
+                    // float isAboveLine = step(1.0 - _mix_, vUV.y);// step(vUV.x * tan(radians), vUV.y);
 
-                    return mix(colorA, colorB, isAboveLine);
-                    //return vec4(vUV.x * tan(_angle_));
+                    float tanAngle = tan(radians);
+                    float yAtMiddle = 0.5 * tanAngle;
+                    float yIntercept = 0.5 - yAtMiddle;
+                    float isAboveLine = step(vUV.x * tan(radians), vUV.y);
+                    float lineY = (vUV.x * tanAngle) + yIntercept;
+
+                    float blendDistance = 0.01;
+                    float distanceFromLine = clamp((vUV.y - lineY) * acos(radians), -1.0 * blendDistance, 1.0) +blendDistance;
+                   
+                    float mixA = clamp(blendDistance - distanceFromLine, 0.0, blendDistance) / blendDistance;
+                    return mix(colorA, colorB, mixA);
+                    //return vec4(abs(mix)); 
+
+                    // float blendAmount = 0.01;
+                    // float mixA = clamp(0.5 - (blendAmount - distanceFromLine), 0.0, 0.5) + 0.5; // clamp(distanceFromLine, 0.0, 1.0);
+                    // return vec4(abs(mixA));
+
+                    // return mix(colorA, colorB, mixA);
+
+                    //return mix(colorA, colorB, isAboveLine);
+                    //return vec4(vUV.x * tan(radians));
                 
 
 
@@ -84,7 +101,7 @@ export class WipeShaderBinding extends DisableableShaderBinding {
     private readonly _textureA: RuntimeData<ConnectionPointType.Texture>;
     private readonly _textureB: RuntimeData<ConnectionPointType.Texture>;
     private readonly _mix: RuntimeData<ConnectionPointType.Float>;
-    private readonly _angle: number;
+    private readonly _angle: RuntimeData<ConnectionPointType.Float>;
 
     /**
      * Creates a new shader binding instance for the Wipe block.
@@ -99,7 +116,7 @@ export class WipeShaderBinding extends DisableableShaderBinding {
         textureA: RuntimeData<ConnectionPointType.Texture>,
         textureB: RuntimeData<ConnectionPointType.Texture>,
         mix: RuntimeData<ConnectionPointType.Float>,
-        angle: number
+        angle: RuntimeData<ConnectionPointType.Float>
     ) {
         super(parentBlock);
         this._textureA = textureA;
@@ -117,7 +134,7 @@ export class WipeShaderBinding extends DisableableShaderBinding {
         effect.setTexture(this.getRemappedName("textureA"), this._textureA.value);
         effect.setTexture(this.getRemappedName("textureB"), this._textureB.value);
         effect.setFloat(this.getRemappedName("mix"), this._mix.value);
-        effect.setFloat(this.getRemappedName("angle"), this._angle);
+        effect.setFloat(this.getRemappedName("angle"), this._angle.value);
     }
 }
 
@@ -151,14 +168,9 @@ export class WipeBlock extends DisableableShaderBlock {
     public readonly mix = this._registerInput("mix", ConnectionPointType.Float);
 
     /**
-     * Defines the angle of the wipe effect.
+     * The connection point containing the angle of the wipe (in degrees).
      */
-    @editableInPropertyPage("Angle", PropertyTypeForEdition.Float, "PROPERTIES", {
-        min: 0,
-        max: Math.PI * 4,
-        notifiers: { rebuild: true },
-    })
-    public angle = Math.PI;
+    public readonly angle = this._registerInput("angle", ConnectionPointType.Float);
 
     /**
      * The shader program (vertex and fragment code) to use to render the block
@@ -182,7 +194,8 @@ export class WipeBlock extends DisableableShaderBlock {
         const textureA = this._confirmRuntimeDataSupplied(this.textureA);
         const textureB = this._confirmRuntimeDataSupplied(this.textureB);
         const mix = this._confirmRuntimeDataSupplied(this.mix);
+        const angle = this._confirmRuntimeDataSupplied(this.angle);
 
-        return new WipeShaderBinding(this, textureA, textureB, mix, this.angle);
+        return new WipeShaderBinding(this, textureA, textureB, mix, angle);
     }
 }
