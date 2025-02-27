@@ -56,7 +56,7 @@ export class MaskBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = babylonDemoEffects;
+    public static override Namespace = babylonDemoEffectsNamespace;
 
     /**
      * The input texture connection point.

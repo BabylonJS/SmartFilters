@@ -73,7 +73,7 @@ export class PremultiplyAlphaBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = babylonDemoUtilities;
+    public static override Namespace = babylonDemoUtilitiesNamespace;
 
     /**
      * The input texture connection point.

@@ -1,2 +1,2 @@
-export const WebCamInputBlockName = "WebCamInputBlock";
-export const TimeInputBlockName = "TimeBlock";
+export const WebCamInputBlockName = "WebCam";
+export const TimeInputBlockName = "Time";
