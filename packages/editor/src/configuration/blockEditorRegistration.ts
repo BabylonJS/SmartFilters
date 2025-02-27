@@ -32,15 +32,6 @@ export type BlockEditorRegistration = {
     ): Promise<Nullable<BaseBlock>>;
 
     /**
-     * Intercepts the creation of an input block and can return specialized input blocks.
-     * @param smartFilter - The SmartFilter the block will belong to
-     * @param engine - The ThinEngine to use
-     * @param blockType - The type of input block to create.
-     * @returns Optionally creates an InputBock and returns it, null otherwise
-     */
-    createInputBlock(smartFilter: SmartFilter, engine: ThinEngine, blockType: string): Nullable<BaseBlock>;
-
-    /**
      * An object that contains all of the blocks to display, organized by category.
      */
     allBlocks: { [key: string]: IBlockRegistration[] };

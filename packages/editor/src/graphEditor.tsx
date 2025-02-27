@@ -15,7 +15,6 @@ import { PropertyTabComponent } from "./components/propertyTab/propertyTabCompon
 import { NodeListComponent } from "./components/nodeList/nodeListComponent.js";
 import { createDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
-import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
 import { BaseBlock, type SmartFilter } from "@babylonjs/smart-filters";
@@ -81,28 +80,17 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         );
     }
 
-    addValueNode(type: string) {
-        const nodeType = BlockTools.GetConnectionNodeTypeFromString(type);
+    createInputBlock(blockTypeAndNamespace: string) {
+        const { blockType } = decodeBlockKey(blockTypeAndNamespace);
+        const nodeType = BlockTools.GetConnectionNodeTypeFromString(blockType);
 
-        let newInputBlock: Nullable<BaseBlock> = null;
+        const newInputBlock = createDefaultInput(
+            this.props.globalState.smartFilter,
+            nodeType,
+            this.props.globalState.engine
+        );
 
-        if (this.props.globalState.engine) {
-            newInputBlock = this.props.globalState.blockEditorRegistration.createInputBlock(
-                this.props.globalState.smartFilter,
-                this.props.globalState.engine,
-                type
-            );
-        }
-
-        if (!newInputBlock) {
-            newInputBlock = createDefaultInput(
-                this.props.globalState.smartFilter,
-                nodeType,
-                this.props.globalState.engine
-            );
-        }
-
-        return this.appendBlock(newInputBlock);
+        return newInputBlock;
     }
 
     override componentDidMount() {
@@ -338,41 +326,47 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
     };
 
     async emitNewBlock(blockTypeAndNamespace: string, targetX: number, targetY: number) {
-        let newNode: GraphNode;
         const { blockType, namespace } = decodeBlockKey(blockTypeAndNamespace);
 
-        if (namespace === "Inputs") {
-            newNode = this.addValueNode(blockTypeAndNamespace);
-        } else {
-            let block: Nullable<BaseBlock> = null;
-            if (this.props.globalState.engine) {
-                block = await this.props.globalState.blockEditorRegistration.getBlock(
-                    blockType,
-                    namespace,
-                    this.props.globalState.smartFilter,
-                    this.props.globalState.engine
-                );
-            }
-            if (!block) {
-                this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
-                    `Could not create a block of type ${blockTypeAndNamespace}`
-                );
-                return;
-            }
-            if (this.props.globalState.blockEditorRegistration.getIsUniqueBlock(block)) {
-                const className = block.getClassName();
-                for (const other of this._graphCanvas.getCachedData()) {
-                    if (other !== block && other.getClassName() === className) {
-                        this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
-                            `You can only have one ${className} per graph`
-                        );
-                        return;
-                    }
+        let block: Nullable<BaseBlock> = null;
+
+        // First try the block registrations provided to the editor
+        if (this.props.globalState.engine) {
+            block = await this.props.globalState.blockEditorRegistration.getBlock(
+                blockType,
+                namespace,
+                this.props.globalState.smartFilter,
+                this.props.globalState.engine
+            );
+        }
+
+        // If we haven't created the block yet, see if it's a standard input block
+        if (!block && namespace === "Inputs") {
+            block = this.createInputBlock(blockTypeAndNamespace);
+        }
+
+        // If we don't have a block yet, display an error
+        if (!block) {
+            this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
+                `Could not create a block of type ${blockTypeAndNamespace}`
+            );
+            return;
+        }
+
+        // Enforce uniqueness if applicable
+        if (this.props.globalState.blockEditorRegistration.getIsUniqueBlock(block)) {
+            const className = block.getClassName();
+            for (const other of this._graphCanvas.getCachedData()) {
+                if (other !== block && other.getClassName() === className) {
+                    this.props.globalState.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(
+                        `You can only have one ${className} per graph`
+                    );
+                    return;
                 }
             }
-
-            newNode = this.appendBlock(block);
         }
+
+        const newNode = this.appendBlock(block);
 
         // Size exceptions
         let offsetX = GraphCanvasComponent.NodeWidth;

@@ -4,8 +4,6 @@ import type { Nullable } from "@babylonjs/core/types.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { BlockEditorRegistration } from "./blockEditorRegistration";
 import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
-import { WebCamInputBlockName } from "./editorBlocks/blockNames.js";
-import { WebCamInputBlock } from "./editorBlocks/webCamInputBlock/webCamInputBlock.js";
 import { CustomBlocksNamespace } from "./constants.js";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import { LogEntry } from "../components/log/logComponent.js";
@@ -73,7 +71,6 @@ export function getBlockEditorRegistration(
     const blockEditorRegistration: BlockEditorRegistration = {
         getIsUniqueBlock,
         getBlock,
-        createInputBlock,
         allBlocks,
         inputDisplayManager: CustomInputDisplayManager,
     };
@@ -89,20 +86,4 @@ export function getBlockEditorRegistration(
  */
 function getIsUniqueBlock(block: BaseBlock): boolean {
     return block.getClassName() === "OutputBlock";
-}
-
-/**
- * Intercepts the creation of an input block and can return specialized input blocks.
- * @param smartFilter - The SmartFilter the block will belong to
- * @param _engine - The ThinEngine to use
- * @param blockType - The type of input block to create.
- * @returns Optionally creates an InputBock and returns it, null otherwise
- */
-function createInputBlock(smartFilter: SmartFilter, _engine: ThinEngine, blockType: string): Nullable<BaseBlock> {
-    switch (blockType) {
-        case WebCamInputBlockName: {
-            return new WebCamInputBlock(smartFilter);
-        }
-    }
-    return null;
 }

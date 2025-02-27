@@ -33,19 +33,19 @@ export class BlockTools {
         return color;
     }
 
-    public static GetConnectionNodeTypeFromString(type: string) {
-        switch (type) {
-            case "[Inputs].[Float]":
+    public static GetConnectionNodeTypeFromString(blockType: string) {
+        switch (blockType) {
+            case "Float":
                 return ConnectionPointType.Float;
-            case "[Inputs].[Texture]":
+            case "Texture":
                 return ConnectionPointType.Texture;
-            case "[Inputs].[Color3]":
+            case "Color3":
                 return ConnectionPointType.Color3;
-            case "[Inputs].[Color4]":
+            case "Color4":
                 return ConnectionPointType.Color4;
-            case "[Inputs].[Vector2]":
+            case "Vector2":
                 return ConnectionPointType.Vector2;
-            case "[Inputs].[WebCam]":
+            case "WebCam":
                 return ConnectionPointType.Texture;
         }
 
