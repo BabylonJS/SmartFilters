@@ -11,6 +11,8 @@ import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtil
 import { BlockNames } from "../blockNames.js";
 import { babylonDemoTransitions } from "../blockNamespaces.js";
 
+//TODO: delete http://localhost:8080/#IC0BS7
+
 const shaderProgram: ShaderProgram = {
     fragment: {
         const: `
@@ -38,9 +40,11 @@ const shaderProgram: ShaderProgram = {
                     vec4 colorA = texture2D(_textureA_, vUV);
                     vec4 colorB = texture2D(_textureB_, vUV);
 
-                    float isAboveLine = step(1.0 - _mix_, flippedUV.y);// step(vUV.x * tan(_angle_), vUV.y);
+                    // float isAboveLine = step(1.0 - _mix_, flippedUV.y);// step(vUV.x * tan(_angle_), vUV.y);
+                    float isAboveLine = step(vUV.x * tan(_angle_), vUV.y);
 
                     return mix(colorA, colorB, isAboveLine);
+                    //return vec4(vUV.x * tan(_angle_));
                 
 
 
