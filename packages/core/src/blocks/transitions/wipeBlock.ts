@@ -1,5 +1,4 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { editableInPropertyPage } from "@babylonjs/core";
 
 import { type RuntimeData } from "../../connection/connectionPoint.js";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
@@ -7,7 +6,7 @@ import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFound
 import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../smartFilter.js";
-import { PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
 
 import { BlockNames } from "../blockNames.js";
 import { babylonDemoTransitions } from "../blockNamespaces.js";
@@ -35,31 +34,38 @@ const shaderProgram: ShaderProgram = {
                 code: `
                 vec4 _wipe_(vec2 vUV)
                 {
+                    vec2 flippedUV = vec2(vUV.x, 1. - vUV.y);
                     vec4 colorA = texture2D(_textureA_, vUV);
                     vec4 colorB = texture2D(_textureB_, vUV);
+
+                    float isAboveLine = step(1.0 - _mix_, flippedUV.y);// step(vUV.x * tan(_angle_), vUV.y);
+
+                    return mix(colorA, colorB, isAboveLine);
                 
-                    float a = acos(cos(_angle_)); // Bring angle into range of 0-pi for ease
-                    float isHalfPi = step(abs(a - HALF_PI), 0.0);
-                    float isGreaterThanHalfPi = 1. - step(a, HALF_PI);
-                    float isLessThanHalfPi = 1. - step(HALF_PI, a);
 
-                    // Build a line equation, D = Ax + By + C
-                    // There are 3 possible line equations based on the angle of the wipe
-                    float m = tan(a); // Convert angle into line slope
-                    float A = mix(-m, -LARGE, isHalfPi);
-                    float C = isLessThanHalfPi * -(1. - _mix_ - (_mix_ * m));
-                    C += isGreaterThanHalfPi * -(_mix_ - (_mix_ * m));
-                    C += isHalfPi * (LARGE * _mix_);
-                    
-                    // Solve for D using UV coordinates
-                    float D = A * vUV.x + vUV.y + C;
-                    
-                    // The color above the line is flipped if the angle is greater than 90 degrees
-                    vec4 colorAbove = mix(colorB, colorA, isGreaterThanHalfPi);
-                    vec4 colorBelow = mix(colorA, colorB, isGreaterThanHalfPi);
 
-                    // If D>0, our coord is above the line
-                    return mix(colorBelow, colorAbove, step(0.0, D));
+                    // float a = acos(cos(_angle_)); // Bring angle into range of 0-pi for ease
+                    // float isHalfPi = step(abs(a - HALF_PI), 0.0);
+                    // float isGreaterThanHalfPi = 1. - step(a, HALF_PI);
+                    // float isLessThanHalfPi = 1. - step(HALF_PI, a);
+
+                    // // Build a line equation, D = Ax + By + C
+                    // // There are 3 possible line equations based on the angle of the wipe
+                    // float m = tan(a); // Convert angle into line slope
+                    // float A = mix(-m, -LARGE, isHalfPi);
+                    // float C = isLessThanHalfPi * -(1. - _mix_ - (_mix_ * m));
+                    // C += isGreaterThanHalfPi * -(_mix_ - (_mix_ * m));
+                    // C += isHalfPi * (LARGE * _mix_);
+                    
+                    // // Solve for D using UV coordinates
+                    // float D = A * vUV.x + vUV.y + C;
+                    
+                    // // The color above the line is flipped if the angle is greater than 90 degrees
+                    // vec4 colorAbove = mix(colorB, colorA, isGreaterThanHalfPi);
+                    // vec4 colorBelow = mix(colorA, colorB, isGreaterThanHalfPi);
+
+                    // // If D>0, our coord is above the line
+                    // return mix(colorBelow, colorAbove, step(0.0, D));
                 }
             `,
             },
@@ -145,7 +151,7 @@ export class WipeBlock extends DisableableShaderBlock {
      */
     @editableInPropertyPage("Angle", PropertyTypeForEdition.Float, "PROPERTIES", {
         min: 0,
-        max: Math.PI * 2,
+        max: Math.PI * 4,
         notifiers: { rebuild: true },
     })
     public angle = Math.PI;

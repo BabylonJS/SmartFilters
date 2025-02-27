@@ -1,5 +1,4 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { editableInPropertyPage } from "@babylonjs/core";
 
 import { type RuntimeData } from "../../connection/connectionPoint.js";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
@@ -7,7 +6,7 @@ import { ShaderBinding } from "../../runtime/shaderRuntime.js";
 import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../smartFilter.js";
 import { ShaderBlock } from "../../blockFoundation/shaderBlock.js";
-import { PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
 
 import { BlockNames } from "../blockNames.js";
 import { babylonDemoEffects } from "../blockNamespaces.js";

@@ -1,5 +1,5 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { editableInPropertyPage, PropertyTypeForEdition } from "@babylonjs/core";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
 import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
 import type { RuntimeData } from "../../connection/connectionPoint.js";
 import type { SmartFilter } from "../../smartFilter.js";
