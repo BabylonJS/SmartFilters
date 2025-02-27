@@ -32,7 +32,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/effects/blackAndWhiteBlock.js"
+                /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/babylonjs/demo/effects/blackAndWhiteBlock.js"
             );
             return new module.BlackAndWhiteBlock(smartFilter, serializedBlock?.name || "BlackAndWhite");
         },
@@ -48,7 +48,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "kaleidoscopeBlock" */ "../blocks/effects/kaleidoscopeBlock.js"
+                /* webpackChunkName: "kaleidoscopeBlock" */ "../blocks/babylonjs/demo/effects/kaleidoscopeBlock.js"
             );
             const block = new module.KaleidoscopeBlock(smartFilter, serializedBlock?.name || "Kaleidoscope");
             if (!serializedBlock) {
@@ -68,7 +68,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "posterizeBlock" */ "../blocks/effects/posterizeBlock.js");
+            const module = await import(
+                /* webpackChunkName: "posterizeBlock" */ "../blocks/babylonjs/demo/effects/posterizeBlock.js"
+            );
             const block = new module.PosterizeBlock(smartFilter, serializedBlock?.name || "Posterize");
             if (!serializedBlock) {
                 const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.5);
@@ -88,7 +90,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "desaturateBlock" */ "../blocks/effects/desaturateBlock.js"
+                /* webpackChunkName: "desaturateBlock" */ "../blocks/babylonjs/demo/effects/desaturateBlock.js"
             );
             const block = new module.DesaturateBlock(smartFilter, serializedBlock?.name || "Desaturate");
             if (!serializedBlock) {
@@ -108,7 +110,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "contrastBlock" */ "../blocks/effects/contrastBlock.js");
+            const module = await import(
+                /* webpackChunkName: "contrastBlock" */ "../blocks/babylonjs/demo/effects/contrastBlock.js"
+            );
             const block = new module.ContrastBlock(smartFilter, serializedBlock?.name || "Contrast");
             if (!serializedBlock) {
                 const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.5);
@@ -128,7 +132,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "greenScreenBlock" */ "../blocks/effects/greenScreenBlock.js"
+                /* webpackChunkName: "greenScreenBlock" */ "../blocks/babylonjs/demo/effects/greenScreenBlock.js"
             );
             const block = new module.GreenScreenBlock(smartFilter, serializedBlock?.name || "GreenScreen");
             if (!serializedBlock) {
@@ -154,7 +158,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "pixelateBlock" */ "../blocks/effects/pixelateBlock.js");
+            const module = await import(
+                /* webpackChunkName: "pixelateBlock" */ "../blocks/babylonjs/demo/effects/pixelateBlock.js"
+            );
             const block = new module.PixelateBlock(smartFilter, serializedBlock?.name || "Pixelate");
             if (!serializedBlock) {
                 const input = new InputBlock(smartFilter, "Intensity", ConnectionPointType.Float, 0.4);
@@ -173,7 +179,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "exposureBlock" */ "../blocks/effects/exposureBlock.js");
+            const module = await import(
+                /* webpackChunkName: "exposureBlock" */ "../blocks/babylonjs/demo/effects/exposureBlock.js"
+            );
             const block = new module.ExposureBlock(smartFilter, serializedBlock?.name || "Exposure");
             if (!serializedBlock) {
                 const input = new InputBlock(smartFilter, "Amount", ConnectionPointType.Float, 0.7);
@@ -192,7 +200,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "maskBlock" */ "../blocks/effects/maskBlock.js");
+            const module = await import(
+                /* webpackChunkName: "maskBlock" */ "../blocks/babylonjs/demo/effects/maskBlock.js"
+            );
             return new module.MaskBlock(smartFilter, serializedBlock?.name || "Mask");
         },
         namespace: babylonDemoEffects,
@@ -207,7 +217,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "spritesheetBlock" */ "../blocks/effects/spritesheetBlock.js"
+                /* webpackChunkName: "spritesheetBlock" */ "../blocks/babylonjs/demo/effects/spritesheetBlock.js"
             );
             return new module.SpritesheetBlock(smartFilter, serializedBlock?.name || "Spritesheet");
         },
@@ -223,7 +233,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "premultiplyAlphaBlock" */ "../blocks/utilities/premultiplyAlphaBlock.js"
+                /* webpackChunkName: "premultiplyAlphaBlock" */ "../blocks/babylonjs/demo/utilities/premultiplyAlphaBlock.js"
             );
             return new module.PremultiplyAlphaBlock(smartFilter, serializedBlock?.name || "PremultiplyAlpha");
         },
@@ -238,7 +248,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "wipeBlock" */ "../blocks/transitions/wipeBlock.js");
+            const module = await import(
+                /* webpackChunkName: "wipeBlock" */ "../blocks/babylonjs/demo/transitions/wipeBlock.js"
+            );
             return new module.WipeBlock(smartFilter, serializedBlock?.name || "Wipe");
         },
         namespace: babylonDemoTransitions,
@@ -257,11 +269,13 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         ) => {
             if (serializedBlock) {
                 const module = await import(
-                    /* webpackChunkName: "blurBlockDeserializer" */ "../blocks/effects/blurBlock.deserializer.js"
+                    /* webpackChunkName: "blurBlockDeserializer" */ "../blocks/babylonjs/demo/effects/blurBlock.deserializer.js"
                 );
                 return module.blurBlockDeserializer(smartFilter, serializedBlock);
             } else {
-                const module = await import(/* webpackChunkName: "blurBlock" */ "../blocks/effects/blurBlock.js");
+                const module = await import(
+                    /* webpackChunkName: "blurBlock" */ "../blocks/babylonjs/demo/effects/blurBlock.js"
+                );
                 return new module.BlurBlock(smartFilter, "Blur");
             }
         },
@@ -278,12 +292,12 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         ) => {
             if (serializedBlock) {
                 const module = await import(
-                    /* webpackChunkName: "compositionBlockDeserializer" */ "../blocks/effects/compositionBlock.deserializer.js"
+                    /* webpackChunkName: "compositionBlockDeserializer" */ "../blocks/babylonjs/demo/effects/compositionBlock.deserializer.js"
                 );
                 return module.compositionDeserializer(smartFilter, serializedBlock);
             } else {
                 const module = await import(
-                    /* webpackChunkName: "compositionBlock" */ "../blocks/effects/compositionBlock.js"
+                    /* webpackChunkName: "compositionBlock" */ "../blocks/babylonjs/demo/effects/compositionBlock.js"
                 );
                 const block = new module.CompositionBlock(smartFilter, "Composition");
                 const top = new InputBlock(smartFilter, "Top", ConnectionPointType.Float, 0.0);
@@ -312,7 +326,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             _smartFilterDeserializer: SmartFilterDeserializer,
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
-            const module = await import(/* webpackChunkName: "tintBlock" */ "../blocks/effects/tintBlock.js");
+            const module = await import(
+                /* webpackChunkName: "tintBlock" */ "../blocks/babylonjs/demo/effects/tintBlock.js"
+            );
             return CustomShaderBlock.Create(
                 smartFilter,
                 serializedBlock?.name || "Tint",
