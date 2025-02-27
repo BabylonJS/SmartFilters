@@ -16,9 +16,9 @@ export type BlockEditorRegistration = {
     getIsUniqueBlock: (block: BaseBlock) => boolean;
 
     /**
-     * Given a block's name, this function should return a new instance of that block with default values, or null if
-     * the block name is not recognized.
-     * @param blockType - The name of the block to create
+     * Given a block's type and namespace, this function should return a new instance of that block with default values,
+     * or null if the block name is not recognized.
+     * @param blockType - The type of the block to create
      * @param namespace - The namespace of the block to create
      * @param smartFilter - The Smart Filter to create the block for
      * @param engine - The engine to use for creating blocks
