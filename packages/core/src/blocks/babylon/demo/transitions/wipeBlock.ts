@@ -7,8 +7,8 @@ import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
 import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { BlockNames } from "../../../blockNames.js";
 import { babylonDemoTransitions } from "../../../blockNamespaces.js";
+import { wipeBlockType } from "../../../blockTypes.js";
 
 //TODO: delete http://localhost:8080/#IC0BS7
 
@@ -90,7 +90,7 @@ export class WipeBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.wipe;
+    public static override ClassName = wipeBlockType;
 
     /**
      * The namespace of the block.

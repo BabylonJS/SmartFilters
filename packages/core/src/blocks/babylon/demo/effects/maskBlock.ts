@@ -1,13 +1,13 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { BlockNames } from "../blockNames.js";
-import { type RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import { maskBlockType } from "../../../blockTypes.js";
+import { type RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 import { uniforms, shaderProgram } from "./maskBlock.shader.js";
 
 /**
@@ -51,7 +51,7 @@ export class MaskBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.mask;
+    public static override ClassName = maskBlockType;
 
     /**
      * The namespace of the block.

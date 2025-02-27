@@ -1,6 +1,6 @@
-import type { ISerializedBlockV1 } from "../../serialization/index.js";
+import type { ISerializedBlockV1 } from "../../../../serialization/index.js";
 import { BlurBlock } from "./blurBlock.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 
 /**
  * The definition of the extra data serialized for blur blocks.

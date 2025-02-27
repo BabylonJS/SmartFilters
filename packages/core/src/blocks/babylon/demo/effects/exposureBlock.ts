@@ -1,14 +1,14 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { type RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import { type RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { exposureBlockType } from "../../../blockTypes.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -76,7 +76,7 @@ export class ExposureBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.exposure;
+    public static override ClassName = exposureBlockType;
 
     /**
      * The namespace of the block.

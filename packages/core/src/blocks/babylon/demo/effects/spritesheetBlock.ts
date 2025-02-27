@@ -1,15 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { spritesheetBlockType } from "../../../blockTypes.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./spritesheetBlock.shader.js";
-import { type RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import { DisableStrategy } from "../../blockFoundation/index.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import { createStrongRef } from "../../runtime/strongRef.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import { type RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import { DisableStrategy } from "../../../../blockFoundation/index.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import { createStrongRef } from "../../../../runtime/strongRef.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 
 /**
  * The shader bindings for the Spritesheet block.
@@ -72,7 +72,7 @@ export class SpritesheetBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.spritesheet;
+    public static override ClassName = spritesheetBlockType;
 
     /**
      * The namespace of the block.

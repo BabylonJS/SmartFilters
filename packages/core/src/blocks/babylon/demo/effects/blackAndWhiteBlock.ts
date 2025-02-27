@@ -1,12 +1,12 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { BlockNames } from "../blockNames.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import { DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import type { RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import { blackAndWhiteBlockType } from "../../../blockTypes.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import { DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import type { RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader.js";
 
 /**
@@ -42,7 +42,7 @@ export class BlackAndWhiteBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.blackAndWhite;
+    public static override ClassName = blackAndWhiteBlockType;
 
     /**
      * The namespace of the block.

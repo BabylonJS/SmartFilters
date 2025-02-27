@@ -1,15 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { BlockNames } from "../blockNames.js";
-import { type RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import { DisableStrategy } from "../../blockFoundation/index.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import { createStrongRef } from "../../runtime/strongRef.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import { pixelateBlockType } from "../../../blockTypes.js";
+import { type RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import { DisableStrategy } from "../../../../blockFoundation/index.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import { createStrongRef } from "../../../../runtime/strongRef.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./pixelateBlock.shader.js";
 
 /**
@@ -53,7 +53,7 @@ export class PixelateBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.pixelate;
+    public static override ClassName = pixelateBlockType;
 
     /**
      * The namespace of the block.

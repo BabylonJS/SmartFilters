@@ -8,7 +8,7 @@ import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
 import { babylonDemoUtilities } from "../../../blockNamespaces.js";
-import { BlockNames } from "../../../blockNames.js";
+import { premultiplyAlphaBlockType } from "../../../blockTypes.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -68,7 +68,7 @@ export class PremultiplyAlphaBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.premultiplyAlpha;
+    public static override ClassName = premultiplyAlphaBlockType;
 
     /**
      * The namespace of the block.

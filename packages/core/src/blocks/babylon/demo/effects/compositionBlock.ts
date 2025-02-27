@@ -1,15 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import type { RuntimeData } from "../../connection/connectionPoint.js";
-import type { SmartFilter } from "../../smartFilter.js";
-import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import { createStrongRef } from "../../runtime/strongRef.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../editorUtils/editableInPropertyPage.js";
+import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import type { RuntimeData } from "../../../../connection/connectionPoint.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
+import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import { createStrongRef } from "../../../../runtime/strongRef.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
 
-import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { compositionBlockType } from "../../../blockTypes.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
@@ -169,7 +169,7 @@ export class CompositionBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.composition;
+    public static override ClassName = compositionBlockType;
 
     /**
      * The namespace of the block.

@@ -1,5 +1,5 @@
-import type { ISerializedBlockV1 } from "../../serialization/index.js";
-import type { SmartFilter } from "../../smartFilter.js";
+import type { ISerializedBlockV1 } from "../../../../serialization/index.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
 import { DirectionalBlurBlock } from "./directionalBlurBlock.js";
 
 /**

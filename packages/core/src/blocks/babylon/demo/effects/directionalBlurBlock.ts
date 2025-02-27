@@ -1,15 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { type RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { ShaderBinding } from "../../runtime/shaderRuntime.js";
-import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
-import type { SmartFilter } from "../../smartFilter.js";
-import { ShaderBlock } from "../../blockFoundation/shaderBlock.js";
-import { editableInPropertyPage, PropertyTypeForEdition } from "../../editorUtils/editableInPropertyPage.js";
+import { type RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import { ShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
+import { ShaderBlock } from "../../../../blockFoundation/shaderBlock.js";
+import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../editorUtils/editableInPropertyPage.js";
 
-import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { directionalBlurBlockType } from "../../../blockTypes.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -115,7 +115,7 @@ export class DirectionalBlurBlock extends ShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.directionalBlur;
+    public static override ClassName = directionalBlurBlockType;
 
     /**
      * The namespace of the block.

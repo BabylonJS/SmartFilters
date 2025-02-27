@@ -1,15 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { type RuntimeData } from "../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../blockFoundation/disableableShaderBlock.js";
-import { DisableableShaderBinding } from "../../runtime/shaderRuntime.js";
-import type { ShaderProgram } from "../../utils/shaderCodeUtils.js";
-import type { SmartFilter } from "../../smartFilter.js";
-import { createStrongRef } from "../../runtime/strongRef.js";
+import { type RuntimeData } from "../../../../connection/connectionPoint.js";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
+import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
+import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
+import type { SmartFilter } from "../../../../smartFilter.js";
+import { createStrongRef } from "../../../../runtime/strongRef.js";
 
-import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { desaturateBlockType } from "../../../blockTypes.js";
+import { babylonDemoEffects } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -89,7 +89,7 @@ export class DesaturateBlock extends DisableableShaderBlock {
     /**
      * The class name of the block.
      */
-    public static override ClassName = BlockNames.desaturate;
+    public static override ClassName = desaturateBlockType;
 
     /**
      * The namespace of the block.

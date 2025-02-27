@@ -1,5 +1,5 @@
-import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import type { SerializedShaderBlockDefinition } from "../../serialization";
+import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
+import type { SerializedShaderBlockDefinition } from "../../../../serialization";
 
 /**
  * This is included to show how a serialized block definition can be loaded and used.

@@ -1,8 +1,23 @@
-import { blurBlockSerializer } from "../blocks/effects/blurBlock.serializer.js";
-import { directionalBlurBlockSerializer } from "../blocks/effects/directionalBlurBlock.serializer.js";
-import { compositionBlockSerializer } from "../blocks/effects/compositionBlock.serializer.js";
-import { BlockNames } from "../blocks/blockNames.js";
+import { blurBlockSerializer } from "../blocks/babylon/demo/effects/blurBlock.serializer.js";
+import { directionalBlurBlockSerializer } from "../blocks/babylon/demo/effects/directionalBlurBlock.serializer.js";
+import { compositionBlockSerializer } from "../blocks/babylon/demo/effects/compositionBlock.serializer.js";
 import type { IBlockSerializerV1 } from "../serialization/v1/smartFilterSerialization.types.js";
+import {
+    blackAndWhiteBlockType,
+    pixelateBlockType,
+    exposureBlockType,
+    contrastBlockType,
+    desaturateBlockType,
+    posterizeBlockType,
+    kaleidoscopeBlockType,
+    greenScreenBlockType,
+    maskBlockType,
+    particleBlockType,
+    spritesheetBlockType,
+    tintBlockType,
+    premultiplyAlphaBlockType,
+    wipeBlockType,
+} from "../blocks/blockTypes.js";
 
 /**
  * Any blocks that do not need to make use of ISerializedBlockV1.data can use the default serialization and
@@ -10,20 +25,20 @@ import type { IBlockSerializerV1 } from "../serialization/v1/smartFilterSerializ
  * webcam source name), then it should be registered in additionalBlockSerializers below.
  */
 export const blocksUsingDefaultSerialization: string[] = [
-    BlockNames.blackAndWhite,
-    BlockNames.pixelate,
-    BlockNames.exposure,
-    BlockNames.contrast,
-    BlockNames.desaturate,
-    BlockNames.posterize,
-    BlockNames.kaleidoscope,
-    BlockNames.greenScreen,
-    BlockNames.mask,
-    BlockNames.particle,
-    BlockNames.spritesheet,
-    BlockNames.tint,
-    BlockNames.premultiplyAlpha,
-    BlockNames.wipe,
+    blackAndWhiteBlockType,
+    pixelateBlockType,
+    exposureBlockType,
+    contrastBlockType,
+    desaturateBlockType,
+    posterizeBlockType,
+    kaleidoscopeBlockType,
+    greenScreenBlockType,
+    maskBlockType,
+    particleBlockType,
+    spritesheetBlockType,
+    tintBlockType,
+    premultiplyAlphaBlockType,
+    wipeBlockType,
 ];
 
 /**
