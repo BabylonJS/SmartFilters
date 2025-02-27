@@ -2,7 +2,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import { type SmartFilter, type RuntimeData } from "@babylonjs/smart-filters";
 import { DisableableShaderBlock, ConnectionPointType, DisableableShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader.js";
 
 /**
@@ -43,7 +43,7 @@ export class BlackAndWhiteBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = babylonDemoEffects;
+    public static override Namespace = babylonDemoEffectsNamespace;
 
     /**
      * The input texture connection point.

@@ -28,6 +28,7 @@ import { PreviewAreaControlComponent } from "./components/preview/previewAreaCon
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
 import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
+import { inputsNamespace } from "@babylonjs/smart-filters-blocks";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -341,7 +342,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         }
 
         // If we haven't created the block yet, see if it's a standard input block
-        if (!block && namespace === "Inputs") {
+        if (!block && namespace === inputsNamespace) {
             block = this.createInputBlock(blockTypeAndNamespace);
         }
 

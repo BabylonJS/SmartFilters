@@ -8,7 +8,7 @@ import {
     DisableStrategy,
 } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     vertex: `
@@ -146,7 +146,7 @@ export class KaleidoscopeBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = babylonDemoEffects;
+    public static override Namespace = babylonDemoEffectsNamespace;
 
     /**
      * The input texture connection point.

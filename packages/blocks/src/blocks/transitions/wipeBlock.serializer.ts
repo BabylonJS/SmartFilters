@@ -1,7 +1,7 @@
 import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { WipeBlock } from "./wipeBlock";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoTransitions } from "../blockNamespaces.js";
+import { babylonDemoTransitionsNamespace } from "../blockNamespaces.js";
 
 /**
  * The V1 serializer for a Wipe Block
@@ -18,7 +18,7 @@ export const wipeBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: BlockNames.wipe,
-            namespace: babylonDemoTransitions,
+            namespace: babylonDemoTransitionsNamespace,
             comments: block.comments,
             data: {
                 angle: wipeBlock.angle,

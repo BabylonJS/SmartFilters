@@ -3,7 +3,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 import type { SmartFilter, IDisableableBlock, RuntimeData, ShaderProgram } from "@babylonjs/smart-filters";
 import { ConnectionPointType, DisableableShaderBlock, DisableableShaderBinding } from "@babylonjs/smart-filters";
 import { BlockNames } from "../blockNames.js";
-import { babylonDemoEffects } from "../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {
@@ -109,7 +109,7 @@ export class FrameBlock extends DisableableShaderBlock {
     /**
      * The namespace of the block.
      */
-    public static override Namespace = babylonDemoEffects;
+    public static override Namespace = babylonDemoEffectsNamespace;
 
     /**
      * The background texture connection point.
