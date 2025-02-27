@@ -1,7 +1,7 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import { spritesheetBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./spritesheetBlock.shader.js";
 import { type RuntimeData } from "../../../../connection/connectionPoint.js";
 import { ConnectionPointType } from "../../../../connection/connectionPointType.js";

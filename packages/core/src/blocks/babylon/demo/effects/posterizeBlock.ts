@@ -9,7 +9,7 @@ import type { SmartFilter } from "../../../../smartFilter.js";
 import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 
 import { posterizeBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

@@ -2,7 +2,7 @@ import type { BaseBlock } from "../../../../blockFoundation";
 import type { IBlockSerializerV1 } from "../../../../serialization";
 import type { CompositionBlock } from "./compositionBlock";
 import { compositionBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 /**
  * The V1 serializer for a Composition Block
@@ -19,7 +19,7 @@ export const compositionBlockSerializer: IBlockSerializerV1 = {
             name: block.name,
             uniqueId: block.uniqueId,
             blockType: compositionBlockType,
-            namespace: babylonDemoEffects,
+            namespace: babylonDemoEffectsNamespace,
             comments: block.comments,
             data: {
                 alphaMode: compositionBlock.alphaMode,

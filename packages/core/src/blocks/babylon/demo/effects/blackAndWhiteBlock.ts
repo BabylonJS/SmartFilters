@@ -6,7 +6,7 @@ import type { RuntimeData } from "../../../../connection/connectionPoint.js";
 import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader.js";
 
 /**

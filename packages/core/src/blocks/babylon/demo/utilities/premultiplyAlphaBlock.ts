@@ -7,7 +7,7 @@ import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
 import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoUtilities } from "../../../blockNamespaces.js";
+import { babylonDemoUtilitiesNamespace } from "../../../blockNamespaces.js";
 import { premultiplyAlphaBlockType } from "../../../blockTypes.js";
 
 const shaderProgram: ShaderProgram = {

@@ -9,7 +9,7 @@ import { ShaderBlock } from "../../../../blockFoundation/shaderBlock.js";
 import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../editorUtils/editableInPropertyPage.js";
 
 import { directionalBlurBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

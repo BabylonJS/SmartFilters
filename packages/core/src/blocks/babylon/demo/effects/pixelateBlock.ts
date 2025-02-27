@@ -9,7 +9,7 @@ import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
 import { createStrongRef } from "../../../../runtime/strongRef.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./pixelateBlock.shader.js";
 
 /**

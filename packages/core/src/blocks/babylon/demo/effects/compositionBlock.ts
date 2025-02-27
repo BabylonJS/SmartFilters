@@ -9,7 +9,7 @@ import { createStrongRef } from "../../../../runtime/strongRef.js";
 import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
 
 import { compositionBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;

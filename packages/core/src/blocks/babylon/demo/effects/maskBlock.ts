@@ -7,7 +7,7 @@ import { type IDisableableBlock, DisableableShaderBlock } from "../../../../bloc
 import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 import { uniforms, shaderProgram } from "./maskBlock.shader.js";
 
 /**

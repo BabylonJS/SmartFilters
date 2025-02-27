@@ -8,7 +8,7 @@ import { createStrongRef } from "../../../../runtime/strongRef.js";
 import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 
 import { contrastBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

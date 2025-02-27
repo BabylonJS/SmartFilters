@@ -6,6 +6,29 @@ import {
     babylonDemoUtilitiesNamespace,
     inputsNamespace,
 } from "../blocks/blockNamespaces.js";
+import { CustomShaderBlock } from "../blockFoundation/customShaderBlock.js";
+import {
+    blackAndWhiteBlockType,
+    kaleidoscopeBlockType,
+    posterizeBlockType,
+    desaturateBlockType,
+    contrastBlockType,
+    greenScreenBlockType,
+    pixelateBlockType,
+    exposureBlockType,
+    maskBlockType,
+    spritesheetBlockType,
+    premultiplyAlphaBlockType,
+    wipeBlockType,
+    blurBlockType,
+    compositionBlockType,
+    tintBlockType,
+} from "../blocks/blockTypes.js";
+import { ConnectionPointType } from "../connection/connectionPointType.js";
+import type { ISerializedBlockV1 } from "../serialization/index.js";
+import type { SmartFilterDeserializer } from "../serialization/smartFilterDeserializer.js";
+import type { SmartFilter } from "../smartFilter.js";
+import { InputBlock } from "../blockFoundation/inputBlock.js";
 
 /**
  * The list of block registrations.
@@ -251,7 +274,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             );
             return new module.WipeBlock(smartFilter, serializedBlock?.name || "Wipe");
         },
-        namespace: babylonDemoTransitions,
+        namespace: babylonDemoTransitionsNamespace,
         tooltip: "Transition from one texture to another using a wipe",
     },
 
@@ -312,28 +335,6 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         },
         namespace: babylonDemoEffectsNamespace,
         tooltip: "Composite the foreground texture over the background texture",
-    },
-
-    {
-        blockType: BlockNames.wipe,
-        factory: async (
-            smartFilter: SmartFilter,
-            _engine: ThinEngine,
-            _smartFilterDeserializer: SmartFilterDeserializer,
-            serializedBlock: ISerializedBlockV1 | undefined
-        ) => {
-            if (serializedBlock) {
-                const module = await import(
-                    /* webpackChunkName: "wipeBlockDeserializer" */ "../blocks/transitions/wipeBlock.deserializer.js"
-                );
-                return module.wipeDeserializer(smartFilter, serializedBlock);
-            } else {
-                const module = await import(/* webpackChunkName: "wipeBlock" */ "../blocks/transitions/wipeBlock.js");
-                return new module.WipeBlock(smartFilter, "Wipe");
-            }
-        },
-        namespace: babylonDemoEffects,
-        tooltip: "Transition from one texture to another using a wipe",
     },
 
     // Blocks defined by serialized definitions

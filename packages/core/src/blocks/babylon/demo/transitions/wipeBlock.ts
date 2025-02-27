@@ -7,10 +7,8 @@ import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
 import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
-import { babylonDemoTransitions } from "../../../blockNamespaces.js";
+import { babylonDemoTransitionsNamespace } from "../../../blockNamespaces.js";
 import { wipeBlockType } from "../../../blockTypes.js";
-
-//TODO: delete http://localhost:8080/#IC0BS7
 
 const shaderProgram: ShaderProgram = {
     fragment: {

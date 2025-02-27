@@ -8,7 +8,7 @@ import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
 import type { SmartFilter } from "../../../../smartFilter.js";
 
 import { exposureBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 const shaderProgram: ShaderProgram = {
     fragment: {

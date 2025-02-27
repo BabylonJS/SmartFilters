@@ -5,7 +5,7 @@ import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../edit
 import { SmartFilter } from "../../../../smartFilter.js";
 import { DirectionalBlurBlock } from "./directionalBlurBlock.js";
 import { blurBlockType } from "../../../blockTypes.js";
-import { babylonDemoEffects } from "../../../blockNamespaces.js";
+import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
 const defaultBlurTextureRatioPerPass = 0.5;
 const defaultBlurSize = 2;
