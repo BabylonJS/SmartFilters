@@ -8,9 +8,9 @@ import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures
 import type { IDisposable } from "../IDisposable";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
-import type { IDisableableBlock } from "../blocks/disableableShaderBlock";
+import type { IDisableableBlock } from "../blockFoundation/disableableShaderBlock";
 import { decorateSymbol, DisableUniform, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
-import type { OutputBlock } from "../blocks/outputBlock";
+import type { OutputBlock } from "../blockFoundation/outputBlock";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.

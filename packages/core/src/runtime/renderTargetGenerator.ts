@@ -3,13 +3,13 @@ import type { Nullable } from "@babylonjs/core/types";
 import { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture.js";
 import type { RenderTargetCreationOptions } from "@babylonjs/core/Materials/Textures/textureCreationOptions";
 
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock";
 import type { InitializationData, SmartFilter } from "../smartFilter";
 import type { InternalSmartFilterRuntime } from "./smartFilterRuntime";
-import { ShaderBlock } from "../blocks/shaderBlock.js";
+import { ShaderBlock } from "../blockFoundation/shaderBlock.js";
 import { createStrongRef } from "./strongRef.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import type { OutputTextureOptions } from "../blocks/textureOptions";
+import type { OutputTextureOptions } from "../blockFoundation/textureOptions";
 import { getBlockOutputTextureSize } from "../utils/textureUtils.js";
 
 /**

@@ -1,6 +1,5 @@
-import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import { ConnectionPointType, InputBlock, type SmartFilter, type IBlockRegistration } from "@babylonjs/smart-filters";
 import { TimeInputBlockName, WebCamInputBlockName } from "./blockNames.js";
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
  * The block registrations for special blocks for ease of use in the editor.

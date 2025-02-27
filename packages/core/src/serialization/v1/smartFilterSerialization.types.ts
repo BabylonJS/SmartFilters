@@ -1,5 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types.js";
-import type { BaseBlock } from "../../blocks/baseBlock.js";
+import type { BaseBlock } from "../../blockFoundation/baseBlock.js";
 import type { SmartFilter } from "../../smartFilter.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo.js";
