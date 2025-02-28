@@ -210,20 +210,23 @@ export class CustomBlockManager {
         }
 
         // Back compat - if the list has any entries that don't have a namespace, add them to the Custom_Blocks namespace
+        // Also, if any are null, ignore them
         let updatedAnyKeys = false;
-        blockKeysList = blockKeysList.map((blockKey) => {
-            if (blockKey.indexOf("].[") === -1) {
-                updatedAnyKeys = true;
-                const key = getBlockKey(blockKey, CustomBlocksNamespace);
-                const oldDefinition = localStorage.getItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
-                if (oldDefinition) {
-                    localStorage.setItem(key + SavedCustomBlockDefinitionNameSuffix, oldDefinition);
-                    localStorage.removeItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+        blockKeysList = blockKeysList
+            .filter((blockKey) => blockKey !== null)
+            .map((blockKey) => {
+                if (blockKey.indexOf("].[") === -1) {
+                    updatedAnyKeys = true;
+                    const key = getBlockKey(blockKey, CustomBlocksNamespace);
+                    const oldDefinition = localStorage.getItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+                    if (oldDefinition) {
+                        localStorage.setItem(key + SavedCustomBlockDefinitionNameSuffix, oldDefinition);
+                        localStorage.removeItem(blockKey + SavedCustomBlockDefinitionNameSuffix);
+                    }
+                    return key;
                 }
-                return key;
-            }
-            return blockKey;
-        });
+                return blockKey;
+            });
         if (updatedAnyKeys) {
             localStorage.setItem(SavedCustomBlockKeysName, JSON.stringify(blockKeysList));
         }

@@ -37,7 +37,6 @@
         "sass": "^1.85.0",
         "sass-loader": "^16.0.5",
         "source-map-loader": "^3.0.0",
-        "split.js": "^1.6.5",
         "style-loader": "^3.3.0",
         "ts-loader": "^9.4.1",
         "url-loader": "^4.1.1",

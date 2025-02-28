@@ -1,6 +1,6 @@
 import { ConnectionPointType, InputBlock, type SmartFilter } from "@babylonjs/smart-filters";
 import { TimeInputBlockName, WebCamInputBlockName } from "./blockNames.js";
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { inputsNamespace, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
  * The block registrations for special blocks for ease of use in the editor.
@@ -8,7 +8,7 @@ import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 export const editorBlockRegistrations: IBlockRegistration[] = [
     {
         blockType: WebCamInputBlockName,
-        namespace: "Inputs",
+        namespace: inputsNamespace,
         tooltip: "Supplies a texture from a webcam",
         factory: async (smartFilter: SmartFilter) => {
             const module = await import(/* webpackChunkName: "webCamBlock" */ "./webCamInputBlock/webCamInputBlock.js");
@@ -17,7 +17,7 @@ export const editorBlockRegistrations: IBlockRegistration[] = [
     },
     {
         blockType: TimeInputBlockName,
-        namespace: "Inputs",
+        namespace: inputsNamespace,
         tooltip: "Supplies a float value representing the current time",
         factory: (smartFilter: SmartFilter) => {
             const inputBlock = new InputBlock(smartFilter, "Time", ConnectionPointType.Float, 0.0);

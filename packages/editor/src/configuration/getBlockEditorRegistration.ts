@@ -1,11 +1,9 @@
 import type { BaseBlock, SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { Nullable } from "@babylonjs/core/types.js";
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { inputsNamespace, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { BlockEditorRegistration } from "./blockEditorRegistration";
 import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
-import { WebCamInputBlockName } from "./editorBlocks/blockNames.js";
-import { WebCamInputBlock } from "./editorBlocks/webCamInputBlock/webCamInputBlock.js";
 import { CustomBlocksNamespace } from "./constants.js";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import { LogEntry } from "../components/log/logComponent.js";
@@ -32,7 +30,7 @@ export function getBlockEditorRegistration(
     }
 
     // Next always have the inputs
-    allBlocks["Inputs"] = [];
+    allBlocks[inputsNamespace] = [];
 
     // Create the map of blocks by namespace now in alphabetical order
     const allBlockRegistrationsSortedByNamespace = allBlockRegistrations.sort((a, b) =>
@@ -73,7 +71,6 @@ export function getBlockEditorRegistration(
     const blockEditorRegistration: BlockEditorRegistration = {
         getIsUniqueBlock,
         getBlock,
-        createInputBlock,
         allBlocks,
         inputDisplayManager: CustomInputDisplayManager,
     };
@@ -89,20 +86,4 @@ export function getBlockEditorRegistration(
  */
 function getIsUniqueBlock(block: BaseBlock): boolean {
     return block.getClassName() === "OutputBlock";
-}
-
-/**
- * Intercepts the creation of an input block and can return specialized input blocks.
- * @param smartFilter - The SmartFilter the block will belong to
- * @param _engine - The ThinEngine to use
- * @param blockType - The type of input block to create.
- * @returns Optionally creates an InputBock and returns it, null otherwise
- */
-function createInputBlock(smartFilter: SmartFilter, _engine: ThinEngine, blockType: string): Nullable<BaseBlock> {
-    switch (blockType) {
-        case WebCamInputBlockName: {
-            return new WebCamInputBlock(smartFilter);
-        }
-    }
-    return null;
 }
