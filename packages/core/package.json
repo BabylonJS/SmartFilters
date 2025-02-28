@@ -2,9 +2,6 @@
     "name": "@babylonjs/smart-filters",
     "version": "0.7.0",
     "description": "Babylon.js Smart Filter core",
-    "author": {
-        "name": "Sebastien VANDENBERGHE"
-    },
     "keywords": [
         "video",
         "composition",
