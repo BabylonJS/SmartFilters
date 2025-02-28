@@ -110,6 +110,11 @@ export type SmartFilterEditorOptions = {
      * An observable that is called when the editor needs to log a message
      */
     onLogRequiredObservable?: Observable<LogEntry>;
+
+    /**
+     * An observable that is called when the editor needs to save editorData to the current Smart Filter
+     */
+    onSaveEditorDataRequiredObservable?: Observable<void>;
 };
 
 /**
@@ -157,7 +162,8 @@ export class SmartFilterEditorControl {
             options.texturePresets,
             options.addCustomBlock,
             options.deleteCustomBlock,
-            options.onLogRequiredObservable
+            options.onLogRequiredObservable,
+            options.onSaveEditorDataRequiredObservable
         );
 
         RegisterToDisplayManagers(globalState);

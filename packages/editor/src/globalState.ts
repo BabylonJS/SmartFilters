@@ -59,7 +59,7 @@ export class GlobalState {
 
     onPreviewResetRequiredObservable = new Observable<void>();
 
-    onSaveEditorDataRequiredObservable = new Observable<void>();
+    onSaveEditorDataRequiredObservable: Observable<void>;
 
     texturePresets: TexturePreset[];
 
@@ -102,7 +102,8 @@ export class GlobalState {
         texturePresets: TexturePreset[] = [],
         addCustomBlock?: (serializedData: string) => void,
         deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void,
-        onLogRequiredObservable?: Observable<LogEntry>
+        onLogRequiredObservable?: Observable<LogEntry>,
+        onSaveEditorDataRequiredObservable?: Observable<void>
     ) {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
@@ -132,6 +133,7 @@ export class GlobalState {
         this.deleteCustomBlock = deleteCustomBlock;
 
         this.onLogRequiredObservable = onLogRequiredObservable ?? new Observable<LogEntry>();
+        this.onSaveEditorDataRequiredObservable = onSaveEditorDataRequiredObservable ?? new Observable<void>();
 
         this._previewBackground = localStorage.getItem(PreviewBackgroundStorageKey) ?? "grid";
     }

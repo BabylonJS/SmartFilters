@@ -48,6 +48,7 @@ async function main(): Promise<void> {
     let currentSmartFilter: Nullable<SmartFilter> = null;
     let renderer: Nullable<SmartFilterRenderer> = null;
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
+    const onSaveEditorDataRequiredObservable = new Observable<void>();
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
     const onLogRequiredObservable = new Observable<LogEntry>();
     let engine: Nullable<ThinEngine> = null;
@@ -219,11 +220,13 @@ async function main(): Promise<void> {
 
                 // Rebuild the current Smart Filter in case this block was used in it
                 if (engine && currentSmartFilter) {
+                    onSaveEditorDataRequiredObservable.notifyObservers();
                     const serializedSmartFilter = await serializeSmartFilter(currentSmartFilter);
                     currentSmartFilter = await smartFilterDeserializer.deserialize(
                         engine,
                         JSON.parse(serializedSmartFilter)
                     );
+                    onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
                 }
                 startRendering();
             } catch (err) {
@@ -241,6 +244,7 @@ async function main(): Promise<void> {
             );
         },
         onLogRequiredObservable,
+        onSaveEditorDataRequiredObservable,
     };
 
     SmartFilterEditorControl.Show(options);
