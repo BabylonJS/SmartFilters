@@ -1,10 +1,10 @@
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock";
 import type { SerializedSmartFilter } from "./serializedSmartFilter.js";
 import { SmartFilter } from "../smartFilter.js";
-import { inputBlockDeserializer } from "../blocks/inputBlock.deserializer.js";
-import { OutputBlock } from "../blocks/outputBlock.js";
+import { inputBlockDeserializer } from "../blockFoundation/inputBlock.deserializer.js";
+import { OutputBlock } from "../blockFoundation/outputBlock.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { InputBlock } from "../blocks/inputBlock.js";
+import { InputBlock } from "../blockFoundation/inputBlock.js";
 import type {
     ISerializedBlockV1,
     ISerializedConnectionV1,

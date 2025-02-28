@@ -1,7 +1,6 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterManifest } from "../smartFilterLoader";
 import { HardCodedSmartFilterNames } from "./smartFilters/hardCoded/hardCodedSmartFilterNames";
-import type { SmartFilterRenderer } from "../smartFilterRenderer";
 
 /**
  * The manifests describing all of the Smart Filters than can be loaded in the app's UI.
@@ -22,16 +21,6 @@ export const smartFilterManifests: SmartFilterManifest[] = [
         createSmartFilter: async () => {
             const module = await import(/* webpackChunkName: "simpleWebcam" */ "./smartFilters/hardCoded/simpleWebcam");
             return module.createSimpleWebcamSmartFilter();
-        },
-    },
-    {
-        type: "HardCoded",
-        name: HardCodedSmartFilterNames.videoWithFrame,
-        createSmartFilter: async (engine: ThinEngine, renderer: SmartFilterRenderer) => {
-            const module = await import(
-                /* webpackChunkName: "videoWithFrame" */ "./smartFilters/hardCoded/videoWithFrame"
-            );
-            return module.createVideoWithFrameSmartFilter(engine, renderer);
         },
     },
     {

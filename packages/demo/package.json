@@ -3,9 +3,6 @@
     "private": true,
     "version": "0.0.0",
     "description": "Demo usage of Smart Filters, as well as dev inner loop for working on the core.",
-    "author": {
-        "name": "Sebastien VANDENBERGHE"
-    },
     "keywords": [
         "video",
         "composition",
@@ -21,7 +18,7 @@
     "license": "MIT",
     "scripts": {
         "build": "webpack --env=prod",
-        "watch": "concurrently \"npm run watch:demo\" \"npm run watch:shaders -w @babylonjs/smart-filters-blocks\" \"npm run watch:shaders -w @babylonjs/smart-filters\"",
+        "watch": "concurrently \"npm run watch:demo\" \"npm run watch:shaders -w @babylonjs/smart-filters\"",
         "watch:demo": "npx webpack-dev-server",
         "clean": "rimraf .temp && rimraf www/scripts",
         "start": "npm run watch",

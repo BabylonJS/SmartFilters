@@ -2,12 +2,12 @@ import type { Nullable } from "@babylonjs/core/types";
 
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import type { ShaderBinding } from "../runtime/shaderRuntime";
-import type { InputBlock } from "../blocks/inputBlock";
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { InputBlock } from "../blockFoundation/inputBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock";
 import { SmartFilter } from "../smartFilter.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import { ShaderBlock } from "../blocks/shaderBlock.js";
-import { isTextureInputBlock } from "../blocks/inputBlock.js";
+import { ShaderBlock } from "../blockFoundation/shaderBlock.js";
+import { isTextureInputBlock } from "../blockFoundation/inputBlock.js";
 import { OptimizedShaderBlock } from "./optimizedShaderBlock.js";
 import {
     AutoDisableMainInputColorName,
@@ -17,8 +17,8 @@ import {
     undecorateSymbol,
 } from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
-import { DisableableShaderBlock, BlockDisableStrategy } from "../blocks/disableableShaderBlock.js";
-import { textureOptionsMatch, type OutputTextureOptions } from "../blocks/textureOptions.js";
+import { DisableableShaderBlock, BlockDisableStrategy } from "../blockFoundation/disableableShaderBlock.js";
+import { textureOptionsMatch, type OutputTextureOptions } from "../blockFoundation/textureOptions.js";
 
 const showDebugData = false;
 

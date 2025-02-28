@@ -4,7 +4,7 @@ import type { Nullable } from "@babylonjs/core/types";
 import type { SmartFilter } from "../smartFilter";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import type { RuntimeData } from "../connection/connectionPoint";
-import { ShaderBlock } from "../blocks/shaderBlock.js";
+import { ShaderBlock } from "../blockFoundation/shaderBlock.js";
 import { ShaderBinding } from "../runtime/shaderRuntime.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 

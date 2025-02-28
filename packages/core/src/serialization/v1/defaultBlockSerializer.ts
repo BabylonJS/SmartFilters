@@ -1,4 +1,4 @@
-import type { BaseBlock } from "../../blocks/baseBlock";
+import type { BaseBlock } from "../../blockFoundation/baseBlock";
 import type { ISerializedBlockV1, SerializeBlockV1 } from "./smartFilterSerialization.types";
 
 /**
