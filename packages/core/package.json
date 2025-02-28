@@ -16,25 +16,26 @@
     ],
     "license": "MIT",
     "readme": "README.md",
-    "main": "lib/index",
-    "module": "lib/index",
-    "esnext": "lib/index",
-    "types": "lib/index",
+    "main": "dist/index",
+    "module": "dist/index",
+    "esnext": "dist/index",
+    "types": "dist/index",
     "type": "module",
     "sideEffects": [
-        "./lib/utils/buildTools/**"
+        "./dist/utils/buildTools/**"
     ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/BabylonJS/SmartFilters.git"
     },
     "files": [
-        "lib",
+        "dist",
+        "src",
         "license.md",
         "readme.md"
     ],
     "scripts": {
-        "clean": "rimraf lib && rimraf buildTools && rimraf tsconfig.build.tsbuildinfo && rimraf ../../tsconfig.buildTools.build.tsbuildinfo",
+        "clean": "rimraf dist && rimraf buildTools && rimraf tsconfig.build.tsbuildinfo && rimraf ../../tsconfig.buildTools.build.tsbuildinfo",
         "preparePublish": "node buildTools/versionUp.js --alpha",
         "build": "npm run build:buildTools && npm run build:runTools && npm run build:core",
         "build:core": "tsc -p ./tsconfig.build.json",

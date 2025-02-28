@@ -23,11 +23,10 @@ junit.xml
 # Build tools
 /packages/core/buildTools/
 
-# Local dist / lib
+# Local dist
 **/www/scripts/**
 **/www/index.html
 dist
-/packages/core/lib
 .temp
 *.tsbuildinfo
 

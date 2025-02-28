@@ -8,5 +8,5 @@
     },
 
     "include": ["./src/utils/buildTools/**/*.ts"],
-    "exclude": ["**/node_modules", "**/lib"]
+    "exclude": ["**/node_modules", "**/dist"]
 }

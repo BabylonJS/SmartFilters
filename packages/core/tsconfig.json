@@ -3,10 +3,10 @@
 
     "compilerOptions": {
         "rootDir": "../",
-        "outDir": "./lib",
+        "outDir": "./dist",
         "composite": true
     },
 
     "include": ["../**/*.ts", "../**/*.tsx"],
-    "exclude": ["**/node_modules", "**/lib"]
+    "exclude": ["**/node_modules", "**/dist"]
 }
