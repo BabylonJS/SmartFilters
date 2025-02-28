@@ -3,9 +3,6 @@
     "private": true,
     "version": "0.0.0",
     "description": "The editor control used in Smart Filters applications.",
-    "author": {
-        "name": "Sebastien VANDENBERGHE"
-    },
     "keywords": [
         "video",
         "composition",
