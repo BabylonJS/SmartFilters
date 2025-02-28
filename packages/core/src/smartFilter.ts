@@ -1,16 +1,16 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import type { SmartFilterRuntime } from "./runtime/smartFilterRuntime";
-import type { BaseBlock } from "./blocks/baseBlock";
+import type { BaseBlock } from "./blockFoundation/baseBlock";
 import type { ConnectionPointType } from "./connection/connectionPointType";
 import type { ConnectionPoint } from "./connection/connectionPoint";
-import { OutputBlock } from "./blocks/outputBlock.js";
+import { OutputBlock } from "./blockFoundation/outputBlock.js";
 import { InternalSmartFilterRuntime } from "./runtime/smartFilterRuntime.js";
 import { RenderTargetGenerator } from "./runtime/renderTargetGenerator.js";
-import { AggregateBlock } from "./blocks/aggregateBlock.js";
+import { AggregateBlock } from "./blockFoundation/aggregateBlock.js";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { IDisposable } from "./IDisposable";
-import { ShaderBlock } from "./blocks/shaderBlock.js";
+import { ShaderBlock } from "./blockFoundation/shaderBlock.js";
 import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 import { getBlockOutputTextureSize } from "./utils/textureUtils.js";
 

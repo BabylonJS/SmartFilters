@@ -1,8 +1,8 @@
 import { createCommand } from "../command/command.js";
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock.js";
 import type { ShaderRuntime } from "../runtime/shaderRuntime";
 import type { InternalSmartFilterRuntime } from "../runtime/smartFilterRuntime";
-import type { OutputBlock } from "../blocks/outputBlock.js";
+import type { OutputBlock } from "../blockFoundation/outputBlock.js";
 
 /**
  * Registers the final command of the command queue - the one that draws to either the canvas or

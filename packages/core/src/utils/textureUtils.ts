@@ -1,5 +1,5 @@
 import type { TextureSize } from "@babylonjs/core/Materials/Textures/textureCreationOptions";
-import type { OutputTextureOptions } from "../blocks/textureOptions";
+import type { OutputTextureOptions } from "../blockFoundation/textureOptions";
 import type { SmartFilter } from "../smartFilter";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 

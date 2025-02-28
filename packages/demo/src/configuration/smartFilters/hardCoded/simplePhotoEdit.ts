@@ -1,6 +1,13 @@
-import { ExposureBlock, ContrastBlock, DesaturateBlock } from "@babylonjs/smart-filters-blocks";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { ConnectionPointType, InputBlock, SmartFilter, createImageTexture } from "@babylonjs/smart-filters";
+import {
+    ConnectionPointType,
+    InputBlock,
+    SmartFilter,
+    createImageTexture,
+    ExposureBlock,
+    ContrastBlock,
+    DesaturateBlock,
+} from "@babylonjs/smart-filters";
 import { HardCodedSmartFilterNames } from "./hardCodedSmartFilterNames";
 
 export function createSimplePhotoEditSmartFilter(engine: ThinEngine): SmartFilter {
