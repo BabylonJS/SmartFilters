@@ -64,7 +64,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
             return;
         }
 
-        this.props.globalState.deleteCustomBlock(block);
+        this.props.globalState.deleteCustomBlock(block.blockType, block.namespace);
 
         this.forceUpdate();
     }

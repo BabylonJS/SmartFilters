@@ -27,6 +27,7 @@ import { addCustomBlockToBlockEditorRegistration } from "./blockRegistration/add
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 import { texturePresets } from "./texturePresets.js";
+import { serializeSmartFilter } from "./smartFilterLoadSave/serializeSmartFilter.js";
 
 /**
  * The main entry point for the Smart Filter editor.
@@ -153,6 +154,37 @@ async function main(): Promise<void> {
         }
     });
 
+    const addCustomBlock = async (serializedData: string) => {
+        try {
+            const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
+            const blockRegistration = createBlockRegistration(
+                customBlockManager,
+                blockDefinition,
+                smartFilterDeserializer
+            );
+            removeCustomBlockFromBlockEditorRegistration(
+                blockEditorRegistration,
+                allBlockRegistrations,
+                blockRegistration.blockType,
+                blockRegistration.namespace
+            );
+            addCustomBlockToBlockEditorRegistration(blockEditorRegistration, blockRegistration);
+            allBlockRegistrations.push(blockRegistration);
+
+            // Rebuild the current Smart Filter in case this block was used in it
+            if (engine && currentSmartFilter) {
+                const serializedSmartFilter = await serializeSmartFilter(currentSmartFilter);
+                currentSmartFilter = await smartFilterDeserializer.deserialize(
+                    engine,
+                    JSON.parse(serializedSmartFilter)
+                );
+            }
+            startRendering();
+        } catch (err) {
+            onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
+        }
+    };
+
     const options: SmartFilterEditorOptions = {
         onNewEngine,
         onSmartFilterLoadedObservable,
@@ -194,29 +226,15 @@ async function main(): Promise<void> {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not reload assets:\n${err}`, true));
             });
         },
-        addCustomBlock: (serializedData: string) => {
-            try {
-                const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
-                const blockRegistration = createBlockRegistration(
-                    customBlockManager,
-                    blockDefinition,
-                    smartFilterDeserializer
-                );
-                removeCustomBlockFromBlockEditorRegistration(blockEditorRegistration, blockRegistration);
-                addCustomBlockToBlockEditorRegistration(blockEditorRegistration, blockRegistration);
-                allBlockRegistrations.push(blockRegistration);
-                startRendering();
-            } catch (err) {
-                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
-            }
-        },
-        deleteCustomBlock: (blockRegistration: IBlockRegistration) => {
-            customBlockManager.deleteBlockDefinition(blockRegistration.blockType, blockRegistration.namespace);
-            removeCustomBlockFromBlockEditorRegistration(blockEditorRegistration, blockRegistration);
-            const index = allBlockRegistrations.indexOf(blockRegistration);
-            if (index !== -1) {
-                allBlockRegistrations.splice(index, 1);
-            }
+        addCustomBlock,
+        deleteCustomBlock: (blockType: string, namespace: string) => {
+            customBlockManager.deleteBlockDefinition(blockType, namespace);
+            removeCustomBlockFromBlockEditorRegistration(
+                blockEditorRegistration,
+                allBlockRegistrations,
+                blockType,
+                namespace
+            );
         },
         onLogRequiredObservable,
     };
