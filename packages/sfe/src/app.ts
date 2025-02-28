@@ -225,7 +225,8 @@ async function main(): Promise<void> {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
             }
         },
-        deleteCustomBlock: (blockType: string, namespace: string) => {
+        deleteCustomBlock: (blockRegistration: IBlockRegistration) => {
+            const { blockType, namespace } = blockRegistration;
             customBlockManager.deleteBlockDefinition(blockType, namespace);
             removeCustomBlockFromBlockEditorRegistration(
                 blockEditorRegistration,

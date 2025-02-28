@@ -10,6 +10,7 @@ import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js"
 import type { LogEntry } from "./components/log/logComponent";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 export type TexturePreset = {
     name: string;
@@ -75,7 +76,7 @@ export class GlobalState {
 
     addCustomBlock?: (serializedData: string) => void;
 
-    deleteCustomBlock?: (blockType: string, namespace: string) => void;
+    deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void;
 
     public get previewBackground(): string {
         return this._previewBackground;
@@ -101,7 +102,7 @@ export class GlobalState {
         saveToSnippetServer?: () => void,
         texturePresets: TexturePreset[] = [],
         addCustomBlock?: (serializedData: string) => void,
-        deleteCustomBlock?: (blockType: string, namespace: string) => void,
+        deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void,
         onLogRequiredObservable?: Observable<LogEntry>
     ) {
         this.stateManager = new StateManager();

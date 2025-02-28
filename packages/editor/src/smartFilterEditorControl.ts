@@ -12,6 +12,7 @@ import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { LogEntry } from "./components/log/logComponent.js";
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
  * Options to configure the Smart Filter Editor
@@ -102,10 +103,9 @@ export type SmartFilterEditorOptions = {
 
     /**
      * If supplied, the editor will call this function when the user tries to delete a custom block
-     * @param blockType - The type of the block to delete
-     * @param namespace - The namespace of the block to delete
+     * @param blockEditorRegistration - The block editor registration of the custom block to delete
      */
-    deleteCustomBlock?: (blockType: string, namespace: string) => void;
+    deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void;
 
     /**
      * An observable that is called when the editor needs to log a message
