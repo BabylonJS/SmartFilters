@@ -4,7 +4,7 @@ import {
     getCompatibilityIssueMessage,
 } from "./connectionPointCompatibilityState.js";
 import { ConnectionPointDirection } from "./connectionPointDirection.js";
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock.js";
 import type { ConnectionPointType, ConnectionPointValue } from "./connectionPointType";
 import type { StrongRef } from "../runtime/strongRef";
 

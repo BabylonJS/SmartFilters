@@ -1,4 +1,4 @@
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import type { IBlockRegistration } from "@babylonjs/smart-filters";
 import type { BlockEditorRegistration } from "@babylonjs/smart-filters-editor-control";
 
 /**

@@ -1,7 +1,12 @@
-import type { BaseBlock, SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
+import {
+    type BaseBlock,
+    type SmartFilter,
+    type SmartFilterDeserializer,
+    type IBlockRegistration,
+    inputsNamespace,
+} from "@babylonjs/smart-filters";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { Nullable } from "@babylonjs/core/types.js";
-import { inputsNamespace, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { BlockEditorRegistration } from "./blockEditorRegistration";
 import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
 import { CustomBlocksNamespace } from "./constants.js";

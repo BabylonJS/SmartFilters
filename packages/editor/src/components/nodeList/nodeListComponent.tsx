@@ -13,7 +13,7 @@ import deleteButton from "../../assets/imgs/delete.svg";
 import addButton from "../../assets/imgs/add.svg";
 import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFileButtonComponent.js";
 import { getBlockKey } from "../../helpers/blockKeyConverters.js";
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import type { IBlockRegistration } from "@babylonjs/smart-filters";
 import { CustomBlocksNamespace } from "../../configuration/constants.js";
 
 interface INodeListComponentProps {

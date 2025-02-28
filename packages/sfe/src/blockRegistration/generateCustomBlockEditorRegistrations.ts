@@ -1,7 +1,11 @@
 import type { CustomBlockManager } from "../customBlockManager";
-import type { SerializedBlockDefinition, SmartFilter, SmartFilterDeserializer } from "@babylonjs/smart-filters";
+import type {
+    SerializedBlockDefinition,
+    SmartFilter,
+    SmartFilterDeserializer,
+    IBlockRegistration,
+} from "@babylonjs/smart-filters";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import { CustomBlocksNamespace } from "@babylonjs/smart-filters-editor-control";
 
 /**

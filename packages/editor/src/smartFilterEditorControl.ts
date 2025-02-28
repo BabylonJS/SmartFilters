@@ -6,13 +6,12 @@ import { GraphEditor } from "./graphEditor.js";
 import { RegisterToDisplayManagers } from "./graphSystem/registerToDisplayLedger.js";
 import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyLedger.js";
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
-import type { SmartFilter } from "@babylonjs/smart-filters";
+import type { SmartFilter, IBlockRegistration } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { LogEntry } from "./components/log/logComponent.js";
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
-import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
  * Options to configure the Smart Filter Editor

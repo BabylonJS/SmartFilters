@@ -17,7 +17,7 @@ import { createDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
-import { BaseBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import { BaseBlock, inputsNamespace, type SmartFilter } from "@babylonjs/smart-filters";
 import { setEditorData } from "./helpers/serializationTools.js";
 import { SplitContainer } from "@babylonjs/shared-ui-components/split/splitContainer.js";
 import { Splitter } from "@babylonjs/shared-ui-components/split/splitter.js";
@@ -28,7 +28,6 @@ import { PreviewAreaControlComponent } from "./components/preview/previewAreaCon
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
 import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
-import { inputsNamespace } from "@babylonjs/smart-filters-blocks";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
