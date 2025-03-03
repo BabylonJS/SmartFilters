@@ -1,7 +1,7 @@
 {
-    "name": "@babylonjs/smart-filters",
-    "version": "0.7.0",
-    "description": "Babylon.js Smart Filter core",
+    "name": "@babylonjs/smart-filters-blocks",
+    "version": "0.0.0",
+    "description": "Babylon.js Smart Filter Block Library",
     "keywords": [
         "video",
         "composition",
@@ -21,9 +21,7 @@
     "esnext": "dist/index",
     "types": "dist/index",
     "type": "module",
-    "sideEffects": [
-        "./dist/utils/buildTools/**"
-    ],
+    "sideEffects": false,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/BabylonJS/SmartFilters.git"
@@ -37,8 +35,12 @@
     "scripts": {
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "preparePublish": "node buildTools/versionUp.js --alpha",
-        "build": "tsc -p ./tsconfig.build.json",
-        "watch": "tsc -p ./tsconfig.build.json --watch",
+        "build": "npm run build:runTools && npm run build:blocks",
+        "build:blocks": "tsc -p ./tsconfig.build.json",
+        "build:runTools": "node ../core/dist/utils/buildTools/buildShaders.js ./src/blocks @bayblonjs/smart-filters",
+        "watch": "concurrently \"npm run watch:blocks\" \"npm run watch:shaders\"",
+        "watch:blocks": "tsc -p ./tsconfig.build.json --watch",
+        "watch:shaders": "node ../core/dist/utils/buildTools/buildShaders.js ./src/blocks @bayblonjs/smart-filters",
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {
