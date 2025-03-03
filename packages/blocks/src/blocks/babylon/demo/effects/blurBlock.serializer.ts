@@ -1,5 +1,4 @@
-import type { IBlockSerializerV1 } from "../../../../serialization/v1/smartFilterSerialization.types";
-import type { BaseBlock } from "../../../../blockFoundation/baseBlock";
+import type { BaseBlock, IBlockSerializerV1 } from "@babylonjs/smart-filters";
 import type { BlurBlock } from "./blurBlock";
 import { blurBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
@@ -16,7 +15,7 @@ export const blurBlockSerializer: IBlockSerializerV1 = {
             throw new Error("Was asked to serialize an unrecognized block type");
         }
 
-        const blurBlock = block as BlurBlock;
+        const blurBlock = block as unknown as BlurBlock;
         return {
             name: block.name,
             uniqueId: block.uniqueId,

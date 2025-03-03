@@ -1,13 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { blackAndWhiteBlockType } from "../../../blockTypes.js";
-import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
-import { DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
-import type { RuntimeData } from "../../../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-import type { SmartFilter } from "../../../../smartFilter.js";
+import {
+    DisableableShaderBinding,
+    type RuntimeData,
+    ConnectionPointType,
+    DisableableShaderBlock,
+    type SmartFilter,
+} from "@babylonjs/smart-filters";
 
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader.js";
+import { blackAndWhiteBlockType } from "../../../blockTypes.js";
 
 /**
  * The shader bindings for the BlackAndWhite block.

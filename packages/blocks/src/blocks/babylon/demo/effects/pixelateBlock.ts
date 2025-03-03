@@ -1,13 +1,16 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import { pixelateBlockType } from "../../../blockTypes.js";
-import { type RuntimeData } from "../../../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
-import { DisableStrategy } from "../../../../blockFoundation/index.js";
-import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
-import { createStrongRef } from "../../../../runtime/strongRef.js";
-import type { SmartFilter } from "../../../../smartFilter.js";
+import {
+    DisableableShaderBinding,
+    type RuntimeData,
+    ConnectionPointType,
+    type IDisableableBlock,
+    DisableableShaderBlock,
+    type SmartFilter,
+    createStrongRef,
+    DisableStrategy,
+} from "@babylonjs/smart-filters";
 
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 import { shaderProgram, uniforms } from "./pixelateBlock.shader.js";

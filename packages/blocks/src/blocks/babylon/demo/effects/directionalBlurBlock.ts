@@ -1,12 +1,15 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
-import { type RuntimeData } from "../../../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-import { ShaderBinding } from "../../../../runtime/shaderRuntime.js";
-import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
-import type { SmartFilter } from "../../../../smartFilter.js";
-import { ShaderBlock } from "../../../../blockFoundation/shaderBlock.js";
-import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../editorUtils/editableInPropertyPage.js";
+import {
+    type ShaderProgram,
+    type RuntimeData,
+    ConnectionPointType,
+    type SmartFilter,
+    editableInPropertyPage,
+    PropertyTypeForEdition,
+    ShaderBinding,
+    ShaderBlock,
+} from "@babylonjs/smart-filters";
 
 import { directionalBlurBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";

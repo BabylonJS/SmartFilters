@@ -1,13 +1,16 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../editorUtils/editableInPropertyPage.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
-import type { RuntimeData } from "../../../../connection/connectionPoint.js";
-import type { SmartFilter } from "../../../../smartFilter.js";
-import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
-import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
-import { createStrongRef } from "../../../../runtime/strongRef.js";
-import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-
+import {
+    type ShaderProgram,
+    DisableableShaderBinding,
+    type RuntimeData,
+    ConnectionPointType,
+    type IDisableableBlock,
+    DisableableShaderBlock,
+    type SmartFilter,
+    createStrongRef,
+    PropertyTypeForEdition,
+    editableInPropertyPage,
+} from "@babylonjs/smart-filters";
 import { compositionBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 

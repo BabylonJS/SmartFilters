@@ -1,11 +1,13 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
-
-import { type RuntimeData } from "../../../../connection/connectionPoint.js";
-import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-import { type IDisableableBlock, DisableableShaderBlock } from "../../../../blockFoundation/disableableShaderBlock.js";
-import { DisableableShaderBinding } from "../../../../runtime/shaderRuntime.js";
-import type { ShaderProgram } from "../../../../utils/shaderCodeUtils.js";
-import type { SmartFilter } from "../../../../smartFilter.js";
+import {
+    type ShaderProgram,
+    DisableableShaderBinding,
+    type RuntimeData,
+    ConnectionPointType,
+    type IDisableableBlock,
+    DisableableShaderBlock,
+    type SmartFilter,
+} from "@babylonjs/smart-filters";
 
 import { babylonDemoUtilitiesNamespace } from "../../../blockNamespaces.js";
 import { premultiplyAlphaBlockType } from "../../../blockTypes.js";

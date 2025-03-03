@@ -1,8 +1,11 @@
-import { AggregateBlock } from "../../../../blockFoundation/aggregateBlock.js";
-import type { ConnectionPoint } from "../../../../connection/connectionPoint.js";
-import type { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-import { editableInPropertyPage, PropertyTypeForEdition } from "../../../../editorUtils/editableInPropertyPage.js";
-import { SmartFilter } from "../../../../smartFilter.js";
+import {
+    type ConnectionPointType,
+    AggregateBlock,
+    type ConnectionPoint,
+    editableInPropertyPage,
+    PropertyTypeForEdition,
+    SmartFilter,
+} from "@babylonjs/smart-filters";
 import { DirectionalBlurBlock } from "./directionalBlurBlock.js";
 import { blurBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";

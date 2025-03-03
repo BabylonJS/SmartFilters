@@ -1,8 +1,7 @@
-import type { BaseBlock } from "../../../../blockFoundation";
-import type { IBlockSerializerV1 } from "../../../../serialization";
 import type { CompositionBlock } from "./compositionBlock";
 import { compositionBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
+import type { IBlockSerializerV1, BaseBlock } from "@babylonjs/smart-filters";
 
 /**
  * The V1 serializer for a Composition Block
@@ -14,7 +13,7 @@ export const compositionBlockSerializer: IBlockSerializerV1 = {
             throw new Error("Was asked to serialize an unrecognized block type");
         }
 
-        const compositionBlock = block as CompositionBlock;
+        const compositionBlock = block as unknown as CompositionBlock;
         return {
             name: block.name,
             uniqueId: block.uniqueId,

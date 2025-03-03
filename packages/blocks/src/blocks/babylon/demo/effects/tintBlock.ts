@@ -1,5 +1,4 @@
-import { ConnectionPointType } from "../../../../connection/connectionPointType.js";
-import type { SerializedShaderBlockDefinition } from "../../../../serialization";
+import { ConnectionPointType, type SerializedShaderBlockDefinition } from "@babylonjs/smart-filters";
 
 /**
  * This is included to show how a serialized block definition can be loaded and used.
