@@ -1,4 +1,4 @@
-import { BlackAndWhiteBlock, PixelateBlock, PremultiplyAlphaBlock } from "@babylonjs/smart-filters";
+import { BlackAndWhiteBlock, PixelateBlock, PremultiplyAlphaBlock } from "@babylonjs/smart-filters-blocks";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import {
     ConnectionPointType,

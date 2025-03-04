@@ -18,7 +18,7 @@
     "license": "MIT",
     "scripts": {
         "build": "webpack --env=prod",
-        "watch": "concurrently \"npm run watch:demo\" \"npm run watch:shaders -w @babylonjs/smart-filters\"",
+        "watch": "concurrently \"npm run watch:demo\" \"npm run watch:shaders -w @babylonjs/smart-filters-blocks\"",
         "watch:demo": "npx webpack-dev-server",
         "clean": "rimraf .temp && rimraf www/scripts",
         "start": "npm run watch",

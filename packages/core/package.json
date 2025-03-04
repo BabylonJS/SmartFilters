@@ -35,15 +35,10 @@
         "readme.md"
     ],
     "scripts": {
-        "clean": "rimraf dist && rimraf buildTools && rimraf tsconfig.build.tsbuildinfo && rimraf ../../tsconfig.buildTools.build.tsbuildinfo",
-        "preparePublish": "node buildTools/versionUp.js --alpha",
-        "build": "npm run build:buildTools && npm run build:runTools && npm run build:core",
-        "build:core": "tsc -p ./tsconfig.build.json",
-        "build:buildTools": "tsc -p ./tsconfig.buildTools.build.json",
-        "build:runTools": "node buildTools/buildShaders.js ./src/blockFoundation ../utils/shaderCodeUtils && node buildTools/buildShaders.js ./src/blocks ../../../../utils/shaderCodeUtils",
-        "watch": "concurrently \"npm run watch:core\" \"npm run watch:shaders\"",
-        "watch:core": "tsc -p ./tsconfig.build.json --watch",
-        "watch:shaders": "node buildTools/watchShaders.js ./src/blocks ../../../../utils/shaderCodeUtils",
+        "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+        "preparePublish": "node dist/utils/buildTools/versionUp.js --alpha",
+        "build": "tsc -p ./tsconfig.build.json",
+        "watch": "tsc -p ./tsconfig.build.json --watch",
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {

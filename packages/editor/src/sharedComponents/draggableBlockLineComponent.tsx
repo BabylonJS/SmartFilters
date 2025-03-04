@@ -1,6 +1,6 @@
 import * as react from "react";
 import { getBlockKey } from "../helpers/blockKeyConverters.js";
-import type { IBlockRegistration } from "@babylonjs/smart-filters";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 export interface IDraggableLineWithButtonComponent {
     block: IBlockRegistration;

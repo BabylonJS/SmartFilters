@@ -1,9 +1,4 @@
-import {
-    logCommands,
-    type SmartFilterDeserializer,
-    type SmartFilter,
-    builtInBlockRegistrations,
-} from "@babylonjs/smart-filters";
+import { logCommands, type SmartFilterDeserializer, type SmartFilter } from "@babylonjs/smart-filters";
 import {
     editorBlockRegistrations,
     getBlockEditorRegistration,
@@ -12,6 +7,7 @@ import {
 import { texturePresets } from "../configuration/texturePresets";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { SmartFilterRenderer } from "../smartFilterRenderer";
+import { builtInBlockRegistrations } from "@babylonjs/smart-filters-blocks";
 
 /**
  * Launches the editor - in a separate file so it can be dynamically imported
