@@ -1,4 +1,4 @@
-var fs = require("fs");
+import * as fs from "fs";
 
 const corePackageText = fs.readFileSync("../core/package.json");
 const corePackageJSON = JSON.parse(corePackageText.toString());
