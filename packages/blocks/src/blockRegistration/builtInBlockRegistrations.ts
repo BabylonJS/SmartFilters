@@ -1,4 +1,12 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import {
+    InputBlock,
+    type SmartFilter,
+    type SmartFilterDeserializer,
+    type ISerializedBlockV1,
+    ConnectionPointType,
+    CustomShaderBlock,
+} from "@babylonjs/smart-filters";
 import type { IBlockRegistration } from "./IBlockRegistration.js";
 import {
     babylonDemoEffectsNamespace,
@@ -6,7 +14,6 @@ import {
     babylonDemoUtilitiesNamespace,
     inputsNamespace,
 } from "../blocks/blockNamespaces.js";
-import { CustomShaderBlock } from "../blockFoundation/customShaderBlock.js";
 import {
     blackAndWhiteBlockType,
     kaleidoscopeBlockType,
@@ -24,11 +31,6 @@ import {
     compositionBlockType,
     tintBlockType,
 } from "../blocks/blockTypes.js";
-import { ConnectionPointType } from "../connection/connectionPointType.js";
-import type { ISerializedBlockV1 } from "../serialization/index.js";
-import type { SmartFilterDeserializer } from "../serialization/smartFilterDeserializer.js";
-import type { SmartFilter } from "../smartFilter.js";
-import { InputBlock } from "../blockFoundation/inputBlock.js";
 
 /**
  * The list of block registrations.

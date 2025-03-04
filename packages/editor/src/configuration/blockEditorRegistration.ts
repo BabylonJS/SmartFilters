@@ -1,6 +1,7 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
-import type { BaseBlock, SmartFilter, IBlockRegistration } from "@babylonjs/smart-filters";
+import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
+import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 
 /**
  * All of the configuration needed for the editor to work with a set of blocks.

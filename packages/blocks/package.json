@@ -34,13 +34,13 @@
     ],
     "scripts": {
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
-        "preparePublish": "node buildTools/versionUp.js --alpha",
+        "preparePublish": "node build/preparePublish.js",
         "build": "npm run build:runTools && npm run build:blocks",
         "build:blocks": "tsc -p ./tsconfig.build.json",
-        "build:runTools": "node ../core/dist/utils/buildTools/buildShaders.js ./src/blocks @bayblonjs/smart-filters",
+        "build:runTools": "node ../core/dist/utils/buildTools/buildShaders.js ./src/blocks @babylonjs/smart-filters",
         "watch": "concurrently \"npm run watch:blocks\" \"npm run watch:shaders\"",
         "watch:blocks": "tsc -p ./tsconfig.build.json --watch",
-        "watch:shaders": "node ../core/dist/utils/buildTools/buildShaders.js ./src/blocks @bayblonjs/smart-filters",
+        "watch:shaders": "node ../core/dist/utils/buildTools/buildShaders.js ./src/blocks @babylonjs/smart-filters",
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {

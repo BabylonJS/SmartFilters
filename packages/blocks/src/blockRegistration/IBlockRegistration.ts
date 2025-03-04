@@ -1,7 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import type { SmartFilter } from "../smartFilter";
-import type { BaseBlock } from "../blockFoundation";
-import type { SmartFilterDeserializer, ISerializedBlockV1 } from "../serialization";
+import type { SmartFilter, SmartFilterDeserializer, ISerializedBlockV1, BaseBlock } from "@babylonjs/smart-filters";
 
 /**
  * An object which describes a block definition, as well as a factory for creating a new instance of the block or
