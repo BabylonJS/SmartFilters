@@ -14,6 +14,7 @@ export function initializePreview(canvas: HTMLCanvasElement): ThinEngine {
             preserveDrawingBuffer: false,
             // Useful during debug to simulate WebGL1 devices (Safari)
             // disableWebGL2Support: true,
+            premultipliedAlpha: false,
         },
         false
     );
