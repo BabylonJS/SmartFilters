@@ -2,6 +2,8 @@
 
 Smart Filters is a graph based system for applying GPU accelerated effects to videos or still images with a built-in optimizer.
 
+See the full documentation at [doc.babylonjs.com](https://doc.babylonjs.com/features/featuresDeepDive/smartFilters/)
+
 ## Structure
 
 These are the packages in this monorepo:
@@ -20,9 +22,15 @@ More info can be found in the dedicated [readme](./packages/demo/readme.md).
 
 ### editor
 
-A simple visual editor for Smart Filters (still in POC state).
+This package contains the graphical editor control used by the demo and the Smart Filter Editor.
 
 More info can be found in the dedicated [readme](./packages/editor/readme.md).
+
+### sfe
+
+This package contains the visual editor appliation deployed to https://sfe.babylonjs.com.
+
+More info can be found in the dedicated [readme](./packages/sfe/readme.md).
 
 ## Running locally
 
@@ -31,6 +39,13 @@ After cloning the repo, running locally during development is as simple as:
 ```
 npm install
 npm start
+```
+
+If you want to run the Smart Filter Editor application locally, start with:
+
+```
+npm install
+npm run start:sfe
 ```
 
 For VSCode users, if you have installed the Chrome Debugging extension, you can start debugging within VSCode by using the appropriate launch menu.
