@@ -237,7 +237,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             underline={true}
                             onLink={() =>
                                 this.props.globalState.hostDocument.defaultView!.open(
-                                    "https://doc.babylonjs.com/how_to/node_material",
+                                    "https://doc.babylonjs.com/features/featuresDeepDive/smartFilters/",
                                     "_blank"
                                 )
                             }
