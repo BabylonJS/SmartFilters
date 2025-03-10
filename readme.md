@@ -10,13 +10,13 @@ These are the packages in this monorepo:
 
 ### core
 
-This is the main package for Smart Filters. It implements the notion of a `SmartFilter` which is a graph of blocks (all inheriting from `BaseBlock`) linked to each other through `ConnectionPoint`s. This package also contains a library of useful blocks.
+This is the main package for Smart Filters. It implements the notion of a `SmartFilter` which is a graph of blocks (all inheriting from `BaseBlock`) linked to each other through `ConnectionPoint`s.
 
 More info can be found in the dedicated [readme](./packages/core/readme.md).
 
 ### demo
 
-Entry point of the demo application for creating and running filters. This demo is also used as the dev inner loop for working on the Core.
+Entry point of the demo application for creating and running Smart Filters. This demo is also used as the dev inner loop for working on the Core.
 
 More info can be found in the dedicated [readme](./packages/demo/readme.md).
 
@@ -28,7 +28,7 @@ More info can be found in the dedicated [readme](./packages/editor/readme.md).
 
 ### sfe
 
-This package contains the visual editor appliation deployed to https://sfe.babylonjs.com.
+This package contains the visual editor application deployed to https://sfe.babylonjs.com.
 
 More info can be found in the dedicated [readme](./packages/sfe/readme.md).
 
