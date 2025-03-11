@@ -16,12 +16,13 @@ const SHADER_BINDING_BIND = "@SHADER_BINDING_BIND@";
 const BLOCK_INPUT_PROPERTIES = "@BLOCK_INPUT_PROPERTIES@";
 const BLOCK_GET_SHADER_BINDING_VARS = "@BLOCK_SHADER_BINDING_BIND_VARS@";
 const BLOCK_GET_SHADER_PARAM_LIST = "@BLOCK_GET_SHADER_PARAM_LIST@";
+const EFFECT_SETTER = "@EFFECT_SETTER@";
 
 const ShaderBindingPrivateVariablesTemplate = `    private readonly _${CAMEL_CASE_UNIFORM}: RuntimeData<ConnectionPointType.${CONNECTION_POINT_TYPE}>;`;
 const ShaderBindingCtorDocstringParams = `     * @param ${CAMEL_CASE_UNIFORM} - The ${CAMEL_CASE_UNIFORM} runtime value`;
 const ShaderBindingCtorParams = `        ${CAMEL_CASE_UNIFORM}: RuntimeData<ConnectionPointType.${CONNECTION_POINT_TYPE}>`;
 const ShaderBindingCtor = `        this._${CAMEL_CASE_UNIFORM} = ${CAMEL_CASE_UNIFORM};`;
-const ShaderBindingBind = `        effect.setTexture(this.getRemappedName(uniforms.${CAMEL_CASE_UNIFORM}), this._${CAMEL_CASE_UNIFORM}.value);`;
+const ShaderBindingBind = `        effect.${EFFECT_SETTER}(this.getRemappedName(uniforms.${CAMEL_CASE_UNIFORM}), this._${CAMEL_CASE_UNIFORM}.value);`;
 
 const BlockInputProperties = `    /**
      * The ${CAMEL_CASE_UNIFORM} connection point.
@@ -166,7 +167,10 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
 
     // Generate the shader binding bind
     const shaderBindingBind = fragmentShaderInfo.uniforms.map((uniform) => {
-        return ShaderBindingBind.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
+        return ShaderBindingBind.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
+            EFFECT_SETTER,
+            getEffectSetter(uniform.type)
+        );
     });
 
     // Generate the block input properties
@@ -250,5 +254,27 @@ function getConnectionPointTypeString(type: ConnectionPointType): string {
             return "Vector2";
         case ConnectionPointType.Boolean:
             return "Boolean";
+    }
+}
+
+/**
+ * Get the effect setter for a connection point type
+ * @param type - The connection point type
+ * @returns - The effect setter for the connection point type
+ */
+function getEffectSetter(type: ConnectionPointType): string {
+    switch (type) {
+        case ConnectionPointType.Float:
+            return "setFloat";
+        case ConnectionPointType.Texture:
+            return "setTexture";
+        case ConnectionPointType.Color3:
+            return "setColor3";
+        case ConnectionPointType.Color4:
+            return "setDirectColor4";
+        case ConnectionPointType.Vector2:
+            return "setVector2";
+        case ConnectionPointType.Boolean:
+            return "setBool";
     }
 }
