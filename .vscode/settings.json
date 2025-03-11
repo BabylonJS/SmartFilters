@@ -2,6 +2,7 @@
     "cSpell.words": [
         "acumin",
         "ADDRESSMODE",
+        "autogen",
         "babylonjs",
         "Consts",
         "desaturated",
@@ -41,7 +42,9 @@
     "files.exclude": {
         "**/node_modules": true,
         "**/dist": false,
-        "**/*.shader.ts": true
+        "**/*.shader.ts": true,
+        "**/*.autogen.shaderProgram.ts": true,
+        "**/*.autogen.block.ts": true
     },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

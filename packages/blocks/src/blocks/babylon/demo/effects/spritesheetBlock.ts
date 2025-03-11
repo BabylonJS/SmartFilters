@@ -2,7 +2,7 @@ import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import { spritesheetBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
-import { shaderProgram, uniforms } from "./spritesheetBlock.shader.js";
+import { shaderProgram, uniforms } from "./spritesheetBlock.autogen.shaderProgram.js";
 import {
     DisableableShaderBinding,
     type RuntimeData,

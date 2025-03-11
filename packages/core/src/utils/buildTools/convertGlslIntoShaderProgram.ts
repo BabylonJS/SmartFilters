@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as path from "path";
 import { parseFragmentShader } from "./shaderConverter.js";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
@@ -61,9 +60,7 @@ const UniformNameLinePrefix = "    ";
  * @param fragmentShaderPath - The path to the fragment file for the shader
  * @param importPath - The path to import the ShaderProgram type from
  */
-export function convertShaderForHardcodedBlock(fragmentShaderPath: string, importPath: string): void {
-    console.log(`Processing fragment shader: ${fragmentShaderPath}`);
-
+export function convertShaderGlslIntoShaderProgram(fragmentShaderPath: string, importPath: string): void {
     // See if there is a corresponding vertex shader
     let vertexShader: string | undefined = undefined;
     const vertexShaderPath = fragmentShaderPath.replace(".fragment.glsl", ".vertex.glsl");
@@ -79,7 +76,7 @@ export function convertShaderForHardcodedBlock(fragmentShaderPath: string, impor
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
 
     // Write the shader TS file
-    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".shader.ts");
+    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".autogen.shaderProgram.ts");
     const functionsSection: string[] = [];
     for (const shaderFunction of fragmentShaderInfo.shaderCode.functions) {
         functionsSection.push(
@@ -113,26 +110,6 @@ export function convertShaderForHardcodedBlock(fragmentShaderPath: string, impor
         );
 
     fs.writeFileSync(shaderFile, finalContents);
-}
-
-/**
- * Converts .fragment.glsl and vertex.glsl file pairs into .shader.ts files which export a ShaderProgram object.
- * @param shaderPath - The path to the .glsl files to convert.
- * @param importPath - The path to import the ShaderProgram type from.
- */
-export function convertShaders(shaderPath: string, importPath: string) {
-    // Get all files in the path
-    const allFiles = fs.readdirSync(shaderPath, { withFileTypes: true, recursive: true });
-
-    // Find all fragment shaders (excluding the template)
-    const fragmentShaderFiles = allFiles.filter(
-        (file) => file.isFile() && file.name.endsWith(".fragment.glsl") && !file.name.endsWith("template.fragment.glsl")
-    );
-
-    // Convert all shaders
-    for (const fragmentShaderFile of fragmentShaderFiles) {
-        convertShaderForHardcodedBlock(path.join(fragmentShaderFile.path, fragmentShaderFile.name), importPath);
-    }
 }
 
 /**

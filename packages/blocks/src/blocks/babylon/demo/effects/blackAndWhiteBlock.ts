@@ -8,7 +8,7 @@ import {
 } from "@babylonjs/smart-filters";
 
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
-import { shaderProgram, uniforms } from "./blackAndWhiteBlock.shader.js";
+import { shaderProgram, uniforms } from "./blackAndWhiteBlock.autogen.shaderProgram.js";
 import { blackAndWhiteBlockType } from "../../../blockTypes.js";
 
 /**
