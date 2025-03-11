@@ -1,4 +1,3 @@
-// import { importCustomBlockDefinition } from "../../serialization/importCustomBlockDefinition.js";
 import * as fs from "fs";
 import { extractShaderProgramFromGlsl } from "./convertGlslIntoShaderProgram.js";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
@@ -118,8 +117,6 @@ ${BLOCK_GET_SHADER_BINDING_VARS}
 }
 
 `;
-
-// TODO: change terminology - don't call these custom blocks
 
 /**
  * Converts a single shader to a .ts file which exports a Smart Filter block
