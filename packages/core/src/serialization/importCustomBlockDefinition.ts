@@ -54,35 +54,10 @@ function importAnnotatedGlsl(fragmentShader: string): SerializedShaderBlockDefin
     // Calculate the input connection points
     const inputConnectionPoints: SerializedInputConnectionPointV1[] = [];
     for (const uniform of fragmentShaderInfo.uniforms) {
-        // Convert to ConnectionPointType
-        let type: ConnectionPointType;
-        switch (uniform.type) {
-            case "float":
-                type = ConnectionPointType.Float;
-                break;
-            case "sampler2D":
-                type = ConnectionPointType.Texture;
-                break;
-            case "vec3":
-                type = ConnectionPointType.Color3;
-                break;
-            case "vec4":
-                type = ConnectionPointType.Color4;
-                break;
-            case "bool":
-                type = ConnectionPointType.Boolean;
-                break;
-            case "vec2":
-                type = ConnectionPointType.Vector2;
-                break;
-            default:
-                throw new Error(`Unsupported uniform type: '${uniform.type}'`);
-        }
-
         // Add to input connection point list
         const inputConnectionPoint: SerializedInputConnectionPointV1 = {
             name: uniform.name,
-            type,
+            type: uniform.type,
             autoBind: uniform.properties?.autoBind as InputAutoBindV1,
         };
         if (inputConnectionPoint.type !== ConnectionPointType.Texture && uniform.properties?.default !== undefined) {

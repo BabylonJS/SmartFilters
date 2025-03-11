@@ -1,5 +1,6 @@
 import type { Nullable } from "@babylonjs/core/types";
 import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
+import { ConnectionPointType } from "../../connection/connectionPointType.js";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
@@ -31,7 +32,7 @@ export type UniformMetadata = {
     /**
      * The type string of the uniform
      */
-    type: string;
+    type: ConnectionPointType;
 
     /**
      * Optional properties of the uniform
@@ -106,9 +107,34 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
             throw new Error(`Uniforms must have a name: '${uniformLine}'`);
         }
 
+        // Convert to ConnectionPointType
+        let type: ConnectionPointType;
+        switch (uniformTypeString) {
+            case "float":
+                type = ConnectionPointType.Float;
+                break;
+            case "sampler2D":
+                type = ConnectionPointType.Texture;
+                break;
+            case "vec3":
+                type = ConnectionPointType.Color3;
+                break;
+            case "vec4":
+                type = ConnectionPointType.Color4;
+                break;
+            case "bool":
+                type = ConnectionPointType.Boolean;
+                break;
+            case "vec2":
+                type = ConnectionPointType.Vector2;
+                break;
+            default:
+                throw new Error(`Unsupported uniform type: '${uniformTypeString}'`);
+        }
+
         uniforms.push({
             name: uniformName,
-            type: uniformTypeString,
+            type,
             properties: annotationJSON ? JSON.parse(annotationJSON.replace("//", "").trim()) : undefined,
         });
 

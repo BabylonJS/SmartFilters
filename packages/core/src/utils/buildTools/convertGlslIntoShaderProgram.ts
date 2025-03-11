@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { parseFragmentShader } from "./shaderConverter.js";
+import { parseFragmentShader, type FragmentShaderInfo } from "./shaderConverter.js";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
 const VERTEX_SHADER = "@VERTEX_SHADER@";
@@ -12,6 +12,8 @@ const FUNCTIONS = "@FUNCTIONS@";
 const FUNCTION_NAME = "@FUNCTION_NAME@";
 const FUNCTION_CODE = "@FUNCTION_CODE@";
 const UNIFORM_NAMES = "@UNIFORM_NAMES@";
+const EXPORT = "@EXPORT_SHADER_PROGRAM@";
+const IMPORTS = "@IMPORT@";
 
 const ConstsTemplate = `
         const: \`${CONSTS_VALUE}\`,`;
@@ -28,12 +30,13 @@ const CodeLinePrefix = "                    ";
 const UniformLinePrefix = "            ";
 const ConstLinePrefix = "            ";
 
-const ShaderTemplate = `import type { ShaderProgram } from "${TYPE_IMPORT_PATH}";
+const ImportTemplate = `import type { ShaderProgram } from "${TYPE_IMPORT_PATH}";`;
+const ShaderTemplate = `${IMPORTS}
 
 /**
  * The shader program for the block.
  */
-export const shaderProgram: ShaderProgram = {
+${EXPORT}const shaderProgram: ShaderProgram = {
     vertex: ${VERTEX_SHADER},
     fragment: {
         uniform: \`${UNIFORMS}\`,${CONSTS_PROPERTY}
@@ -48,7 +51,7 @@ export const shaderProgram: ShaderProgram = {
  * The uniform names for this shader, to be used in the shader binding so
  * that the names are always in sync.
  */
-export const uniforms = {
+${EXPORT}const uniforms = {
 ${UNIFORM_NAMES}
 };
 `;
@@ -56,11 +59,40 @@ ${UNIFORM_NAMES}
 const UniformNameLinePrefix = "    ";
 
 /**
- * Converts a single shader to a .ts file which can be imported by a hardcoded block
+ * Converts a single shader to a .ts file which exports a ShaderProgram which can be imported by a hardcoded block
  * @param fragmentShaderPath - The path to the fragment file for the shader
  * @param importPath - The path to import the ShaderProgram type from
  */
-export function convertShaderGlslIntoShaderProgram(fragmentShaderPath: string, importPath: string): void {
+export function convertGlslIntoShaderProgram(fragmentShaderPath: string, importPath: string): void {
+    const { shaderProgramCode } = extractShaderProgramFromGlsl(fragmentShaderPath, importPath, true, true);
+    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".autogen.shaderProgram.ts");
+    fs.writeFileSync(shaderFile, shaderProgramCode);
+}
+
+/**
+ * Extracts the shader program from a glsl file(s) and returns it as a string which can be written to a .ts file
+ * @param fragmentShaderPath - The path to the fragment file for the shader
+ * @param importPath - The path to import the ShaderProgram type from
+ * @param exportObjects - Whether to export the shaderProgram and uniforms objects
+ * @param includeImports - Whether to include the imports in the output
+ * @returns The string to write to the .ts file
+ */
+export function extractShaderProgramFromGlsl(
+    fragmentShaderPath: string,
+    importPath: string,
+    exportObjects: boolean,
+    includeImports: boolean
+): {
+    /**
+     * The shader program code
+     */
+    shaderProgramCode: string;
+
+    /**
+     * The FragmentShaderInfo
+     */
+    fragmentShaderInfo: FragmentShaderInfo;
+} {
     // See if there is a corresponding vertex shader
     let vertexShader: string | undefined = undefined;
     const vertexShaderPath = fragmentShaderPath.replace(".fragment.glsl", ".vertex.glsl");
@@ -75,8 +107,7 @@ export function convertShaderGlslIntoShaderProgram(fragmentShaderPath: string, i
     const fragmentShader = fs.readFileSync(fragmentShaderPath, "utf8");
     const fragmentShaderInfo = parseFragmentShader(fragmentShader);
 
-    // Write the shader TS file
-    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".autogen.shaderProgram.ts");
+    // Generate the shader program code
     const functionsSection: string[] = [];
     for (const shaderFunction of fragmentShaderInfo.shaderCode.functions) {
         functionsSection.push(
@@ -86,8 +117,9 @@ export function convertShaderGlslIntoShaderProgram(fragmentShaderPath: string, i
             )
         );
     }
+    const imports = includeImports ? ImportTemplate.replace(TYPE_IMPORT_PATH, importPath) : "";
     const finalContents = ShaderTemplate.replace(VERTEX_SHADER, vertexShader ? `\`${vertexShader}\`` : "undefined")
-        .replace(TYPE_IMPORT_PATH, importPath)
+        .replace(IMPORTS, imports)
         .replace(UNIFORMS, "\n" + addLinePrefixes(fragmentShaderInfo.shaderCode.uniform || "", UniformLinePrefix))
         .replace(MAIN_FUNCTION_NAME, fragmentShaderInfo.shaderCode.mainFunctionName)
         .replace(MAIN_INPUT_NAME, fragmentShaderInfo.shaderCode.mainInputTexture || '""')
@@ -107,9 +139,13 @@ export function convertShaderGlslIntoShaderProgram(fragmentShaderPath: string, i
                 fragmentShaderInfo.uniforms.map((u) => `${u.name}: "${u.name}",`).join("\n"),
                 UniformNameLinePrefix
             )
-        );
+        )
+        .replace(new RegExp(EXPORT, "g"), exportObjects ? "export " : "");
 
-    fs.writeFileSync(shaderFile, finalContents);
+    return {
+        shaderProgramCode: finalContents,
+        fragmentShaderInfo,
+    };
 }
 
 /**
