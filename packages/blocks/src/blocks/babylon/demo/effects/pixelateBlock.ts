@@ -13,7 +13,7 @@ import {
 } from "@babylonjs/smart-filters";
 
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
-import { shaderProgram, uniforms } from "./pixelateBlock.autogen.shaderProgram.js";
+import { shaderProgram, uniforms } from "./pixelateBlock.fragment.js";
 
 /**
  * The shader bindings for the Pixelate block.

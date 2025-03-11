@@ -55,7 +55,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/babylon/demo/effects/blackAndWhiteBlock.autogen.block.js"
+                /* webpackChunkName: "blackAndWhiteBlock" */ "../blocks/babylon/demo/effects/blackAndWhiteBlock.block.js"
             );
             return new module.BlackAndWhiteBlock(smartFilter, serializedBlock?.name || "BlackAndWhite");
         },
@@ -272,7 +272,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "wipeBlock" */ "../blocks/babylon/demo/transitions/wipeBlock.autogen.block.js"
+                /* webpackChunkName: "wipeBlock" */ "../blocks/babylon/demo/transitions/wipeBlock.block.js"
             );
             return new module.WipeBlock(smartFilter, serializedBlock?.name || "Wipe");
         },

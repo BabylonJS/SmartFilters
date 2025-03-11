@@ -65,7 +65,7 @@ const UniformNameLinePrefix = "    ";
  */
 export function convertGlslIntoShaderProgram(fragmentShaderPath: string, importPath: string): void {
     const { shaderProgramCode } = extractShaderProgramFromGlsl(fragmentShaderPath, importPath, true, true);
-    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".autogen.shaderProgram.ts");
+    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".fragment.ts");
     fs.writeFileSync(shaderFile, shaderProgramCode);
 }
 

@@ -12,7 +12,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { compositionBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
-import { uniforms, shaderProgram } from "./compositionBlock.autogen.shaderProgram.js";
+import { uniforms, shaderProgram } from "./compositionBlock.fragment.js";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;

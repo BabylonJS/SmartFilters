@@ -1,1 +1,1 @@
-export * from "./wipeBlock.autogen.block.js";
+export * from "./wipeBlock.block.js";

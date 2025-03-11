@@ -201,8 +201,8 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
         .replace(BLOCK_GET_SHADER_BINDING_VARS, blockGetShaderBindingVars.join("\n"))
         .replace(BLOCK_GET_SHADER_PARAM_LIST, blockGetShaderParamList.join(","));
 
-    // Write the block TS file
-    const outputFullPathAndFileName = fragmentShaderPath.replace(".fragment.glsl", ".autogen.block.ts");
+    // Write the block class TS file
+    const outputFullPathAndFileName = fragmentShaderPath.replace(".fragment.glsl", ".block.ts");
     fs.writeFileSync(outputFullPathAndFileName, finalContents);
 }
 
