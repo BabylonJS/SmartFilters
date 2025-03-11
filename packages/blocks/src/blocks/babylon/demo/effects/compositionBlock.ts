@@ -1,6 +1,5 @@
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import {
-    type ShaderProgram,
     DisableableShaderBinding,
     type RuntimeData,
     ConnectionPointType,
@@ -13,6 +12,7 @@ import {
 } from "@babylonjs/smart-filters";
 import { compositionBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
+import { uniforms, shaderProgram } from "./compositionBlock.autogen.shaderProgram.js";
 
 /** Defines that alpha blending is disabled */
 export const ALPHA_DISABLE = 0;
@@ -25,64 +25,10 @@ export const ALPHA_SUBTRACT = 3;
 /** Defines that alpha blending is SRC * DEST */
 export const ALPHA_MULTIPLY = 4;
 
-const shaderProgram: ShaderProgram = {
-    fragment: {
-        uniform: `
-            uniform sampler2D _background_;
-            uniform sampler2D _foreground_;
-            
-            uniform vec2 _scaleUV_;
-            uniform vec2 _translateUV_;
-            uniform int _alphaMode_;
-            uniform float _foregroundAlphaScale_;
-            `,
-
-        mainFunctionName: "_composition_",
-
-        mainInputTexture: "_background_",
-
-        functions: [
-            {
-                name: "_composition_",
-                code: `
-                vec4 _composition_(vec2 vUV) {
-                    vec4 background = texture2D(_background_, vUV);
-
-                    vec2 transformedUV = vUV * (1.0 / _scaleUV_) + _translateUV_;
-                    if (transformedUV.x < 0.0 || transformedUV.x > 1.0 || transformedUV.y < 0.0 || transformedUV.y > 1.0) {
-                        return background;
-                    }
-            
-                    vec4 foreground = texture2D(_foreground_, transformedUV);
-                    foreground.a *= _foregroundAlphaScale_;
-                
-                    // SRC is foreground, DEST is background
-                    if (_alphaMode_ == 0) {
-                        return foreground;
-                    }
-                    else if (_alphaMode_ == 1) {
-                        return foreground.a * foreground + background;
-                    }
-                    else if (_alphaMode_ == 2) {
-                        return mix(background, foreground, foreground.a);
-                    }
-                    else if (_alphaMode_ == 3) {
-                        return background - foreground * background;
-                    }
-                    else if (_alphaMode_ == 4) {
-                        return foreground * background;
-                    }
-                
-                    return background;
-                }
-            `,
-            },
-        ],
-    },
-};
-
 /**
  * The shader bindings for the Composition block.
+ * This demonstrates how multiple input connection point values can be packed into a single
+ * uniform.
  */
 export class CompositionShaderBinding extends DisableableShaderBinding {
     private readonly _backgroundTexture: RuntimeData<ConnectionPointType.Texture>;
@@ -146,20 +92,21 @@ export class CompositionShaderBinding extends DisableableShaderBinding {
         const foregroundAlphaScale = this._foregroundAlphaScale.value;
         const alphaMode = this._alphaMode;
 
-        effect.setInt(this.getRemappedName("alphaMode"), alphaMode);
-        effect.setTexture(this.getRemappedName("background"), background);
-        effect.setTexture(this.getRemappedName("foreground"), foreground);
+        effect.setFloat(this.getRemappedName(uniforms.alphaMode), alphaMode);
+        effect.setTexture(this.getRemappedName(uniforms.background), background);
+        effect.setTexture(this.getRemappedName(uniforms.foreground), foreground);
 
         // NOTE: textures may always be undefined if connected to another shader block when the graph is optimized
 
-        effect.setFloat2(this.getRemappedName("scaleUV"), foregroundWidth, foregroundHeight);
-        effect.setFloat2(this.getRemappedName("translateUV"), -1 * foregroundLeft, foregroundTop);
-        effect.setFloat(this.getRemappedName("foregroundAlphaScale"), foregroundAlphaScale);
+        effect.setFloat2(this.getRemappedName(uniforms.scaleUV), foregroundWidth, foregroundHeight);
+        effect.setFloat2(this.getRemappedName(uniforms.translateUV), -1 * foregroundLeft, foregroundTop);
+        effect.setFloat(this.getRemappedName(uniforms.foregroundAlphaScale), foregroundAlphaScale);
     }
 }
 
 /**
  * A simple compositing Block letting the filter "blend" 2 different layers.
+ * It demonstrates how a block can use properties for values which will not change at runtime (alphaMode)
  *
  * The alpha mode of the block can be set to one of the following:
  * - ALPHA_DISABLE: alpha blending is disabled
@@ -182,13 +129,13 @@ export class CompositionBlock extends DisableableShaderBlock {
     /**
      * The background texture to composite on to.
      */
-    public readonly background = this._registerInput("background", ConnectionPointType.Texture);
+    public readonly background = this._registerInput(uniforms.background, ConnectionPointType.Texture);
 
     /**
      * The foreground texture to composite in.
      */
     public readonly foreground = this._registerOptionalInput(
-        "foreground",
+        uniforms.foreground,
         ConnectionPointType.Texture,
         createStrongRef(null)
     );
@@ -233,7 +180,7 @@ export class CompositionBlock extends DisableableShaderBlock {
      * Defines a multiplier applied to the foreground's alpha channel.
      */
     public readonly foregroundAlphaScale = this._registerOptionalInput(
-        "foregroundAlphaScale",
+        uniforms.foregroundAlphaScale,
         ConnectionPointType.Float,
         createStrongRef(1.0)
     );
