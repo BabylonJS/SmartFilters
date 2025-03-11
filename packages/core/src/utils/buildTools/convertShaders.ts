@@ -35,7 +35,7 @@ export function convertShader(fullPathAndFileName: string, importPath: string): 
     const hardcodedBlockDefinitionFileName = fullPathAndFileName.replace(".fragment.glsl", ".ts");
     if (fs.existsSync(hardcodedBlockDefinitionFileName)) {
         console.log(
-            "Found corresponding .ts file - generating another .ts file that it can load the shader code from."
+            "Found corresponding .ts file - generating another .ts file that exports a ShaderProgram it can import."
         );
         convertGlslIntoShaderProgram(fullPathAndFileName, importPath);
     } else {

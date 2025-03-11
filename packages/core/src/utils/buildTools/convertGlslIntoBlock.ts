@@ -206,32 +206,6 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
     fs.writeFileSync(outputFullPathAndFileName, finalContents);
 }
 
-// /**
-//  * Converts an object into valid JS that creates that object
-//  * @param obj - The object to convert
-//  * @param indent - The indent to use for the object
-//  * @returns - A string that contains JS that creates the object
-//  */
-// function objectToJsString(obj: any, indent: string = indentation): string {
-//     if (typeof obj !== "object" || obj === null) {
-//         return JSON.stringify(obj);
-//     }
-
-//     if (Array.isArray(obj)) {
-//         const arrayItems = obj.map((item) => objectToJsString(item, indent + indentation));
-//         return `[\n${indent}${arrayItems.join(`,\n${indent}`)},\n${indent.slice(indentationSize)}]`;
-//     }
-
-//     const entries = Object.entries(obj).map(([key, value]) => {
-//         const formattedValue = objectToJsString(value, indent + indentation);
-//         return `${indent}${key}: ${formattedValue}`;
-//     });
-//     return `{\n${entries.join(",\n")},\n${indent.slice(indentationSize)}}`;
-// }
-
-// const indentation = "    ";
-// const indentationSize = indentation.length;
-
 /**
  * Get the string representation of a connection point type
  * @param type - The connection point type
