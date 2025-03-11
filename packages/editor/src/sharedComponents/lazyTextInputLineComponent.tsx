@@ -13,12 +13,11 @@ type ILazyTextInputLineComponentProps = {
     target: any;
     // The property name to set on the target object
     propertyName: string;
-    // If target value is undefined, initialValue will be used
-    initialValue?: string;
-    // Callback to run side effects when the value changes
-    onChange?: (value: string) => void;
-    // Observable to help run side effects when the value changes
+    // Callback to run side effects when the value changes.
+    onSubmit?: () => void;
+    // Observable to help run side effects when the value changes.
     onPropertyChangedObservable?: Observable<PropertyChangedEvent>;
+    noDirectUpdate?: boolean;
     label?: string;
     lockObject?: LockObject;
     icon?: string;
@@ -34,8 +33,10 @@ type ILazyTextInputLineComponentProps = {
     max?: number;
     placeholder?: string;
     unit?: React.ReactNode;
-    validator?: (input: string) => boolean;
-    onInvalidSubmit?: (invalidInput: string) => void;
+    // Function to extract the value from the input. If this throws, the input is considered invalid.
+    extractValue?: (input: string) => any;
+    // Callback to handle the side effects of an invalid input
+    onExtractValueFailed?: (invalidInput: string) => void;
     multilines?: boolean;
     disabled?: boolean;
 };
@@ -60,11 +61,39 @@ function getCurrentNumericValue(value: string, props: ILazyTextInputLineComponen
     return 0;
 }
 
+function formatValue(value: string, props: ILazyTextInputLineComponentProps) {
+    if (props.numbersOnly) {
+        if (!value) {
+            value = "0";
+        }
+
+        //Removing starting zero if there is a number of a minus after it.
+        if (value.search(/0+[0-9-]/g) === 0) {
+            value = value.substring(1);
+        }
+    }
+
+    if (props.numeric) {
+        let numericValue = getCurrentNumericValue(value, props);
+        if (props.roundValues) {
+            numericValue = Math.round(numericValue);
+        }
+        if (props.min !== undefined) {
+            numericValue = Math.max(props.min, numericValue);
+        }
+        if (props.max !== undefined) {
+            numericValue = Math.min(props.max, numericValue);
+        }
+        value = numericValue.toString();
+    }
+    return value;
+}
+
 export class LazyTextInputLineComponent extends react.Component<
     ILazyTextInputLineComponentProps,
     ILazyTextInputLineComponentState
 > {
-    private _lastAttemptedSubmission: string | undefined;
+    _lastInvalidSubmission: string | undefined;
 
     constructor(props: ILazyTextInputLineComponentProps) {
         super(props);
@@ -72,52 +101,38 @@ export class LazyTextInputLineComponent extends react.Component<
         const emptyValue = this.props.numeric ? "0" : "";
 
         this.state = {
-            input: this.props.target[this.props.propertyName] ?? this.props.initialValue ?? emptyValue,
+            input: this.props.target[this.props.propertyName] ?? emptyValue,
             dragging: false,
             inputValid: true,
         };
     }
 
+    validateInput = (value: string) => {
+        if (this.props.extractValue) {
+            try {
+                this.props.extractValue(value);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     onSubmit = (value: string) => {
-        if (this.props.numbersOnly) {
-            if (!value) {
-                value = "0";
-            }
+        value = formatValue(value, this.props);
 
-            //Removing starting zero if there is a number of a minus after it.
-            if (value.search(/0+[0-9-]/g) === 0) {
-                value = value.substring(1);
+        if (this.validateInput(value) === false) {
+            if (this.props.onExtractValueFailed && this._lastInvalidSubmission !== value) {
+                this.props.onExtractValueFailed(value);
             }
-        }
-
-        if (this.props.numeric) {
-            let numericValue = getCurrentNumericValue(value, this.props);
-            if (this.props.roundValues) {
-                numericValue = Math.round(numericValue);
-            }
-            if (this.props.min !== undefined) {
-                numericValue = Math.max(this.props.min, numericValue);
-            }
-            if (this.props.max !== undefined) {
-                numericValue = Math.min(this.props.max, numericValue);
-            }
-            value = numericValue.toString();
-        }
-
-        if (this.props.validator && this.props.validator(value) == false) {
-            if (this.props.onInvalidSubmit && this._lastAttemptedSubmission !== value) {
-                this.props.onInvalidSubmit(value);
-            }
-            this._lastAttemptedSubmission = value;
+            this._lastInvalidSubmission = value;
             return;
         }
 
         this.props.target[this.props.propertyName] = value;
-        this._lastAttemptedSubmission = value;
+        this.props.onSubmit?.();
 
-        if (this.props.onChange) {
-            this.props.onChange(value);
-        }
         if (this.props.onPropertyChangedObservable) {
             this.props.onPropertyChangedObservable.notifyObservers({
                 object: this.props.target,
@@ -140,7 +155,7 @@ export class LazyTextInputLineComponent extends react.Component<
 
         this.setState({
             input,
-            inputValid: this.props.validator ? this.props.validator(input) : true,
+            inputValid: this.validateInput(input),
         });
     };
 
