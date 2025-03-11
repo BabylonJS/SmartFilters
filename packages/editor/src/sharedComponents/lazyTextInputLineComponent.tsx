@@ -130,7 +130,7 @@ export class LazyTextInputLineComponent extends react.Component<
             return;
         }
 
-        this.props.target[this.props.propertyName] = value;
+        this.props.target[this.props.propertyName] = this.props.extractValue ? this.props.extractValue(value) : value;
         this.props.onSubmit?.();
 
         if (this.props.onPropertyChangedObservable) {
