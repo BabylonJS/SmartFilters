@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import { parseFragmentShader, type FragmentShaderInfo } from "./shaderConverter.js";
 import { Logger } from "@babylonjs/core/Misc/logger.js";
+import { parseFragmentShader, type FragmentShaderInfo } from "./shaderConverter.js";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
 const VERTEX_SHADER = "@VERTEX_SHADER@";

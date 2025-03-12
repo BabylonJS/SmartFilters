@@ -1,7 +1,7 @@
 import type { Nullable } from "@babylonjs/core/types";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
-import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 

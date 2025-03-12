@@ -2,6 +2,7 @@ import "@babylonjs/core/Engines/Extensions/engine.dynamicTexture";
 import "@babylonjs/core/Engines/Extensions/engine.videoTexture";
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture";
 import "@babylonjs/core/Misc/fileTools";
+import { Logger } from "@babylonjs/core/Misc/logger";
 import { SmartFilterRenderer } from "./smartFilterRenderer";
 import { inputBlockDeserializer, SmartFilterEditorControl } from "@babylonjs/smart-filters-editor-control";
 import { createThinEngine } from "./helpers/createThinEngine";
@@ -13,7 +14,6 @@ import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } fr
 import { hookupBackgroundOption } from "./backgroundOption";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { builtInBlockRegistrations } from "@babylonjs/smart-filters-blocks";
-import { Logger } from "@babylonjs/core/Misc/logger";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;

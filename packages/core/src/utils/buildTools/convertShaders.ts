@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import { convertGlslIntoShaderProgram } from "./convertGlslIntoShaderProgram.js";
 import { convertGlslIntoBlock } from "./convertGlslIntoBlock.js";
-import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 /**
  * Converts all GLSL files in a path into blocks for use in the build system.

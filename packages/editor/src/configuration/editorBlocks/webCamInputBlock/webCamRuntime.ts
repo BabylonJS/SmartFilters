@@ -1,8 +1,8 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { ConnectionPointType, IDisposable, RuntimeData } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types";
 import { WebCamSession } from "./webCamSession.js";
-import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 /**
  * Manages the runtime of WebCam input block, hooking it up to a texture, responding to changes in source,

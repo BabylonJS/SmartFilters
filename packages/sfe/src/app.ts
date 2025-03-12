@@ -1,6 +1,7 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
 import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
@@ -28,9 +29,6 @@ import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.j
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 import { texturePresets } from "./texturePresets.js";
 import { serializeSmartFilter } from "./smartFilterLoadSave/serializeSmartFilter.js";
-import { Logger } from "@babylonjs/core/Misc/logger.js";
-
-Logger.LogLevels = Logger.NoneLogLevel;
 
 /**
  * The main entry point for the Smart Filter editor.

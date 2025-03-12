@@ -1,4 +1,5 @@
 import { Observable } from "@babylonjs/core/Misc/observable.js";
+import { Logger } from "@babylonjs/core/Misc/logger";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
 import { registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
-import { Logger } from "@babylonjs/core/Misc/logger";
 
 /**
  * Simple example of rendering a Smart Filter
