@@ -1,4 +1,4 @@
-export * from "./blackAndWhiteBlock.js";
+export * from "./blackAndWhiteBlock.block.js";
 export * from "./blurBlock.js";
 export * from "./compositionBlock.js";
 export * from "./contrastBlock.js";

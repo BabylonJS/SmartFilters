@@ -48,6 +48,8 @@ npm install
 npm run start:sfe
 ```
 
+Local Smart Filter demo will run at http://localhost:8080
+
 For VSCode users, if you have installed the Chrome Debugging extension, you can start debugging within VSCode by using the appropriate launch menu.
 
 ## Build Tricks

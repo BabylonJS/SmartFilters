@@ -6,9 +6,9 @@
  * @example node watchShaders.js <shaderPath> <importPath>
  */
 
-import { convertShaderForHardcodedBlock } from "./convertShaderForHardcodedBlock.js";
 import { watch } from "chokidar";
 import { extname } from "path";
+import { convertShader } from "./convertShaders.js";
 
 const externalArguments = process.argv.slice(2);
 if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1]) {
@@ -29,7 +29,7 @@ if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1
         // Wrap in try-catch to prevent the watcher from crashing
         // if the new shader changes are invalid
         try {
-            convertShaderForHardcodedBlock(file, importPath);
+            convertShader(file, importPath);
             console.log(`Successfully updated shader ${file}`);
         } catch (error) {
             console.error(`Failed to convert shader ${file}: ${error}`);
