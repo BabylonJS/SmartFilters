@@ -1,5 +1,4 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { Nullable } from "@babylonjs/core/types";
 import {
     type SmartFilter,
@@ -10,6 +9,7 @@ import {
     type SerializedBlockDefinition,
     CustomAggregateBlock,
     type SmartFilterDeserializer,
+    Logger,
 } from "@babylonjs/smart-filters";
 import { CustomBlocksNamespace, getBlockKey } from "@babylonjs/smart-filters-editor-control";
 

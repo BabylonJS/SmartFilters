@@ -1,10 +1,9 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
 
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
-import { Logger } from "@babylonjs/core/Misc/logger.js";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
-import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
+import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter, Logger } from "@babylonjs/smart-filters";
 import { builtInBlockRegistrations, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import {
     editorBlockRegistrations,
