@@ -162,8 +162,12 @@ export class CustomBlockManager {
      * @param serializedData - The serialized block definition - either a SerializedBlockDefinition object in a JSON string, or a glsl shader
      * @returns The block definition that was saved
      */
-    public saveBlockDefinition(serializedData: string): SerializedBlockDefinition {
+    public saveBlockDefinition(serializedData: string): Nullable<SerializedBlockDefinition> {
         const blockDefinition = importCustomBlockDefinition(serializedData);
+
+        if (!blockDefinition) {
+            return null;
+        }
 
         let blockType: string;
         switch (blockDefinition.format) {
@@ -210,10 +214,10 @@ export class CustomBlockManager {
         }
 
         // Back compat - if the list has any entries that don't have a namespace, add them to the Custom_Blocks namespace
-        // Also, if any are null, ignore them
+        // Also, if any are null or otherwise invalid, ignore them
         let updatedAnyKeys = false;
         blockKeysList = blockKeysList
-            .filter((blockKey) => blockKey !== null)
+            .filter((blockKey) => blockKey !== null && blockKey.indexOf("[undefined]") === -1)
             .map((blockKey) => {
                 if (blockKey.indexOf("].[") === -1) {
                     updatedAnyKeys = true;
