@@ -1,4 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
 
@@ -149,13 +150,13 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     // Collect uniform, const, and function names which need to be decorated
     // eslint-disable-next-line prettier/prettier
     const uniformNames = uniforms.map((uniform) => uniform.name);
-    console.log(`Uniforms found: ${JSON.stringify(uniforms)}`);
+    Logger.Log(`Uniforms found: ${JSON.stringify(uniforms)}`);
     const consts = [...fragmentShader.matchAll(/\S*const\s+\w*\s+(\w*)\s*=.*;/g)].map((match) => match[1]);
-    console.log(`Consts found: ${JSON.stringify(consts)}`);
+    Logger.Log(`Consts found: ${JSON.stringify(consts)}`);
     const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionNamesRegEx)].map(
         (match) => match[1]
     );
-    console.log(`Functions found: ${JSON.stringify(functionNames)}`);
+    Logger.Log(`Functions found: ${JSON.stringify(functionNames)}`);
 
     // Decorate the uniforms, consts, and functions
     const symbolsToDecorate = [...uniformNames, ...consts, ...functionNames];
@@ -164,7 +165,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         const regex = new RegExp(`(?<=\\W+)${symbol}(?=\\W+)`, "gs");
         fragmentShaderWithRenamedSymbols = fragmentShaderWithRenamedSymbols.replace(regex, `_${symbol}_`);
     }
-    console.log(`${symbolsToDecorate.length} symbol(s) renamed`);
+    Logger.Log(`${symbolsToDecorate.length} symbol(s) renamed`);
 
     // Extract all the uniforms
     const finalUniforms = [...fragmentShaderWithRenamedSymbols.matchAll(/^\s*(uniform\s.*)/gm)].map(
@@ -334,7 +335,7 @@ function removeFunctionBodies(input: string): string {
     }
 
     if (depth !== 0) {
-        console.error("Unbalanced curly braces in shader code");
+        Logger.Error("Unbalanced curly braces in shader code");
     }
 
     return output;

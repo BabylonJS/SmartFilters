@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as fs from "fs";
 
 const corePackageText = fs.readFileSync("../core/package.json");

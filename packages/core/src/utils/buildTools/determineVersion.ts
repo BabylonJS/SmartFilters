@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { Nullable } from "@babylonjs/core/types";
 import type { ExecException } from "child_process";
 

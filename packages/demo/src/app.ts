@@ -9,7 +9,7 @@ import { SmartFilterLoader } from "./smartFilterLoader";
 import { smartFilterManifests } from "./configuration/smartFilters";
 import { blockFactory } from "./configuration/blockFactory";
 import { TextureRenderHelper } from "./textureRenderHelper";
-import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } from "@babylonjs/smart-filters";
+import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter, Logger } from "@babylonjs/smart-filters";
 import { hookupBackgroundOption } from "./backgroundOption";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { builtInBlockRegistrations } from "@babylonjs/smart-filters-blocks";
@@ -82,7 +82,9 @@ function renderCurrentSmartFilter(hideEditor: boolean = true) {
         return;
     }
 
-    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, renderer.optimize ? "[optimized]" : "");
+    Logger.Log(
+        `Rendering SmartFilter "${smartFilterState.smartFilter.name}" ${renderer.optimize ? "[optimized]" : ""}`
+    );
 
     renderer
         .startRendering(smartFilterState.smartFilter)
@@ -156,7 +158,7 @@ optimizeCheckbox.onchange = () => {
 // Error handling
 errorCloseButton.addEventListener("click", closeError);
 function showError(message: string) {
-    console.error(message);
+    Logger.Error(message);
     errorMessage.textContent = message;
     errorContainer.style.display = "grid";
 }

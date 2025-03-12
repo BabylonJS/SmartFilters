@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as fs from "fs";
 import { exec, type ExecException } from "child_process";
 import { compareVersions, determineVersion, getNpmVersion, type VersionType } from "./determineVersion.js";

@@ -7,6 +7,7 @@ import {
     type InputBlock,
     type SmartFilter,
     type SmartFilterRuntime,
+    Logger,
 } from "@babylonjs/smart-filters";
 import { RenderTargetGenerator } from "@babylonjs/smart-filters";
 import { LogEntry, registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
@@ -82,7 +83,7 @@ export class SmartFilterRenderer {
             await this.loadAssets(filter);
             this._loadAnimations(filter);
 
-            console.log("Number of render targets created: " + rtg.numTargetsCreated);
+            Logger.Log("Number of render targets created: " + rtg.numTargetsCreated);
 
             this._setRuntime(runtime);
 

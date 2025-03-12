@@ -10,7 +10,7 @@ import { CheckBoxLineComponent } from "../../../sharedComponents/checkBoxLineCom
 
 import type { Nullable } from "@babylonjs/core/types.js";
 import { getTextureInputBlockEditorData } from "../../../graphSystem/getEditorData.js";
-import { TextInputLineComponent } from "@babylonjs/shared-ui-components/lines/textInputLineComponent.js";
+import { LazyTextInputLineComponent } from "../../../sharedComponents/lazyTextInputLineComponent.js";
 import { debounce } from "../../../helpers/debounce.js";
 import type { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 
@@ -127,15 +127,14 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         }
                     }}
                 />
-                <TextInputLineComponent
+                <LazyTextInputLineComponent
+                    key={this.props.inputBlock.uniqueId}
                     label="URL"
                     propertyName="url"
                     lockObject={this.props.stateManager.lockObject}
-                    target={{ url: (editorData.url ?? "").indexOf("data:") === 0 ? "" : editorData.url }}
-                    onChange={(newValue: string) => {
-                        editorData.url = newValue;
-                        editorData.urlTypeHint = this._getUrlTypeHint(newValue);
-
+                    target={editorData}
+                    onSubmit={() => {
+                        editorData.urlTypeHint = this._getUrlTypeHint(editorData.url ?? "");
                         this._triggerAssetUpdate();
                     }}
                 />

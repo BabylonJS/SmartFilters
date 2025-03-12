@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import { convertGlslIntoShaderProgram } from "./convertGlslIntoShaderProgram.js";
 import { convertGlslIntoBlock } from "./convertGlslIntoBlock.js";
 
@@ -30,13 +31,13 @@ export function convertShaders(shaderPath: string, importPath: string) {
  * @param importPath - The path to import the ShaderProgram type from.
  */
 export function convertShader(fullPathAndFileName: string, importPath: string): void {
-    console.log(`\nProcessing shader: ${fullPathAndFileName}`);
+    Logger.Log(`\nProcessing shader: ${fullPathAndFileName}`);
 
     if (fullPathAndFileName.endsWith(".fragment.glsl")) {
-        console.log("Generating a .ts file that exports a ShaderProgram.");
+        Logger.Log("Generating a .ts file that exports a ShaderProgram.");
         convertGlslIntoShaderProgram(fullPathAndFileName, importPath);
     } else if (fullPathAndFileName.endsWith(".block.glsl")) {
-        console.log("Generating a .ts file that exports the block as a class.");
+        Logger.Log("Generating a .ts file that exports the block as a class.");
         convertGlslIntoBlock(fullPathAndFileName, importPath);
     }
 }
