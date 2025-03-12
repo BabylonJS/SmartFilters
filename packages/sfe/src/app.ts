@@ -224,6 +224,8 @@ async function main(): Promise<void> {
                     onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
                 }
                 startRendering();
+
+                onLogRequiredObservable.notifyObservers(new LogEntry("Loaded custom block successfully", false));
             } catch (err) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load custom block:\n${err}`, true));
             }

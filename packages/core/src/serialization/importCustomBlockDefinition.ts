@@ -6,7 +6,7 @@ import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/sha
 
 /**
  * Imports a serialized custom block definition. Supports either serialized CustomShaderBlock definitions or
- * CustomAggregateBlock definitions.
+ * CustomAggregateBlock definitions. Can throw an exception if the serialized data is invalid.
  *
  * CustomShaderBlock definitions can be supplied either as serialized SerializedBlockDefinition object
  * or a glsl shader with the required annotations (see readme.md for details).
@@ -33,6 +33,12 @@ export function importCustomBlockDefinition(serializedData: string): SerializedB
         if (blockDefinition.format === "smartFilter" && blockDefinition.name && !blockDefinition.blockType) {
             blockDefinition.blockType = blockDefinition.name;
         }
+
+        // Validation
+        if (!blockDefinition.blockType) {
+            throw new Error("Could not find a blockType");
+        }
+
         return blockDefinition;
     }
 }
