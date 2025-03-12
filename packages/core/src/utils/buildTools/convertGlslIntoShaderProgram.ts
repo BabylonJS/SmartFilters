@@ -65,7 +65,7 @@ const UniformNameLinePrefix = "    ";
  */
 export function convertGlslIntoShaderProgram(fragmentShaderPath: string, importPath: string): void {
     const { shaderProgramCode } = extractShaderProgramFromGlsl(fragmentShaderPath, importPath, true, true);
-    const shaderFile = fragmentShaderPath.replace(".fragment.glsl", ".fragment.ts");
+    const shaderFile = fragmentShaderPath.replace(".glsl", ".ts");
     fs.writeFileSync(shaderFile, shaderProgramCode);
 }
 
@@ -95,7 +95,15 @@ export function extractShaderProgramFromGlsl(
 } {
     // See if there is a corresponding vertex shader
     let vertexShader: string | undefined = undefined;
-    const vertexShaderPath = fragmentShaderPath.replace(".fragment.glsl", ".vertex.glsl");
+    let extensionToFind: string;
+    if (fragmentShaderPath.endsWith(".block.glsl")) {
+        extensionToFind = ".block.glsl";
+    } else if (fragmentShaderPath.endsWith(".fragment.glsl")) {
+        extensionToFind = ".fragment.glsl";
+    } else {
+        throw new Error("The shader file must end with .fragment.glsl or .block.glsl");
+    }
+    const vertexShaderPath = fragmentShaderPath.replace(extensionToFind, ".vertex.glsl");
     if (fs.existsSync(vertexShaderPath)) {
         vertexShader = fs.readFileSync(vertexShaderPath, "utf8");
     }
@@ -122,7 +130,7 @@ export function extractShaderProgramFromGlsl(
         .replace(IMPORTS, imports)
         .replace(UNIFORMS, "\n" + addLinePrefixes(fragmentShaderInfo.shaderCode.uniform || "", UniformLinePrefix))
         .replace(MAIN_FUNCTION_NAME, fragmentShaderInfo.shaderCode.mainFunctionName)
-        .replace(MAIN_INPUT_NAME, fragmentShaderInfo.shaderCode.mainInputTexture || '""')
+        .replace(MAIN_INPUT_NAME, fragmentShaderInfo.shaderCode.mainInputTexture || "")
         .replace(
             CONSTS_PROPERTY,
             fragmentShaderInfo.shaderCode.const

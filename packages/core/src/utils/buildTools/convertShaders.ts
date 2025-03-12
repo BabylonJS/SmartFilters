@@ -12,34 +12,31 @@ export function convertShaders(shaderPath: string, importPath: string) {
     // Get all files in the path
     const allFiles = fs.readdirSync(shaderPath, { withFileTypes: true, recursive: true });
 
-    // Find all fragment shaders (excluding the template)
-    const fragmentShaderFiles = allFiles.filter(
-        (file) => file.isFile() && file.name.endsWith(".fragment.glsl") && !file.name.endsWith("template.fragment.glsl")
+    // Find all shaders (files with .fragment.glsl or .block.glsl extensions)
+    const shaderFiles = allFiles.filter(
+        (file) => file.isFile() && (file.name.endsWith(".fragment.glsl") || file.name.endsWith(".block.glsl"))
     );
 
     // Convert all shaders
-    for (const fragmentShaderFile of fragmentShaderFiles) {
-        const fullPathAndFileName = path.join(fragmentShaderFile.path, fragmentShaderFile.name);
+    for (const shaderFile of shaderFiles) {
+        const fullPathAndFileName = path.join(shaderFile.path, shaderFile.name);
         convertShader(fullPathAndFileName, importPath);
     }
 }
 
 /**
- * Converts a single GLSL file into a block for use in the build system.
+ * Converts a single GLSL file into a block class or a ShaderProgram for use in the build system.
  * @param fullPathAndFileName - The full path and file name of the .glsl file to convert.
  * @param importPath - The path to import the ShaderProgram type from.
  */
 export function convertShader(fullPathAndFileName: string, importPath: string): void {
-    console.log(`\nProcessing fragment shader: ${fullPathAndFileName}`);
+    console.log(`\nProcessing shader: ${fullPathAndFileName}`);
 
-    const hardcodedBlockDefinitionFileName = fullPathAndFileName.replace(".fragment.glsl", ".ts");
-    if (fs.existsSync(hardcodedBlockDefinitionFileName)) {
-        console.log(
-            "Found corresponding .ts file - generating another .ts file that exports a ShaderProgram it can import."
-        );
+    if (fullPathAndFileName.endsWith(".fragment.glsl")) {
+        console.log("Generating a .ts file that exports a ShaderProgram.");
         convertGlslIntoShaderProgram(fullPathAndFileName, importPath);
-    } else {
-        console.log("No corresponding .ts file found - generating a .ts file that can be used as a hardcoded block.");
+    } else if (fullPathAndFileName.endsWith(".block.glsl")) {
+        console.log("Generating a .ts file that exports the block as a class.");
         convertGlslIntoBlock(fullPathAndFileName, importPath);
     }
 }

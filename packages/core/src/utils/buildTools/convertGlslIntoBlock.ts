@@ -202,7 +202,7 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
         .replace(BLOCK_GET_SHADER_PARAM_LIST, blockGetShaderParamList.join(","));
 
     // Write the block class TS file
-    const outputFullPathAndFileName = fragmentShaderPath.replace(".fragment.glsl", ".block.ts");
+    const outputFullPathAndFileName = fragmentShaderPath.replace(".glsl", ".ts");
     fs.writeFileSync(outputFullPathAndFileName, finalContents);
 }
 

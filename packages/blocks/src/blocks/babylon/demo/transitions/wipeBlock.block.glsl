@@ -1,7 +1,7 @@
 // { "smartFilterBlockType": "WipeBlock", "namespace": "Babylon.Demo.Transitions" }
 
 uniform sampler2D textureA;
-uniform sampler2D textureB; // main
+uniform sampler2D textureB;
 uniform float progress;
 
 vec4 wipe(vec2 vUV) { // main
