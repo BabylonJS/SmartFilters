@@ -33,7 +33,7 @@
         "readme.md"
     ],
     "scripts": {
-        "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+        "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo && rimraf --glob ./src/blocks/**/*.block.ts && rimraf --glob ./src/blocks/**/*.fragment.ts",
         "preparePublish": "node build/preparePublish.js",
         "build": "npm run build:runTools && npm run build:blocks",
         "build:blocks": "tsc -p ./tsconfig.build.json",
