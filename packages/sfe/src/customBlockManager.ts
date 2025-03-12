@@ -162,12 +162,8 @@ export class CustomBlockManager {
      * @param serializedData - The serialized block definition - either a SerializedBlockDefinition object in a JSON string, or a glsl shader
      * @returns The block definition that was saved
      */
-    public saveBlockDefinition(serializedData: string): Nullable<SerializedBlockDefinition> {
+    public saveBlockDefinition(serializedData: string): SerializedBlockDefinition {
         const blockDefinition = importCustomBlockDefinition(serializedData);
-
-        if (!blockDefinition) {
-            return null;
-        }
 
         let blockType: string;
         switch (blockDefinition.format) {

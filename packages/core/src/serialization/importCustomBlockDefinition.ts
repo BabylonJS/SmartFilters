@@ -1,4 +1,3 @@
-import type { Nullable } from "@babylonjs/core/types.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
 import { hasGlslHeader, parseFragmentShader } from "../utils/buildTools/shaderConverter.js";
 import type { SerializedBlockDefinition } from "./serializedBlockDefinition.js";
@@ -7,7 +6,7 @@ import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/sha
 
 /**
  * Imports a serialized custom block definition. Supports either serialized CustomShaderBlock definitions or
- * CustomAggregateBlock definitions. Return null if the serialized data appears invalid.
+ * CustomAggregateBlock definitions. Can throw an exception if the serialized data is invalid.
  *
  * CustomShaderBlock definitions can be supplied either as serialized SerializedBlockDefinition object
  * or a glsl shader with the required annotations (see readme.md for details).
@@ -15,9 +14,9 @@ import type { InputAutoBindV1, SerializedInputConnectionPointV1 } from "./v1/sha
  * CustomAggregateBlock definitions must be supplied as serialized SerializedBlockDefinition object.
  *
  * @param serializedData - The serialized data
- * @returns The serialized block definition or null if the serialized data appears invalid
+ * @returns The serialized block definition
  */
-export function importCustomBlockDefinition(serializedData: string): Nullable<SerializedBlockDefinition> {
+export function importCustomBlockDefinition(serializedData: string): SerializedBlockDefinition {
     if (hasGlslHeader(serializedData)) {
         return importAnnotatedGlsl(serializedData);
     } else {
@@ -37,7 +36,7 @@ export function importCustomBlockDefinition(serializedData: string): Nullable<Se
 
         // Validation
         if (!blockDefinition.blockType) {
-            return null;
+            throw new Error("Could not find a blockType");
         }
 
         return blockDefinition;

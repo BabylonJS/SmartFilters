@@ -199,9 +199,6 @@ async function main(): Promise<void> {
         addCustomBlock: async (serializedData: string) => {
             try {
                 const blockDefinition = customBlockManager.saveBlockDefinition(serializedData);
-                if (!blockDefinition) {
-                    throw new Error("Invalid block definition");
-                }
 
                 const blockRegistration = createBlockRegistration(
                     customBlockManager,
