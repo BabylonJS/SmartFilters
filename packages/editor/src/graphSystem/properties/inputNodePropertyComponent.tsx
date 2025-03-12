@@ -54,8 +54,11 @@ export class InputPropertyComponent extends react.Component<IPropertyComponentPr
                             multilines={true}
                             target={this.props.nodeData.data}
                             propertyName="appMetadata"
+                            formatValue={(value: any) => {
+                                return value ? JSON.stringify(value) : "";
+                            }}
                             extractValue={(value: string) => {
-                                return value !== "" ? JSON.parse(value) : null;
+                                return value ? JSON.parse(value) : undefined;
                             }}
                             onExtractValueFailed={() => {
                                 this.props.stateManager.onErrorMessageDialogRequiredObservable.notifyObservers(

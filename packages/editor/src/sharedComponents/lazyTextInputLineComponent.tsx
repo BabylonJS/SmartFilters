@@ -33,8 +33,10 @@ type ILazyTextInputLineComponentProps = {
     max?: number;
     placeholder?: string;
     unit?: React.ReactNode;
-    // Function to extract the value from the input. If this throws, the input is considered invalid.
+    // Function to extract the value for target[propertyName] from the input. If this throws, the input is considered invalid.
     extractValue?: (input: string) => any;
+    // Function to format the initial target[propertyName] before displaying it in the input.
+    formatValue?: (input: any) => string;
     // Callback to handle the side effects of an invalid input
     onExtractValueFailed?: (invalidInput: string) => void;
     multilines?: boolean;
@@ -99,9 +101,10 @@ export class LazyTextInputLineComponent extends react.Component<
         super(props);
 
         const emptyValue = this.props.numeric ? "0" : "";
+        const value = this.props.target[this.props.propertyName];
 
         this.state = {
-            input: this.props.target[this.props.propertyName] ?? emptyValue,
+            input: this.props.formatValue?.(value) ?? value ?? emptyValue,
             dragging: false,
             inputValid: true,
         };
