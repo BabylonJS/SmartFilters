@@ -1,4 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import type { ShaderBinding } from "../runtime/shaderRuntime";
@@ -19,7 +20,6 @@ import {
 import { DependencyGraph } from "./dependencyGraph.js";
 import { DisableableShaderBlock, BlockDisableStrategy } from "../blockFoundation/disableableShaderBlock.js";
 import { textureOptionsMatch, type OutputTextureOptions } from "../blockFoundation/textureOptions.js";
-import { Logger } from "@babylonjs/core/Misc/logger";
 
 const showDebugData = false;
 

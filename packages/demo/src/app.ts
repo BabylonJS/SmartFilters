@@ -20,9 +20,6 @@ type CurrentSmartFilterState = {
     optimizedSmartFilter?: SmartFilter;
 };
 
-// Enable the logger
-Logger.LogLevels = Logger.AllLogLevel;
-
 // Hardcoded options there is no UI for
 const renderToTextureInsteadOfCanvas: boolean = false;
 
