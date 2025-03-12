@@ -114,7 +114,6 @@ export class LazyTextInputLineComponent extends react.Component<
         if (this.props.extractValue) {
             try {
                 this.props.extractValue(value);
-                return true;
             } catch (e) {
                 return false;
             }
