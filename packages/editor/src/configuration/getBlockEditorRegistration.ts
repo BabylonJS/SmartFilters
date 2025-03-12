@@ -7,6 +7,7 @@ import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
 import { CustomBlocksNamespace } from "./constants.js";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import { LogEntry } from "../components/log/logComponent.js";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 /**
  * Creates the block editor registration for the editor.
@@ -61,7 +62,7 @@ export function getBlockEditorRegistration(
                 if (onLogRequiredObservable) {
                     onLogRequiredObservable.notifyObservers(new LogEntry(errorString, true));
                 } else {
-                    console.error(errorString);
+                    Logger.Error(errorString);
                 }
             }
         }

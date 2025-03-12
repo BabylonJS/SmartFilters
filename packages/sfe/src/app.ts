@@ -28,6 +28,7 @@ import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.j
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 import { texturePresets } from "./texturePresets.js";
 import { serializeSmartFilter } from "./smartFilterLoadSave/serializeSmartFilter.js";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 /**
  * The main entry point for the Smart Filter editor.
@@ -47,6 +48,9 @@ async function main(): Promise<void> {
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
     const onLogRequiredObservable = new Observable<LogEntry>();
     let engine: Nullable<ThinEngine> = null;
+
+    // Enable the logger
+    Logger.LogLevels = Logger.AllLogLevel;
 
     // Create the Smart Filter deserializer
     const smartFilterDeserializer = new SmartFilterDeserializer(
@@ -246,5 +250,5 @@ async function main(): Promise<void> {
 }
 
 main().catch((error) => {
-    console.error(error);
+    Logger.Error(error);
 });

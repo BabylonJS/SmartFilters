@@ -19,6 +19,7 @@ import {
 import { DependencyGraph } from "./dependencyGraph.js";
 import { DisableableShaderBlock, BlockDisableStrategy } from "../blockFoundation/disableableShaderBlock.js";
 import { textureOptionsMatch, type OutputTextureOptions } from "../blockFoundation/textureOptions.js";
+import { Logger } from "@babylonjs/core/Misc/logger";
 
 const showDebugData = false;
 
@@ -690,12 +691,12 @@ export class SmartFilterOptimizer {
             code = code!.replace(/\r/g, "");
             code = code!.replace(/\n(\n)*/g, "\n");
 
-            console.log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
-            console.log(codeUniforms);
-            console.log(codeConsts);
-            console.log(code);
-            console.log("remappedSymbols=", this._remappedSymbols);
-            console.log("samplers=", samplers);
+            Logger.Log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
+            Logger.Log(codeUniforms);
+            Logger.Log(codeConsts);
+            Logger.Log(code);
+            Logger.Log(`remappedSymbols=${this._remappedSymbols}`);
+            Logger.Log(`samplers=${samplers}`);
         }
 
         optimizedBlock.setShaderProgram({

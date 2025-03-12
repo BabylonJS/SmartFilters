@@ -1,4 +1,5 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { Nullable } from "@babylonjs/core/types";
 import {
     type SmartFilter,
@@ -205,7 +206,7 @@ export class CustomBlockManager {
             try {
                 blockKeysList = JSON.parse(blockTypeListJson);
             } catch {
-                console.warn("Failed to parse Custom Block list from local storage");
+                Logger.Warn("Failed to parse Custom Block list from local storage");
             }
         }
 

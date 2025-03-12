@@ -13,11 +13,15 @@ import { SmartFilterDeserializer, type ISerializedBlockV1, type SmartFilter } fr
 import { hookupBackgroundOption } from "./backgroundOption";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { builtInBlockRegistrations } from "@babylonjs/smart-filters-blocks";
+import { Logger } from "@babylonjs/core/Misc/logger";
 
 type CurrentSmartFilterState = {
     smartFilter: SmartFilter;
     optimizedSmartFilter?: SmartFilter;
 };
+
+// Enable the logger
+Logger.LogLevels = Logger.AllLogLevel;
 
 // Hardcoded options there is no UI for
 const renderToTextureInsteadOfCanvas: boolean = false;
@@ -82,7 +86,9 @@ function renderCurrentSmartFilter(hideEditor: boolean = true) {
         return;
     }
 
-    console.log(`Rendering SmartFilter "${smartFilterState.smartFilter.name}"`, renderer.optimize ? "[optimized]" : "");
+    Logger.Log(
+        `Rendering SmartFilter "${smartFilterState.smartFilter.name}" ${renderer.optimize ? "[optimized]" : ""}`
+    );
 
     renderer
         .startRendering(smartFilterState.smartFilter)
@@ -156,7 +162,7 @@ optimizeCheckbox.onchange = () => {
 // Error handling
 errorCloseButton.addEventListener("click", closeError);
 function showError(message: string) {
-    console.error(message);
+    Logger.Error(message);
     errorMessage.textContent = message;
     errorContainer.style.display = "grid";
 }

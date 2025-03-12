@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import { parseFragmentShader, type FragmentShaderInfo } from "./shaderConverter.js";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 const TYPE_IMPORT_PATH = "@TYPE_IMPORT_PATH@";
 const VERTEX_SHADER = "@VERTEX_SHADER@";
@@ -108,7 +109,7 @@ export function extractShaderProgramFromGlsl(
         vertexShader = fs.readFileSync(vertexShaderPath, "utf8");
     }
     if (vertexShader) {
-        console.log("Found vertex shader");
+        Logger.Log("Found vertex shader");
     }
 
     // Read the fragment shader
