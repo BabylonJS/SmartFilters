@@ -11,5 +11,5 @@ export { type IDisposable } from "./IDisposable.js";
 export { SmartFilter, type InitializationData } from "./smartFilter.js";
 export * from "./version.js";
 
-// So that users of the Smart Filters core can modify the logger settings (e.g. to change the logging level)
+// So that users of the Smart Filters core can easily modify the logger settings (e.g. to change the logging level)
 export { Logger } from "@babylonjs/core/Misc/logger.js";
