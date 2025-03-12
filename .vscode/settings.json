@@ -41,7 +41,9 @@
     "files.exclude": {
         "**/node_modules": true,
         "**/dist": false,
-        "**/*.shader.ts": true
+        "**/*.shader.ts": true,
+        "**/*.fragment.ts": true,
+        "**/*.block.ts": true
     },
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

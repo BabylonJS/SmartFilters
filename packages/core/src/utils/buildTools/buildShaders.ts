@@ -5,7 +5,7 @@
  * @example node buildShaders.js <shaderPath> <importPath>
  */
 
-import { convertShaders } from "./convertShaderForHardcodedBlock.js";
+import { convertShaders } from "./convertShaders.js";
 
 const externalArguments = process.argv.slice(2);
 if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1]) {
