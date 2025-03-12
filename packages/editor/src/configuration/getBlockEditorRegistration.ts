@@ -1,6 +1,6 @@
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 import type { Nullable } from "@babylonjs/core/types.js";
-import { type BaseBlock, type SmartFilter, type SmartFilterDeserializer } from "@babylonjs/smart-filters";
+import { type BaseBlock, type SmartFilter, type SmartFilterDeserializer, Logger } from "@babylonjs/smart-filters";
 import { inputsNamespace, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { BlockEditorRegistration } from "./blockEditorRegistration";
 import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
@@ -61,7 +61,7 @@ export function getBlockEditorRegistration(
                 if (onLogRequiredObservable) {
                     onLogRequiredObservable.notifyObservers(new LogEntry(errorString, true));
                 } else {
-                    console.error(errorString);
+                    Logger.Error(errorString);
                 }
             }
         }

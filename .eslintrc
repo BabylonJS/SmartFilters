@@ -61,6 +61,7 @@
         }
     },
     "rules": {
+        "no-console": "error",
         "block-spacing": "error",
         // "capitalized-comments": ["error", "always"],
         // ... All other rules (not @typescript-eslint/*)

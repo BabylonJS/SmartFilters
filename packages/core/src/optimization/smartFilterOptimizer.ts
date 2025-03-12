@@ -1,4 +1,5 @@
 import type { Nullable } from "@babylonjs/core/types";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import type { ShaderBinding } from "../runtime/shaderRuntime";
@@ -690,12 +691,12 @@ export class SmartFilterOptimizer {
             code = code!.replace(/\r/g, "");
             code = code!.replace(/\n(\n)*/g, "\n");
 
-            console.log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
-            console.log(codeUniforms);
-            console.log(codeConsts);
-            console.log(code);
-            console.log("remappedSymbols=", this._remappedSymbols);
-            console.log("samplers=", samplers);
+            Logger.Log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
+            Logger.Log(codeUniforms);
+            Logger.Log(codeConsts);
+            Logger.Log(code);
+            Logger.Log(`remappedSymbols=${this._remappedSymbols}`);
+            Logger.Log(`samplers=${samplers}`);
         }
 
         optimizedBlock.setShaderProgram({

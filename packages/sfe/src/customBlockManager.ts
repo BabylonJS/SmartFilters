@@ -9,6 +9,7 @@ import {
     type SerializedBlockDefinition,
     CustomAggregateBlock,
     type SmartFilterDeserializer,
+    Logger,
 } from "@babylonjs/smart-filters";
 import { CustomBlocksNamespace, getBlockKey } from "@babylonjs/smart-filters-editor-control";
 
@@ -205,7 +206,7 @@ export class CustomBlockManager {
             try {
                 blockKeysList = JSON.parse(blockTypeListJson);
             } catch {
-                console.warn("Failed to parse Custom Block list from local storage");
+                Logger.Warn("Failed to parse Custom Block list from local storage");
             }
         }
 
