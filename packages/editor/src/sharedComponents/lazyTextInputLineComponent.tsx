@@ -95,19 +95,45 @@ export class LazyTextInputLineComponent extends react.Component<
     ILazyTextInputLineComponentProps,
     ILazyTextInputLineComponentState
 > {
+    _localChange = false;
     _lastInvalidSubmission: string | undefined;
 
     constructor(props: ILazyTextInputLineComponentProps) {
         super(props);
 
-        const emptyValue = this.props.numeric ? "0" : "";
-        const value = this.props.target[this.props.propertyName];
-
         this.state = {
-            input: this.props.formatValue?.(value) ?? value ?? emptyValue,
+            input: this.getInputValue(this.props),
             dragging: false,
             inputValid: true,
         };
+    }
+
+    getInputValue = (props: ILazyTextInputLineComponentProps): string => {
+        const emptyValue = props.numeric ? "0" : "";
+        const value = props.target[props.propertyName];
+        return props.formatValue?.(value) ?? value ?? emptyValue;
+    };
+
+    override shouldComponentUpdate(
+        nextProps: ILazyTextInputLineComponentProps,
+        nextState: { input: string; dragging: boolean }
+    ) {
+        if (this._localChange) {
+            this._localChange = false;
+            return true;
+        }
+
+        const newValue = this.getInputValue(nextProps);
+        if (newValue !== nextState.input) {
+            nextState.input = newValue;
+            return true;
+        }
+
+        if (nextState.dragging != this.state.dragging) {
+            return true;
+        }
+
+        return false;
     }
 
     validateInput = (value: string) => {
@@ -183,6 +209,7 @@ export class LazyTextInputLineComponent extends react.Component<
     };
 
     onChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        this._localChange = true;
         this.setInput(event.target.value);
     };
 

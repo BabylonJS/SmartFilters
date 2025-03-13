@@ -24,6 +24,7 @@ const AssetTypeOptionArray = ["image", "video"];
 const AssetTypeOptions: IInspectableOptions[] = AssetTypeOptionArray.map((value, index) => {
     return { label: value, value: index };
 });
+const DataUrlPlaceholder = "";
 
 export class ImageSourcePropertyTabComponent extends react.Component<ImageSourcePropertyTabComponentProps> {
     private readonly _imageOptions: IInspectableOptions[];
@@ -53,6 +54,13 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
 
     override render() {
         const editorData = getTextureInputBlockEditorData(this.props.inputBlock);
+
+        // Don't read/write the url directly, it may be base64 encoded data and not a URL
+        // In that case, we show a placeholder instead
+        const urlTextInputTarget = {
+            url: (editorData.url ?? "").indexOf("data:") === 0 ? DataUrlPlaceholder : editorData.url,
+        };
+
         return (
             <div>
                 <OptionsLine
@@ -63,10 +71,16 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     noDirectUpdate
                     extractValue={() => {
                         const url = this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url;
-                        if (!url || this._imageOptions.findIndex((c: IInspectableOptions) => c.value === url) === -1) {
+                        if (!url) {
                             return CustomImageOption;
                         }
-                        return url;
+                        const texturePresetIndex = this._imageOptions.findIndex(
+                            (c: IInspectableOptions) =>
+                                (this._texturePresets[c.value as unknown as number]?.url || "") === url
+                        );
+                        return texturePresetIndex !== -1
+                            ? this._imageOptions[texturePresetIndex]!.value
+                            : CustomImageOption;
                     }}
                     onSelect={(newSelectionValue: string | number) => {
                         if (newSelectionValue === CustomImageOption || typeof newSelectionValue === "string") {
@@ -100,6 +114,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                                     editorData.url = base64data;
                                     editorData.forcedExtension = extension;
                                     editorData.urlTypeHint = this._getUrlTypeHint(file.name);
+                                    this.forceUpdate();
 
                                     this._triggerAssetUpdate(true);
                                 };
@@ -132,10 +147,13 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     label="URL"
                     propertyName="url"
                     lockObject={this.props.stateManager.lockObject}
-                    target={editorData}
+                    target={urlTextInputTarget}
                     onSubmit={() => {
-                        editorData.urlTypeHint = this._getUrlTypeHint(editorData.url ?? "");
-                        this._triggerAssetUpdate();
+                        if (urlTextInputTarget.url !== DataUrlPlaceholder) {
+                            editorData.url = urlTextInputTarget.url;
+                            editorData.urlTypeHint = this._getUrlTypeHint(editorData.url ?? "");
+                            this._triggerAssetUpdate();
+                        }
                     }}
                 />
                 <CheckBoxLineComponent
