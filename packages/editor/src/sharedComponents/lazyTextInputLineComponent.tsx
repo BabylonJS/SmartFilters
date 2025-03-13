@@ -45,6 +45,7 @@ type ILazyTextInputLineComponentProps = {
 
 interface ILazyTextInputLineComponentState {
     input: string;
+    originalInput: string;
     dragging: boolean;
     inputValid: boolean;
 }
@@ -95,19 +96,48 @@ export class LazyTextInputLineComponent extends react.Component<
     ILazyTextInputLineComponentProps,
     ILazyTextInputLineComponentState
 > {
+    _localChange = false;
     _lastInvalidSubmission: string | undefined;
 
     constructor(props: ILazyTextInputLineComponentProps) {
         super(props);
 
-        const emptyValue = this.props.numeric ? "0" : "";
-        const value = this.props.target[this.props.propertyName];
-
+        const originalInput = this.getInputValue(props);
         this.state = {
-            input: this.props.formatValue?.(value) ?? value ?? emptyValue,
+            input: originalInput,
+            originalInput,
             dragging: false,
             inputValid: true,
         };
+    }
+
+    getInputValue = (props: ILazyTextInputLineComponentProps): string => {
+        const emptyValue = props.numeric ? "0" : "";
+        const value = props.target[props.propertyName];
+        return props.formatValue?.(value) ?? value ?? emptyValue;
+    };
+
+    override shouldComponentUpdate(
+        nextProps: ILazyTextInputLineComponentProps,
+        nextState: { input: string; originalInput: string; dragging: boolean }
+    ) {
+        if (this._localChange) {
+            this._localChange = false;
+            return true;
+        }
+
+        const newValue = this.getInputValue(nextProps);
+        if (newValue !== nextState.originalInput) {
+            nextState.originalInput = newValue;
+            nextState.input = newValue;
+            return true;
+        }
+
+        if (nextState.dragging != this.state.dragging) {
+            return true;
+        }
+
+        return false;
     }
 
     validateInput = (value: string) => {
@@ -132,15 +162,21 @@ export class LazyTextInputLineComponent extends react.Component<
             return;
         }
 
-        this.props.target[this.props.propertyName] = this.props.extractValue ? this.props.extractValue(value) : value;
+        const valueToSet = this.props.extractValue ? this.props.extractValue(value) : value;
+        const initialValue = this.props.target[this.props.propertyName];
+        this.props.target[this.props.propertyName] = valueToSet;
         this.props.onSubmit?.();
+
+        this.setState({
+            originalInput: valueToSet,
+        });
 
         if (this.props.onPropertyChangedObservable) {
             this.props.onPropertyChangedObservable.notifyObservers({
                 object: this.props.target,
                 property: this.props.propertyName,
-                initialValue: this.props.target[this.props.propertyName],
-                value: value,
+                initialValue,
+                value: valueToSet,
             });
         }
     };
@@ -183,6 +219,7 @@ export class LazyTextInputLineComponent extends react.Component<
     };
 
     onChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        this._localChange = true;
         this.setInput(event.target.value);
     };
 
