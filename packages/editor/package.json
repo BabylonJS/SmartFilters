@@ -32,7 +32,8 @@
     "scripts": {
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "assets": "node build/copyAssets.js",
-        "build": "npm run assets && tsc -p ./tsconfig.build.json",
+        "build": "npm run assets && npm run build:editorControl",
+        "build:editorControl": "tsc -p ./tsconfig.build.json",
         "test": "echo \"Error: no test specified\" && exit 1",
         "preparePublish": "node build/preparePublish.js"
     },
