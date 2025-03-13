@@ -27,6 +27,7 @@ var buildConfig = function (env) {
         devtool: isProd ? false : "eval-cheap-module-source-map",
         devServer: {
             static: ["www"],
+            open: true,
         },
         plugins: [
             new HtmlWebpackPlugin(
