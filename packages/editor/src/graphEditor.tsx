@@ -120,9 +120,8 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         }
 
         if (navigator.userAgent.indexOf("Mobile") !== -1) {
-            (
-                (this.props.globalState.hostDocument || document).querySelector(".blocker") as HTMLElement
-            ).style.visibility = "visible";
+            ((this.props.globalState.hostDocument || document).querySelector(".blocker") as HTMLElement).style.display =
+                "grid";
         }
 
         this.props.globalState.onPopupClosedObservable.addOnce(() => {
@@ -639,6 +638,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                     isError={this.state.isError}
                     onClose={() => this.setState({ message: "" })}
                 />
+                <div className="blocker">Smart Filter Editor only runs on desktops</div>
             </Portal>
         );
     }
