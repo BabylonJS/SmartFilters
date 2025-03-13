@@ -70,7 +70,11 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                     options={this._imageOptions}
                     noDirectUpdate
                     extractValue={() => {
-                        const url = this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url;
+                        if (editorData.url?.startsWith("data:")) {
+                            return CustomImageOption;
+                        }
+                        const url =
+                            editorData.url || this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url;
                         if (!url) {
                             return CustomImageOption;
                         }
