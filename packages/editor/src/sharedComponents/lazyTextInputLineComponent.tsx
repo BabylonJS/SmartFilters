@@ -45,6 +45,7 @@ type ILazyTextInputLineComponentProps = {
 
 interface ILazyTextInputLineComponentState {
     input: string;
+    originalInput: string;
     dragging: boolean;
     inputValid: boolean;
 }
@@ -101,8 +102,10 @@ export class LazyTextInputLineComponent extends react.Component<
     constructor(props: ILazyTextInputLineComponentProps) {
         super(props);
 
+        const originalInput = this.getInputValue(props);
         this.state = {
-            input: this.getInputValue(this.props),
+            input: originalInput,
+            originalInput,
             dragging: false,
             inputValid: true,
         };
@@ -116,7 +119,7 @@ export class LazyTextInputLineComponent extends react.Component<
 
     override shouldComponentUpdate(
         nextProps: ILazyTextInputLineComponentProps,
-        nextState: { input: string; dragging: boolean }
+        nextState: { input: string; originalInput: string; dragging: boolean }
     ) {
         if (this._localChange) {
             this._localChange = false;
@@ -124,7 +127,8 @@ export class LazyTextInputLineComponent extends react.Component<
         }
 
         const newValue = this.getInputValue(nextProps);
-        if (newValue !== nextState.input) {
+        if (newValue !== nextState.originalInput) {
+            nextState.originalInput = newValue;
             nextState.input = newValue;
             return true;
         }
@@ -158,15 +162,21 @@ export class LazyTextInputLineComponent extends react.Component<
             return;
         }
 
-        this.props.target[this.props.propertyName] = this.props.extractValue ? this.props.extractValue(value) : value;
+        const valueToSet = this.props.extractValue ? this.props.extractValue(value) : value;
+        const initialValue = this.props.target[this.props.propertyName];
+        this.props.target[this.props.propertyName] = valueToSet;
         this.props.onSubmit?.();
+
+        this.setState({
+            originalInput: valueToSet,
+        });
 
         if (this.props.onPropertyChangedObservable) {
             this.props.onPropertyChangedObservable.notifyObservers({
                 object: this.props.target,
                 property: this.props.propertyName,
-                initialValue: this.props.target[this.props.propertyName],
-                value: value,
+                initialValue,
+                value: valueToSet,
             });
         }
     };
