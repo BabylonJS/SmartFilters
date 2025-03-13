@@ -211,10 +211,10 @@ export class CustomBlockManager {
         }
 
         // Back compat - if the list has any entries that don't have a namespace, add them to the Custom_Blocks namespace
-        // Also, if any are null, ignore them
+        // Also, if any are null or otherwise invalid, ignore them
         let updatedAnyKeys = false;
         blockKeysList = blockKeysList
-            .filter((blockKey) => blockKey !== null)
+            .filter((blockKey) => blockKey !== null && blockKey.indexOf("[undefined]") === -1)
             .map((blockKey) => {
                 if (blockKey.indexOf("].[") === -1) {
                     updatedAnyKeys = true;
