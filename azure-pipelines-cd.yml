@@ -12,7 +12,9 @@ jobs:
           demands: npm
       steps:
           - script: "npm install"
-            displayName: "Npm install and build"
+            displayName: "Npm install"
+          - script: "npm run build"
+            displayName: "Npm run build"
           - script: "npm run test"
             displayName: "Jest Unit Tests"
           - script: "npm run preparePublish"
