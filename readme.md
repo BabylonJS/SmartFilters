@@ -16,7 +16,7 @@ More info can be found in the dedicated [readme](./packages/core/readme.md).
 
 ### demo
 
-Entry point of the demo application for creating and running Smart Filters. This demo is also used as the dev inner loop for working on the Core.
+Entry point of the demo application integrating Smart Filters. This demo is also used as the dev inner loop for working on the Core.
 
 More info can be found in the dedicated [readme](./packages/demo/readme.md).
 
@@ -32,7 +32,7 @@ This package contains the visual editor application deployed to https://sfe.baby
 
 More info can be found in the dedicated [readme](./packages/sfe/readme.md).
 
-## Running locally
+## Running Locally
 
 After cloning the repo, running locally during development is as simple as:
 
@@ -41,6 +41,8 @@ npm install
 npm start
 ```
 
+The local Smart Filter demo will run at http://localhost:8080
+
 If you want to run the Smart Filter Editor application locally, start with:
 
 ```
@@ -48,13 +50,15 @@ npm install
 npm run start:sfe
 ```
 
-Local Smart Filter demo will run at http://localhost:8080
+The local build of the Smart Filter Editor will run at http://localhost:8080
+
+In both cases, the code is watched for changes and will automatically incrementally build and reload the webpage.
 
 For VSCode users, if you have installed the Chrome Debugging extension, you can start debugging within VSCode by using the appropriate launch menu.
 
-## Build Tricks
+## Additional Build Commands
 
-The monorepo is based on npm workspace and typescript composite projects. All the packages are trying to be of type "module" without side effects for simple consumption. You can find below the main commands of the repo.
+The monorepo is based on npm workspace and typescript composite projects. All the packages are trying to be of type "module" without side effects for simple consumption. You can find additional commands of the repo below.
 
 The following command will run all the test projects in the repo:
 
@@ -62,7 +66,7 @@ The following command will run all the test projects in the repo:
 npm run test
 ```
 
-Building is pretty similar to testing:
+A full production build is similar:
 
 ```
 npm run build
