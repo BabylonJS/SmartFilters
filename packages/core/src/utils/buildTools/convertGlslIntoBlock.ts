@@ -10,6 +10,7 @@ const NAMESPACE = "@NAMESPACE@";
 const SHADER_BINDING_PRIVATE_VARIABLES = "@SHADER_BINDING_PRIVATE_VARIABLES@";
 const CAMEL_CASE_UNIFORM = "@CAMEL_CASE_UNIFORM@";
 const CONNECTION_POINT_TYPE = "@CONNECTION_POINT_TYPE@";
+const CONNECTION_POINT_DEFAULT_VALUE = "@CONNECTION_POINT_DEFAULT_VALUE@";
 const SHADER_BINDING_EXTENDS = "@SHADER_BINDING_EXTENDS@";
 const SHADER_BINDING_CTOR_DOCSTRING_PARAMS = "@SHADER_BINDING_CTOR_DOCSTRING_PARAMS@";
 const SHADER_BINDING_CTOR_PARAMS = "@SHADER_CTOR_PARAMS@";
@@ -30,10 +31,20 @@ const ShaderBindingCtorParams = `        ${CAMEL_CASE_UNIFORM}: RuntimeData<Conn
 const ShaderBindingCtor = `        this._${CAMEL_CASE_UNIFORM} = ${CAMEL_CASE_UNIFORM};`;
 const ShaderBindingBind = `        effect.${EFFECT_SETTER}(this.getRemappedName(uniforms.${CAMEL_CASE_UNIFORM}), this._${CAMEL_CASE_UNIFORM}.value);`;
 
-const BlockInputProperties = `    /**
+const BlockInputProperty = `    /**
      * The ${CAMEL_CASE_UNIFORM} connection point.
      */
     public readonly ${CAMEL_CASE_UNIFORM} = this._registerInput(uniforms.${CAMEL_CASE_UNIFORM}, ConnectionPointType.${CONNECTION_POINT_TYPE});
+`;
+const BlockInputOptionalProperty = `    /**
+    /**
+     * The ${CAMEL_CASE_UNIFORM} connection point.
+     */
+    public readonly ${CAMEL_CASE_UNIFORM} = this._registerOptionalInput(
+        "${CAMEL_CASE_UNIFORM}",
+        ConnectionPointType.${CONNECTION_POINT_TYPE},
+        createStrongRef(${CONNECTION_POINT_DEFAULT_VALUE})
+    );
 `;
 const BlockGetShaderBindingVars = `        const ${CAMEL_CASE_UNIFORM} = this._confirmRuntimeDataSupplied(this.${CAMEL_CASE_UNIFORM});`;
 
@@ -131,6 +142,8 @@ ${BLOCK_GET_SHADER_BINDING_VARS}
  * @param importPath - The path to import the ShaderProgram type from
  */
 export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: string): void {
+    const extraImports: string[] = [];
+
     const { shaderProgramCode, fragmentShaderInfo } = extractShaderProgramFromGlsl(
         fragmentShaderPath,
         importPath,
@@ -179,10 +192,19 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
 
     // Generate the block input properties
     const blockInputProperties = fragmentShaderInfo.uniforms.map((uniform) => {
-        return BlockInputProperties.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
-            CONNECTION_POINT_TYPE,
-            getConnectionPointTypeString(uniform.type)
-        );
+        if (uniform.properties?.default !== undefined) {
+            if (extraImports.indexOf("    createStrongRef") === -1) {
+                extraImports.push("    createStrongRef");
+            }
+            return BlockInputOptionalProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name)
+                .replace(CONNECTION_POINT_TYPE, getConnectionPointTypeString(uniform.type))
+                .replace(CONNECTION_POINT_DEFAULT_VALUE, uniform.properties.default);
+        } else {
+            return BlockInputProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
+                CONNECTION_POINT_TYPE,
+                getConnectionPointTypeString(uniform.type)
+            );
+        }
     });
 
     // Generate the block get shader binding vars
@@ -203,7 +225,6 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
     let shaderBindingExtends = "ShaderBinding";
     let blockDisableStrategy = "";
     let shaderBindingSuperParams = "";
-    const extraImports: string[] = [];
     if (fragmentShaderInfo.blockDisableStrategy) {
         shaderBlockExtends = "DisableableShaderBlock";
         shaderBindingExtends = "DisableableShaderBinding";

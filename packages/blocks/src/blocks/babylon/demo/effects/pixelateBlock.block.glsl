@@ -9,6 +9,7 @@
 uniform sampler2D input; // main
 // { "default": "0.3" }
 uniform float intensity;
+// { "default": false }
 uniform bool disabled;
 
 const float videoPixelatePower = 6.0;
