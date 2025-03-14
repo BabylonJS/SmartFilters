@@ -43,6 +43,11 @@ type RemappedSymbol = {
     remappedName: string;
 
     /**
+     * For "function", this is the parameter list to differentiate between overloads.
+     */
+    params?: string;
+
+    /**
      * The declaration of the symbol. For "function" it is the function code.
      */
     declaration: string;
@@ -267,6 +272,7 @@ export class SmartFilterOptimizer {
                 (s) =>
                     s.type === "function" &&
                     s.name === funcName &&
+                    s.params === func.params &&
                     s.owners[0] &&
                     s.owners[0].blockType === block.blockType
             );
@@ -285,6 +291,7 @@ export class SmartFilterOptimizer {
                     type: "function",
                     name: funcName,
                     remappedName: newVarName,
+                    params: func.params,
                     declaration: funcCode,
                     owners: [block],
                     inputBlock: undefined,
@@ -708,6 +715,7 @@ export class SmartFilterOptimizer {
                 functions: [
                     {
                         name: mainFuncName,
+                        params: "",
                         code,
                     },
                 ],

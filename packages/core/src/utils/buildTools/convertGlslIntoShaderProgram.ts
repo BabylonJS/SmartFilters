@@ -11,6 +11,7 @@ const MAIN_INPUT_NAME = "@MAIN_INPUT_NAME@";
 const MAIN_FUNCTION_NAME = "@MAIN_FUNCTION_NAME@";
 const FUNCTIONS = "@FUNCTIONS@";
 const FUNCTION_NAME = "@FUNCTION_NAME@";
+const FUNCTION_PARAMS = "@FUNCTION_PARAMS@";
 const FUNCTION_CODE = "@FUNCTION_CODE@";
 const UNIFORM_NAMES = "@UNIFORM_NAMES@";
 const EXPORT = "@EXPORT_SHADER_PROGRAM@";
@@ -25,6 +26,7 @@ const FunctionTemplate = `
                 code: \`
 ${FUNCTION_CODE}
                     \`,
+                params: "${FUNCTION_PARAMS}"
             },`;
 
 const CodeLinePrefix = "                    ";
@@ -120,10 +122,9 @@ export function extractShaderProgramFromGlsl(
     const functionsSection: string[] = [];
     for (const shaderFunction of fragmentShaderInfo.shaderCode.functions) {
         functionsSection.push(
-            FunctionTemplate.replace(FUNCTION_NAME, shaderFunction.name).replace(
-                FUNCTION_CODE,
-                addLinePrefixes(shaderFunction.code, CodeLinePrefix)
-            )
+            FunctionTemplate.replace(FUNCTION_NAME, shaderFunction.name)
+                .replace(FUNCTION_PARAMS, shaderFunction.params || "")
+                .replace(FUNCTION_CODE, addLinePrefixes(shaderFunction.code, CodeLinePrefix))
         );
     }
     const imports = includeImports ? ImportTemplate.replace(TYPE_IMPORT_PATH, importPath) : "";

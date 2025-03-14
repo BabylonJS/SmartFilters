@@ -39,7 +39,7 @@ async function main(): Promise<void> {
     }
 
     // Services and options to keep around for the lifetime of the page
-    const optimize = false;
+    const optimize = true;
     let currentSmartFilter: Nullable<SmartFilter> = null;
     let renderer: Nullable<SmartFilterRenderer> = null;
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
