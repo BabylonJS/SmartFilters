@@ -182,7 +182,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "pixelateBlock" */ "../blocks/babylon/demo/effects/pixelateBlock.js"
+                /* webpackChunkName: "pixelateBlock" */ "../blocks/babylon/demo/effects/pixelateBlock.block.js"
             );
             const block = new module.PixelateBlock(smartFilter, serializedBlock?.name || "Pixelate");
             if (!serializedBlock) {
@@ -224,7 +224,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "maskBlock" */ "../blocks/babylon/demo/effects/maskBlock.js"
+                /* webpackChunkName: "maskBlock" */ "../blocks/babylon/demo/effects/maskBlock.block.js"
             );
             return new module.MaskBlock(smartFilter, serializedBlock?.name || "Mask");
         },

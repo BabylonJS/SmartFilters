@@ -1,4 +1,13 @@
+/*  
+{ 
+    "smartFilterBlockType": "PixelateBlock", 
+    "namespace": "Babylon.Demo.Effects", 
+    "blockDisableStrategy": "Manual"
+}
+*/
+
 uniform sampler2D input; // main
+// { "default": "0.3" }
 uniform float intensity;
 uniform bool disabled;
 
