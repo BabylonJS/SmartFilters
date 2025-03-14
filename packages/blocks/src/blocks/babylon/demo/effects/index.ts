@@ -9,6 +9,6 @@ export * from "./greenScreenBlock.block.js";
 export * from "./kaleidoscopeBlock.block.js";
 export * from "./maskBlock.block.js";
 export * from "./pixelateBlock.block.js";
-export * from "./posterizeBlock.js";
+export * from "./posterizeBlock.block.js";
 export * from "./spritesheetBlock.js";
 export * from "./tintBlock.js";

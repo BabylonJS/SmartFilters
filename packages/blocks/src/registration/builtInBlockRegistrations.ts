@@ -92,7 +92,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "posterizeBlock" */ "../blocks/babylon/demo/effects/posterizeBlock.js"
+                /* webpackChunkName: "posterizeBlock" */ "../blocks/babylon/demo/effects/posterizeBlock.block.js"
             );
             const block = new module.PosterizeBlock(smartFilter, serializedBlock?.name || "Posterize");
             if (!serializedBlock) {
