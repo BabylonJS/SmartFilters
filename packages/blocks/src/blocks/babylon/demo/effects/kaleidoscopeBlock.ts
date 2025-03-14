@@ -8,7 +8,7 @@ import {
     type IDisableableBlock,
     DisableableShaderBlock,
     type SmartFilter,
-    DisableStrategy,
+    BlockDisableStrategy,
 } from "@babylonjs/smart-filters";
 
 import { kaleidoscopeBlockType } from "../../../blockTypes.js";
@@ -173,7 +173,7 @@ export class KaleidoscopeBlock extends DisableableShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, false, DisableStrategy.Manual);
+        super(smartFilter, name, false, BlockDisableStrategy.Manual);
     }
 
     /**

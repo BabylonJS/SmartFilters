@@ -1,10 +1,14 @@
-// { "smartFilterBlockType": "ContrastBlock", "namespace": "Babylon.Demo.Effects" }
+/*  
+{ 
+    "smartFilterBlockType": "ContrastBlock", 
+    "namespace": "Babylon.Demo.Effects", 
+    "blockDisableStrategy": "AutoSample"
+}
+*/
 
 uniform sampler2D input; // main
-// { "default": 0.5, "min": 0, "max": 1 }
+// { "default": 0.5 }
 uniform float intensity;
-
-const float contrastIntensity = 0.44;
 
 vec4 contrast(vec2 vUV) { // main
     vec4 color = texture2D(input, vUV);
