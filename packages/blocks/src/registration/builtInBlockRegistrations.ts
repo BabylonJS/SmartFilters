@@ -134,7 +134,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "contrastBlock" */ "../blocks/babylon/demo/effects/contrastBlock.js"
+                /* webpackChunkName: "contrastBlock" */ "../blocks/babylon/demo/effects/contrastBlock.block.js"
             );
             const block = new module.ContrastBlock(smartFilter, serializedBlock?.name || "Contrast");
             if (!serializedBlock) {
