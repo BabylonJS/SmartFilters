@@ -1,4 +1,10 @@
-// { "smartFilterBlockType": "BlackAndWhiteBlock", "namespace": "Babylon.Demo.Effects" }
+/*
+{
+    "smartFilterBlockType": "BlackAndWhiteBlock", 
+    "namespace": "Babylon.Demo.Effects",
+    "blockDisableStrategy": "AutoSample"
+}
+*/
 
 uniform sampler2D input; // main
 
