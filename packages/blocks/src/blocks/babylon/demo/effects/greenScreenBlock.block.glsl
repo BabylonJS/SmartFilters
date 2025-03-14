@@ -11,7 +11,7 @@ uniform sampler2D background;
 uniform vec3 reference;
 uniform float distance;
 
-vec4 _greenScreen_(vec2 vUV) { // main
+vec4 greenScreen(vec2 vUV) { // main
     vec4 color = texture2D(input, vUV);
     vec4 background = texture2D(background, vUV);
 
