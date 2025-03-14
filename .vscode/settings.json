@@ -20,6 +20,7 @@
         "multilines",
         "NPOT",
         "Premultiplies",
+        "premultiply",
         "PULLREQUESTID",
         "resizer",
         "runtimes",

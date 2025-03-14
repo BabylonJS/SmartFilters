@@ -13,6 +13,7 @@ import {
     createStrongRef,
     BlockDisableStrategy,
 } from "@babylonjs/smart-filters";
+
 /**
  * The shader bindings for the Spritesheet block.
  */

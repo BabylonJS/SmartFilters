@@ -256,7 +256,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "premultiplyAlphaBlock" */ "../blocks/babylon/demo/utilities/premultiplyAlphaBlock.js"
+                /* webpackChunkName: "premultiplyAlphaBlock" */ "../blocks/babylon/demo/utilities/premultiplyAlphaBlock.block.js"
             );
             return new module.PremultiplyAlphaBlock(smartFilter, serializedBlock?.name || "PremultiplyAlpha");
         },
