@@ -8,6 +8,7 @@ import {
     editableInPropertyPage,
     PropertyTypeForEdition,
     type IEditablePropertyListOption,
+    Logger,
 } from "@babylonjs/smart-filters";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
 import { WebCamInputBlockName } from "../blockNames.js";
@@ -48,12 +49,17 @@ class WebcamSourceManager {
      */
     constructor() {
         this._updateWebcamSources();
-        navigator.mediaDevices.addEventListener("devicechange", () => {
+        navigator.mediaDevices?.addEventListener("devicechange", () => {
             this._updateWebcamSources();
         });
     }
 
     private async _updateWebcamSources(): Promise<void> {
+        if (!navigator.mediaDevices) {
+            Logger.Warn("Webcam not supported by this browser");
+            return;
+        }
+
         let foundDefault = false;
         const devices = await navigator.mediaDevices.enumerateDevices();
         const sources = devices
