@@ -4,7 +4,7 @@ export * from "./compositionBlock.js";
 export * from "./contrastBlock.block.js";
 export * from "./desaturateBlock.block.js";
 export * from "./directionalBlurBlock.js";
-export * from "./exposureBlock.js";
+export * from "./exposureBlock.block.js";
 export * from "./greenScreenBlock.js";
 export * from "./kaleidoscopeBlock.js";
 export * from "./maskBlock.js";

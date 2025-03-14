@@ -203,7 +203,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "exposureBlock" */ "../blocks/babylon/demo/effects/exposureBlock.js"
+                /* webpackChunkName: "exposureBlock" */ "../blocks/babylon/demo/effects/exposureBlock.block.js"
             );
             const block = new module.ExposureBlock(smartFilter, serializedBlock?.name || "Exposure");
             if (!serializedBlock) {
