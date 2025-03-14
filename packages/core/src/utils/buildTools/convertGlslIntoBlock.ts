@@ -1,18 +1,26 @@
 import * as fs from "fs";
 import { extractShaderProgramFromGlsl } from "./convertGlslIntoShaderProgram.js";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
+import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
+const EXTRA_IMPORTS = "@EXTRA_IMPORTS@";
 const SHADER_PROGRAM = "@SHADER_PROGRAM@";
 const BLOCK_NAME = "@BLOCK_NAME@";
 const NAMESPACE = "@NAMESPACE@";
 const SHADER_BINDING_PRIVATE_VARIABLES = "@SHADER_BINDING_PRIVATE_VARIABLES@";
 const CAMEL_CASE_UNIFORM = "@CAMEL_CASE_UNIFORM@";
 const CONNECTION_POINT_TYPE = "@CONNECTION_POINT_TYPE@";
+const CONNECTION_POINT_DEFAULT_VALUE = "@CONNECTION_POINT_DEFAULT_VALUE@";
+const SHADER_BINDING_EXTENDS = "@SHADER_BINDING_EXTENDS@";
 const SHADER_BINDING_CTOR_DOCSTRING_PARAMS = "@SHADER_BINDING_CTOR_DOCSTRING_PARAMS@";
 const SHADER_BINDING_CTOR_PARAMS = "@SHADER_CTOR_PARAMS@";
+const SHADER_BINDING_SUPER_PARAMS = "@SHADER_BINDING_SUPER_PARAMS@";
 const SHADER_BINDING_CTOR = "@SHADER_BINDING_CTOR@";
 const SHADER_BINDING_BIND = "@SHADER_BINDING_BIND@";
+const SHADER_BLOCK_EXTENDS = "@SHADER_BLOCK_EXTENDS@";
 const BLOCK_INPUT_PROPERTIES = "@BLOCK_INPUT_PROPERTIES@";
+const BLOCK_DISABLE_OPTIMIZATION = "@BLOCK_DISABLE_OPTIMIZATION@";
+const BLOCK_DISABLE_STRATEGY = "@BLOCK_DISABLE_STRATEGY@";
 const BLOCK_GET_SHADER_BINDING_VARS = "@BLOCK_SHADER_BINDING_BIND_VARS@";
 const BLOCK_GET_SHADER_PARAM_LIST = "@BLOCK_GET_SHADER_PARAM_LIST@";
 const EFFECT_SETTER = "@EFFECT_SETTER@";
@@ -23,10 +31,20 @@ const ShaderBindingCtorParams = `        ${CAMEL_CASE_UNIFORM}: RuntimeData<Conn
 const ShaderBindingCtor = `        this._${CAMEL_CASE_UNIFORM} = ${CAMEL_CASE_UNIFORM};`;
 const ShaderBindingBind = `        effect.${EFFECT_SETTER}(this.getRemappedName(uniforms.${CAMEL_CASE_UNIFORM}), this._${CAMEL_CASE_UNIFORM}.value);`;
 
-const BlockInputProperties = `    /**
+const BlockInputProperty = `    /**
      * The ${CAMEL_CASE_UNIFORM} connection point.
      */
     public readonly ${CAMEL_CASE_UNIFORM} = this._registerInput(uniforms.${CAMEL_CASE_UNIFORM}, ConnectionPointType.${CONNECTION_POINT_TYPE});
+`;
+const BlockInputOptionalProperty = `    /**
+    /**
+     * The ${CAMEL_CASE_UNIFORM} connection point.
+     */
+    public readonly ${CAMEL_CASE_UNIFORM} = this._registerOptionalInput(
+        "${CAMEL_CASE_UNIFORM}",
+        ConnectionPointType.${CONNECTION_POINT_TYPE},
+        createStrongRef(${CONNECTION_POINT_DEFAULT_VALUE})
+    );
 `;
 const BlockGetShaderBindingVars = `        const ${CAMEL_CASE_UNIFORM} = this._confirmRuntimeDataSupplied(this.${CAMEL_CASE_UNIFORM});`;
 
@@ -43,17 +61,17 @@ const FileTemplate = `/* eslint-disable prettier/prettier */
 import type { Effect } from "@babylonjs/core/Materials/effect";
 
 import {
-    ShaderBinding,
+    ${SHADER_BINDING_EXTENDS},
     type RuntimeData,
     ConnectionPointType,
     type SmartFilter,
-    ShaderBlock,
+    ${SHADER_BLOCK_EXTENDS},
     type ShaderProgram,
-} from "@babylonjs/smart-filters";${SHADER_PROGRAM}
+${EXTRA_IMPORTS}} from "@babylonjs/smart-filters";${SHADER_PROGRAM}
 /**
  * The shader binding for the ${BLOCK_NAME}, used by the runtime
  */
-class ${BLOCK_NAME}ShaderBinding extends ShaderBinding {
+class ${BLOCK_NAME}ShaderBinding extends ${SHADER_BINDING_EXTENDS} {
 ${SHADER_BINDING_PRIVATE_VARIABLES}
 
     /**
@@ -63,7 +81,7 @@ ${SHADER_BINDING_CTOR_DOCSTRING_PARAMS}
     constructor(
 ${SHADER_BINDING_CTOR_PARAMS}
     ) {
-        super();
+        super(${SHADER_BINDING_SUPER_PARAMS});
 ${SHADER_BINDING_CTOR}
     }
 
@@ -79,7 +97,7 @@ ${SHADER_BINDING_BIND}
 /**
  * The implementation of the ${BLOCK_NAME}
  */
-export class ${BLOCK_NAME} extends ShaderBlock {
+export class ${BLOCK_NAME} extends ${SHADER_BLOCK_EXTENDS} {
     /**
      * The class name of the block.
      */
@@ -102,14 +120,14 @@ ${BLOCK_INPUT_PROPERTIES}
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name);
+        super(smartFilter, name, ${BLOCK_DISABLE_OPTIMIZATION}${BLOCK_DISABLE_STRATEGY});
     }
 
     /**
      * Get the class instance that binds all the required data to the shader (effect) when rendering.
      * @returns The class instance that binds the data to the effect
      */
-    public getShaderBinding(): ShaderBinding {
+    public getShaderBinding(): ${SHADER_BINDING_EXTENDS} {
 ${BLOCK_GET_SHADER_BINDING_VARS}
 
         return new ${BLOCK_NAME}ShaderBinding(${BLOCK_GET_SHADER_PARAM_LIST});
@@ -124,6 +142,8 @@ ${BLOCK_GET_SHADER_BINDING_VARS}
  * @param importPath - The path to import the ShaderProgram type from
  */
 export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: string): void {
+    const extraImports: string[] = [];
+
     const { shaderProgramCode, fragmentShaderInfo } = extractShaderProgramFromGlsl(
         fragmentShaderPath,
         importPath,
@@ -172,10 +192,19 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
 
     // Generate the block input properties
     const blockInputProperties = fragmentShaderInfo.uniforms.map((uniform) => {
-        return BlockInputProperties.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
-            CONNECTION_POINT_TYPE,
-            getConnectionPointTypeString(uniform.type)
-        );
+        if (uniform.properties?.default !== undefined) {
+            if (extraImports.indexOf("    createStrongRef") === -1) {
+                extraImports.push("    createStrongRef");
+            }
+            return BlockInputOptionalProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name)
+                .replace(CONNECTION_POINT_TYPE, getConnectionPointTypeString(uniform.type))
+                .replace(CONNECTION_POINT_DEFAULT_VALUE, uniform.properties.default);
+        } else {
+            return BlockInputProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
+                CONNECTION_POINT_TYPE,
+                getConnectionPointTypeString(uniform.type)
+            );
+        }
     });
 
     // Generate the block get shader binding vars
@@ -183,21 +212,63 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
         return BlockGetShaderBindingVars.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
     });
 
+    // Handle the disable optimization flag
+    const disableOptimization = fragmentShaderInfo.disableOptimization === true ? "true" : "false";
+
     // Generate the block get shader param list
     const blockGetShaderParamList = fragmentShaderInfo.uniforms.map((uniform) => {
         return uniform.name;
     });
 
+    // Decide if this is a disableable block or not
+    let shaderBlockExtends = "ShaderBlock";
+    let shaderBindingExtends = "ShaderBinding";
+    let blockDisableStrategy = "";
+    let shaderBindingSuperParams = "";
+    if (fragmentShaderInfo.blockDisableStrategy) {
+        shaderBlockExtends = "DisableableShaderBlock";
+        shaderBindingExtends = "DisableableShaderBinding";
+        blockDisableStrategy = `, BlockDisableStrategy.${BlockDisableStrategy[fragmentShaderInfo.blockDisableStrategy]}`;
+        shaderBindingSuperParams = "parentBlock";
+
+        shaderBindingCtorDocstringParams.unshift("     * @param parentBlock - IDisableableBlock");
+        shaderBindingCtorParams.unshift("        parentBlock: IDisableableBlock");
+        blockGetShaderParamList.unshift("this");
+
+        extraImports.push("    type IDisableableBlock");
+        extraImports.push("    BlockDisableStrategy");
+
+        shaderBindingBind.unshift("        super.bind(effect);");
+    }
+
+    // Additional validation
+    if (
+        fragmentShaderInfo.blockDisableStrategy !== undefined &&
+        fragmentShaderInfo.blockDisableStrategy !== BlockDisableStrategy.Manual
+    ) {
+        if (fragmentShaderInfo.uniforms.findIndex((uniform) => uniform.name === "disabled") !== -1) {
+            throw new Error(
+                "A block that uses a BlockDisableStrategy other than Manual should not declare its own 'disabled' uniform"
+            );
+        }
+    }
+
     // Generate final contents
     const finalContents = FileTemplate.replace(SHADER_PROGRAM, shaderProgramCode)
+        .replace(EXTRA_IMPORTS, extraImports.join(",\n"))
         .replace(new RegExp(BLOCK_NAME, "g"), fragmentShaderInfo.blockType)
         .replace(NAMESPACE, fragmentShaderInfo.namespace || "Other")
+        .replace(new RegExp(SHADER_BINDING_EXTENDS, "g"), shaderBindingExtends)
         .replace(SHADER_BINDING_PRIVATE_VARIABLES, shaderBindingPrivateVariables.join("\n"))
         .replace(SHADER_BINDING_CTOR_DOCSTRING_PARAMS, shaderBindingCtorDocstringParams.join("\n"))
         .replace(SHADER_BINDING_CTOR_PARAMS, shaderBindingCtorParams.join(",\n"))
         .replace(SHADER_BINDING_CTOR, shaderBindingCtor.join("\n"))
+        .replace(SHADER_BINDING_SUPER_PARAMS, shaderBindingSuperParams)
         .replace(SHADER_BINDING_BIND, shaderBindingBind.join("\n"))
+        .replace(new RegExp(SHADER_BLOCK_EXTENDS, "g"), shaderBlockExtends)
         .replace(BLOCK_INPUT_PROPERTIES, blockInputProperties.join("\n"))
+        .replace(BLOCK_DISABLE_OPTIMIZATION, disableOptimization)
+        .replace(BLOCK_DISABLE_STRATEGY, blockDisableStrategy)
         .replace(BLOCK_GET_SHADER_BINDING_VARS, blockGetShaderBindingVars.join("\n"))
         .replace(BLOCK_GET_SHADER_PARAM_LIST, blockGetShaderParamList.join(","));
 

@@ -2,6 +2,7 @@ import type { Nullable } from "@babylonjs/core/types";
 import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
+import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 
@@ -59,6 +60,11 @@ export type FragmentShaderInfo = {
      * If true, optimization should be disabled for this shader
      */
     disableOptimization?: boolean;
+
+    /**
+     * If supplied, the strategy to use for making this block disableable
+     */
+    blockDisableStrategy?: BlockDisableStrategy;
 
     /**
      * The shader code
@@ -203,7 +209,8 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         namespace,
         shaderCode,
         uniforms,
-        disableOptimization: !!header?.disableOptimizer,
+        disableOptimization: !!header?.disableOptimization,
+        blockDisableStrategy: header?.blockDisableStrategy,
     };
 }
 
@@ -362,7 +369,13 @@ type GlslHeader = {
     /**
      * If true, optimization should be disabled for this shader
      */
-    disableOptimizer?: boolean;
+    disableOptimization?: boolean;
+
+    /**
+     * If supplied, this will be an instance of DisableableShaderBlock, with this BlockDisableStrategy
+     * In the GLSL file, use the string key of the BlockDisableStrategy (e.g. "AutoSample").
+     */
+    blockDisableStrategy?: BlockDisableStrategy;
 };
 
 /**
@@ -381,18 +394,18 @@ function readHeader(fragmentShader: string): {
      */
     fragmentShaderWithoutHeader: string;
 } {
-    const singleLineHeaderMatch = new RegExp(/^\/\/\s*(\{.*\})/gm).exec(fragmentShader);
+    const singleLineHeaderMatch = new RegExp(/^\n*\s*\/\/\s*(\{.*\})/g).exec(fragmentShader);
     if (singleLineHeaderMatch && singleLineHeaderMatch[1]) {
         return {
-            header: JSON.parse(singleLineHeaderMatch[1].trim()),
+            header: parseHeader(singleLineHeaderMatch[1].trim()),
             fragmentShaderWithoutHeader: fragmentShader.replace(singleLineHeaderMatch[0], ""),
         };
     }
 
-    const multiLineHeaderMatch = new RegExp("^\\/\\*(.*)\\*\\/", "gs").exec(fragmentShader);
+    const multiLineHeaderMatch = new RegExp(/^\n*\s*\/\*\s*(\{.*\})\s*\*\//gs).exec(fragmentShader);
     if (multiLineHeaderMatch && multiLineHeaderMatch[1]) {
         return {
-            header: JSON.parse(multiLineHeaderMatch[1].trim()),
+            header: parseHeader(multiLineHeaderMatch[1].trim()),
             fragmentShaderWithoutHeader: fragmentShader.replace(multiLineHeaderMatch[0], ""),
         };
     }
@@ -401,6 +414,43 @@ function readHeader(fragmentShader: string): {
         header: null,
         fragmentShaderWithoutHeader: fragmentShader,
     };
+}
+
+/**
+ * Parses the header from a string into a GlslHeader object
+ * @param header - The header string to parse
+ * @returns - The GlslHeader if the header is valid, otherwise null
+ */
+function parseHeader(header: string): Nullable<GlslHeader> {
+    const parsedObject = JSON.parse(header);
+
+    if (!parsedObject || typeof parsedObject !== "object") {
+        return null;
+    }
+
+    // Check for required properties
+    if (!parsedObject[SmartFilterBlockTypeKey]) {
+        throw new Error("Missing required property: " + SmartFilterBlockTypeKey);
+    }
+
+    const glslHeader = parsedObject as GlslHeader;
+
+    // Fix up the disableStrategy to be a BlockDisableStrategy
+    if (glslHeader.blockDisableStrategy) {
+        const rawStrategyValue = glslHeader.blockDisableStrategy;
+        switch (rawStrategyValue as unknown as string) {
+            case "Manual":
+                glslHeader.blockDisableStrategy = BlockDisableStrategy.Manual;
+                break;
+            case "AutoSample":
+                glslHeader.blockDisableStrategy = BlockDisableStrategy.AutoSample;
+                break;
+            default:
+                throw new Error(`Invalid disableStrategy: ${rawStrategyValue}`);
+        }
+    }
+
+    return glslHeader;
 }
 
 /**

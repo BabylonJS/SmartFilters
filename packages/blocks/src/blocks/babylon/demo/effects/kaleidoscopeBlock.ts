@@ -8,12 +8,15 @@ import {
     type IDisableableBlock,
     DisableableShaderBlock,
     type SmartFilter,
-    DisableStrategy,
+    BlockDisableStrategy,
 } from "@babylonjs/smart-filters";
 
 import { kaleidoscopeBlockType } from "../../../blockTypes.js";
 import { babylonDemoEffectsNamespace } from "../../../blockNamespaces.js";
 
+/**
+ * This block uses a custom vertex shader, so it defines the ShaderProgram inline
+ */
 const shaderProgram: ShaderProgram = {
     vertex: `
         // Attributes
@@ -173,7 +176,7 @@ export class KaleidoscopeBlock extends DisableableShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, false, DisableStrategy.Manual);
+        super(smartFilter, name, false, BlockDisableStrategy.Manual);
     }
 
     /**

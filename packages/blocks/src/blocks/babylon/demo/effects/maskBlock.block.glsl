@@ -1,3 +1,11 @@
+/*  
+{ 
+    "smartFilterBlockType": "MaskBlock", 
+    "namespace": "Babylon.Demo.Effects", 
+    "blockDisableStrategy": "AutoSample"
+}
+*/
+
 uniform sampler2D input; // main
 uniform sampler2D mask;
 

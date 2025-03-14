@@ -11,8 +11,9 @@ import {
     DisableableShaderBlock,
     type SmartFilter,
     createStrongRef,
-    DisableStrategy,
+    BlockDisableStrategy,
 } from "@babylonjs/smart-filters";
+
 /**
  * The shader bindings for the Spritesheet block.
  */
@@ -118,7 +119,7 @@ export class SpritesheetBlock extends DisableableShaderBlock {
      * @param name - The friendly name of the block
      */
     constructor(smartFilter: SmartFilter, name: string) {
-        super(smartFilter, name, false, DisableStrategy.Manual);
+        super(smartFilter, name, false, BlockDisableStrategy.Manual);
     }
 
     /**
