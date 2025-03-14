@@ -6,7 +6,6 @@
 }
 */
 
-
 uniform sampler2D input; // main
 uniform float amount;
 

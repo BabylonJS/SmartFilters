@@ -220,6 +220,18 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
         shaderBindingBind.unshift("        super.bind(effect);");
     }
 
+    // Additional validation
+    if (
+        fragmentShaderInfo.blockDisableStrategy !== undefined &&
+        fragmentShaderInfo.blockDisableStrategy !== BlockDisableStrategy.Manual
+    ) {
+        if (fragmentShaderInfo.uniforms.findIndex((uniform) => uniform.name === "disabled") !== -1) {
+            throw new Error(
+                "A block that uses a BlockDisableStrategy other than Manual should not declare its own 'disabled' uniform"
+            );
+        }
+    }
+
     // Generate final contents
     const finalContents = FileTemplate.replace(SHADER_PROGRAM, shaderProgramCode)
         .replace(EXTRA_IMPORTS, extraImports.join(",\n"))
