@@ -2,7 +2,7 @@ export * from "./blackAndWhiteBlock.block.js";
 export * from "./blurBlock.js";
 export * from "./compositionBlock.js";
 export * from "./contrastBlock.block.js";
-export * from "./desaturateBlock.js";
+export * from "./desaturateBlock.block.js";
 export * from "./directionalBlurBlock.js";
 export * from "./exposureBlock.js";
 export * from "./greenScreenBlock.js";

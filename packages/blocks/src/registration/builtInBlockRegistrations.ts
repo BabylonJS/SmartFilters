@@ -113,7 +113,7 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
             serializedBlock: ISerializedBlockV1 | undefined
         ) => {
             const module = await import(
-                /* webpackChunkName: "desaturateBlock" */ "../blocks/babylon/demo/effects/desaturateBlock.js"
+                /* webpackChunkName: "desaturateBlock" */ "../blocks/babylon/demo/effects/desaturateBlock.block.js"
             );
             const block = new module.DesaturateBlock(smartFilter, serializedBlock?.name || "Desaturate");
             if (!serializedBlock) {
