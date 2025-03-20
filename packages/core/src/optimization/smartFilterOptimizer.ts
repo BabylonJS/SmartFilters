@@ -268,7 +268,7 @@ export class SmartFilterOptimizer {
 
             const regexFindCurName = new RegExp(decorateSymbol(funcName), "g");
 
-            const existingRemapped = this._remappedSymbols.find(
+            const existingFunctionExactOverload = this._remappedSymbols.find(
                 (s) =>
                     s.type === "function" &&
                     s.name === funcName &&
@@ -277,11 +277,21 @@ export class SmartFilterOptimizer {
                     s.owners[0].blockType === block.blockType
             );
 
-            const newVarName = existingRemapped?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
+            const existingFunction = this._remappedSymbols.find(
+                (s) =>
+                    s.type === "function" &&
+                    s.name === funcName &&
+                    s.owners[0] &&
+                    s.owners[0].blockType === block.blockType
+            );
 
-            if (!existingRemapped) {
+            const newVarName = existingFunction?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
+
+            if (!existingFunction) {
                 replaceFuncNames.push([regexFindCurName, newVarName]);
+            }
 
+            if (!existingFunctionExactOverload) {
                 let funcCode = func.code;
                 for (const [regex, replacement] of replaceFuncNames) {
                     funcCode = funcCode.replace(regex, replacement);
