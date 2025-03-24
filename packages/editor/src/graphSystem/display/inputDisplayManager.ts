@@ -2,7 +2,7 @@
 import { BlockTools } from "../../blockTools.js";
 import type { IDisplayManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/displayManager";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
-import styles from "../../assets/styles/graphSystem/display/inputDisplayManager.module.scss";
+import * as styles from "../../assets/styles/graphSystem/display/inputDisplayManager.module.scss";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { Color3, Color4 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";

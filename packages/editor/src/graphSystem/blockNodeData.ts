@@ -4,7 +4,7 @@ import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import { ConnectionPointPortData } from "./connectionPointPortData.js";
 // import triangle from "../assets/imgs/triangle.svg";
 // import square from "../assets/imgs/square.svg";
-import styles from "../assets/styles/graphSystem/blockNodeData.module.scss";
+import * as styles from "../assets/styles/graphSystem/blockNodeData.module.scss";
 import type { BaseBlock } from "@babylonjs/smart-filters";
 
 export class BlockNodeData implements INodeData {
