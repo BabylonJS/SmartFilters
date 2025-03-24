@@ -12,11 +12,14 @@ export const RegisterNodePortDesign = (stateManager: StateManager) => {
         let decodedSvg = "";
         switch (type) {
             case ConnectionPointType.Float:
-            case ConnectionPointType.Boolean:
                 decodedSvg = atob(
                     "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMSAyMSI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNmZmY7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5WZWN0b3IxPC90aXRsZT48ZyBpZD0iTGF5ZXJfNSIgZGF0YS1uYW1lPSJMYXllciA1Ij48Y2lyY2xlIGNsYXNzPSJjbHMtMSIgY3g9IjEwLjUiIGN5PSIxMC41IiByPSI3LjUiLz48L2c+PC9zdmc+"
                 );
-
+                break;
+            case ConnectionPointType.Boolean:
+                decodedSvg = atob(
+                    "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMYXllcl81IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjtzdHJva2Utd2lkdGg6MHB4O308L3N0eWxlPjwvZGVmcz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im0xNi4wNCwxNC40N2MuOTEtMS4yNCwxLjQ2LTIuNzcsMS40Ni00LjQzLDAtNC4xNC0zLjM2LTcuNS03LjUtNy41cy03LjUsMy4zNi03LjUsNy41YzAsMS42Ni41NSwzLjE5LDEuNDYsNC40M2gxMi4wN1oiLz48L3N2Zz4="
+                );
                 break;
             case ConnectionPointType.Vector2:
                 decodedSvg = atob(
