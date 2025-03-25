@@ -389,4 +389,9 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
         namespace: inputsNamespace,
         tooltip: "A Vector2 to be used as input",
     },
+    {
+        blockType: "Boolean",
+        namespace: inputsNamespace,
+        tooltip: "A boolean to be used as input",
+    },
 ];

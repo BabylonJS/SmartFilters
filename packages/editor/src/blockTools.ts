@@ -39,6 +39,8 @@ export class BlockTools {
                 return ConnectionPointType.Vector2;
             case "WebCam":
                 return ConnectionPointType.Texture;
+            case "Boolean":
+                return ConnectionPointType.Boolean;
         }
 
         // TODO AutoDetect...
@@ -57,6 +59,8 @@ export class BlockTools {
                 return "Texture";
             case ConnectionPointType.Vector2:
                 return "Vector2";
+            case ConnectionPointType.Boolean:
+                return "Boolean";
         }
 
         return "";
