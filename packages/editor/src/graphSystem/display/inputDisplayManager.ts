@@ -11,18 +11,6 @@ import { getTextureInputBlockEditorData } from "../getEditorData.js";
 export class InputDisplayManager implements IDisplayManager {
     public getHeaderClass(_nodeData: INodeData) {
         return styles["constant"]!;
-
-        // const inputBlock = nodeData.data as InputBlock;
-
-        // return styles["constant"];
-        // if (inputBlock.isConstant) {
-        // }
-
-        // if (inputBlock.visibleInInspector) {
-        //     return styles["inspector"];
-        // }
-
-        // return "";
     }
 
     public shouldDisplayPortLabels(): boolean {
