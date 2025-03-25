@@ -59,12 +59,14 @@ var buildConfig = function (env) {
                             options: {
                                 sourceMap: true,
                                 modules: "global",
+                                esModule: true,
                             },
                         },
                         {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: true,
+                                api: "modern",
                             },
                         },
                     ],
@@ -78,12 +80,14 @@ var buildConfig = function (env) {
                             options: {
                                 sourceMap: true,
                                 modules: true,
+                                esModule: true,
                             },
                         },
                         {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: true,
+                                api: "modern",
                             },
                         },
                     ],

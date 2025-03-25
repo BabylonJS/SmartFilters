@@ -6,27 +6,19 @@ export class BlockTools {
         let color = "#880000";
         switch (type) {
             case ConnectionPointType.Boolean:
-                color = "#228e0f";
+                color = "#51b0e5";
                 break;
             case ConnectionPointType.Float:
                 color = "#cb9e27";
                 break;
-            // case NodeMaterialBlockConnectionPointTypes.Vector2:
-            //     color = "#16bcb1";
-            //     break;
-            // case NodeMaterialBlockConnectionPointTypes.Vector3:
             case ConnectionPointType.Color3:
                 color = "#b786cb";
                 break;
-            // case NodeMaterialBlockConnectionPointTypes.Vector4:
             case ConnectionPointType.Color4:
                 color = "#be5126";
                 break;
-            // case NodeMaterialBlockConnectionPointTypes.Matrix:
-            //     color = "#591990";
-            //     break;
             case ConnectionPointType.Texture:
-                color = "#6174FA";
+                color = "#f28e0a";
                 break;
         }
 
@@ -47,6 +39,8 @@ export class BlockTools {
                 return ConnectionPointType.Vector2;
             case "WebCam":
                 return ConnectionPointType.Texture;
+            case "Boolean":
+                return ConnectionPointType.Boolean;
         }
 
         // TODO AutoDetect...
@@ -65,6 +59,8 @@ export class BlockTools {
                 return "Texture";
             case ConnectionPointType.Vector2:
                 return "Vector2";
+            case ConnectionPointType.Boolean:
+                return "Boolean";
         }
 
         return "";
