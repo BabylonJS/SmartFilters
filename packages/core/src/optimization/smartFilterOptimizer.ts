@@ -285,12 +285,16 @@ export class SmartFilterOptimizer {
                     s.owners[0].blockType === block.blockType
             );
 
+            // Get or create the remapped name, ignoring the parameter list
             const newVarName = existingFunction?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
 
+            // If the function name, regardless of params, wasn't found, add the rename mapping to our list
             if (!existingFunction) {
                 replaceFuncNames.push([regexFindCurName, newVarName]);
             }
 
+            // If this exact overload wasn't found, add it to the list of remapped symbols so it'll be emitted in
+            // the final shader.
             if (!existingFunctionExactOverload) {
                 let funcCode = func.code;
                 for (const [regex, replacement] of replaceFuncNames) {
