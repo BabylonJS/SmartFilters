@@ -88,8 +88,8 @@ describe("smartFilterOptimizer", () => {
             const optimizedBlock = optimizedSmartFilter!.attachedBlocks.find((b) => b.name === "optimized");
             const optimizedShaderProgram = (optimizedBlock as ShaderBlock).getShaderProgram();
             const fragmentShaderCode = optimizedShaderProgram.fragment.functions[0]?.code;
-            expect(fragmentShaderCode!.match(/vec4 _getColor_\(float f\)/g)?.length).toBe(1);
-            expect(fragmentShaderCode!.match(/vec4 _getColor_\(vec3 v\)/g)?.length).toBe(1);
+            expect((fragmentShaderCode!.match(/vec4 _getColor_\(float f\)/g) || []).length).toBe(1);
+            expect((fragmentShaderCode!.match(/vec4 _getColor_\(vec3 v\)/g) || []).length).toBe(1);
         });
     });
 });
