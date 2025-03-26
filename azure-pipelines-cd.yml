@@ -25,7 +25,7 @@ jobs:
             displayName: "Npm publish"
             inputs:
                 command: "custom"
-                customCommand: "publish --tag preview --access public -w @babylonjs/smart-filters"
+                customCommand: "publish --access public -w @babylonjs/smart-filters && publish --access public -w @babylonjs/smart-filters-blocks"
                 customEndpoint: "NPMWithAccessToken"
           - script: |
                 # SFE
