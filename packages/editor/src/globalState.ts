@@ -3,7 +3,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import type { Nullable } from "@babylonjs/core/types";
 import { StateManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/stateManager.js";
 import { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject.js";
-import { type BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
+import { type BaseBlock, type ConnectionPoint, SmartFilter } from "@babylonjs/smart-filters";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import { RegisterDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import { RegisterElbowSupport } from "./graphSystem/registerElbowSupport.js";
@@ -11,6 +11,8 @@ import { RegisterNodePortDesign } from "./graphSystem/registerNodePortDesign.js"
 import type { LogEntry } from "./components/log/logComponent";
 import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphNode.js";
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
+import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/portData.js";
+import { BlockTools } from "./blockTools.js";
 
 export type TexturePreset = {
     name: string;
@@ -109,6 +111,9 @@ export class GlobalState {
         this.stateManager = new StateManager();
         this.stateManager.data = this;
         this.stateManager.lockObject = this.lockObject;
+        this.stateManager.getPortColor = (portData: IPortData) => {
+            return BlockTools.GetColorFromConnectionNodeType((portData.data as ConnectionPoint).type);
+        };
 
         RegisterElbowSupport(this.stateManager);
         RegisterNodePortDesign(this.stateManager);

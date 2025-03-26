@@ -2,7 +2,7 @@
 import { BlockTools } from "../../blockTools.js";
 import type { IDisplayManager } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/displayManager";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
-import styles from "../../assets/styles/graphSystem/display/inputDisplayManager.module.scss";
+import * as styles from "../../assets/styles/graphSystem/display/inputDisplayManager.module.scss";
 import { ConnectionPointType } from "@babylonjs/smart-filters";
 import { Color3, Color4 } from "@babylonjs/core/Maths/math.color.js";
 import type { AnyInputBlock } from "@babylonjs/smart-filters";
@@ -11,18 +11,6 @@ import { getTextureInputBlockEditorData } from "../getEditorData.js";
 export class InputDisplayManager implements IDisplayManager {
     public getHeaderClass(_nodeData: INodeData) {
         return styles["constant"]!;
-
-        // const inputBlock = nodeData.data as InputBlock;
-
-        // return styles["constant"];
-        // if (inputBlock.isConstant) {
-        // }
-
-        // if (inputBlock.visibleInInspector) {
-        //     return styles["inspector"];
-        // }
-
-        // return "";
     }
 
     public shouldDisplayPortLabels(): boolean {
