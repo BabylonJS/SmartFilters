@@ -43,6 +43,11 @@ type RemappedSymbol = {
     remappedName: string;
 
     /**
+     * For "function", this is the parameter list to differentiate between overloads.
+     */
+    params?: string;
+
+    /**
      * The declaration of the symbol. For "function" it is the function code.
      */
     declaration: string;
@@ -263,7 +268,16 @@ export class SmartFilterOptimizer {
 
             const regexFindCurName = new RegExp(decorateSymbol(funcName), "g");
 
-            const existingRemapped = this._remappedSymbols.find(
+            const existingFunctionExactOverload = this._remappedSymbols.find(
+                (s) =>
+                    s.type === "function" &&
+                    s.name === funcName &&
+                    s.params === func.params &&
+                    s.owners[0] &&
+                    s.owners[0].blockType === block.blockType
+            );
+
+            const existingFunction = this._remappedSymbols.find(
                 (s) =>
                     s.type === "function" &&
                     s.name === funcName &&
@@ -271,11 +285,17 @@ export class SmartFilterOptimizer {
                     s.owners[0].blockType === block.blockType
             );
 
-            const newVarName = existingRemapped?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
+            // Get or create the remapped name, ignoring the parameter list
+            const newVarName = existingFunction?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
 
-            if (!existingRemapped) {
+            // If the function name, regardless of params, wasn't found, add the rename mapping to our list
+            if (!existingFunction) {
                 replaceFuncNames.push([regexFindCurName, newVarName]);
+            }
 
+            // If this exact overload wasn't found, add it to the list of remapped symbols so it'll be emitted in
+            // the final shader.
+            if (!existingFunctionExactOverload) {
                 let funcCode = func.code;
                 for (const [regex, replacement] of replaceFuncNames) {
                     funcCode = funcCode.replace(regex, replacement);
@@ -285,6 +305,7 @@ export class SmartFilterOptimizer {
                     type: "function",
                     name: funcName,
                     remappedName: newVarName,
+                    params: func.params,
                     declaration: funcCode,
                     owners: [block],
                     inputBlock: undefined,
@@ -708,6 +729,7 @@ export class SmartFilterOptimizer {
                 functions: [
                     {
                         name: mainFuncName,
+                        params: "",
                         code,
                     },
                 ],

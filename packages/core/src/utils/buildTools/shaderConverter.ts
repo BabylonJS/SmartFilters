@@ -5,6 +5,7 @@ import { ConnectionPointType } from "../../connection/connectionPointType.js";
 import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
 const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
+const GetFunctionParamsRegEx = /\S*\w+\s+\w+\s*\((.*)\)/g;
 
 /**
  * Describes the supported metadata properties for a uniform
@@ -253,10 +254,11 @@ function extractFunctions(fragment: string): {
         }
         if (inFunction && depth === 0) {
             inFunction = false;
-            const { functionBody, functionName, isMainFunction } = processFunctionBody(currentFunction);
+            const { functionBody, functionName, functionParams, isMainFunction } = processFunctionBody(currentFunction);
 
             extractedFunctions.push({
                 name: functionName,
+                params: functionParams,
                 code: functionBody,
             });
 
@@ -280,7 +282,7 @@ function extractFunctions(fragment: string): {
 /**
  * Creates code for a ShaderFunction instance from the body of a function
  * @param functionBody - The body of the function
- * @returns The body, name, and whether the function is the main function
+ * @returns The body, name, parameter list, and whether the function is the main function
  */
 function processFunctionBody(functionBody: string): {
     /**
@@ -294,6 +296,11 @@ function processFunctionBody(functionBody: string): {
     functionName: string;
 
     /**
+     * The parameters of the function
+     */
+    functionParams: string;
+
+    /**
      * Whether the function is the main function
      */
     isMainFunction: boolean;
@@ -305,13 +312,17 @@ function processFunctionBody(functionBody: string): {
         throw new Error("No function name found in shader code");
     }
 
+    // Extract the function params
+    const functionParamsFound = [...functionBody.matchAll(GetFunctionParamsRegEx)].map((match) => match[1]);
+    const functionParams = functionParamsFound[0] || "";
+
     const isMainFunction = functionBody.includes("// main");
 
     if (isMainFunction) {
         functionBody = functionBody.replace("// main", "");
     }
 
-    return { functionBody, functionName, isMainFunction };
+    return { functionBody, functionName, functionParams, isMainFunction };
 }
 
 /**
