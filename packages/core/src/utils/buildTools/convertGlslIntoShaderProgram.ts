@@ -26,7 +26,7 @@ const FunctionTemplate = `
                 code: \`
 ${FUNCTION_CODE}
                     \`,
-                params: "${FUNCTION_PARAMS}"
+                params: "${FUNCTION_PARAMS}",
             },`;
 
 const CodeLinePrefix = "                    ";
