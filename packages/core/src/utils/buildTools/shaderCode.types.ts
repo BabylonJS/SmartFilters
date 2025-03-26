@@ -11,6 +11,11 @@ export type ShaderFunction = {
      * The code of the function.
      */
     code: string;
+
+    /**
+     * The parameters of the function.
+     */
+    params?: string;
 };
 
 /**
