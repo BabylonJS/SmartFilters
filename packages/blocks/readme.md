@@ -1,8 +1,4 @@
-# Babylon.js Smart Filters - PREVIEW
-
-# PREVIEW WARNING
-
-This package is currently in preview form, and updates will likely include breaking changes. It is not yet intended to be used by other projects.
+# Babylon.js Smart Filters
 
 ## Blocks
 
