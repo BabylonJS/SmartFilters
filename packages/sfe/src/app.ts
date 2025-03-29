@@ -167,12 +167,16 @@ async function main(): Promise<void> {
             }
         },
         loadSmartFilter: async (file: File, engine: ThinEngine) => {
-            if (renderer) {
-                currentSmartFilter = await loadSmartFilterFromFile(smartFilterDeserializer, engine, file);
-                if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
-                    onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
+            try {
+                if (renderer) {
+                    currentSmartFilter = await loadSmartFilterFromFile(smartFilterDeserializer, engine, file);
+                    if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
+                        onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
+                    }
+                    return currentSmartFilter;
                 }
-                return currentSmartFilter;
+            } catch (err: unknown) {
+                onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load Smart Filter:\n${err}`, true));
             }
             return null;
         },
