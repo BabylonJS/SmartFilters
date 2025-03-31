@@ -50,6 +50,7 @@ export class CustomBlockManager {
      * @param engine - The engine to use
      * @param blockType - The block type to create
      * @param namespace - The namespace of the block to create
+     * @param name - The name to assign to this new instance of the block, or null to use the default name
      * @param smartFilterDeserializer - The deserializer to use
      * @returns The instantiated block, or null if the block type is not registered
      */
@@ -58,6 +59,7 @@ export class CustomBlockManager {
         engine: ThinEngine,
         blockType: string,
         namespace: Nullable<string>,
+        name: Nullable<string>,
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<Nullable<BaseBlock>> {
         namespace = namespace || CustomBlocksNamespace;
@@ -66,7 +68,7 @@ export class CustomBlockManager {
             return null;
         }
 
-        return this.createBlockFromBlockDefinition(smartFilter, engine, blockDefinition, smartFilterDeserializer);
+        return this.createBlockFromBlockDefinition(smartFilter, engine, blockDefinition, name, smartFilterDeserializer);
     }
 
     /**
@@ -74,6 +76,7 @@ export class CustomBlockManager {
      * @param smartFilter - The Smart Filter to create the block for
      * @param engine - The engine to use
      * @param blockDefinition - The serialized block definition
+     * @param name - The name to assign to this new instance of the block, or null to use the default name
      * @param smartFilterDeserializer - The deserializer to use
      * @returns The instantiated block, or null if the block type is not registered
      */
@@ -81,16 +84,21 @@ export class CustomBlockManager {
         smartFilter: SmartFilter,
         engine: ThinEngine,
         blockDefinition: SerializedBlockDefinition,
+        name: Nullable<string>,
         smartFilterDeserializer: SmartFilterDeserializer
     ): Promise<BaseBlock> {
         switch (blockDefinition.format) {
             case "shaderBlockDefinition":
-                return CustomShaderBlock.Create(smartFilter, this._getDefaultName(blockDefinition), blockDefinition);
+                return CustomShaderBlock.Create(
+                    smartFilter,
+                    name || this._getDefaultName(blockDefinition),
+                    blockDefinition
+                );
             case "smartFilter":
                 return CustomAggregateBlock.Create(
                     smartFilter,
                     engine,
-                    this._getDefaultName(blockDefinition),
+                    name || this._getDefaultName(blockDefinition),
                     blockDefinition,
                     smartFilterDeserializer
                 );

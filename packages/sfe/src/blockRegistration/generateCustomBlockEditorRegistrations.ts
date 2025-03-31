@@ -49,6 +49,7 @@ export function createBlockRegistration(
                 smartFilter,
                 engine,
                 blockDefinition,
+                null, // use default name
                 deserializer
             );
         },
