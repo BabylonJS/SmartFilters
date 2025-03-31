@@ -39,11 +39,12 @@ export class GeneralPropertyTabComponent extends react.Component<IPropertyCompon
 
     override render() {
         const block = this.props.nodeData.data as BaseBlock;
+        const isOutputBlock = block.blockType === "OutputBlock";
 
         return (
             <>
                 <LineContainerComponent title="GENERAL">
-                    {
+                    {!isOutputBlock && (
                         <TextInputLineComponent
                             label="Name"
                             propertyName="name"
@@ -58,15 +59,17 @@ export class GeneralPropertyTabComponent extends react.Component<IPropertyCompon
                             //     return true;
                             // }}
                         />
-                    }
+                    )}
                     <TextLineComponent label="Type" value={block.blockType} />
-                    <TextInputLineComponent
-                        label="Comments"
-                        propertyName="comments"
-                        lockObject={this.props.stateManager.lockObject}
-                        target={block}
-                        onChange={() => this.props.stateManager.onUpdateRequiredObservable.notifyObservers(block)}
-                    />
+                    {!isOutputBlock && (
+                        <TextInputLineComponent
+                            label="Comments"
+                            propertyName="comments"
+                            lockObject={this.props.stateManager.lockObject}
+                            target={block}
+                            onChange={() => this.props.stateManager.onUpdateRequiredObservable.notifyObservers(block)}
+                        />
+                    )}
                 </LineContainerComponent>
             </>
         );
