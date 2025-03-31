@@ -16,6 +16,7 @@ import { Vector2LineComponent } from "@babylonjs/shared-ui-components/lines/vect
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
 import { DynamicOptionsLine } from "../../sharedComponents/dynamicOptionsLineComponent.js";
+import { OutputBlockName } from "../../configuration/constants.js";
 
 export class GenericPropertyComponent extends react.Component<IPropertyComponentProps> {
     constructor(props: IPropertyComponentProps) {
@@ -39,7 +40,7 @@ export class GeneralPropertyTabComponent extends react.Component<IPropertyCompon
 
     override render() {
         const block = this.props.nodeData.data as BaseBlock;
-        const isOutputBlock = block.blockType === "OutputBlock";
+        const isOutputBlock = block.blockType === OutputBlockName;
 
         return (
             <>
