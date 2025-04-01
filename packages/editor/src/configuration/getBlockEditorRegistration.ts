@@ -4,7 +4,7 @@ import { type BaseBlock, type SmartFilter, type SmartFilterDeserializer, Logger 
 import { inputsNamespace, type IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { BlockEditorRegistration } from "./blockEditorRegistration";
 import { CustomInputDisplayManager } from "./customInputDisplayManager.js";
-import { CustomBlocksNamespace } from "./constants.js";
+import { CustomBlocksNamespace, OutputBlockName } from "./constants.js";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import { LogEntry } from "../components/log/logComponent.js";
 
@@ -85,5 +85,5 @@ export function getBlockEditorRegistration(
  * @returns Whether the block should be unique in the graph
  */
 function getIsUniqueBlock(block: BaseBlock): boolean {
-    return block.getClassName() === "OutputBlock";
+    return block.getClassName() === OutputBlockName;
 }

@@ -29,6 +29,7 @@ import { PreviewAreaControlComponent } from "./components/preview/previewAreaCon
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
 import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
+import { OutputBlockName } from "./configuration/constants.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -73,7 +74,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                     // this.props.globalState.smartFilter!.attachedBlocks.push(block);
                 }
 
-                if (block.getClassName() === "OutputBlock") {
+                if (block.getClassName() === OutputBlockName) {
                     // Do Nothing, only one output block allowed and created by the graph
                 }
             },

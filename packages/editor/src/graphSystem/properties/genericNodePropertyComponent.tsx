@@ -16,6 +16,7 @@ import { Vector2LineComponent } from "@babylonjs/shared-ui-components/lines/vect
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
 import { Observable } from "@babylonjs/core/Misc/observable.js";
 import { DynamicOptionsLine } from "../../sharedComponents/dynamicOptionsLineComponent.js";
+import { OutputBlockName } from "../../configuration/constants.js";
 
 export class GenericPropertyComponent extends react.Component<IPropertyComponentProps> {
     constructor(props: IPropertyComponentProps) {
@@ -39,11 +40,12 @@ export class GeneralPropertyTabComponent extends react.Component<IPropertyCompon
 
     override render() {
         const block = this.props.nodeData.data as BaseBlock;
+        const isOutputBlock = block.blockType === OutputBlockName;
 
         return (
             <>
                 <LineContainerComponent title="GENERAL">
-                    {
+                    {!isOutputBlock && (
                         <TextInputLineComponent
                             label="Name"
                             propertyName="name"
@@ -58,15 +60,17 @@ export class GeneralPropertyTabComponent extends react.Component<IPropertyCompon
                             //     return true;
                             // }}
                         />
-                    }
+                    )}
                     <TextLineComponent label="Type" value={block.blockType} />
-                    <TextInputLineComponent
-                        label="Comments"
-                        propertyName="comments"
-                        lockObject={this.props.stateManager.lockObject}
-                        target={block}
-                        onChange={() => this.props.stateManager.onUpdateRequiredObservable.notifyObservers(block)}
-                    />
+                    {!isOutputBlock && (
+                        <TextInputLineComponent
+                            label="Comments"
+                            propertyName="comments"
+                            lockObject={this.props.stateManager.lockObject}
+                            target={block}
+                            onChange={() => this.props.stateManager.onUpdateRequiredObservable.notifyObservers(block)}
+                        />
+                    )}
                 </LineContainerComponent>
             </>
         );
