@@ -223,7 +223,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
 }
 
 /**
- * Extracts all the top-level functions from the shader
+ * Extracts all functions from the shader
  * @param fragment - The shader code to process
  * @returns A list of functions
  */
@@ -243,7 +243,7 @@ function extractFunctions(fragment: string): {
     let pos = 0;
 
     while (pos < fragment.length) {
-        // Match the next available function header at the top-level of the fragment code
+        // Match the next available function header in the fragment code
         GetFunctionHeaderRegEx.lastIndex = pos;
         const match = GetFunctionHeaderRegEx.exec(fragment);
         if (!match) {
