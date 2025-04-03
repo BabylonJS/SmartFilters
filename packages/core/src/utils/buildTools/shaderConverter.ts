@@ -4,7 +4,6 @@ import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
 import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
-const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
 const GetFunctionHeaderRegEx = /\S*\w+\s+(\w+)\s*\((.*?)\)\s*\{/g; // Matches a function's name and its parameters
 const ReservedSymbols = ["main"];
 
@@ -161,7 +160,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     Logger.Log(`Uniforms found: ${JSON.stringify(uniforms)}`);
     const consts = [...fragmentShader.matchAll(/\S*const\s+\w*\s+(\w*)\s*=.*;/g)].map((match) => match[1]);
     Logger.Log(`Consts found: ${JSON.stringify(consts)}`);
-    const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionNamesRegEx)].map(
+    const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionHeaderRegEx)].map(
         (match) => match[1]
     );
     Logger.Log(`Functions found: ${JSON.stringify(functionNames)}`);
