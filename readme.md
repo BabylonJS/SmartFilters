@@ -50,7 +50,7 @@ npm install
 npm run start:sfe
 ```
 
-The local build of the Smart Filter Editor will run at http://localhost:8080
+The local build of the Smart Filter Editor will run at http://localhost:8081
 
 In both cases, the code is watched for changes and will automatically incrementally build and reload the webpage.
 
