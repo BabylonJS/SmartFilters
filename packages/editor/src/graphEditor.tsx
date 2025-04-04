@@ -30,6 +30,7 @@ import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
 import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
 import { OutputBlockName } from "./configuration/constants.js";
+import type { BlockNodeData } from "./graphSystem/blockNodeData";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -221,6 +222,22 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         };
 
         this.props.globalState.hostDocument!.addEventListener("keydown", (evt) => {
+            // If one of the selected nodes is an OutputBlock, and the keypress is delete, remove the OutputBlock from the selected list
+            if (evt.keyCode === 46 || evt.keyCode === 8) {
+                const indexOfOutputBlock = this._graphCanvas.selectedNodes.findIndex(
+                    (node) => (node.content as BlockNodeData).data.isOutput
+                );
+                if (indexOfOutputBlock !== -1) {
+                    this._graphCanvas.selectedNodes.splice(indexOfOutputBlock, 1);
+
+                    // If there are none left, notify that the selection changed, because handleKeyDown will
+                    // not do it since there is nothing selected any longer
+                    if (this._graphCanvas.selectedNodes.length === 0) {
+                        this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
+                    }
+                }
+            }
+
             this._graphCanvas.handleKeyDown(
                 evt,
                 (nodeData) => {
