@@ -4,8 +4,8 @@ import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
 import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
-const GetFunctionNamesRegEx = /\S*\w+\s+(\w+)\s*\(/g;
-const GetFunctionParamsRegEx = /\S*\w+\s+\w+\s*\((.*)\)/g;
+const GetFunctionHeaderRegEx = /\S*\w+\s+(\w+)\s*\((.*?)\)\s*\{/g; // Matches a function's name and its parameters
+const ReservedSymbols = ["main"];
 
 /**
  * Describes the supported metadata properties for a uniform
@@ -160,7 +160,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     Logger.Log(`Uniforms found: ${JSON.stringify(uniforms)}`);
     const consts = [...fragmentShader.matchAll(/\S*const\s+\w*\s+(\w*)\s*=.*;/g)].map((match) => match[1]);
     Logger.Log(`Consts found: ${JSON.stringify(consts)}`);
-    const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionNamesRegEx)].map(
+    const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionHeaderRegEx)].map(
         (match) => match[1]
     );
     Logger.Log(`Functions found: ${JSON.stringify(functionNames)}`);
@@ -169,6 +169,12 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     const symbolsToDecorate = [...uniformNames, ...consts, ...functionNames];
     let fragmentShaderWithRenamedSymbols = fragmentShader;
     for (const symbol of symbolsToDecorate) {
+        if (!symbol) {
+            continue;
+        }
+        if (ReservedSymbols.indexOf(symbol) !== -1) {
+            throw new Error(`Symbol "${symbol}" is reserved and cannot be used`);
+        }
         const regex = new RegExp(`(?<=\\W+)${symbol}(?=\\W+)`, "gs");
         fragmentShaderWithRenamedSymbols = fragmentShaderWithRenamedSymbols.replace(regex, `_${symbol}_`);
     }
@@ -216,7 +222,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
 }
 
 /**
- * Extracts all the functions from the shader
+ * Extracts all functions from the shader
  * @param fragment - The shader code to process
  * @returns A list of functions
  */
@@ -231,45 +237,63 @@ function extractFunctions(fragment: string): {
      */
     mainFunctionName: string;
 } {
-    const lines = fragment.split("\n");
     const extractedFunctions: ShaderFunction[] = [];
     let mainFunctionName: string | undefined;
-    let inFunction = false;
-    let depth = 0;
-    let currentFunction = "";
+    let pos = 0;
 
-    for (const line of lines) {
-        if (!inFunction && line.includes("{")) {
-            inFunction = true;
+    while (pos < fragment.length) {
+        // Match the next available function header in the fragment code
+        GetFunctionHeaderRegEx.lastIndex = pos;
+        const match = GetFunctionHeaderRegEx.exec(fragment);
+        if (!match) {
+            break;
         }
-        if (inFunction) {
-            currentFunction += line + "\n";
+
+        const functionName = match[1];
+        if (!functionName) {
+            throw new Error("No function name found in shader code");
         }
-        for (let pos = 0; pos < line.length; pos++) {
-            if (line[pos] === "{") {
+
+        const functionParams = match[2] || "";
+
+        // Store start index of the function definition
+        const startIndex = match.index;
+
+        // Balance braces to find end of function, starting just after the opening `{`
+        let endIndex = match.index + match[0].length;
+        let depth = 1;
+        while (depth > 0 && endIndex < fragment.length) {
+            if (fragment[endIndex] === "{") {
                 depth++;
-            } else if (line[pos] === "}") {
+            } else if (fragment[endIndex] === "}") {
                 depth--;
             }
+            endIndex++;
         }
-        if (inFunction && depth === 0) {
-            inFunction = false;
-            const { functionBody, functionName, functionParams, isMainFunction } = processFunctionBody(currentFunction);
 
-            extractedFunctions.push({
-                name: functionName,
-                params: functionParams,
-                code: functionBody,
-            });
+        if (depth !== 0) {
+            throw new Error(`Mismatched curly braces found near: ${functionName}`);
+        }
 
-            if (isMainFunction) {
-                if (mainFunctionName) {
-                    throw new Error("Multiple main functions found in shader code");
-                }
-                mainFunctionName = functionName;
+        // Finally, process the function code
+        let functionCode = fragment.substring(startIndex, endIndex).trim();
+
+        // Check if this function is the main function
+        if (functionCode.includes("// main")) {
+            if (mainFunctionName) {
+                throw new Error("Multiple main functions found in shader code");
             }
-            currentFunction = "";
+            mainFunctionName = functionName;
+            functionCode = functionCode.replace("// main", "");
         }
+
+        extractedFunctions.push({
+            name: functionName,
+            code: functionCode,
+            params: functionParams.trim(),
+        });
+
+        pos = endIndex;
     }
 
     if (!mainFunctionName) {
@@ -277,52 +301,6 @@ function extractFunctions(fragment: string): {
     }
 
     return { extractedFunctions, mainFunctionName };
-}
-
-/**
- * Creates code for a ShaderFunction instance from the body of a function
- * @param functionBody - The body of the function
- * @returns The body, name, parameter list, and whether the function is the main function
- */
-function processFunctionBody(functionBody: string): {
-    /**
-     * The body of the function
-     */
-    functionBody: string;
-
-    /**
-     * The name of the function
-     */
-    functionName: string;
-
-    /**
-     * The parameters of the function
-     */
-    functionParams: string;
-
-    /**
-     * Whether the function is the main function
-     */
-    isMainFunction: boolean;
-} {
-    // Extract the function name
-    const functionNamesFound = [...functionBody.matchAll(GetFunctionNamesRegEx)].map((match) => match[1]);
-    const functionName = functionNamesFound[0];
-    if (!functionName) {
-        throw new Error("No function name found in shader code");
-    }
-
-    // Extract the function params
-    const functionParamsFound = [...functionBody.matchAll(GetFunctionParamsRegEx)].map((match) => match[1]);
-    const functionParams = functionParamsFound[0] || "";
-
-    const isMainFunction = functionBody.includes("// main");
-
-    if (isMainFunction) {
-        functionBody = functionBody.replace("// main", "");
-    }
-
-    return { functionBody, functionName, functionParams, isMainFunction };
 }
 
 /**
