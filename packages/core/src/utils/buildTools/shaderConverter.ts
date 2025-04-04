@@ -271,25 +271,27 @@ function extractFunctions(fragment: string): {
             endIndex++;
         }
 
-        // Finally, process the function code
-        if (depth === 0) {
-            let functionCode = fragment.substring(startIndex, endIndex).trim();
-
-            // Check if this function is the main function
-            if (functionCode.includes("// main")) {
-                if (mainFunctionName) {
-                    throw new Error("Multiple main functions found in shader code");
-                }
-                mainFunctionName = functionName;
-                functionCode = functionCode.replace("// main", "");
-            }
-
-            extractedFunctions.push({
-                name: functionName,
-                code: functionCode,
-                params: functionParams.trim(),
-            });
+        if (depth !== 0) {
+            throw new Error(`Mismatched curly braces found near: ${functionName}`);
         }
+
+        // Finally, process the function code
+        let functionCode = fragment.substring(startIndex, endIndex).trim();
+
+        // Check if this function is the main function
+        if (functionCode.includes("// main")) {
+            if (mainFunctionName) {
+                throw new Error("Multiple main functions found in shader code");
+            }
+            mainFunctionName = functionName;
+            functionCode = functionCode.replace("// main", "");
+        }
+
+        extractedFunctions.push({
+            name: functionName,
+            code: functionCode,
+            params: functionParams.trim(),
+        });
 
         pos = endIndex;
     }
