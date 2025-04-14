@@ -174,6 +174,7 @@ export function getShaderCreateOptions(shaderProgram: ShaderProgram): ShaderCrea
         fragmentShader: code,
         uniformNames: uniformNames,
         samplerNames: samplerNames,
+        defines: shaderFragment.defines,
     };
 
     if (shaderProgram.vertex) {

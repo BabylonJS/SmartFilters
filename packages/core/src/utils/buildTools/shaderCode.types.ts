@@ -51,4 +51,9 @@ export type ShaderCode = {
      * The list of functions used in the shader.
      */
     functions: ShaderFunction[];
+
+    /**
+     * The declaration of define statements.
+     */
+    defines?: string[];
 };
