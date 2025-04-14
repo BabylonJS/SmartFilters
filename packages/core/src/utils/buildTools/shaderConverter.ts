@@ -168,7 +168,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     );
     Logger.Log(`Functions found: ${JSON.stringify(functionNames)}`);
 
-    // Decorate the uniforms, consts, and functions
+    // Decorate the uniforms, consts, defines, and functions
     const symbolsToDecorate = [...uniformNames, ...consts, ...defineNames, ...functionNames];
     let fragmentShaderWithRenamedSymbols = fragmentShader;
     for (const symbol of symbolsToDecorate) {
@@ -207,11 +207,11 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     const { extractedFunctions, mainFunctionName } = extractFunctions(fragmentShaderWithRenamedSymbols);
 
     const shaderCode: ShaderCode = {
-        defines: finalDefines,
         uniform: finalUniforms.join("\n"),
         mainFunctionName,
         mainInputTexture,
         functions: extractedFunctions,
+        defines: finalDefines,
     };
 
     if (finalConsts.length > 0) {
