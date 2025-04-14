@@ -5,7 +5,7 @@ import { ConnectionPointType } from "../../connection/connectionPointType.js";
 import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
 const GetFunctionHeaderRegEx = /\S*\w+\s+(\w+)\s*\((.*?)\)\s*\{/g; // Matches a function's name and its parameters
-const GetDefineRegEx = /^\s*#\s*define\s+(\w+).*$/gm; // Matches a #define statement line, capturing its name
+const GetDefineRegEx = /^\S*#define\s+(\w+).*$/gm; // Matches a #define statement line, capturing its name
 const ReservedSymbols = ["main"];
 
 /**
