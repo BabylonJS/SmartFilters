@@ -156,8 +156,8 @@ describe("smartFilterOptimizer", () => {
 
         it("optimizes the shader program", () => {
             expect(optimizedSmartFilter).not.toBeNull();
-            expect(optimizedBlock).not.toBeNull();
-            expect(optimizedShaderProgram).not.toBeNull();
+            expect(optimizedBlock).toBeDefined();
+            expect(optimizedShaderProgram).toBeDefined();
         });
 
         it("emits exactly one define", () => {
