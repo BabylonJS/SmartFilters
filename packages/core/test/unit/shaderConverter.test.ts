@@ -23,6 +23,7 @@ vec4 apply(vec2 vUV){ // main
     vec4 color = texture2D(input, vUV);
     return color * double(intensity);
 }
+#define BAZ
 
 float double(float value) { return value * 2.0; }
 
@@ -105,6 +106,19 @@ describe("parseFragmentShader", () => {
                 for (const fn of result.shaderCode.functions) {
                     expect(fn.code).not.toMatch(rawSymbolRegex);
                 }
+            }
+        });
+    });
+
+    describe("define parsing", () => {
+        it("captures #define tokens", () => {
+            expect(result.shaderCode.defines?.every((define) => define.includes("#define"))).toBeTruthy();
+        });
+
+        it("identifies all define names", () => {
+            const defineNames = ["FOO", "BAR", "BAZ"];
+            for (const name of defineNames) {
+                expect(result.shaderCode.defines?.some((define) => define.includes(decorated(name)))).toBeTruthy();
             }
         });
     });

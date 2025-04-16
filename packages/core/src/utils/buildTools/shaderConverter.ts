@@ -5,6 +5,7 @@ import { ConnectionPointType } from "../../connection/connectionPointType.js";
 import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
 const GetFunctionHeaderRegEx = /\S*\w+\s+(\w+)\s*\((.*?)\)\s*\{/g; // Matches a function's name and its parameters
+const GetDefineRegEx = /^\S*#define\s+(\w+).*$/gm; // Matches a #define statement line, capturing its name
 const ReservedSymbols = ["main"];
 
 /**
@@ -160,13 +161,15 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     Logger.Log(`Uniforms found: ${JSON.stringify(uniforms)}`);
     const consts = [...fragmentShader.matchAll(/\S*const\s+\w*\s+(\w*)\s*=.*;/g)].map((match) => match[1]);
     Logger.Log(`Consts found: ${JSON.stringify(consts)}`);
+    const defineNames = [...fragmentShader.matchAll(GetDefineRegEx)].map((match) => match[1]);
+    Logger.Log(`Defines found: ${JSON.stringify(defineNames)}`);
     const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionHeaderRegEx)].map(
         (match) => match[1]
     );
     Logger.Log(`Functions found: ${JSON.stringify(functionNames)}`);
 
-    // Decorate the uniforms, consts, and functions
-    const symbolsToDecorate = [...uniformNames, ...consts, ...functionNames];
+    // Decorate the uniforms, consts, defines, and functions
+    const symbolsToDecorate = [...uniformNames, ...consts, ...defineNames, ...functionNames];
     let fragmentShaderWithRenamedSymbols = fragmentShader;
     for (const symbol of symbolsToDecorate) {
         if (!symbol) {
@@ -188,6 +191,9 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     // Extract all the consts
     const finalConsts = [...fragmentShaderWithRenamedSymbols.matchAll(/^\s*(const\s.*)/gm)].map((match) => match[1]);
 
+    // Extract all the defines
+    const finalDefines = [...fragmentShaderWithRenamedSymbols.matchAll(GetDefineRegEx)].map((match) => match[0]);
+
     // Find the main input
     const mainInputs = [...fragmentShaderWithRenamedSymbols.matchAll(/\S*uniform.*\s(\w*);\s*\/\/\s*main/gm)].map(
         (match) => match[1]
@@ -205,6 +211,7 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
         mainFunctionName,
         mainInputTexture,
         functions: extractedFunctions,
+        defines: finalDefines,
     };
 
     if (finalConsts.length > 0) {

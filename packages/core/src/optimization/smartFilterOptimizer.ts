@@ -21,6 +21,7 @@ import { DependencyGraph } from "./dependencyGraph.js";
 import { DisableableShaderBlock, BlockDisableStrategy } from "../blockFoundation/disableableShaderBlock.js";
 import { textureOptionsMatch, type OutputTextureOptions } from "../blockFoundation/textureOptions.js";
 
+const GetDefineRegEx = /^\S*#define\s+(\w+).*$/; // Matches a #define statement line, capturing its decorated or undecorated name
 const showDebugData = false;
 
 /**
@@ -30,7 +31,7 @@ type RemappedSymbol = {
     /**
      * The type of the symbol.
      */
-    type: "uniform" | "const" | "sampler" | "function";
+    type: "uniform" | "const" | "sampler" | "function" | "define";
 
     /**
      * The name of the symbol.
@@ -245,6 +246,53 @@ export class SmartFilterOptimizer {
         }
 
         return newVarName;
+    }
+
+    private _processDefines(block: ShaderBlock, code: string): string {
+        const defines = block.getShaderProgram().fragment.defines;
+        if (!defines) {
+            return code;
+        }
+
+        for (const define of defines) {
+            const match = define.match(GetDefineRegEx);
+            const defName = match?.[1];
+
+            if (!match || !defName) {
+                continue;
+            }
+
+            // See if we have already processed this define for this block type
+            const existingRemapped = this._remappedSymbols.find(
+                (s) =>
+                    s.type === "define" &&
+                    s.name === defName &&
+                    s.owners[0] &&
+                    s.owners[0].blockType === block.blockType
+            );
+
+            let newDefName: string;
+            if (existingRemapped) {
+                newDefName = existingRemapped.remappedName;
+            } else {
+                // Add the new define to the remapped symbols list
+                newDefName = decorateSymbol(this._makeSymbolUnique(undecorateSymbol(defName)));
+
+                this._remappedSymbols.push({
+                    type: "define",
+                    name: defName,
+                    remappedName: newDefName,
+                    declaration: define.replace(defName, newDefName), // No need to reconstruct the declaration
+                    owners: [block],
+                    inputBlock: undefined,
+                });
+            }
+
+            // Replace the define name in the main shader code
+            code = code.replace(defName, newDefName);
+        }
+
+        return code;
     }
 
     private _processHelperFunctions(block: ShaderBlock, code: string): string {
@@ -502,6 +550,9 @@ export class SmartFilterOptimizer {
             // Replaces the texture2D calls by sampleTexture for easier processing
             code = code.replace(/texture2D/g, "sampleTexture");
 
+            // Processes the defines to make them unique
+            code = this._processDefines(block, code);
+
             // Processes the functions other than the main function
             code = this._processHelperFunctions(block, code);
 
@@ -671,12 +722,16 @@ export class SmartFilterOptimizer {
         // Sets the remapping of the shader variables
         const blockOwnerToShaderBinding = new Map<ShaderBlock, ShaderBinding>();
 
+        const codeDefines = [];
         let codeUniforms = "";
         let codeConsts = "";
         let codeFunctions = "";
 
         for (const s of this._remappedSymbols) {
             switch (s.type) {
+                case "define":
+                    codeDefines.push(s.declaration);
+                    break;
                 case "const":
                     codeConsts += s.declaration + "\n";
                     break;
@@ -713,6 +768,7 @@ export class SmartFilterOptimizer {
             code = code!.replace(/\n(\n)*/g, "\n");
 
             Logger.Log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
+            Logger.Log(codeDefines.join("\n"));
             Logger.Log(codeUniforms);
             Logger.Log(codeConsts);
             Logger.Log(code);
@@ -723,6 +779,7 @@ export class SmartFilterOptimizer {
         optimizedBlock.setShaderProgram({
             vertex: this._vertexShaderCode,
             fragment: {
+                defines: codeDefines,
                 const: codeConsts,
                 uniform: codeUniforms,
                 mainFunctionName: mainFuncName,
