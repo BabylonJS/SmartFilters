@@ -20,13 +20,22 @@ interface INodeListComponentProps {
     globalState: GlobalState;
 }
 
-export class NodeListComponent extends react.Component<INodeListComponentProps, { filter: string }> {
+export class NodeListComponent extends react.Component<
+    INodeListComponentProps,
+    { filter: string; onlyShowCustomBlocks: boolean }
+> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
 
     constructor(props: INodeListComponentProps) {
         super(props);
 
-        this.state = { filter: "" };
+        this.state = { filter: "", onlyShowCustomBlocks: false };
+
+        props.globalState.onlyShowCustomBlocks.add((value) => {
+            this.setState({
+                onlyShowCustomBlocks: value,
+            });
+        });
 
         this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable.add(() => {
             this.forceUpdate();
@@ -77,7 +86,9 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         for (const key in allBlocks) {
             const blockList = allBlocks[key]!.filter(
                 (block: IBlockRegistration) =>
-                    !this.state.filter || block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
+                    (!this.state.onlyShowCustomBlocks || block.isCustom) &&
+                    (!this.state.filter ||
+                        block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1)
             )
                 .sort((a: IBlockRegistration, b: IBlockRegistration) => a.blockType.localeCompare(b.blockType))
                 .map((block: IBlockRegistration) => {

@@ -306,6 +306,18 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 this.props.globalState.stateManager.onGridSizeChanged.notifyObservers();
                             }}
                         />
+                        <CheckBoxLineComponent
+                            label="Only Show Custom Blocks"
+                            isSelected={() => {
+                                const value = DataStorage.ReadBoolean("OnlyShowCustomBlocks", false);
+                                this.props.globalState.onlyShowCustomBlocks.notifyObservers(value);
+                                return value;
+                            }}
+                            onSelect={(value: boolean) => {
+                                DataStorage.WriteBoolean("OnlyShowCustomBlocks", value);
+                                this.props.globalState.onlyShowCustomBlocks.notifyObservers(value);
+                            }}
+                        />
                     </LineContainerComponent>
                     {(this.props.globalState.loadSmartFilter ||
                         this.props.globalState.downloadSmartFilter ||

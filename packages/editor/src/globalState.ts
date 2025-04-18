@@ -64,6 +64,8 @@ export class GlobalState {
 
     onSaveEditorDataRequiredObservable: Observable<void>;
 
+    onlyShowCustomBlocks = new Observable<boolean>();
+
     texturePresets: TexturePreset[];
 
     downloadSmartFilter?: () => void;
