@@ -15,18 +15,29 @@ import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFile
 import { getBlockKey } from "../../helpers/blockKeyConverters.js";
 import { CustomBlocksNamespace } from "../../configuration/constants.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { OnlyShowCustomBlocksDefaultValue } from "../../constants.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
 }
 
-export class NodeListComponent extends react.Component<INodeListComponentProps, { filter: string }> {
+export class NodeListComponent extends react.Component<
+    INodeListComponentProps,
+    { filter: string; onlyShowCustomBlocks: boolean }
+> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
+    private _onOnlyShowCustomBlocksObserver: Nullable<Observer<boolean>>;
 
     constructor(props: INodeListComponentProps) {
         super(props);
 
-        this.state = { filter: "" };
+        this.state = { filter: "", onlyShowCustomBlocks: OnlyShowCustomBlocksDefaultValue };
+
+        this._onOnlyShowCustomBlocksObserver = props.globalState.onlyShowCustomBlocksObservable.add((value) => {
+            this.setState({
+                onlyShowCustomBlocks: value,
+            });
+        });
 
         this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable.add(() => {
             this.forceUpdate();
@@ -35,6 +46,7 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
 
     override componentWillUnmount() {
         this.props.globalState.onResetRequiredObservable.remove(this._onResetRequiredObserver);
+        this.props.globalState.onlyShowCustomBlocksObservable.remove(this._onOnlyShowCustomBlocksObserver);
     }
 
     filterContent(filter: string) {
@@ -77,7 +89,9 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
         for (const key in allBlocks) {
             const blockList = allBlocks[key]!.filter(
                 (block: IBlockRegistration) =>
-                    !this.state.filter || block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1
+                    (!this.state.onlyShowCustomBlocks || block.isCustom) &&
+                    (!this.state.filter ||
+                        block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1)
             )
                 .sort((a: IBlockRegistration, b: IBlockRegistration) => a.blockType.localeCompare(b.blockType))
                 .map((block: IBlockRegistration) => {
@@ -134,12 +148,13 @@ export class NodeListComponent extends react.Component<INodeListComponentProps, 
 
         // Register blocks
         const ledger = NodeLedger.RegisteredNodeNames;
+        ledger.length = 0; // clear the ledger
         for (const namespace in allBlocks) {
             const blockRegistrations = allBlocks[namespace];
             if (blockRegistrations && blockRegistrations.length) {
                 for (const blockRegistration of blockRegistrations) {
-                    const blockKey = getBlockKey(blockRegistration.blockType, blockRegistration.namespace);
-                    if (!ledger.includes(blockKey)) {
+                    if (!this.state.onlyShowCustomBlocks || blockRegistration.isCustom) {
+                        const blockKey = getBlockKey(blockRegistration.blockType, blockRegistration.namespace);
                         ledger.push(blockKey);
                     }
                 }

@@ -24,6 +24,7 @@ import type { GlobalState } from "../../globalState";
 import type { ISelectionChangedOptions } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/selectionChangedOptions";
 import { SmartFilterCoreVersion, type AnyInputBlock } from "@babylonjs/smart-filters";
 import type { Observer } from "@babylonjs/core/Misc/observable.js";
+import { OnlyShowCustomBlocksDefaultValue } from "../../constants.js";
 
 interface IPropertyTabComponentProps {
     globalState: GlobalState;
@@ -304,6 +305,16 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             onSelect={(value: boolean) => {
                                 DataStorage.WriteBoolean("ShowGrid", value);
                                 this.props.globalState.stateManager.onGridSizeChanged.notifyObservers();
+                            }}
+                        />
+                        <CheckBoxLineComponent
+                            label="Only show custom blocks"
+                            isSelected={() =>
+                                DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
+                            }
+                            onSelect={(value: boolean) => {
+                                DataStorage.WriteBoolean("OnlyShowCustomBlocks", value);
+                                this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(value);
                             }}
                         />
                     </LineContainerComponent>
