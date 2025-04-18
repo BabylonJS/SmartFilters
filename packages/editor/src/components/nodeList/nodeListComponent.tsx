@@ -82,8 +82,6 @@ export class NodeListComponent extends react.Component<
         // Create node menu
         const blockMenu = [];
         const allBlocks = this.props.globalState.blockEditorRegistration.allBlocks;
-        const registeredNodeNames = NodeLedger.RegisteredNodeNames;
-        registeredNodeNames.length = 0; // clear so we only include the filtered node names
 
         for (const key in allBlocks) {
             const blockList = allBlocks[key]!.filter(
@@ -94,8 +92,6 @@ export class NodeListComponent extends react.Component<
             )
                 .sort((a: IBlockRegistration, b: IBlockRegistration) => a.blockType.localeCompare(b.blockType))
                 .map((block: IBlockRegistration) => {
-                    const blockKey = getBlockKey(block.blockType, block.namespace);
-                    registeredNodeNames.push(blockKey);
                     if (block.isCustom) {
                         return (
                             <DraggableBlockLineComponent
@@ -147,6 +143,20 @@ export class NodeListComponent extends react.Component<
             }
         }
 
+        // Register blocks
+        const ledger = NodeLedger.RegisteredNodeNames;
+        ledger.length = 0; // clear the ledger
+        for (const namespace in allBlocks) {
+            const blockRegistrations = allBlocks[namespace];
+            if (blockRegistrations && blockRegistrations.length) {
+                for (const blockRegistration of blockRegistrations) {
+                    if (!this.state.onlyShowCustomBlocks || blockRegistration.isCustom) {
+                        const blockKey = getBlockKey(blockRegistration.blockType, blockRegistration.namespace);
+                        ledger.push(blockKey);
+                    }
+                }
+            }
+        }
         NodeLedger.NameFormatter = (name) => {
             let finalName = name;
             // custom frame
