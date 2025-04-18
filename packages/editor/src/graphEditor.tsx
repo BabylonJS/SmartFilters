@@ -30,6 +30,8 @@ import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IInspectorOptions } from "@babylonjs/core/Debug/debugLayer.js";
 import { decodeBlockKey } from "./helpers/blockKeyConverters.js";
 import { OutputBlockName } from "./configuration/constants.js";
+import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
+import { OnlyShowCustomBlocksDefaultValue } from "./constants.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -133,6 +135,10 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             this.props.globalState.smartFilter = smartFilter;
             this.props.globalState.onResetRequiredObservable.notifyObservers(false);
         });
+
+        this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(
+            DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
+        );
 
         this.build();
     }

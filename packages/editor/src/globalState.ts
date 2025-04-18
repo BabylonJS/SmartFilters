@@ -64,7 +64,7 @@ export class GlobalState {
 
     onSaveEditorDataRequiredObservable: Observable<void>;
 
-    onlyShowCustomBlocks = new Observable<boolean>();
+    onlyShowCustomBlocksObservable = new Observable<boolean>();
 
     texturePresets: TexturePreset[];
 

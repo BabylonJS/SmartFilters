@@ -309,17 +309,12 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         />
                         <CheckBoxLineComponent
                             label="Only show custom blocks"
-                            isSelected={() => {
-                                const value = DataStorage.ReadBoolean(
-                                    "OnlyShowCustomBlocks",
-                                    OnlyShowCustomBlocksDefaultValue
-                                );
-                                this.props.globalState.onlyShowCustomBlocks.notifyObservers(value);
-                                return value;
-                            }}
+                            isSelected={() =>
+                                DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
+                            }
                             onSelect={(value: boolean) => {
                                 DataStorage.WriteBoolean("OnlyShowCustomBlocks", value);
-                                this.props.globalState.onlyShowCustomBlocks.notifyObservers(value);
+                                this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(value);
                             }}
                         />
                     </LineContainerComponent>

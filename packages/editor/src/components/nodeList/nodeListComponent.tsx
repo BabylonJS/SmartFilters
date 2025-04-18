@@ -32,7 +32,7 @@ export class NodeListComponent extends react.Component<
 
         this.state = { filter: "", onlyShowCustomBlocks: OnlyShowCustomBlocksDefaultValue };
 
-        props.globalState.onlyShowCustomBlocks.add((value) => {
+        props.globalState.onlyShowCustomBlocksObservable.add((value) => {
             this.setState({
                 onlyShowCustomBlocks: value,
             });
