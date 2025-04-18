@@ -26,13 +26,14 @@ export class NodeListComponent extends react.Component<
     { filter: string; onlyShowCustomBlocks: boolean }
 > {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
+    private _onOnlyShowCustomBlocksObserver: Nullable<Observer<boolean>>;
 
     constructor(props: INodeListComponentProps) {
         super(props);
 
         this.state = { filter: "", onlyShowCustomBlocks: OnlyShowCustomBlocksDefaultValue };
 
-        props.globalState.onlyShowCustomBlocksObservable.add((value) => {
+        this._onOnlyShowCustomBlocksObserver = props.globalState.onlyShowCustomBlocksObservable.add((value) => {
             this.setState({
                 onlyShowCustomBlocks: value,
             });
@@ -45,6 +46,7 @@ export class NodeListComponent extends react.Component<
 
     override componentWillUnmount() {
         this.props.globalState.onResetRequiredObservable.remove(this._onResetRequiredObserver);
+        this.props.globalState.onlyShowCustomBlocksObservable.remove(this._onOnlyShowCustomBlocksObserver);
     }
 
     filterContent(filter: string) {
