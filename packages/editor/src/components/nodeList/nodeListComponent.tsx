@@ -15,6 +15,7 @@ import { LineWithFileButtonComponent } from "../../sharedComponents/lineWithFile
 import { getBlockKey } from "../../helpers/blockKeyConverters.js";
 import { CustomBlocksNamespace } from "../../configuration/constants.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
+import { OnlyShowCustomBlocksDefaultValue } from "../../constants.js";
 
 interface INodeListComponentProps {
     globalState: GlobalState;
@@ -29,7 +30,7 @@ export class NodeListComponent extends react.Component<
     constructor(props: INodeListComponentProps) {
         super(props);
 
-        this.state = { filter: "", onlyShowCustomBlocks: false };
+        this.state = { filter: "", onlyShowCustomBlocks: OnlyShowCustomBlocksDefaultValue };
 
         props.globalState.onlyShowCustomBlocks.add((value) => {
             this.setState({
