@@ -307,7 +307,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                             }}
                         />
                         <CheckBoxLineComponent
-                            label="Only Show Custom Blocks"
+                            label="Only show custom blocks"
                             isSelected={() => {
                                 const value = DataStorage.ReadBoolean("OnlyShowCustomBlocks", false);
                                 this.props.globalState.onlyShowCustomBlocks.notifyObservers(value);
