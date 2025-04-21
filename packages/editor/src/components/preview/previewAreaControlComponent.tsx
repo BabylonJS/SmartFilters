@@ -11,6 +11,20 @@ interface IPreviewAreaControlComponent {
     togglePreviewAreaComponent: () => void;
 }
 
+const backgroundOptions = [
+    { label: "Grid", value: "grid" },
+    { label: "Black", value: "black" },
+    { label: "White", value: "white" },
+];
+
+const aspectRatioOptions = [
+    { label: "16:6", value: "1.77778" },
+    { label: "4:3", value: "1.33333" },
+    { label: "1:1", value: "1.0" },
+    { label: "19:6", value: "3.16667" },
+    { label: "3:4", value: "0.75" },
+];
+
 export class PreviewAreaControlComponent extends react.Component<IPreviewAreaControlComponent, { background: string }> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
 
@@ -31,17 +45,21 @@ export class PreviewAreaControlComponent extends react.Component<IPreviewAreaCon
     }
 
     override render() {
-        const backgroundOptions = [
-            { label: "Grid", value: "grid" },
-            { label: "Black", value: "black" },
-            { label: "White", value: "white" },
-        ];
-
         return (
             <div id="preview-area-bar">
                 <OptionsLine
                     label=""
                     options={backgroundOptions}
+                    target={this.props.globalState}
+                    propertyName="previewBackground"
+                    valuesAreStrings={true}
+                    onSelect={() => {
+                        this.props.globalState.onPreviewResetRequiredObservable.notifyObservers();
+                    }}
+                />
+                <OptionsLine
+                    label=""
+                    options={aspectRatioOptions}
                     target={this.props.globalState}
                     propertyName="previewBackground"
                     valuesAreStrings={true}
