@@ -50,7 +50,7 @@ async function main(): Promise<void> {
     const onLogRequiredObservable = new Observable<LogEntry>();
     let engine: Nullable<ThinEngine> = null;
 
-    // Manage persisting values
+    // Set up optimize observable behavior
     onOptimizerEnabledChangedObservable.add(async (value: boolean) => {
         localStorage.setItem(LocalStorageOptimizeName, value ? "true" : "false");
         optimize = value;
