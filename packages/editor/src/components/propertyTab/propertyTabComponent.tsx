@@ -37,14 +37,27 @@ interface IPropertyTabComponentState {
     currentFrameNodePort: Nullable<FrameNodePort>;
     currentNodePort: Nullable<NodePort>;
     uploadInProgress: boolean;
+    optimize: Nullable<boolean>;
 }
 
 export class PropertyTabComponent extends react.Component<IPropertyTabComponentProps, IPropertyTabComponentState> {
     private _onResetRequiredObserver?: Observer<boolean>;
+    private _onOptimizerEnabledInitialValueObserver?: Observer<boolean>;
+    private _onOptimizerEnabledChangedObserver?: Observer<boolean>;
+
     // private _modeSelect: React.RefObject<OptionsLineComponent>;
 
     constructor(props: IPropertyTabComponentProps) {
         super(props);
+
+        let optimize = null;
+
+        if (this.props.globalState.onOptimizerEnabledChangedObservable) {
+            this._onOptimizerEnabledInitialValueObserver =
+                this.props.globalState.onOptimizerEnabledChangedObservable.addOnce((value: boolean) => {
+                    optimize = value;
+                });
+        }
 
         this.state = {
             currentNode: null,
@@ -52,6 +65,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             currentFrameNodePort: null,
             currentNodePort: null,
             uploadInProgress: false,
+            optimize,
         };
 
         // this._modeSelect = React.createRef();
@@ -103,11 +117,25 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable?.add(() => {
             this.forceUpdate();
         });
+
+        if (this.props.globalState.onOptimizerEnabledChangedObservable) {
+            this._onOptimizerEnabledChangedObserver = this.props.globalState.onOptimizerEnabledChangedObservable.add(
+                (value: boolean) => {
+                    this.setState({ optimize: value });
+                }
+            );
+        }
     }
 
     override componentWillUnmount() {
         if (this._onResetRequiredObserver) {
             this._onResetRequiredObserver.remove();
+        }
+        if (this._onOptimizerEnabledChangedObserver) {
+            this._onOptimizerEnabledChangedObserver.remove();
+        }
+        if (this._onOptimizerEnabledInitialValueObserver) {
+            this._onOptimizerEnabledInitialValueObserver.remove();
         }
     }
 
@@ -317,6 +345,15 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(value);
                             }}
                         />
+                        {this.props.globalState.onOptimizerEnabledChangedObservable && (
+                            <CheckBoxLineComponent
+                                label="Optimize Smart Filter"
+                                isSelected={() => !!this.state.optimize}
+                                onSelect={(value: boolean) => {
+                                    this.props.globalState.onOptimizerEnabledChangedObservable?.notifyObservers(value);
+                                }}
+                            />
+                        )}
                     </LineContainerComponent>
                     {(this.props.globalState.loadSmartFilter ||
                         this.props.globalState.downloadSmartFilter ||

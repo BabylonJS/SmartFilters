@@ -30,6 +30,8 @@ export class GlobalState {
 
     onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>;
 
+    onOptimizerEnabledChangedObservable: Nullable<Observable<boolean>>;
+
     smartFilter: SmartFilter;
 
     blockEditorRegistration: BlockEditorRegistration;
@@ -95,6 +97,7 @@ export class GlobalState {
         engine: Nullable<ThinEngine>,
         onNewEngine: Nullable<(engine: ThinEngine) => void>,
         onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
+        onOptimizerEnabledChangedObservable: Nullable<Observable<boolean>>,
         smartFilter: Nullable<SmartFilter>,
         blockEditorRegistration: BlockEditorRegistration,
         hostElement: HTMLElement,
@@ -124,6 +127,7 @@ export class GlobalState {
         this.engine = engine;
         this.onNewEngine = onNewEngine;
         this.onSmartFilterLoadedObservable = onSmartFilterLoadedObservable;
+        this.onOptimizerEnabledChangedObservable = onOptimizerEnabledChangedObservable;
         this.smartFilter = smartFilter ?? new SmartFilter("New Filter");
         this.blockEditorRegistration = blockEditorRegistration;
         this.hostElement = hostElement;

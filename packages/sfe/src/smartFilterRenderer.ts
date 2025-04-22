@@ -13,6 +13,26 @@ import { RenderTargetGenerator } from "@babylonjs/smart-filters";
 import { LogEntry, registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
 
 /**
+ * Describes the result of rendering a Smart Filter
+ */
+export type RenderResult = {
+    /**
+     * Indicates if the Smart Filter was rendered successfully
+     */
+    succeeded: boolean;
+
+    /**
+     * The time it took to optimize the Smart Filter (undefined if not applicable)
+     */
+    optimizationTimeInMs?: number;
+
+    /**
+     * The time it took to compile the Smart Filter (undefined if not applicable)
+     */
+    compileTimeInMs?: number;
+};
+
+/**
  * Simple example of rendering a Smart Filter
  */
 export class SmartFilterRenderer {
@@ -44,7 +64,25 @@ export class SmartFilterRenderer {
      * If true, Smart Filters rendered with this renderer will be optimized.
      * Does not affect any previously rendered filters.
      */
-    public optimize: boolean = false;
+    //public optimize: boolean = false;
+
+    private _shouldOptimize: boolean = false;
+
+    /**
+     * If true, Smart Filters rendered with this renderer will be optimized.
+     * Does not affect any previously rendered filters.
+     */
+    public get optimize(): boolean {
+        return this._shouldOptimize;
+    }
+
+    /**
+     * If true, Smart Filters rendered with this renderer will be optimized.
+     * Does not affect any previously rendered filters.
+     */
+    public set optimize(value: boolean) {
+        this._shouldOptimize = value;
+    }
 
     /**
      * Creates a new Smart Filter renderer.
@@ -70,10 +108,20 @@ export class SmartFilterRenderer {
      * @param onLogRequiredObservable - The observable to use to notify when a log entry is required
      * @returns A promise that resolves as true if the rendering started successfully, false otherwise
      */
-    public async startRendering(filter: SmartFilter, onLogRequiredObservable: Observable<LogEntry>): Promise<boolean> {
+    public async startRendering(
+        filter: SmartFilter,
+        onLogRequiredObservable: Observable<LogEntry>
+    ): Promise<RenderResult> {
+        let optimizationTimeInMs: number | undefined = undefined;
+
         try {
             this._lastRenderedSmartFilter = filter;
-            const filterToRender = this.optimize ? this._optimize(filter) : filter;
+            const filterToRender = filter;
+            if (this.optimize) {
+                const startTime = performance.now();
+                this._optimize(filter);
+                optimizationTimeInMs = Math.floor(performance.now() - startTime);
+            }
 
             const rtg = new RenderTargetGenerator(this.optimize);
             const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
@@ -87,11 +135,16 @@ export class SmartFilterRenderer {
 
             this._setRuntime(runtime);
 
-            return true;
+            return {
+                succeeded: true,
+                optimizationTimeInMs,
+            };
         } catch (err: any) {
             const message = err["message"] || err["_compilationError"] || err;
             onLogRequiredObservable.notifyObservers(new LogEntry(`Could not render Smart Filter:\n${message}`, true));
-            return false;
+            return {
+                succeeded: false,
+            };
         }
     }
 

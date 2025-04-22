@@ -38,6 +38,13 @@ export type SmartFilterEditorOptions = {
     onSmartFilterLoadedObservable?: Observable<SmartFilter>;
 
     /**
+     * If supplied, the editor will display a toggle to enable or disable the optimizer, and notify this observable when it changes.
+     * The editor will get the initial value for this toggle by subscribing to the observable, and if it has not yet been notified, will
+     * default to false.
+     */
+    onOptimizerEnabledChangedObservable?: Observable<boolean>;
+
+    /**
      * A BlockEditorRegistration object which is responsible for providing the information
      * required for the Editor to be able to display and work with the Smart Filter
      * blocks the application uses. Note that each application may have its own set
@@ -151,6 +158,7 @@ export class SmartFilterEditorControl {
             options.engine ?? null,
             options.onNewEngine ?? null,
             options.onSmartFilterLoadedObservable ?? null,
+            options.onOptimizerEnabledChangedObservable ?? null,
             options.filter ?? null,
             options.blockEditorRegistration,
             hostElement,
