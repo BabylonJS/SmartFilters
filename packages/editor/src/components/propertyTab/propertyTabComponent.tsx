@@ -42,7 +42,6 @@ interface IPropertyTabComponentState {
 
 export class PropertyTabComponent extends react.Component<IPropertyTabComponentProps, IPropertyTabComponentState> {
     private _onResetRequiredObserver?: Observer<boolean>;
-    private _onOptimizerEnabledInitialValueObserver?: Observer<boolean>;
     private _onOptimizerEnabledChangedObserver?: Observer<boolean>;
 
     // private _modeSelect: React.RefObject<OptionsLineComponent>;
@@ -50,14 +49,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     constructor(props: IPropertyTabComponentProps) {
         super(props);
 
-        let optimize = null;
-
-        if (this.props.globalState.onOptimizerEnabledChangedObservable) {
-            this._onOptimizerEnabledInitialValueObserver =
-                this.props.globalState.onOptimizerEnabledChangedObservable.addOnce((value: boolean) => {
-                    optimize = value;
-                });
-        }
+        const optimize = this.props.globalState.onOptimizerEnabledChangedObservable?._eventState.lastReturnValue;
 
         this.state = {
             currentNode: null,
@@ -133,9 +125,6 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         }
         if (this._onOptimizerEnabledChangedObserver) {
             this._onOptimizerEnabledChangedObserver.remove();
-        }
-        if (this._onOptimizerEnabledInitialValueObserver) {
-            this._onOptimizerEnabledInitialValueObserver.remove();
         }
     }
 
