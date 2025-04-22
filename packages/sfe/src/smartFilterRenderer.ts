@@ -64,25 +64,7 @@ export class SmartFilterRenderer {
      * If true, Smart Filters rendered with this renderer will be optimized.
      * Does not affect any previously rendered filters.
      */
-    //public optimize: boolean = false;
-
-    private _shouldOptimize: boolean = false;
-
-    /**
-     * If true, Smart Filters rendered with this renderer will be optimized.
-     * Does not affect any previously rendered filters.
-     */
-    public get optimize(): boolean {
-        return this._shouldOptimize;
-    }
-
-    /**
-     * If true, Smart Filters rendered with this renderer will be optimized.
-     * Does not affect any previously rendered filters.
-     */
-    public set optimize(value: boolean) {
-        this._shouldOptimize = value;
-    }
+    public optimize: boolean = false;
 
     /**
      * Creates a new Smart Filter renderer.
