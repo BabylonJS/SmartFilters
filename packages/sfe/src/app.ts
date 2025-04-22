@@ -157,8 +157,10 @@ async function main(): Promise<void> {
                 if (renderResult.optimizationTimeMs !== null) {
                     stats.push(`Optimizer: ${Math.floor(renderResult.optimizationTimeMs).toLocaleString()}ms`);
                 }
-                if (renderResult.compileTimeMs !== null) {
-                    stats.push(`Compilation: ${Math.floor(renderResult.compileTimeMs).toLocaleString()}ms`);
+                if (renderResult.runtimeCreationTimeMs !== null) {
+                    stats.push(
+                        `Runtime Creation: ${Math.floor(renderResult.runtimeCreationTimeMs).toLocaleString()}ms`
+                    );
                 }
                 if (stats.length > 0) {
                     statsString = ` [${stats.join(", ")}]`;

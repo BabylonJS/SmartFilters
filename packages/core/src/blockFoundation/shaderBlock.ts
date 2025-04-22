@@ -138,8 +138,7 @@ export abstract class ShaderBlock extends BaseBlock {
         const shaderBlockRuntime = new ShaderRuntime(
             runtime.effectRenderer,
             this.getShaderProgram(),
-            this.getShaderBinding(),
-            initializationData
+            this.getShaderBinding()
         );
         initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
         runtime.registerResource(shaderBlockRuntime);

@@ -29,7 +29,7 @@ export type RenderResult = {
     /**
      * The time it took to compile the Smart Filter (null if not applicable)
      */
-    compileTimeMs: Nullable<number>;
+    runtimeCreationTimeMs: Nullable<number>;
 };
 
 /**
@@ -113,18 +113,22 @@ export class SmartFilterRenderer {
         onLogRequiredObservable: Observable<LogEntry>
     ): Promise<RenderResult> {
         let optimizationTimeMs: Nullable<number> = null;
+        let runtimeCreationTimeMs: Nullable<number> = null;
 
         try {
             this._lastRenderedSmartFilter = filter;
             const filterToRender = filter;
             if (this.optimize) {
-                const startTime = performance.now();
+                const optimizeStartTime = performance.now();
                 this._optimize(filter);
-                optimizationTimeMs = performance.now() - startTime;
+                optimizationTimeMs = performance.now() - optimizeStartTime;
             }
 
             const rtg = new RenderTargetGenerator(this.optimize);
+
+            const createRuntimeStartTime = performance.now();
             const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
+            runtimeCreationTimeMs = performance.now() - createRuntimeStartTime;
 
             // NOTE: Always load assets and animations from the unoptimized filter because it has all the metadata needed to load assets and
             //       shares runtime data with the optimized filter so loading assets for it will work for the optimized filter as well
@@ -138,7 +142,7 @@ export class SmartFilterRenderer {
             return {
                 succeeded: true,
                 optimizationTimeMs,
-                compileTimeMs: runtime.totalShaderCompileTimeMs,
+                runtimeCreationTimeMs,
             };
         } catch (err: any) {
             const message = err["message"] || err["_compilationError"] || err;
@@ -146,7 +150,7 @@ export class SmartFilterRenderer {
             return {
                 succeeded: false,
                 optimizationTimeMs: null,
-                compileTimeMs: null,
+                runtimeCreationTimeMs: null,
             };
         }
     }
