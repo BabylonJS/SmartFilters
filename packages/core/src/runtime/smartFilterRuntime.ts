@@ -3,6 +3,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { CommandBuffer } from "../command/commandBuffer.js";
 import type { IDisposable } from "../IDisposable";
 import type { Command } from "../command/command";
+import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
  * A runtime is a snapshot of a smart filter containing all the
@@ -23,6 +24,14 @@ export type SmartFilterRuntime = {
      * Dispose the runtime and all its associated resources
      */
     dispose(): void;
+
+    /**
+     * The sum of all of the shader compilation times in milliseconds.
+     * NOTE: if parallel shader compilation is enabled, this will include the time spent waiting for the
+     * Javascript thread to become available again after the shader compilation is complete, so it will be
+     * an overestimate. If you disable parallel shader compilation in the engine, this will be more accurate.
+     */
+    readonly totalShaderCompileTimeMs: Nullable<number>;
 };
 
 /**
@@ -48,6 +57,11 @@ export class InternalSmartFilterRuntime implements SmartFilterRuntime {
     public readonly commandBuffer: CommandBuffer;
 
     private readonly _resources: IDisposable[];
+
+    /**
+     * The sum of all of the shader compilation times in milliseconds, settable only internally.
+     */
+    public totalShaderCompileTimeMs: Nullable<number> = null;
 
     /**
      * Instantiates a new smart filter runtime for one given engine.

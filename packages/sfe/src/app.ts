@@ -154,8 +154,11 @@ async function main(): Promise<void> {
             if (renderResult.succeeded) {
                 let statsString = "";
                 const stats: string[] = [];
-                if (renderResult.optimizationTimeInMs !== undefined) {
-                    stats.push(`Optimizer: ${renderResult.optimizationTimeInMs}ms`);
+                if (renderResult.optimizationTimeMs !== null) {
+                    stats.push(`Optimizer: ${Math.floor(renderResult.optimizationTimeMs).toLocaleString()}ms`);
+                }
+                if (renderResult.compileTimeMs !== null) {
+                    stats.push(`Compilation: ${Math.floor(renderResult.compileTimeMs).toLocaleString()}ms`);
                 }
                 if (stats.length > 0) {
                     statsString = ` [${stats.join(", ")}]`;

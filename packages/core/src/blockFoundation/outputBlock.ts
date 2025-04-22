@@ -113,7 +113,8 @@ export class OutputBlock extends BaseBlock {
             const shaderBlockRuntime = new ShaderRuntime(
                 runtime.effectRenderer,
                 shaderProgram,
-                new OutputShaderBinding(this.input.runtimeData)
+                new OutputShaderBinding(this.input.runtimeData),
+                initializationData
             );
             initializationData.initializationPromises.push(shaderBlockRuntime.onReadyAsync);
             runtime.registerResource(shaderBlockRuntime);

@@ -44,6 +44,11 @@ export type InitializationData = {
      * Resources that need to be disposed when the runtime is disposed.
      */
     readonly disposableResources: IDisposable[];
+
+    /**
+     * The sum of all of the shader compilation times in milliseconds.
+     */
+    totalShaderCompileTimeMs: number;
 };
 
 /**
@@ -184,6 +189,7 @@ export class SmartFilter {
             outputBlock: this.outputBlock,
             initializationPromises: [],
             disposableResources: [],
+            totalShaderCompileTimeMs: 0,
         };
 
         this._workWithAggregateFreeGraph(() => {
@@ -209,6 +215,9 @@ export class SmartFilter {
 
         // Register the resources to dispose when the runtime is disposed
         initializationData.disposableResources.forEach((resource) => runtime.registerResource(resource));
+
+        // Record performance stats
+        runtime.totalShaderCompileTimeMs = initializationData.totalShaderCompileTimeMs;
 
         return runtime;
     }

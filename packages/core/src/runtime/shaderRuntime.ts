@@ -11,6 +11,7 @@ import { createStrongRef, type StrongRef } from "./strongRef.js";
 import type { IDisableableBlock } from "../blockFoundation/disableableShaderBlock";
 import { decorateSymbol, DisableUniform, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
 import type { OutputBlock } from "../blockFoundation/outputBlock";
+import type { InitializationData } from "../smartFilter";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
@@ -98,11 +99,18 @@ export class ShaderRuntime implements IDisposable {
      * @param effectRenderer - defines the effect renderer to use to render the full screen effect
      * @param shaderProgram - defines the shader code associated with this runtime
      * @param shaderBinding - defines the shader bindings associated with this runtime
+     * @param initializationData - defines the initialization data to use for tracking compile performance
      */
-    constructor(effectRenderer: EffectRenderer, shaderProgram: ShaderProgram, shaderBinding: ShaderBinding) {
+    constructor(
+        effectRenderer: EffectRenderer,
+        shaderProgram: ShaderProgram,
+        shaderBinding: ShaderBinding,
+        initializationData: InitializationData
+    ) {
         this._engine = effectRenderer.engine;
         this._effectRenderer = effectRenderer;
         this._shaderBinding = shaderBinding;
+        const shaderCompilationStartTime = performance.now();
         this._effectWrapper = new EffectWrapper({
             engine: this._engine,
             ...getShaderCreateOptions(shaderProgram),
@@ -111,6 +119,7 @@ export class ShaderRuntime implements IDisposable {
         // Wraps the effect readiness in a promise to expose it as a public property.
         this.onReadyAsync = new Promise<void>((resolve, reject) => {
             this._effectWrapper.effect.executeWhenCompiled(() => {
+                initializationData.totalShaderCompileTimeMs += performance.now() - shaderCompilationStartTime;
                 resolve();
             });
 

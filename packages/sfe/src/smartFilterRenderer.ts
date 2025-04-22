@@ -22,14 +22,14 @@ export type RenderResult = {
     succeeded: boolean;
 
     /**
-     * The time it took to optimize the Smart Filter (undefined if not applicable)
+     * The time it took to optimize the Smart Filter (null if not applicable)
      */
-    optimizationTimeInMs?: number;
+    optimizationTimeMs: Nullable<number>;
 
     /**
-     * The time it took to compile the Smart Filter (undefined if not applicable)
+     * The time it took to compile the Smart Filter (null if not applicable)
      */
-    compileTimeInMs?: number;
+    compileTimeMs: Nullable<number>;
 };
 
 /**
@@ -112,7 +112,7 @@ export class SmartFilterRenderer {
         filter: SmartFilter,
         onLogRequiredObservable: Observable<LogEntry>
     ): Promise<RenderResult> {
-        let optimizationTimeInMs: number | undefined = undefined;
+        let optimizationTimeMs: Nullable<number> = null;
 
         try {
             this._lastRenderedSmartFilter = filter;
@@ -120,7 +120,7 @@ export class SmartFilterRenderer {
             if (this.optimize) {
                 const startTime = performance.now();
                 this._optimize(filter);
-                optimizationTimeInMs = Math.floor(performance.now() - startTime);
+                optimizationTimeMs = performance.now() - startTime;
             }
 
             const rtg = new RenderTargetGenerator(this.optimize);
@@ -137,13 +137,16 @@ export class SmartFilterRenderer {
 
             return {
                 succeeded: true,
-                optimizationTimeInMs,
+                optimizationTimeMs,
+                compileTimeMs: runtime.totalShaderCompileTimeMs,
             };
         } catch (err: any) {
             const message = err["message"] || err["_compilationError"] || err;
             onLogRequiredObservable.notifyObservers(new LogEntry(`Could not render Smart Filter:\n${message}`, true));
             return {
                 succeeded: false,
+                optimizationTimeMs: null,
+                compileTimeMs: null,
             };
         }
     }
