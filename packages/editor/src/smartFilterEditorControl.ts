@@ -39,8 +39,7 @@ export type SmartFilterEditorOptions = {
 
     /**
      * If supplied, the editor will display a toggle to enable or disable the optimizer, and notify this observable when it changes.
-     * The editor will get the initial value for this toggle by subscribing to the observable, and if it has not yet been notified, will
-     * default to false.
+     * If it has not yet been notified, the UI will default to false.
      */
     onOptimizerEnabledChangedObservable?: Observable<boolean>;
 
