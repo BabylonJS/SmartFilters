@@ -13,6 +13,7 @@ import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
 import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/portData.js";
 import { BlockTools } from "./blockTools.js";
+import type { ObservableProperty } from "./helpers/observableProperty.js";
 
 export type TexturePreset = {
     name: string;
@@ -30,7 +31,7 @@ export class GlobalState {
 
     onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>;
 
-    onOptimizerEnabledChangedObservable: Nullable<Observable<boolean>>;
+    optimizerEnabled: Nullable<ObservableProperty<boolean>>;
 
     smartFilter: SmartFilter;
 
@@ -97,7 +98,7 @@ export class GlobalState {
         engine: Nullable<ThinEngine>,
         onNewEngine: Nullable<(engine: ThinEngine) => void>,
         onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
-        onOptimizerEnabledChangedObservable: Nullable<Observable<boolean>>,
+        optimizerEnabled: Nullable<ObservableProperty<boolean>>,
         smartFilter: Nullable<SmartFilter>,
         blockEditorRegistration: BlockEditorRegistration,
         hostElement: HTMLElement,
@@ -127,7 +128,7 @@ export class GlobalState {
         this.engine = engine;
         this.onNewEngine = onNewEngine;
         this.onSmartFilterLoadedObservable = onSmartFilterLoadedObservable;
-        this.onOptimizerEnabledChangedObservable = onOptimizerEnabledChangedObservable;
+        this.optimizerEnabled = optimizerEnabled;
         this.smartFilter = smartFilter ?? new SmartFilter("New Filter");
         this.blockEditorRegistration = blockEditorRegistration;
         this.hostElement = hostElement;

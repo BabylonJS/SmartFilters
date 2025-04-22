@@ -49,7 +49,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     constructor(props: IPropertyTabComponentProps) {
         super(props);
 
-        const optimize = this.props.globalState.onOptimizerEnabledChangedObservable?._eventState.lastReturnValue;
+        const optimize = this.props.globalState.optimizerEnabled?.value || null;
 
         this.state = {
             currentNode: null,
@@ -110,8 +110,8 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             this.forceUpdate();
         });
 
-        if (this.props.globalState.onOptimizerEnabledChangedObservable) {
-            this._onOptimizerEnabledChangedObserver = this.props.globalState.onOptimizerEnabledChangedObservable.add(
+        if (this.props.globalState.optimizerEnabled) {
+            this._onOptimizerEnabledChangedObserver = this.props.globalState.optimizerEnabled.onChangedObservable.add(
                 (value: boolean) => {
                     this.setState({ optimize: value });
                 }
@@ -334,12 +334,14 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(value);
                             }}
                         />
-                        {this.props.globalState.onOptimizerEnabledChangedObservable && (
+                        {this.props.globalState.optimizerEnabled && (
                             <CheckBoxLineComponent
                                 label="Optimize Smart Filter"
                                 isSelected={() => !!this.state.optimize}
                                 onSelect={(value: boolean) => {
-                                    this.props.globalState.onOptimizerEnabledChangedObservable?.notifyObservers(value);
+                                    if (this.props.globalState.optimizerEnabled) {
+                                        this.props.globalState.optimizerEnabled.value = value;
+                                    }
                                 }}
                             />
                         )}
