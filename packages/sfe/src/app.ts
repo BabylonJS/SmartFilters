@@ -1,5 +1,4 @@
 import "@babylonjs/core/Engines/Extensions/engine.rawTexture.js";
-
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine";
 import { Observable, type Observer } from "@babylonjs/core/Misc/observable.js";
 import type { Nullable } from "@babylonjs/core/types";
@@ -10,6 +9,7 @@ import {
     getBlockEditorRegistration,
     inputBlockDeserializer,
     LogEntry,
+    ObservableProperty,
     SmartFilterEditorControl,
     type SmartFilterEditorOptions,
 } from "@babylonjs/smart-filters-editor-control";
@@ -29,6 +29,8 @@ import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFr
 import { texturePresets } from "./texturePresets.js";
 import { serializeSmartFilter } from "./smartFilterLoadSave/serializeSmartFilter.js";
 
+const LocalStorageOptimizeName = "OptimizeSmartFilter";
+
 /**
  * The main entry point for the Smart Filter editor.
  */
@@ -39,14 +41,25 @@ async function main(): Promise<void> {
     }
 
     // Services and options to keep around for the lifetime of the page
-    const optimize = false;
     let currentSmartFilter: Nullable<SmartFilter> = null;
     let renderer: Nullable<SmartFilterRenderer> = null;
     const onSmartFilterLoadedObservable = new Observable<SmartFilter>();
+    const optimizerEnabled = new ObservableProperty<boolean>(
+        localStorage.getItem(LocalStorageOptimizeName) === "true" || false
+    );
     const onSaveEditorDataRequiredObservable = new Observable<void>();
     let afterEngineResizerObserver: Nullable<Observer<ThinEngine>> = null;
     const onLogRequiredObservable = new Observable<LogEntry>();
     let engine: Nullable<ThinEngine> = null;
+
+    // Set up optimize property change behavior
+    optimizerEnabled.onChangedObservable.add(async (value: boolean) => {
+        localStorage.setItem(LocalStorageOptimizeName, value ? "true" : "false");
+        if (renderer && renderer.optimize !== value) {
+            renderer.optimize = value;
+            await startRendering();
+        }
+    });
 
     // Create the Smart Filter deserializer
     const smartFilterDeserializer = new SmartFilterDeserializer(
@@ -125,7 +138,7 @@ async function main(): Promise<void> {
             }
         }
 
-        renderer = new SmartFilterRenderer(newEngine, optimize);
+        renderer = new SmartFilterRenderer(newEngine, optimizerEnabled.value);
         await startRendering();
 
         if (justLoadedSmartFilter) {
@@ -135,8 +148,24 @@ async function main(): Promise<void> {
 
     const startRendering = async () => {
         if (renderer && currentSmartFilter) {
-            if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
-                onLogRequiredObservable.notifyObservers(new LogEntry("Smart Filter built successfully", false));
+            const renderResult = await renderer.startRendering(currentSmartFilter, onLogRequiredObservable);
+            if (renderResult.succeeded) {
+                let statsString = "";
+                const stats: string[] = [];
+                if (renderResult.optimizationTimeMs !== null) {
+                    stats.push(`Optimizer: ${Math.floor(renderResult.optimizationTimeMs).toLocaleString()}ms`);
+                }
+                if (renderResult.runtimeCreationTimeMs !== null) {
+                    stats.push(
+                        `Runtime Creation: ${Math.floor(renderResult.runtimeCreationTimeMs).toLocaleString()}ms`
+                    );
+                }
+                if (stats.length > 0) {
+                    statsString = ` [${stats.join(", ")}]`;
+                }
+                onLogRequiredObservable.notifyObservers(
+                    new LogEntry("Smart Filter built successfully" + statsString, false)
+                );
             }
         }
     };
@@ -158,6 +187,7 @@ async function main(): Promise<void> {
     const options: SmartFilterEditorOptions = {
         onNewEngine,
         onSmartFilterLoadedObservable,
+        optimizerEnabled,
         blockEditorRegistration: blockEditorRegistration,
         hostElement,
         downloadSmartFilter: () => {
@@ -170,9 +200,8 @@ async function main(): Promise<void> {
             try {
                 if (renderer) {
                     currentSmartFilter = await loadSmartFilterFromFile(smartFilterDeserializer, engine, file);
-                    if (await renderer.startRendering(currentSmartFilter, onLogRequiredObservable)) {
-                        onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
-                    }
+                    onLogRequiredObservable.notifyObservers(new LogEntry("Loaded Smart Filter from JSON", false));
+                    startRendering();
                     return currentSmartFilter;
                 }
             } catch (err: unknown) {

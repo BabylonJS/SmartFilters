@@ -18,5 +18,6 @@ export function initializePreview(canvas: HTMLCanvasElement): ThinEngine {
         },
         false
     );
+    engine.getCaps().parallelShaderCompile = undefined;
     return engine;
 }

@@ -13,6 +13,7 @@ import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { LogEntry } from "./components/log/logComponent.js";
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
+import type { ObservableProperty } from "./helpers/observableProperty.js";
 
 /**
  * Options to configure the Smart Filter Editor
@@ -36,6 +37,11 @@ export type SmartFilterEditorOptions = {
      * If supplied, the editor will subscribe to this observable to be notified when a new Smart Filter should be displayed
      */
     onSmartFilterLoadedObservable?: Observable<SmartFilter>;
+
+    /**
+     * If supplied, the editor will display a toggle to enable or disable the optimizer, and update this property when it changes.
+     */
+    optimizerEnabled?: ObservableProperty<boolean>;
 
     /**
      * A BlockEditorRegistration object which is responsible for providing the information
@@ -151,6 +157,7 @@ export class SmartFilterEditorControl {
             options.engine ?? null,
             options.onNewEngine ?? null,
             options.onSmartFilterLoadedObservable ?? null,
+            options.optimizerEnabled ?? null,
             options.filter ?? null,
             options.blockEditorRegistration,
             hostElement,

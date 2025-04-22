@@ -13,6 +13,26 @@ import { RenderTargetGenerator } from "@babylonjs/smart-filters";
 import { LogEntry, registerAnimations, TextureAssetCache } from "@babylonjs/smart-filters-editor-control";
 
 /**
+ * Describes the result of rendering a Smart Filter
+ */
+export type RenderResult = {
+    /**
+     * Indicates if the Smart Filter was rendered successfully
+     */
+    succeeded: boolean;
+
+    /**
+     * The time it took to optimize the Smart Filter (null if not applicable)
+     */
+    optimizationTimeMs: Nullable<number>;
+
+    /**
+     * The time it took to compile the Smart Filter (null if not applicable)
+     */
+    runtimeCreationTimeMs: Nullable<number>;
+};
+
+/**
  * Simple example of rendering a Smart Filter
  */
 export class SmartFilterRenderer {
@@ -70,13 +90,27 @@ export class SmartFilterRenderer {
      * @param onLogRequiredObservable - The observable to use to notify when a log entry is required
      * @returns A promise that resolves as true if the rendering started successfully, false otherwise
      */
-    public async startRendering(filter: SmartFilter, onLogRequiredObservable: Observable<LogEntry>): Promise<boolean> {
+    public async startRendering(
+        filter: SmartFilter,
+        onLogRequiredObservable: Observable<LogEntry>
+    ): Promise<RenderResult> {
+        let optimizationTimeMs: Nullable<number> = null;
+        let runtimeCreationTimeMs: Nullable<number> = null;
+
         try {
             this._lastRenderedSmartFilter = filter;
-            const filterToRender = this.optimize ? this._optimize(filter) : filter;
+            const filterToRender = filter;
+            if (this.optimize) {
+                const optimizeStartTime = performance.now();
+                this._optimize(filter);
+                optimizationTimeMs = performance.now() - optimizeStartTime;
+            }
 
             const rtg = new RenderTargetGenerator(this.optimize);
+
+            const createRuntimeStartTime = performance.now();
             const runtime = await filterToRender.createRuntimeAsync(this.engine, rtg);
+            runtimeCreationTimeMs = performance.now() - createRuntimeStartTime;
 
             // NOTE: Always load assets and animations from the unoptimized filter because it has all the metadata needed to load assets and
             //       shares runtime data with the optimized filter so loading assets for it will work for the optimized filter as well
@@ -87,11 +121,19 @@ export class SmartFilterRenderer {
 
             this._setRuntime(runtime);
 
-            return true;
+            return {
+                succeeded: true,
+                optimizationTimeMs,
+                runtimeCreationTimeMs,
+            };
         } catch (err: any) {
             const message = err["message"] || err["_compilationError"] || err;
             onLogRequiredObservable.notifyObservers(new LogEntry(`Could not render Smart Filter:\n${message}`, true));
-            return false;
+            return {
+                succeeded: false,
+                optimizationTimeMs: null,
+                runtimeCreationTimeMs: null,
+            };
         }
     }
 
