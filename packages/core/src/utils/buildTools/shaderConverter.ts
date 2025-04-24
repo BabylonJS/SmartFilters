@@ -4,8 +4,19 @@ import type { ShaderCode, ShaderFunction } from "./shaderCode.types";
 import { ConnectionPointType } from "../../connection/connectionPointType.js";
 import { BlockDisableStrategy } from "../../blockFoundation/disableableShaderBlock.js";
 
-const GetFunctionHeaderRegEx = /\S*\w+\s+(\w+)\s*\((.*?)\)\s*\{/g; // Matches a function's name and its parameters
-const GetDefineRegEx = /^\S*#define\s+(\w+).*$/gm; // Matches a #define statement line, capturing its name
+// Note: creating a global RegExp object is risky, because it holds state (e.g. lastIndex) that has to be
+// cleared at the right time to ensure correctness, which is easy to forget to do.
+// Instead, for regular expressions used in multiple places, we define the string and options once, and create
+// a new RegExp object from them when needed, to ensure state isn't accidentally reused.
+
+// Matches a function's name and its parameters
+const GetFunctionHeaderRegExString = `\\S*\\w+\\s+(\\w+)\\s*\\((.*?)\\)\\s*\\{`;
+const GetFunctionHeaderRegExOptions = "g";
+
+// Matches a #define statement line, capturing its name
+const GetDefineRegExString = `^\\S*#define\\s+(\\w+).*$`;
+const GetDefineRegExOptions = "gm";
+
 const ReservedSymbols = ["main"];
 
 /**
@@ -161,11 +172,15 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     Logger.Log(`Uniforms found: ${JSON.stringify(uniforms)}`);
     const consts = [...fragmentShader.matchAll(/\S*const\s+\w*\s+(\w*)\s*=.*;/g)].map((match) => match[1]);
     Logger.Log(`Consts found: ${JSON.stringify(consts)}`);
-    const defineNames = [...fragmentShader.matchAll(GetDefineRegEx)].map((match) => match[1]);
-    Logger.Log(`Defines found: ${JSON.stringify(defineNames)}`);
-    const functionNames = [...fragmentShaderWithNoFunctionBodies.matchAll(GetFunctionHeaderRegEx)].map(
+    const defineNames = [...fragmentShader.matchAll(new RegExp(GetDefineRegExString, GetDefineRegExOptions))].map(
         (match) => match[1]
     );
+    Logger.Log(`Defines found: ${JSON.stringify(defineNames)}`);
+    const functionNames = [
+        ...fragmentShaderWithNoFunctionBodies.matchAll(
+            new RegExp(GetFunctionHeaderRegExString, GetFunctionHeaderRegExOptions)
+        ),
+    ].map((match) => match[1]);
     Logger.Log(`Functions found: ${JSON.stringify(functionNames)}`);
 
     // Decorate the uniforms, consts, defines, and functions
@@ -192,7 +207,9 @@ export function parseFragmentShader(fragmentShader: string): FragmentShaderInfo 
     const finalConsts = [...fragmentShaderWithRenamedSymbols.matchAll(/^\s*(const\s.*)/gm)].map((match) => match[1]);
 
     // Extract all the defines
-    const finalDefines = [...fragmentShaderWithRenamedSymbols.matchAll(GetDefineRegEx)].map((match) => match[0]);
+    const finalDefines = [
+        ...fragmentShaderWithRenamedSymbols.matchAll(new RegExp(GetDefineRegExString, GetDefineRegExOptions)),
+    ].map((match) => match[0]);
 
     // Find the main input
     const mainInputs = [...fragmentShaderWithRenamedSymbols.matchAll(/\S*uniform.*\s(\w*);\s*\/\/\s*main/gm)].map(
@@ -248,10 +265,12 @@ function extractFunctions(fragment: string): {
     let mainFunctionName: string | undefined;
     let pos = 0;
 
+    const getFunctionHeaderRegEx = new RegExp(GetFunctionHeaderRegExString, GetFunctionHeaderRegExOptions);
+
     while (pos < fragment.length) {
         // Match the next available function header in the fragment code
-        GetFunctionHeaderRegEx.lastIndex = pos;
-        const match = GetFunctionHeaderRegEx.exec(fragment);
+        getFunctionHeaderRegEx.lastIndex = pos;
+        const match = getFunctionHeaderRegEx.exec(fragment);
         if (!match) {
             break;
         }
