@@ -367,31 +367,37 @@ export const builtInBlockRegistrations: IBlockRegistration[] = [
     {
         blockType: "Float",
         namespace: inputsNamespace,
+        isInput: true,
         tooltip: "A floating point number representing a value with a fractional component",
     },
     {
         blockType: "Color3",
         namespace: inputsNamespace,
+        isInput: true,
         tooltip: "A set of 3 floating point numbers representing a color",
     },
     {
         blockType: "Color4",
         namespace: inputsNamespace,
+        isInput: true,
         tooltip: "A set of 4 floating point numbers representing a color",
     },
     {
         blockType: "Texture",
         namespace: inputsNamespace,
+        isInput: true,
         tooltip: "A texture to be used as input",
     },
     {
         blockType: "Vector2",
         namespace: inputsNamespace,
+        isInput: true,
         tooltip: "A Vector2 to be used as input",
     },
     {
         blockType: "Boolean",
         namespace: inputsNamespace,
+        isInput: true,
         tooltip: "A boolean to be used as input",
     },
 ];
