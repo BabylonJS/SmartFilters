@@ -37,6 +37,11 @@ export interface IBlockRegistration {
     tooltip: string;
 
     /**
+     * True if this is an input block
+     */
+    isInput?: boolean;
+
+    /**
      * If true, this represents a custom block (not one that was programmatically included)
      */
     isCustom?: boolean;

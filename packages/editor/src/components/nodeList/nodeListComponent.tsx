@@ -89,7 +89,7 @@ export class NodeListComponent extends react.Component<
         for (const key in allBlocks) {
             const blockList = allBlocks[key]!.filter(
                 (block: IBlockRegistration) =>
-                    (!this.state.onlyShowCustomBlocks || block.isCustom) &&
+                    (!this.state.onlyShowCustomBlocks || block.isCustom || block.isInput) &&
                     (!this.state.filter ||
                         block.blockType.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1)
             )
@@ -153,7 +153,7 @@ export class NodeListComponent extends react.Component<
             const blockRegistrations = allBlocks[namespace];
             if (blockRegistrations && blockRegistrations.length) {
                 for (const blockRegistration of blockRegistrations) {
-                    if (!this.state.onlyShowCustomBlocks || blockRegistration.isCustom) {
+                    if (!this.state.onlyShowCustomBlocks || blockRegistration.isCustom || blockRegistration.isInput) {
                         const blockKey = getBlockKey(blockRegistration.blockType, blockRegistration.namespace);
                         ledger.push(blockKey);
                     }

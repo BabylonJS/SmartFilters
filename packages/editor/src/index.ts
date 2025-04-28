@@ -17,3 +17,4 @@ export * from "./configuration/editorBlocks/inputBlockDeserializer.js";
 export * from "./configuration/editorBlocks/webCamInputBlock/webCamInputBlock.js";
 export * from "./helpers/registerAnimations.js";
 export * from "./configuration/constants.js";
+export * from "./helpers/observableProperty.js";
