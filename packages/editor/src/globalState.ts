@@ -13,7 +13,7 @@ import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
 import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/portData.js";
 import { BlockTools } from "./blockTools.js";
-import type { ObservableProperty } from "./helpers/observableProperty.js";
+import { ObservableProperty } from "./helpers/observableProperty.js";
 
 export type TexturePreset = {
     name: string;
@@ -21,6 +21,8 @@ export type TexturePreset = {
 };
 
 const PreviewBackgroundStorageKey = "PreviewBackground";
+export const DefaultPreviewAspectRatio = "1.33333";
+export const PreviewAspectRatioKey = "PreviewAspectRatio";
 
 export class GlobalState {
     private _previewBackground: string;
@@ -32,6 +34,10 @@ export class GlobalState {
     onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>;
 
     optimizerEnabled: Nullable<ObservableProperty<boolean>>;
+
+    previewAspectRatio: ObservableProperty<string> = new ObservableProperty<string>(
+        localStorage.getItem(PreviewAspectRatioKey) ?? DefaultPreviewAspectRatio
+    );
 
     smartFilter: SmartFilter;
 

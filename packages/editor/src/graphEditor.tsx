@@ -1,7 +1,7 @@
 import * as react from "react";
 import * as reactDOM from "react-dom";
 
-import type { GlobalState } from "./globalState";
+import { PreviewAspectRatioKey, type GlobalState } from "./globalState.js";
 import "./assets/styles/main.scss";
 
 import { Portal } from "./portal.js";
@@ -115,11 +115,12 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             const canvas = this.props.globalState.hostDocument.getElementById(
                 "sfe-preview-canvas"
             ) as HTMLCanvasElement;
-            if (canvas && this.props.globalState.onNewEngine) {
+            const previewDiv = this.props.globalState.hostDocument.getElementById("preview") as HTMLDivElement;
+            if (canvas && previewDiv && this.props.globalState.onNewEngine) {
                 const engine = initializePreview(canvas);
                 this.props.globalState.engine = engine;
                 this.props.globalState.onNewEngine(engine);
-                this._canvasResizeObserver.observe(canvas);
+                this._canvasResizeObserver.observe(previewDiv);
             }
         }
 
@@ -140,6 +141,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(
             DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
         );
+        this.props.globalState.previewAspectRatio.onChangedObservable.add((newValue: string) => {
+            localStorage.setItem(PreviewAspectRatioKey, newValue);
+        });
 
         this.build();
     }
@@ -639,7 +643,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                                     size={8}
                                     minSize={200}
                                     initialSize={300}
-                                    maxSize={500}
+                                    maxSize={800}
                                     controlledSide={ControlledSize.Second}
                                 />
                                 <div className="nme-preview-part">

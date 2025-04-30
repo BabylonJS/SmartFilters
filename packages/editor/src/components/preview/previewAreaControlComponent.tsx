@@ -1,5 +1,5 @@
 import * as react from "react";
-import type { GlobalState } from "../../globalState";
+import { DefaultPreviewAspectRatio, type GlobalState } from "../../globalState.js";
 
 import popUpIcon from "../../assets/imgs/popOut.svg";
 import type { Nullable } from "@babylonjs/core/types";
@@ -18,15 +18,16 @@ const backgroundOptions = [
 ];
 
 const aspectRatioOptions = [
-    { label: "16:6", value: "1.77778" },
-    { label: "4:3", value: "1.33333" },
+    { label: "16:9", value: "1.77778" },
+    { label: "4:3", value: DefaultPreviewAspectRatio },
     { label: "1:1", value: "1.0" },
-    { label: "19:6", value: "3.16667" },
+    { label: "19:6", value: "0.5625" },
     { label: "3:4", value: "0.75" },
 ];
 
 export class PreviewAreaControlComponent extends react.Component<IPreviewAreaControlComponent, { background: string }> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
+    private _onPreviewAspectRatioChangedObserver: Nullable<Observer<string>>;
 
     constructor(props: IPreviewAreaControlComponent) {
         super(props);
@@ -34,10 +35,17 @@ export class PreviewAreaControlComponent extends react.Component<IPreviewAreaCon
         this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable.add(() => {
             this.forceUpdate();
         });
+
+        this._onPreviewAspectRatioChangedObserver = this.props.globalState.previewAspectRatio.onChangedObservable.add(
+            () => {
+                this.forceUpdate();
+            }
+        );
     }
 
     override componentWillUnmount() {
         this.props.globalState.onResetRequiredObservable.remove(this._onResetRequiredObserver);
+        this.props.globalState.previewAspectRatio.onChangedObservable.remove(this._onPreviewAspectRatioChangedObserver);
     }
 
     onPopUp() {
@@ -60,12 +68,9 @@ export class PreviewAreaControlComponent extends react.Component<IPreviewAreaCon
                 <OptionsLine
                     label=""
                     options={aspectRatioOptions}
-                    target={this.props.globalState}
-                    propertyName="previewBackground"
+                    target={this.props.globalState.previewAspectRatio}
+                    propertyName="value"
                     valuesAreStrings={true}
-                    onSelect={() => {
-                        this.props.globalState.onPreviewResetRequiredObservable.notifyObservers();
-                    }}
                 />
                 <div
                     title="Open preview in new window"
