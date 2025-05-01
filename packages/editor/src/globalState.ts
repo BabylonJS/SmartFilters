@@ -23,6 +23,7 @@ export type TexturePreset = {
 const PreviewBackgroundStorageKey = "PreviewBackground";
 export const DefaultPreviewAspectRatio = "1.33333";
 export const PreviewAspectRatioKey = "PreviewAspectRatio";
+export const PreviewFillContainerKey = "PreviewFillContainer";
 
 export class GlobalState {
     private _previewBackground: string;
@@ -37,6 +38,10 @@ export class GlobalState {
 
     previewAspectRatio: ObservableProperty<string> = new ObservableProperty<string>(
         localStorage.getItem(PreviewAspectRatioKey) ?? DefaultPreviewAspectRatio
+    );
+
+    previewFillContainer: ObservableProperty<boolean> = new ObservableProperty<boolean>(
+        !!localStorage.getItem(PreviewFillContainerKey)
     );
 
     smartFilter: SmartFilter;

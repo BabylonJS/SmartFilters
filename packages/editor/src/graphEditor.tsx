@@ -1,7 +1,7 @@
 import * as react from "react";
 import * as reactDOM from "react-dom";
 
-import { PreviewAspectRatioKey, type GlobalState } from "./globalState.js";
+import { PreviewAspectRatioKey, PreviewFillContainerKey, type GlobalState } from "./globalState.js";
 import "./assets/styles/main.scss";
 
 import { Portal } from "./portal.js";
@@ -142,6 +142,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         );
         this.props.globalState.previewAspectRatio.onChangedObservable.add((newValue: string) => {
             localStorage.setItem(PreviewAspectRatioKey, newValue);
+        });
+        this.props.globalState.previewFillContainer.onChangedObservable.add((newValue: boolean) => {
+            localStorage.setItem(PreviewFillContainerKey, newValue ? "true" : "");
         });
 
         this.build();
@@ -540,6 +543,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         if (this._previewHost) {
             const previewAreaComponentHost = react.createElement(PreviewAreaComponent, {
                 globalState: this.props.globalState,
+                allowPreviewFillMode: true,
             });
             reactDOM.render(previewAreaComponentHost, this._previewHost);
         }
@@ -558,10 +562,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         const newWindowButton = document.getElementById("preview-new-window");
         if (newWindowButton) {
             newWindowButton.style.display = "none";
-        }
-        const previewAreaBar = document.getElementById("preview-area-bar");
-        if (previewAreaBar) {
-            previewAreaBar.style.gridTemplateColumns = "auto 1fr 40px 40px";
         }
     };
 
@@ -654,7 +654,10 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                                         />
                                     ) : null}
                                     {!this.state.showPreviewPopUp ? (
-                                        <PreviewAreaComponent globalState={this.props.globalState} />
+                                        <PreviewAreaComponent
+                                            globalState={this.props.globalState}
+                                            allowPreviewFillMode={false}
+                                        />
                                     ) : null}
                                 </div>
                             </>

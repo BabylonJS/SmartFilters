@@ -5,6 +5,7 @@ import popUpIcon from "../../assets/imgs/popOut.svg";
 import type { Nullable } from "@babylonjs/core/types";
 import type { Observer } from "@babylonjs/core/Misc/observable";
 import { OptionsLine } from "@babylonjs/shared-ui-components/lines/optionsLineComponent.js";
+import { CheckBoxLineComponent } from "../../sharedComponents/checkBoxLineComponent.js";
 
 interface IPreviewAreaControlComponent {
     globalState: GlobalState;
@@ -24,20 +25,12 @@ const aspectRatioOptions = [
     { label: "1:1", value: "1.0" },
     { label: "19:6", value: "0.5625" },
     { label: "3:4", value: "0.75" },
-    { label: "Fill", value: "unset" }, // DO NOT CHECK IN
 ];
-
-/**
- * The problem is that the canvas and preview div need the same aspect ratio set on them.
- * If the canvas doesn't have an aspect ratio set, it will infer it from the height/width attributes which
- * are stale from the previous size. For fill, this is a problem, because we would normally clear the aspect ratio
- * and let it fill its container. Either we need to eliminate this implicit aspect ratio behavior, or we need to
- * explicitly set the aspect ratio on the canvas to be the same as it's container.
- */
 
 export class PreviewAreaControlComponent extends react.Component<IPreviewAreaControlComponent, { background: string }> {
     private _onResetRequiredObserver: Nullable<Observer<boolean>>;
     private _onPreviewAspectRatioChangedObserver: Nullable<Observer<string>>;
+    private _onPreviewFillContainerChangedObserver: Nullable<Observer<boolean>>;
 
     constructor(props: IPreviewAreaControlComponent) {
         super(props);
@@ -51,11 +44,18 @@ export class PreviewAreaControlComponent extends react.Component<IPreviewAreaCon
                 this.forceUpdate();
             }
         );
+        this._onPreviewFillContainerChangedObserver =
+            this.props.globalState.previewFillContainer.onChangedObservable.add(() => {
+                this.forceUpdate();
+            });
     }
 
     override componentWillUnmount() {
         this.props.globalState.onResetRequiredObservable.remove(this._onResetRequiredObserver);
         this.props.globalState.previewAspectRatio.onChangedObservable.remove(this._onPreviewAspectRatioChangedObserver);
+        this.props.globalState.previewFillContainer.onChangedObservable.remove(
+            this._onPreviewFillContainerChangedObserver
+        );
     }
 
     onPopUp() {
@@ -82,6 +82,15 @@ export class PreviewAreaControlComponent extends react.Component<IPreviewAreaCon
                     propertyName="value"
                     valuesAreStrings={true}
                 />
+                {this.props.allowPreviewFillMode && (
+                    <CheckBoxLineComponent
+                        label="Fill"
+                        isSelected={() => this.props.globalState.previewFillContainer.value}
+                        onSelect={(value: boolean) => {
+                            this.props.globalState.previewFillContainer.value = value;
+                        }}
+                    />
+                )}
                 <div
                     title="Open preview in new window"
                     id="preview-new-window"
