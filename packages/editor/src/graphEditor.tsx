@@ -115,12 +115,11 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             const canvas = this.props.globalState.hostDocument.getElementById(
                 "sfe-preview-canvas"
             ) as HTMLCanvasElement;
-            const previewDiv = this.props.globalState.hostDocument.getElementById("preview") as HTMLDivElement;
-            if (canvas && previewDiv && this.props.globalState.onNewEngine) {
+            if (canvas && this.props.globalState.onNewEngine) {
                 const engine = initializePreview(canvas);
                 this.props.globalState.engine = engine;
                 this.props.globalState.onNewEngine(engine);
-                this._canvasResizeObserver.observe(previewDiv);
+                this._canvasResizeObserver.observe(canvas);
             }
         }
 
@@ -510,6 +509,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             const previewAreaControlComponentHost = react.createElement(PreviewAreaControlComponent, {
                 globalState: this.props.globalState,
                 togglePreviewAreaComponent: this.handlePopUp,
+                allowPreviewFillMode: true,
             });
             reactDOM.render(previewAreaControlComponentHost, host);
         }
@@ -526,8 +526,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             host.style.overflow = "hidden";
             host.style.display = "grid";
             host.style.gridRow = "2";
-            host.style.gridTemplateRows = "auto 40px";
-            host.style.gridTemplateRows = "calc(100% - 40px) 40px";
+            host.style.gridTemplateRows = "auto";
 
             parentControl.appendChild(host);
 
@@ -651,6 +650,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                                         <PreviewAreaControlComponent
                                             globalState={this.props.globalState}
                                             togglePreviewAreaComponent={this.handlePopUp}
+                                            allowPreviewFillMode={false}
                                         />
                                     ) : null}
                                     {!this.state.showPreviewPopUp ? (
