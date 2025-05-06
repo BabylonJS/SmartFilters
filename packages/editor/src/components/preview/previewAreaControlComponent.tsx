@@ -75,13 +75,15 @@ export class PreviewAreaControlComponent extends react.Component<IPreviewAreaCon
                         this.props.globalState.onPreviewResetRequiredObservable.notifyObservers();
                     }}
                 />
-                <OptionsLine
-                    label=""
-                    options={aspectRatioOptions}
-                    target={this.props.globalState.previewAspectRatio}
-                    propertyName="value"
-                    valuesAreStrings={true}
-                />
+                {(!this.props.allowPreviewFillMode || !this.props.globalState.previewFillContainer.value) && (
+                    <OptionsLine
+                        label=""
+                        options={aspectRatioOptions}
+                        target={this.props.globalState.previewAspectRatio}
+                        propertyName="value"
+                        valuesAreStrings={true}
+                    />
+                )}
                 {this.props.allowPreviewFillMode && (
                     <CheckBoxLineComponent
                         label="Fill"

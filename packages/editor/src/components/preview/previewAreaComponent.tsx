@@ -59,7 +59,7 @@ export class PreviewAreaComponent extends react.Component<IPreviewAreaComponentP
                     <canvas id="sfe-preview-canvas" style={{ aspectRatio }} />
                     {!this.props.globalState.smartFilter ? (
                         <div className={"waitPanel" + (this.state.isLoading ? "" : " hidden")}>
-                            Please wait, loading....
+                            Please wait, loading...
                         </div>
                     ) : (
                         <></>
