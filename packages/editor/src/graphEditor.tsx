@@ -1,7 +1,7 @@
 import * as react from "react";
 import * as reactDOM from "react-dom";
 
-import type { GlobalState } from "./globalState";
+import { ForceWebGL1StorageKey, type GlobalState } from "./globalState.js";
 import "./assets/styles/main.scss";
 
 import { Portal } from "./portal.js";
@@ -116,7 +116,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                 "sfe-preview-canvas"
             ) as HTMLCanvasElement;
             if (canvas && this.props.globalState.onNewEngine) {
-                const engine = initializePreview(canvas);
+                const engine = initializePreview(canvas, this.props.globalState.forceWebGL1.value);
                 this.props.globalState.engine = engine;
                 this.props.globalState.onNewEngine(engine);
                 this._canvasResizeObserver.observe(canvas);
@@ -140,6 +140,10 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(
             DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
         );
+        this.props.globalState.forceWebGL1.onChangedObservable.add((newValue: boolean) => {
+            localStorage.setItem(ForceWebGL1StorageKey, newValue ? "true" : "");
+            // TODO: force the engine to be recreated
+        });
 
         this.build();
     }
@@ -441,7 +445,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         ) as HTMLCanvasElement
     ) => {
         if (canvas && this.props.globalState.onNewEngine) {
-            const engine = initializePreview(canvas);
+            const engine = initializePreview(canvas, this.props.globalState.forceWebGL1.value);
             this.props.globalState.engine = engine;
             this.props.globalState.onNewEngine(engine);
         }

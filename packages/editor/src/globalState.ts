@@ -13,7 +13,7 @@ import type { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/
 import type { BlockEditorRegistration } from "./configuration/blockEditorRegistration.js";
 import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/portData.js";
 import { BlockTools } from "./blockTools.js";
-import type { ObservableProperty } from "./helpers/observableProperty.js";
+import { ObservableProperty } from "./helpers/observableProperty.js";
 
 export type TexturePreset = {
     name: string;
@@ -21,6 +21,7 @@ export type TexturePreset = {
 };
 
 const PreviewBackgroundStorageKey = "PreviewBackground";
+export const ForceWebGL1StorageKey = "ForceWebGL1";
 
 export class GlobalState {
     private _previewBackground: string;
@@ -32,6 +33,10 @@ export class GlobalState {
     onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>;
 
     optimizerEnabled: Nullable<ObservableProperty<boolean>>;
+
+    forceWebGL1: ObservableProperty<boolean> = new ObservableProperty<boolean>(
+        !!localStorage.getItem(ForceWebGL1StorageKey)
+    );
 
     smartFilter: SmartFilter;
 
