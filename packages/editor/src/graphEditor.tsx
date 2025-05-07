@@ -8,7 +8,7 @@ import { Portal } from "./portal.js";
 
 import { MessageDialog } from "@babylonjs/shared-ui-components/components/MessageDialog.js";
 import { GraphCanvasComponent } from "@babylonjs/shared-ui-components/nodeGraphSystem/graphCanvas.js";
-import { LogComponent } from "./components/log/logComponent.js";
+import { LogComponent, LogEntry } from "./components/log/logComponent.js";
 import { TypeLedger } from "@babylonjs/shared-ui-components/nodeGraphSystem/typeLedger.js";
 import { BlockTools } from "./blockTools.js";
 import { PropertyTabComponent } from "./components/propertyTab/propertyTabComponent.js";
@@ -33,6 +33,7 @@ import { OutputBlockName } from "./configuration/constants.js";
 import type { BlockNodeData } from "./graphSystem/blockNodeData";
 import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
 import { OnlyShowCustomBlocksDefaultValue } from "./constants.js";
+import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
 interface IGraphEditorProps {
     globalState: GlobalState;
@@ -117,6 +118,8 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             ) as HTMLCanvasElement;
             if (canvas && this.props.globalState.onNewEngine) {
                 const engine = initializePreview(canvas, this.props.globalState.forceWebGL1);
+                const versionToLog = `Babylon.js v${ThinEngine.Version} - WebGL${engine.webGLVersion}`;
+                this.props.globalState.onLogRequiredObservable.notifyObservers(new LogEntry(versionToLog, false));
                 this.props.globalState.engine = engine;
                 this.props.globalState.onNewEngine(engine);
                 this._canvasResizeObserver.observe(canvas);
