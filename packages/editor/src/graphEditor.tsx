@@ -1,7 +1,12 @@
 import * as react from "react";
 import * as reactDOM from "react-dom";
 
-import { ForceWebGL1StorageKey, type GlobalState } from "./globalState.js";
+import {
+    PreviewAspectRatioKey,
+    PreviewFillContainerKey,
+    ForceWebGL1StorageKey,
+    type GlobalState,
+} from "./globalState.js";
 import "./assets/styles/main.scss";
 
 import { Portal } from "./portal.js";
@@ -140,6 +145,12 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(
             DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
         );
+        this.props.globalState.previewAspectRatio.onChangedObservable.add((newValue: string) => {
+            localStorage.setItem(PreviewAspectRatioKey, newValue);
+        });
+        this.props.globalState.previewFillContainer.onChangedObservable.add((newValue: boolean) => {
+            localStorage.setItem(PreviewFillContainerKey, newValue ? "true" : "");
+        });
         this.props.globalState.forceWebGL1.onChangedObservable.add((newValue: boolean) => {
             localStorage.setItem(ForceWebGL1StorageKey, newValue ? "true" : "");
             // TODO: force the engine to be recreated
@@ -510,6 +521,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             const previewAreaControlComponentHost = react.createElement(PreviewAreaControlComponent, {
                 globalState: this.props.globalState,
                 togglePreviewAreaComponent: this.handlePopUp,
+                allowPreviewFillMode: true,
             });
             reactDOM.render(previewAreaControlComponentHost, host);
         }
@@ -526,8 +538,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
             host.style.overflow = "hidden";
             host.style.display = "grid";
             host.style.gridRow = "2";
-            host.style.gridTemplateRows = "auto 40px";
-            host.style.gridTemplateRows = "calc(100% - 40px) 40px";
+            host.style.gridTemplateRows = "auto";
 
             parentControl.appendChild(host);
 
@@ -541,6 +552,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         if (this._previewHost) {
             const previewAreaComponentHost = react.createElement(PreviewAreaComponent, {
                 globalState: this.props.globalState,
+                allowPreviewFillMode: true,
             });
             reactDOM.render(previewAreaComponentHost, this._previewHost);
         }
@@ -559,10 +571,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         const newWindowButton = document.getElementById("preview-new-window");
         if (newWindowButton) {
             newWindowButton.style.display = "none";
-        }
-        const previewAreaBar = document.getElementById("preview-area-bar");
-        if (previewAreaBar) {
-            previewAreaBar.style.gridTemplateColumns = "auto 1fr 40px 40px";
         }
     };
 
@@ -643,7 +651,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                                     size={8}
                                     minSize={200}
                                     initialSize={300}
-                                    maxSize={500}
+                                    maxSize={800}
                                     controlledSide={ControlledSize.Second}
                                 />
                                 <div className="nme-preview-part">
@@ -651,10 +659,14 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                                         <PreviewAreaControlComponent
                                             globalState={this.props.globalState}
                                             togglePreviewAreaComponent={this.handlePopUp}
+                                            allowPreviewFillMode={false}
                                         />
                                     ) : null}
                                     {!this.state.showPreviewPopUp ? (
-                                        <PreviewAreaComponent globalState={this.props.globalState} />
+                                        <PreviewAreaComponent
+                                            globalState={this.props.globalState}
+                                            allowPreviewFillMode={false}
+                                        />
                                     ) : null}
                                 </div>
                             </>
