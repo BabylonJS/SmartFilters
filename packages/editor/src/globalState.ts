@@ -14,7 +14,6 @@ import type { BlockEditorRegistration } from "./configuration/blockEditorRegistr
 import type { IPortData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/portData.js";
 import { BlockTools } from "./blockTools.js";
 import { ObservableProperty } from "./helpers/observableProperty.js";
-import { ObservableProperty } from "./helpers/observableProperty.js";
 
 export type TexturePreset = {
     name: string;
