@@ -153,7 +153,6 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         });
         this.props.globalState.forceWebGL1.onChangedObservable.add((newValue: boolean) => {
             localStorage.setItem(ForceWebGL1StorageKey, newValue ? "true" : "");
-            // TODO: force the engine to be recreated
         });
 
         this.build();
