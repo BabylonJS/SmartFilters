@@ -360,7 +360,12 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 label="Force WebGL v1"
                                 isSelected={() => !!this.state.forceWebGL1}
                                 onSelect={(value: boolean) => {
-                                    this.props.globalState.forceWebGL1.value = value;
+                                    if (window.confirm("Any unsaved changes will be lost. Do you want to continue?")) {
+                                        this.props.globalState.forceWebGL1.value = value;
+                                        window.location.reload();
+                                    } else {
+                                        this.forceUpdate();
+                                    }
                                 }}
                             />
                         )}
