@@ -45,9 +45,7 @@ export class GlobalState {
         !!localStorage.getItem(PreviewFillContainerKey)
     );
 
-    forceWebGL1: ObservableProperty<boolean> = new ObservableProperty<boolean>(
-        !!localStorage.getItem(ForceWebGL1StorageKey)
-    );
+    forceWebGL1: boolean = !!localStorage.getItem(ForceWebGL1StorageKey);
 
     smartFilter: SmartFilter;
 

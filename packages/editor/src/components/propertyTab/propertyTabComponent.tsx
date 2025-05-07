@@ -20,7 +20,7 @@ import { BlockTools } from "../../blockTools.js";
 import type { Nullable } from "@babylonjs/core/types";
 import type { FrameNodePort } from "@babylonjs/shared-ui-components/nodeGraphSystem/frameNodePort";
 import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
-import type { GlobalState } from "../../globalState";
+import { ForceWebGL1StorageKey, type GlobalState } from "../../globalState.js";
 import type { ISelectionChangedOptions } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/selectionChangedOptions";
 import { SmartFilterCoreVersion, type AnyInputBlock } from "@babylonjs/smart-filters";
 import type { Observer } from "@babylonjs/core/Misc/observable.js";
@@ -38,13 +38,11 @@ interface IPropertyTabComponentState {
     currentNodePort: Nullable<NodePort>;
     uploadInProgress: boolean;
     optimize: Nullable<boolean>;
-    forceWebGL1: boolean;
 }
 
 export class PropertyTabComponent extends react.Component<IPropertyTabComponentProps, IPropertyTabComponentState> {
     private _onResetRequiredObserver?: Observer<boolean>;
     private _onOptimizerEnabledChangedObserver?: Observer<boolean>;
-    private _onForceWebGL1ChangedObserver?: Observer<boolean>;
 
     // private _modeSelect: React.RefObject<OptionsLineComponent>;
 
@@ -60,7 +58,6 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             currentNodePort: null,
             uploadInProgress: false,
             optimize,
-            forceWebGL1: this.props.globalState.forceWebGL1.value,
         };
 
         // this._modeSelect = React.createRef();
@@ -120,10 +117,6 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                 }
             );
         }
-
-        this.props.globalState.forceWebGL1.onChangedObservable.add((value: boolean) => {
-            this.setState({ forceWebGL1: value });
-        });
     }
 
     override componentWillUnmount() {
@@ -132,9 +125,6 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         }
         if (this._onOptimizerEnabledChangedObserver) {
             this._onOptimizerEnabledChangedObserver.remove();
-        }
-        if (this._onForceWebGL1ChangedObserver) {
-            this._onForceWebGL1ChangedObserver.remove();
         }
     }
 
@@ -358,12 +348,13 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                         {this.props.globalState.onNewEngine && ( // NOTE: only display this option if the Editor controls creating the Engine
                             <CheckBoxLineComponent
                                 label="Force WebGL v1"
-                                isSelected={() => !!this.state.forceWebGL1}
+                                isSelected={() => this.props.globalState.forceWebGL1}
                                 onSelect={(value: boolean) => {
                                     if (window.confirm("Any unsaved changes will be lost. Do you want to continue?")) {
-                                        this.props.globalState.forceWebGL1.value = value;
+                                        localStorage.setItem(ForceWebGL1StorageKey, value ? "true" : "");
                                         window.location.reload();
                                     } else {
+                                        // Re-apply the original value (this.props.globalState.forceWebGL1)
                                         this.forceUpdate();
                                     }
                                 }}
