@@ -24,6 +24,7 @@ const PreviewBackgroundStorageKey = "PreviewBackground";
 export const DefaultPreviewAspectRatio = "1.33333";
 export const PreviewAspectRatioKey = "PreviewAspectRatio";
 export const PreviewFillContainerKey = "PreviewFillContainer";
+export const ForceWebGL1StorageKey = "ForceWebGL1";
 
 export class GlobalState {
     private _previewBackground: string;
@@ -43,6 +44,8 @@ export class GlobalState {
     previewFillContainer: ObservableProperty<boolean> = new ObservableProperty<boolean>(
         !!localStorage.getItem(PreviewFillContainerKey)
     );
+
+    forceWebGL1: boolean = !!localStorage.getItem(ForceWebGL1StorageKey);
 
     smartFilter: SmartFilter;
 
