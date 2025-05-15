@@ -4,7 +4,7 @@ import {
     getCompatibilityIssueMessage,
 } from "./connectionPointCompatibilityState.js";
 import { ConnectionPointDirection } from "./connectionPointDirection.js";
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock.js";
 import type { ConnectionPointType, ConnectionPointValue } from "./connectionPointType";
 import type { StrongRef } from "../runtime/strongRef";
 
@@ -89,7 +89,7 @@ export class ConnectionPoint<U extends ConnectionPointType = ConnectionPointType
     }
 
     /**
-     * @returns the connection point this connection point is connected to.
+     * @returns The connection point this connection point is connected to.
      * (the one on the other side of the connection)
      * Only input connection points have a connected point which they received their value from.
      * (Relation is always 1:N for input:output)
@@ -99,8 +99,8 @@ export class ConnectionPoint<U extends ConnectionPointType = ConnectionPointType
     }
 
     /**
-     * @returns the connection point this connection point is to.
-     * (the one on the other side of the connection)
+     * @returns The connection points this output connection point is connected to.
+     * (the ones on the other side of the connection)
      * Only output connection points have a list of endpoints which they provide their value to.
      * (Relation is always 1:N for input:output)
      */
@@ -185,7 +185,7 @@ export class ConnectionPoint<U extends ConnectionPointType = ConnectionPointType
 
         // Connections are double-linked - remove the reference back to this connection point from the one we just disconnected from
         endpoint._connectedTo = null;
-        endpoint.runtimeData = null;
+        endpoint.runtimeData = endpoint.defaultRuntimeData;
     }
 
     /**

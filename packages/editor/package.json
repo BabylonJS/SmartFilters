@@ -1,10 +1,8 @@
 {
-    "name": "@babylonjs/smart-filters-editor",
+    "name": "@babylonjs/smart-filters-editor-control",
+    "private": true,
     "version": "0.0.0",
-    "description": "An editor for the smart filters.",
-    "author": {
-        "name": "Sebastien VANDENBERGHE"
-    },
+    "description": "The editor control used in Smart Filters applications.",
     "keywords": [
         "video",
         "composition",
@@ -34,7 +32,8 @@
     "scripts": {
         "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
         "assets": "node build/copyAssets.js",
-        "build": "npm run assets && tsc -p ./tsconfig.build.json",
+        "build": "npm run assets && npm run build:editorControl",
+        "build:editorControl": "tsc -p ./tsconfig.build.json",
         "test": "echo \"Error: no test specified\" && exit 1",
         "preparePublish": "node build/preparePublish.js"
     },
@@ -42,8 +41,8 @@
         "recursive-copy": "^2.0.13"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^7.35.2",
-        "@babylonjs/shared-ui-components": "^7.35.2",
+        "@babylonjs/core": "^8.0.1",
+        "@babylonjs/shared-ui-components": "^8.0.1",
         "@fortawesome/fontawesome-svg-core": "^6.1.0",
         "@fortawesome/free-solid-svg-icons": "^6.1.0",
         "@fortawesome/react-fontawesome": "^0.1.18",

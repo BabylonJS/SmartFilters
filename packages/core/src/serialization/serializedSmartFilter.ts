@@ -1,4 +1,4 @@
-import type { SerializedSmartFilterV1 } from "./v1/serialization.types";
+import type { SerializedSmartFilterV1 } from "./v1/smartFilterSerialization.types";
 
 /**
  * Type union of all versions of serialized SmartFilters

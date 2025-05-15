@@ -1,6 +1,5 @@
 /**
  * Represents the owner of a command.
- * In practice, it will mostly be a block, the smart filter or a tool injecting commands.
  */
 export interface ICommandOwner {
     /**
@@ -9,9 +8,9 @@ export interface ICommandOwner {
     readonly name: string;
 
     /**
-     * Gets the class name of the owner.
+     * The blockType of the owner;
      */
-    getClassName(): string;
+    readonly blockType: string;
 }
 
 /**

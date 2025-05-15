@@ -27,6 +27,7 @@ var buildConfig = function (env) {
         devtool: isProd ? false : "eval-cheap-module-source-map",
         devServer: {
             static: ["www"],
+            port: 8080,
         },
         plugins: [
             new HtmlWebpackPlugin(
@@ -39,9 +40,6 @@ var buildConfig = function (env) {
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".scss", ".svg"],
             alias: {
-                // "core": path.resolve("node_modules/@babylonjs/core"),
-                // "shared-ui-components": path.resolve("node_modules/@dev/shared-ui-components"),
-                // TODO. React not understood as a module
                 react: path.resolve("../../node_modules/react"),
                 "react-dom": path.resolve("../../node_modules/react-dom"),
             },
@@ -61,12 +59,14 @@ var buildConfig = function (env) {
                             options: {
                                 sourceMap: true,
                                 modules: "global",
+                                esModule: true,
                             },
                         },
                         {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: true,
+                                api: "modern",
                             },
                         },
                     ],
@@ -80,12 +80,14 @@ var buildConfig = function (env) {
                             options: {
                                 sourceMap: true,
                                 modules: true,
+                                esModule: true,
                             },
                         },
                         {
                             loader: "sass-loader",
                             options: {
                                 sourceMap: true,
+                                api: "modern",
                             },
                         },
                     ],

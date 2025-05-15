@@ -18,7 +18,7 @@ export class Color3PropertyTabComponent extends react.Component<IColor3PropertyT
         return (
             <Color3LineComponent
                 lockObject={this.props.stateManager.lockObject}
-                label="Value"
+                label={this.props.inputBlock.name}
                 target={foo}
                 propertyName="color"
                 onChange={() => {

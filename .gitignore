@@ -35,6 +35,8 @@ dist
 
 # generated shader TS files
 **/*.shader.ts
+**/*.fragment.ts
+**/*.block.ts
 
 # browser extension output
 packages/browserExtension/www

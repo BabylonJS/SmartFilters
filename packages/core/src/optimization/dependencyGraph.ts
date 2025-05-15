@@ -1,3 +1,5 @@
+import { Logger } from "@babylonjs/core/Misc/logger.js";
+
 /**
  * Implementation of a dependency graph.
  */
@@ -87,7 +89,7 @@ export class DependencyGraph<T> {
         }
 
         if (this._list.size > 0) {
-            console.error(this._list);
+            Logger.Error(JSON.stringify(this._list));
             throw new Error("Circular dependency detected!");
         }
     }

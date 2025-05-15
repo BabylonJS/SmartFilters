@@ -1,16 +1,18 @@
 import type { SmartFilter } from "../smartFilter";
-import type { BaseBlock } from "../blocks/baseBlock";
-import { inputBlockSerializer } from "../blocks/inputBlock.serializer.js";
+import type { BaseBlock } from "../blockFoundation/baseBlock";
+import { inputBlockSerializer } from "../blockFoundation/inputBlock.serializer.js";
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import { defaultBlockSerializer } from "./v1/defaultBlockSerializer.js";
-import { OutputBlock } from "../blocks/outputBlock.js";
+import { OutputBlock } from "../blockFoundation/outputBlock.js";
 import type {
     IBlockSerializerV1,
     ISerializedBlockV1,
     ISerializedConnectionV1,
     SerializeBlockV1,
     SerializedSmartFilterV1,
-} from "./v1/serialization.types";
+} from "./v1/smartFilterSerialization.types";
+import { CustomShaderBlock } from "../blockFoundation/customShaderBlock.js";
+import { CustomAggregateBlock } from "../blockFoundation/customAggregateBlock.js";
 
 /**
  * Determines if two serialized connection points are equivalent to each other
@@ -37,17 +39,17 @@ export class SmartFilterSerializer {
 
     /**
      * Creates a new SmartFilterSerializer
-     * @param blocksUsingDefaultSerialization - A list of the classNames of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
+     * @param blocksUsingDefaultSerialization - A list of the blockType of blocks which can use default serialization (they only have ConnectionPoint properties and no constructor parameters)
      * @param additionalBlockSerializers - An array of block serializers to use, beyond those for the core blocks
      */
     public constructor(blocksUsingDefaultSerialization: string[], additionalBlockSerializers: IBlockSerializerV1[]) {
-        this._blockSerializers.set(inputBlockSerializer.className, inputBlockSerializer.serialize);
+        this._blockSerializers.set(inputBlockSerializer.blockType, inputBlockSerializer.serialize);
         this._blockSerializers.set(OutputBlock.ClassName, defaultBlockSerializer);
         blocksUsingDefaultSerialization.forEach((block) => {
             this._blockSerializers.set(block, defaultBlockSerializer);
         });
         additionalBlockSerializers.forEach((serializer) =>
-            this._blockSerializers.set(serializer.className, serializer.serialize)
+            this._blockSerializers.set(serializer.blockType, serializer.serialize)
         );
     }
 
@@ -61,9 +63,13 @@ export class SmartFilterSerializer {
 
         const blocks = smartFilter.attachedBlocks.map((block: BaseBlock) => {
             // Serialize the block itself
-            const serializeFn = this._blockSerializers.get(block.getClassName());
+            const blockClassName = block.getClassName();
+            const serializeFn =
+                blockClassName === CustomShaderBlock.ClassName || blockClassName === CustomAggregateBlock.ClassName
+                    ? defaultBlockSerializer
+                    : this._blockSerializers.get(block.blockType);
             if (!serializeFn) {
-                throw new Error(`No serializer was provided for a block of type ${block.getClassName()}`);
+                throw new Error(`No serializer was provided for a block of type ${block.blockType}`);
             }
             const serializedBlock: ISerializedBlockV1 = serializeFn(block);
 
@@ -102,8 +108,10 @@ export class SmartFilterSerializer {
         });
 
         return {
-            version: 1,
+            format: "smartFilter",
+            formatVersion: 1,
             name: smartFilter.name,
+            namespace: smartFilter.namespace,
             comments: smartFilter.comments,
             editorData: smartFilter.editorData,
             blocks,

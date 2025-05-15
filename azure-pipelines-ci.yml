@@ -24,6 +24,8 @@ jobs:
       steps:
           - script: "npm install"
             displayName: "Npm install"
+          - script: "npm run build"
+            displayName: "Npm run build"
 
     - job: ESLint
       displayName: "2. ESLint"
@@ -33,6 +35,8 @@ jobs:
       steps:
           - script: "npm install"
             displayName: "Npm install"
+          - script: "npm run build"
+            displayName: "Npm run build"
           - script: "npm run lint:check"
             displayName: "Run ESLint Check"
 
@@ -44,5 +48,7 @@ jobs:
       steps:
           - script: "npm install"
             displayName: "Npm install"
+          - script: "npm run build"
+            displayName: "Npm run build"
           - script: "npm run test"
             displayName: "Jest Unit Tests"

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as fs from "fs";
 import { exec, type ExecException } from "child_process";
 import { compareVersions, determineVersion, getNpmVersion, type VersionType } from "./determineVersion.js";
@@ -41,6 +42,7 @@ queryNpmFeed("preview", (npmPreviewVersion) => {
 
         console.log("Version to use:", versionToUse);
 
+        // Update package.json if needed
         if (packageJSON.version !== versionToUse) {
             packageJSON.version = versionToUse;
             fs.writeFileSync("package.json", JSON.stringify(packageJSON, null, 4));
@@ -48,5 +50,12 @@ queryNpmFeed("preview", (npmPreviewVersion) => {
         } else {
             console.log("No need to update package.json");
         }
+
+        // Write out to version.ts
+        const versionTsText = `/**
+ * The version of the SmartFilter core. During publish, this file is overwritten by versionUp.ts with the same version that is used for the NPM publish.
+ */
+export const SmartFilterCoreVersion = "${versionToUse}";\n`;
+        fs.writeFileSync("src/version.ts", versionTsText);
     });
 });

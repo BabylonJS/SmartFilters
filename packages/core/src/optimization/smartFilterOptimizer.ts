@@ -1,13 +1,14 @@
 import type { Nullable } from "@babylonjs/core/types";
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 
 import type { ConnectionPoint } from "../connection/connectionPoint";
 import type { ShaderBinding } from "../runtime/shaderRuntime";
-import type { InputBlock } from "../blocks/inputBlock";
-import type { BaseBlock } from "../blocks/baseBlock";
+import type { InputBlock } from "../blockFoundation/inputBlock";
+import type { BaseBlock } from "../blockFoundation/baseBlock";
 import { SmartFilter } from "../smartFilter.js";
 import { ConnectionPointType } from "../connection/connectionPointType.js";
-import { ShaderBlock } from "../blocks/shaderBlock.js";
-import { isTextureInputBlock } from "../blocks/inputBlock.js";
+import { ShaderBlock } from "../blockFoundation/shaderBlock.js";
+import { isTextureInputBlock } from "../blockFoundation/inputBlock.js";
 import { OptimizedShaderBlock } from "./optimizedShaderBlock.js";
 import {
     AutoDisableMainInputColorName,
@@ -17,8 +18,10 @@ import {
     undecorateSymbol,
 } from "../utils/shaderCodeUtils.js";
 import { DependencyGraph } from "./dependencyGraph.js";
-import { DisableableShaderBlock, BlockDisableStrategy } from "../blocks/disableableShaderBlock.js";
+import { DisableableShaderBlock, BlockDisableStrategy } from "../blockFoundation/disableableShaderBlock.js";
+import { textureOptionsMatch, type OutputTextureOptions } from "../blockFoundation/textureOptions.js";
 
+const GetDefineRegEx = /^\S*#define\s+(\w+).*$/; // Matches a #define statement line, capturing its decorated or undecorated name
 const showDebugData = false;
 
 /**
@@ -28,7 +31,7 @@ type RemappedSymbol = {
     /**
      * The type of the symbol.
      */
-    type: "uniform" | "const" | "sampler" | "function";
+    type: "uniform" | "const" | "sampler" | "function" | "define";
 
     /**
      * The name of the symbol.
@@ -39,6 +42,11 @@ type RemappedSymbol = {
      * The name of the symbol after it has been remapped.
      */
     remappedName: string;
+
+    /**
+     * For "function", this is the parameter list to differentiate between overloads.
+     */
+    params?: string;
 
     /**
      * The declaration of the symbol. For "function" it is the function code.
@@ -104,7 +112,7 @@ export class SmartFilterOptimizer {
     private _mainFunctionNameToCode: Map<string, string> = new Map();
     private _dependencyGraph: DependencyGraph<string> = new DependencyGraph<string>();
     private _vertexShaderCode: string | undefined;
-    private _textureRatio: number | undefined;
+    private _currentOutputTextureOptions: OutputTextureOptions | undefined;
     private _forceUnoptimized: boolean = false;
 
     /**
@@ -224,7 +232,7 @@ export class SmartFilterOptimizer {
         this._mainFunctionNameToCode = new Map();
         this._dependencyGraph = new DependencyGraph();
         this._vertexShaderCode = undefined;
-        this._textureRatio = undefined;
+        this._currentOutputTextureOptions = undefined;
         this._forceUnoptimized = false;
     }
 
@@ -238,6 +246,53 @@ export class SmartFilterOptimizer {
         }
 
         return newVarName;
+    }
+
+    private _processDefines(block: ShaderBlock, code: string): string {
+        const defines = block.getShaderProgram().fragment.defines;
+        if (!defines) {
+            return code;
+        }
+
+        for (const define of defines) {
+            const match = define.match(GetDefineRegEx);
+            const defName = match?.[1];
+
+            if (!match || !defName) {
+                continue;
+            }
+
+            // See if we have already processed this define for this block type
+            const existingRemapped = this._remappedSymbols.find(
+                (s) =>
+                    s.type === "define" &&
+                    s.name === defName &&
+                    s.owners[0] &&
+                    s.owners[0].blockType === block.blockType
+            );
+
+            let newDefName: string;
+            if (existingRemapped) {
+                newDefName = existingRemapped.remappedName;
+            } else {
+                // Add the new define to the remapped symbols list
+                newDefName = decorateSymbol(this._makeSymbolUnique(undecorateSymbol(defName)));
+
+                this._remappedSymbols.push({
+                    type: "define",
+                    name: defName,
+                    remappedName: newDefName,
+                    declaration: define.replace(defName, newDefName), // No need to reconstruct the declaration
+                    owners: [block],
+                    inputBlock: undefined,
+                });
+            }
+
+            // Replace the define name in the main shader code
+            code = code.replace(defName, newDefName);
+        }
+
+        return code;
     }
 
     private _processHelperFunctions(block: ShaderBlock, code: string): string {
@@ -261,19 +316,34 @@ export class SmartFilterOptimizer {
 
             const regexFindCurName = new RegExp(decorateSymbol(funcName), "g");
 
-            const existingRemapped = this._remappedSymbols.find(
+            const existingFunctionExactOverload = this._remappedSymbols.find(
+                (s) =>
+                    s.type === "function" &&
+                    s.name === funcName &&
+                    s.params === func.params &&
+                    s.owners[0] &&
+                    s.owners[0].blockType === block.blockType
+            );
+
+            const existingFunction = this._remappedSymbols.find(
                 (s) =>
                     s.type === "function" &&
                     s.name === funcName &&
                     s.owners[0] &&
-                    s.owners[0].getClassName() === block.getClassName()
+                    s.owners[0].blockType === block.blockType
             );
 
-            const newVarName = existingRemapped?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
+            // Get or create the remapped name, ignoring the parameter list
+            const newVarName = existingFunction?.remappedName ?? decorateSymbol(this._makeSymbolUnique(funcName));
 
-            if (!existingRemapped) {
+            // If the function name, regardless of params, wasn't found, add the rename mapping to our list
+            if (!existingFunction) {
                 replaceFuncNames.push([regexFindCurName, newVarName]);
+            }
 
+            // If this exact overload wasn't found, add it to the list of remapped symbols so it'll be emitted in
+            // the final shader.
+            if (!existingFunctionExactOverload) {
                 let funcCode = func.code;
                 for (const [regex, replacement] of replaceFuncNames) {
                     funcCode = funcCode.replace(regex, replacement);
@@ -283,6 +353,7 @@ export class SmartFilterOptimizer {
                     type: "function",
                     name: funcName,
                     remappedName: newVarName,
+                    params: func.params,
                     declaration: funcCode,
                     owners: [block],
                     inputBlock: undefined,
@@ -334,7 +405,7 @@ export class SmartFilterOptimizer {
                         s.type === varDecl &&
                         s.name === varName &&
                         s.owners[0] &&
-                        s.owners[0].getClassName() === block.getClassName()
+                        s.owners[0].blockType === block.blockType
                 );
                 if (existingRemapped && singleInstance) {
                     newVarName = existingRemapped.remappedName;
@@ -424,7 +495,7 @@ export class SmartFilterOptimizer {
                 return false;
             }
 
-            if (block.textureRatio !== this._textureRatio) {
+            if (!textureOptionsMatch(block.outputTextureOptions, this._currentOutputTextureOptions)) {
                 return false;
             }
         }
@@ -442,8 +513,8 @@ export class SmartFilterOptimizer {
         const block = outputConnectionPoint.ownerBlock;
 
         if (block instanceof ShaderBlock) {
-            if (this._textureRatio === undefined) {
-                this._textureRatio = block.textureRatio;
+            if (this._currentOutputTextureOptions === undefined) {
+                this._currentOutputTextureOptions = block.outputTextureOptions;
             }
 
             const shaderProgram = block.getShaderProgram();
@@ -478,6 +549,9 @@ export class SmartFilterOptimizer {
 
             // Replaces the texture2D calls by sampleTexture for easier processing
             code = code.replace(/texture2D/g, "sampleTexture");
+
+            // Processes the defines to make them unique
+            code = this._processDefines(block, code);
 
             // Processes the functions other than the main function
             code = this._processHelperFunctions(block, code);
@@ -590,7 +664,7 @@ export class SmartFilterOptimizer {
             return newShaderFuncName;
         }
 
-        throw `Unhandled block type! className=${block.getClassName()}`;
+        throw `Unhandled block type! blockType=${block.blockType}`;
     }
 
     private _saveBlockStackState(): void {
@@ -648,12 +722,16 @@ export class SmartFilterOptimizer {
         // Sets the remapping of the shader variables
         const blockOwnerToShaderBinding = new Map<ShaderBlock, ShaderBinding>();
 
+        const codeDefines = [];
         let codeUniforms = "";
         let codeConsts = "";
         let codeFunctions = "";
 
         for (const s of this._remappedSymbols) {
             switch (s.type) {
+                case "define":
+                    codeDefines.push(s.declaration);
+                    break;
                 case "const":
                     codeConsts += s.declaration + "\n";
                     break;
@@ -689,31 +767,34 @@ export class SmartFilterOptimizer {
             code = code!.replace(/\r/g, "");
             code = code!.replace(/\n(\n)*/g, "\n");
 
-            console.log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
-            console.log(codeUniforms);
-            console.log(codeConsts);
-            console.log(code);
-            console.log("remappedSymbols=", this._remappedSymbols);
-            console.log("samplers=", samplers);
+            Logger.Log(`=================== BLOCK (forceUnoptimized=${this._forceUnoptimized}) ===================`);
+            Logger.Log(codeDefines.join("\n"));
+            Logger.Log(codeUniforms);
+            Logger.Log(codeConsts);
+            Logger.Log(code);
+            Logger.Log(`remappedSymbols=${this._remappedSymbols}`);
+            Logger.Log(`samplers=${samplers}`);
         }
 
         optimizedBlock.setShaderProgram({
             vertex: this._vertexShaderCode,
             fragment: {
+                defines: codeDefines,
                 const: codeConsts,
                 uniform: codeUniforms,
                 mainFunctionName: mainFuncName,
                 functions: [
                     {
                         name: mainFuncName,
+                        params: "",
                         code,
                     },
                 ],
             },
         });
 
-        if (this._textureRatio !== undefined) {
-            optimizedBlock.textureRatio = this._textureRatio;
+        if (this._currentOutputTextureOptions !== undefined) {
+            optimizedBlock.outputTextureOptions = this._currentOutputTextureOptions;
         }
 
         optimizedBlock.setShaderBindings(Array.from(blockOwnerToShaderBinding.values()));

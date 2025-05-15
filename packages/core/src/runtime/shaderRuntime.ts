@@ -3,12 +3,14 @@ import type { RenderTargetWrapper } from "@babylonjs/core/Engines/renderTargetWr
 import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
 import type { Effect } from "@babylonjs/core/Materials/effect";
 import { EffectWrapper } from "@babylonjs/core/Materials/effectRenderer.js";
+import type { ThinRenderTargetTexture } from "@babylonjs/core/Materials/Textures/thinRenderTargetTexture";
 
 import type { IDisposable } from "../IDisposable";
 import type { ShaderProgram } from "../utils/shaderCodeUtils";
 import { createStrongRef, type StrongRef } from "./strongRef.js";
-import type { IDisableableBlock } from "../blocks/disableableShaderBlock";
+import type { IDisableableBlock } from "../blockFoundation/disableableShaderBlock";
 import { decorateSymbol, DisableUniform, getShaderCreateOptions } from "../utils/shaderCodeUtils.js";
+import type { OutputBlock } from "../blockFoundation/outputBlock";
 
 /**
  * The shader bindings for a ShaderBlock that can't be disabled.
@@ -119,10 +121,25 @@ export class ShaderRuntime implements IDisposable {
     }
 
     /**
-     * Renders the full screen effect into a texture.
-     * @param renderTargetWrapper - The render target wrapper to render into
+     * Renders the full screen effect into a render target.
+     * @param outputBlock - The output block to render to - assumes it has a .renderTargetWrapper
      */
-    public renderToTexture(renderTargetWrapper: RenderTargetWrapper): void {
+    public renderToTargetWrapper(outputBlock: OutputBlock): void {
+        this._renderToTargetWrapper(outputBlock.renderTargetWrapper!);
+    }
+
+    /**
+     * Renders the full screen effect into a texture.
+     * @param renderTargetTexture - The render target texture to render into
+     */
+    public renderToTargetTexture(renderTargetTexture: ThinRenderTargetTexture): void {
+        const renderTargetWrapper = renderTargetTexture.renderTarget;
+        if (renderTargetWrapper) {
+            this._renderToTargetWrapper(renderTargetWrapper);
+        }
+    }
+
+    private _renderToTargetWrapper(renderTargetWrapper: RenderTargetWrapper): void {
         this._engine.bindFramebuffer(renderTargetWrapper);
         this._draw(renderTargetWrapper.width, renderTargetWrapper.height);
         this._engine.unBindFramebuffer(renderTargetWrapper);

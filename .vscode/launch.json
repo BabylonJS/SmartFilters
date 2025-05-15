@@ -5,37 +5,67 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-msedge",
+            "type": "msedge",
             "request": "launch",
-            "name": "Dev Host development (Edge)",
+            "name": "Launch Demo (Edge)",
             "url": "http://localhost:8080",
             "outFiles": ["!**/node_modules/**"],
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "Serve and watch (Dev)"
+            "preLaunchTask": "Serve and watch demo (Dev)"
         },
         {
-            "type": "pwa-chrome",
+            "type": "chrome",
             "request": "launch",
-            "name": "Dev Host development (Chrome)",
+            "name": "Launch Demo (Chrome)",
             "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "Serve and watch (Dev)"
+            "preLaunchTask": "Serve and watch demo (Dev)"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "Launch SFE (Edge)",
+            "url": "http://localhost:8081",
+            "webRoot": "${workspaceFolder}",
+            "outFiles": ["!**/node_modules/**"],
+            "preLaunchTask": "Serve and watch SFE (Dev)"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch SFE (Chrome)",
+            "url": "http://localhost:8081",
+            "webRoot": "${workspaceFolder}",
+            "outFiles": ["!**/node_modules/**"],
+            "preLaunchTask": "Serve and watch SFE (Dev)"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run and Debug unit tests",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/jest/bin/jest.js",
+                "--runInBand",
+                "--selectProjects",
+                "unit"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run and Debug current unit test file",
+            "runtimeArgs": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/jest/bin/jest.js",
+                "--runInBand",
+                "--testPathPattern",
+                "${fileBasename}" // Run only the currently open file
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         }
-        // {
-        //     /*
-        //     Launch tests
-        //     https://jestjs.io/docs/troubleshooting#debugging-in-vs-code
-        //     */
-        //     "type": "node",
-        //     "request": "launch",
-        //     "name": "Run and Debug unit tests (Dev)",
-        //     "runtimeArgs": ["--inspect-brk", "${workspaceRoot}/node_modules/jest/bin/jest.js", "--runInBand", "--selectProjects", "unit"],
-        //     "console": "integratedTerminal",
-        //     "internalConsoleOptions": "neverOpen",
-        //     "port": 9229,
-        //     // "outFiles": ["${workspaceRoot}/**/dist/**/*"], // debugging sources
-        //     // "envFile": "${workspaceRoot}/.env",
-        //     "preLaunchTask": "Build (Dev)"
-        // },
     ]
 }

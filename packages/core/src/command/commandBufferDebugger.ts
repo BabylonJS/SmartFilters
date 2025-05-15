@@ -1,3 +1,4 @@
+import { Logger } from "@babylonjs/core/Misc/logger.js";
 import type { CommandBuffer } from "./commandBuffer";
 
 /**
@@ -5,9 +6,9 @@ import type { CommandBuffer } from "./commandBuffer";
  * @param commandBuffer - The command buffer to log
  */
 export function logCommands(commandBuffer: Readonly<CommandBuffer>) {
-    console.log("----- Command buffer commands -----");
+    Logger.Log("----- Command buffer commands -----");
     commandBuffer.visitCommands((command) => {
-        console.log(`  Owner: ${command.owner.getClassName()} (${command.owner.name}) - Command: ${command.name}`);
+        Logger.Log(`  Owner: ${command.owner.blockType} (${command.owner.name}) - Command: ${command.name}`);
     });
-    console.log("-----------------------------------");
+    Logger.Log("-----------------------------------");
 }

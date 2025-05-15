@@ -6,9 +6,9 @@
  * @example node watchShaders.js <shaderPath> <importPath>
  */
 
-import { convertShader } from "./shaderConverter.js";
 import { watch } from "chokidar";
 import { extname } from "path";
+import { convertShader } from "./convertShaders.js";
 
 const externalArguments = process.argv.slice(2);
 if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1]) {
@@ -26,6 +26,8 @@ if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1
             return;
         }
 
+        console.log(`Change detected. Starting conversion...`);
+
         // Wrap in try-catch to prevent the watcher from crashing
         // if the new shader changes are invalid
         try {
@@ -34,7 +36,7 @@ if (externalArguments.length >= 2 && externalArguments[0] && externalArguments[1
         } catch (error) {
             console.error(`Failed to convert shader ${file}: ${error}`);
         }
-    });
 
-    console.log(`Watching for shader changes in ${shaderPath}`);
+        console.log(`Watching for changes in ${shaderPath}...`);
+    });
 }

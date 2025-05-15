@@ -1,2 +1,2 @@
 export * from "./defaultBlockSerializer.js";
-export * from "./serialization.types.js";
+export * from "./smartFilterSerialization.types.js";

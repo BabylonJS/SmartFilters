@@ -9,6 +9,7 @@ interface ILineWithFileButtonComponentProps {
     onIconClick: (file: File) => void;
     accept: string;
     uploadName?: string;
+    allowMultiple?: boolean;
 }
 
 export class LineWithFileButtonComponent extends react.Component<
@@ -26,8 +27,10 @@ export class LineWithFileButtonComponent extends react.Component<
 
     onChange(evt: any) {
         const files: File[] = evt.target.files;
-        if (files && files.length > 0) {
-            this.props.onIconClick(files[0]!);
+        if (files) {
+            for (const file of files) {
+                this.props.onIconClick(file);
+            }
         }
         evt.target.value = "";
     }
@@ -55,6 +58,7 @@ export class LineWithFileButtonComponent extends react.Component<
                         id={this.props.uploadName ? this.props.uploadName : "file-upload"}
                         type="file"
                         accept={this.props.accept}
+                        multiple={!!this.props.allowMultiple}
                         onChange={(evt) => this.onChange(evt)}
                     />
                 </div>

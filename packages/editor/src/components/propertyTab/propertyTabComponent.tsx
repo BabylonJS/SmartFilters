@@ -3,7 +3,6 @@ import { GraphNode } from "@babylonjs/shared-ui-components/nodeGraphSystem/graph
 import { NodePort } from "@babylonjs/shared-ui-components/nodeGraphSystem/nodePort.js";
 import * as react from "react";
 import { DataStorage } from "@babylonjs/core/Misc/dataStorage.js";
-import { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 
 import { FileButtonLineComponent } from "../../sharedComponents/fileButtonLineComponent.js";
 import { LineContainerComponent } from "../../sharedComponents/lineContainerComponent.js";
@@ -21,9 +20,11 @@ import { BlockTools } from "../../blockTools.js";
 import type { Nullable } from "@babylonjs/core/types";
 import type { FrameNodePort } from "@babylonjs/shared-ui-components/nodeGraphSystem/frameNodePort";
 import type { LockObject } from "@babylonjs/shared-ui-components/tabs/propertyGrids/lockObject";
-import type { GlobalState } from "../../globalState";
+import { ForceWebGL1StorageKey, type GlobalState } from "../../globalState.js";
 import type { ISelectionChangedOptions } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/selectionChangedOptions";
-import type { AnyInputBlock } from "@babylonjs/smart-filters";
+import { SmartFilterCoreVersion, type AnyInputBlock } from "@babylonjs/smart-filters";
+import type { Observer } from "@babylonjs/core/Misc/observable.js";
+import { OnlyShowCustomBlocksDefaultValue } from "../../constants.js";
 
 interface IPropertyTabComponentProps {
     globalState: GlobalState;
@@ -36,14 +37,19 @@ interface IPropertyTabComponentState {
     currentFrameNodePort: Nullable<FrameNodePort>;
     currentNodePort: Nullable<NodePort>;
     uploadInProgress: boolean;
+    optimize: Nullable<boolean>;
 }
 
 export class PropertyTabComponent extends react.Component<IPropertyTabComponentProps, IPropertyTabComponentState> {
-    // private _onBuiltObserver: Nullable<Observer<void>>;
+    private _onResetRequiredObserver?: Observer<boolean>;
+    private _onOptimizerEnabledChangedObserver?: Observer<boolean>;
+
     // private _modeSelect: React.RefObject<OptionsLineComponent>;
 
     constructor(props: IPropertyTabComponentProps) {
         super(props);
+
+        const optimize = this.props.globalState.optimizerEnabled?.value || null;
 
         this.state = {
             currentNode: null,
@@ -51,6 +57,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             currentFrameNodePort: null,
             currentNodePort: null,
             uploadInProgress: false,
+            optimize,
         };
 
         // this._modeSelect = React.createRef();
@@ -99,13 +106,26 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             }
         );
 
-        // this._onBuiltObserver = this.props.globalState.onBuiltObservable.add(() => {
-        //     this.forceUpdate();
-        // });
+        this._onResetRequiredObserver = this.props.globalState.onResetRequiredObservable?.add(() => {
+            this.forceUpdate();
+        });
+
+        if (this.props.globalState.optimizerEnabled) {
+            this._onOptimizerEnabledChangedObserver = this.props.globalState.optimizerEnabled.onChangedObservable.add(
+                (value: boolean) => {
+                    this.setState({ optimize: value });
+                }
+            );
+        }
     }
 
     override componentWillUnmount() {
-        // this.props.globalState.onBuiltObservable.remove(this._onBuiltObserver);
+        if (this._onResetRequiredObserver) {
+            this._onResetRequiredObserver.remove();
+        }
+        if (this._onOptimizerEnabledChangedObserver) {
+            this._onOptimizerEnabledChangedObserver.remove();
+        }
     }
 
     processInputBlockUpdate(ib: AnyInputBlock) {
@@ -117,12 +137,13 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
     }
 
     async load(_file: File) {
-        if (this.props.globalState.loadSmartFilter) {
-            this.props.globalState.smartFilter = await this.props.globalState.loadSmartFilter(_file);
-
-            this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
-            this.props.globalState.onResetRequiredObservable.notifyObservers(false);
-            this.props.globalState.stateManager.onRebuildRequiredObservable.notifyObservers();
+        if (this.props.globalState.engine && this.props.globalState.loadSmartFilter) {
+            const newSmartFilter = await this.props.globalState.loadSmartFilter(_file, this.props.globalState.engine);
+            if (newSmartFilter) {
+                this.props.globalState.smartFilter = newSmartFilter;
+                this.props.globalState.stateManager.onSelectionChangedObservable.notifyObservers(null);
+                this.props.globalState.onResetRequiredObservable.notifyObservers(false);
+            }
         }
     }
 
@@ -227,23 +248,34 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                 </div>
                 <div>
                     <LineContainerComponent title="GENERAL">
-                        <TextLineComponent label="Version" value={ThinEngine.Version} />
+                        <TextLineComponent label="Version" value={SmartFilterCoreVersion} />
                         <TextLineComponent
                             label="Help"
                             value="doc.babylonjs.com"
                             underline={true}
                             onLink={() =>
                                 this.props.globalState.hostDocument.defaultView!.open(
-                                    "https://doc.babylonjs.com/how_to/node_material",
+                                    "https://doc.babylonjs.com/features/featuresDeepDive/smartFilters/",
                                     "_blank"
                                 )
                             }
                         />
                         <TextInputLineComponent
+                            label="Name"
+                            lockObject={this.props.globalState.lockObject}
+                            target={this.props.globalState.smartFilter}
+                            propertyName="name"
+                        />
+                        <TextInputLineComponent
+                            label="Namespace"
+                            lockObject={this.props.globalState.lockObject}
+                            target={this.props.globalState.smartFilter}
+                            propertyName="namespace"
+                        />
+                        <TextInputLineComponent
                             label="Comment"
                             multilines={true}
                             lockObject={this.props.globalState.lockObject}
-                            value={this.props.globalState.smartFilter!.comments ?? ""}
                             target={this.props.globalState.smartFilter}
                             propertyName="comments"
                         />
@@ -292,43 +324,87 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 this.props.globalState.stateManager.onGridSizeChanged.notifyObservers();
                             }}
                         />
-                    </LineContainerComponent>
-                    <LineContainerComponent title="FILE">
-                        {this.props.globalState.loadSmartFilter && (
-                            <FileButtonLineComponent label="Load" onClick={(file) => this.load(file)} accept=".json" />
-                        )}
-                        {this.props.globalState.downloadSmartFilter && (
-                            <ButtonLineComponent
-                                label="Save"
-                                onClick={() => {
-                                    this.downloadSmartFilter();
+                        <CheckBoxLineComponent
+                            label="Only show custom blocks"
+                            isSelected={() =>
+                                DataStorage.ReadBoolean("OnlyShowCustomBlocks", OnlyShowCustomBlocksDefaultValue)
+                            }
+                            onSelect={(value: boolean) => {
+                                DataStorage.WriteBoolean("OnlyShowCustomBlocks", value);
+                                this.props.globalState.onlyShowCustomBlocksObservable.notifyObservers(value);
+                            }}
+                        />
+                        {this.props.globalState.optimizerEnabled && (
+                            <CheckBoxLineComponent
+                                label="Optimize Smart Filter"
+                                isSelected={() => !!this.state.optimize}
+                                onSelect={(value: boolean) => {
+                                    if (this.props.globalState.optimizerEnabled) {
+                                        this.props.globalState.optimizerEnabled.value = value;
+                                    }
                                 }}
                             />
                         )}
-                        {this.props.globalState.saveToSnippetServer && (
-                            <ButtonLineComponent
-                                label="Save to unique URL"
-                                isDisabled={this.state.uploadInProgress}
-                                onClick={() => {
-                                    this.saveToSnippetServer();
+                        {this.props.globalState.onNewEngine && ( // NOTE: only display this option if the Editor controls creating the Engine
+                            <CheckBoxLineComponent
+                                label="Force WebGL v1"
+                                isSelected={() => this.props.globalState.forceWebGL1}
+                                onSelect={(value: boolean) => {
+                                    if (window.confirm("Any unsaved changes will be lost. Do you want to continue?")) {
+                                        localStorage.setItem(ForceWebGL1StorageKey, value ? "true" : "");
+                                        window.location.reload();
+                                    } else {
+                                        // Re-apply the original value (this.props.globalState.forceWebGL1)
+                                        this.forceUpdate();
+                                    }
                                 }}
                             />
                         )}
-                        {/*<ButtonLineComponent
-                            label="Generate code"
-                            onClick={() => {
-                                StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
-                            }}
-                        />
-                        <ButtonLineComponent
-                            label="Export shaders"
-                            onClick={() => {
-                                this.props.globalState.nodeMaterial.build();
-                                StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
-                            }}
-                        />
-                        <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
                     </LineContainerComponent>
+                    {(this.props.globalState.loadSmartFilter ||
+                        this.props.globalState.downloadSmartFilter ||
+                        this.props.globalState.saveToSnippetServer) && (
+                        <LineContainerComponent title="FILE">
+                            {this.props.globalState.loadSmartFilter && (
+                                <FileButtonLineComponent
+                                    label="Load"
+                                    onClick={(file) => this.load(file)}
+                                    accept=".json"
+                                />
+                            )}
+                            {this.props.globalState.downloadSmartFilter && (
+                                <ButtonLineComponent
+                                    label="Save"
+                                    onClick={() => {
+                                        this.downloadSmartFilter();
+                                    }}
+                                />
+                            )}
+                            {this.props.globalState.saveToSnippetServer && (
+                                <ButtonLineComponent
+                                    label="Save to unique URL"
+                                    isDisabled={this.state.uploadInProgress}
+                                    onClick={() => {
+                                        this.saveToSnippetServer();
+                                    }}
+                                />
+                            )}
+                            {/*<ButtonLineComponent
+                        label="Generate code"
+                        onClick={() => {
+                            StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.generateCode(), "code.txt");
+                        }}
+                    />
+                    <ButtonLineComponent
+                        label="Export shaders"
+                        onClick={() => {
+                            this.props.globalState.nodeMaterial.build();
+                            StringTools.DownloadAsFile(this.props.globalState.hostDocument, this.props.globalState.nodeMaterial!.compiledShaders, "shaders.txt");
+                        }}
+                    />
+                    <FileButtonLineComponent label="Load Frame" uploadName={"frame-upload"} onClick={(file) => this.loadFrame(file)} accept=".json" />*/}
+                        </LineContainerComponent>
+                    )}
                     {/*
                     {!this.props.globalState.customSave && (
                         <LineContainerComponent title="SNIPPET">
