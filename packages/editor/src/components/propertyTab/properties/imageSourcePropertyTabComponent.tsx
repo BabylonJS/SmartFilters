@@ -55,6 +55,11 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
     override render() {
         const editorData = getTextureInputBlockEditorData(this.props.inputBlock);
 
+        // If the reloadAssets callback wasn't supplied, don't show any properties
+        if (!(this.props.stateManager.data as GlobalState).reloadAssets) {
+            return null;
+        }
+
         // Don't read/write the url directly, it may be base64 encoded data and not a URL
         // In that case, we show a placeholder instead
         const urlTextInputTarget = {

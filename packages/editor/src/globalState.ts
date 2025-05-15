@@ -61,7 +61,7 @@ export class GlobalState {
 
     beforeRenderObservable: Nullable<Observable<void>>;
 
-    lockObject = new LockObject();
+    lockObject: any;
 
     pointerOverCanvas: boolean = false;
 
@@ -128,6 +128,13 @@ export class GlobalState {
         onLogRequiredObservable?: Observable<LogEntry>,
         onSaveEditorDataRequiredObservable?: Observable<void>
     ) {
+        const allowEdits = !!rebuildRuntime;
+        if (allowEdits) {
+            this.lockObject = new LockObject();
+        } else {
+            this.lockObject = new ReadOnlyLock();
+        }
+
         this.stateManager = new StateManager();
         this.stateManager.data = this;
         this.stateManager.lockObject = this.lockObject;
@@ -163,5 +170,16 @@ export class GlobalState {
         this.onSaveEditorDataRequiredObservable = onSaveEditorDataRequiredObservable ?? new Observable<void>();
 
         this._previewBackground = localStorage.getItem(PreviewBackgroundStorageKey) ?? "grid";
+    }
+}
+
+// TODO: remove once GraphCanvas supports readonly mode
+class ReadOnlyLock {
+    public get lock(): boolean {
+        return true;
+    }
+
+    public set lock(_value: boolean) {
+        // Ignore
     }
 }
