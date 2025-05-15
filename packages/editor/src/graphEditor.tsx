@@ -69,7 +69,9 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
     appendBlock(dataToAppend: BaseBlock | INodeData, recursion = true) {
         return this._graphCanvas.createNodeFromObject(
-            dataToAppend,
+            dataToAppend instanceof BaseBlock
+                ? TypeLedger.NodeDataBuilder(dataToAppend, this._graphCanvas)
+                : dataToAppend,
             (block: BaseBlock) => {
                 if (this.props.globalState.smartFilter!.attachedBlocks.indexOf(block) === -1) {
                     // TODO manage add but should not be possible to arrive here.
@@ -302,7 +304,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         const smartFilter = this.props.globalState.smartFilter;
 
         smartFilter.attachedBlocks.forEach((n: BaseBlock) => {
-            this.appendBlock(TypeLedger.NodeDataBuilder(n, this._graphCanvas), true);
+            this.appendBlock(n, true);
         });
 
         // Links
@@ -610,9 +612,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
                             ref={this._graphCanvasRef}
                             stateManager={this.props.globalState.stateManager}
                             onEmitNewNode={(nodeData) => {
-                                return this.appendBlock(
-                                    TypeLedger.NodeDataBuilder(nodeData.data as BaseBlock, this._graphCanvas)
-                                );
+                                return this.appendBlock(nodeData.data as BaseBlock);
                             }}
                         />
                         <Splitter

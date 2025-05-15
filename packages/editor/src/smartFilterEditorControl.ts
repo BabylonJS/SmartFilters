@@ -8,6 +8,7 @@ import { RegisterToPropertyTabManagers } from "./graphSystem/registerToPropertyL
 import { RegisterTypeLedger } from "./graphSystem/registerToTypeLedger.js";
 import type { SmartFilter } from "@babylonjs/smart-filters";
 import type { Nullable } from "@babylonjs/core/types.js";
+import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import { CreatePopup } from "@babylonjs/shared-ui-components/popupHelper.js";
 import type { IBlockRegistration } from "@babylonjs/smart-filters-blocks";
 import type { LogEntry } from "./components/log/logComponent.js";
@@ -86,16 +87,12 @@ export type SmartFilterEditorOptions = {
     texturePresets?: TexturePreset[];
 
     /**
-     * An optional callback, which if supplied, is called when the editor determines that
-     * the graph has changed and the runtime needs to be rebuilt. If not supplied, structural changes
-     * to the graph will be ignored.
+     * An observable that is called before rendering the filter every frame.
      */
-    rebuildRuntime?: (smartFilter: SmartFilter) => void;
+    beforeRenderObservable: Observable<void>;
 
     /**
-     * An optional callback, which if supplied allows the texture input blocks to allow the user
-     * to set the texture to user supplied images or videos. If not supplied, texture input blocks
-     * are read only.
+     * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
      */
     rebuildRuntime: () => void;
 

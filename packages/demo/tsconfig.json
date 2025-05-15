@@ -8,6 +8,14 @@
         "resolveJsonModule": true
     },
 
-    "include": ["../**/*.ts", "../**/*.tsx", "./src/configuration/smartFilters/serialized/*.json"],
+    "include": [
+        "./src/**/*.ts",
+        "../core/**/*.ts",
+        "../core/**/*.tsx",
+        "../editor/**/*.ts",
+        "../editor/**/*.tsx",
+        "../blocks/**/*.ts",
+        "./src/configuration/smartFilters/serialized/*.json"
+    ],
     "exclude": ["**/node_modules", "**/.temp", "../browserExtension/**"]
 }

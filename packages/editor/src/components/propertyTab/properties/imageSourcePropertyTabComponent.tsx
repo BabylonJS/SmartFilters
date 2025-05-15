@@ -94,34 +94,26 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
                         editorData.url = this._texturePresets[newSelectionValue]?.url || "";
                         editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
 
-        if ((this.props.stateManager.data as GlobalState).reloadAssets === null) {
-            return <div />;
-        } else {
-            return (
-                <div>
-                    <OptionsLine
-                        label="Source"
-                        target={{}}
-                        propertyName="value"
-                        options={this._imageOptions}
-                        noDirectUpdate
-                        extractValue={() => {
-                            const url = this.props.inputBlock.runtimeValue.value?.getInternalTexture()?.url;
-                            if (
-                                !url ||
-                                this._imageOptions.findIndex((c: IInspectableOptions) => c.value === url) === -1
-                            ) {
-                                return CustomImageOption;
-                            }
-                            return url;
-                        }}
-                        onSelect={(newSelectionValue: string | number) => {
-                            if (newSelectionValue === CustomImageOption || typeof newSelectionValue === "string") {
-                                // Take no action, let the user click the Upload button
-                                return;
-                            }
-                            editorData.url = this._texturePresets[newSelectionValue]?.url || "";
-                            editorData.urlTypeHint = this._getUrlTypeHint(editorData.url);
+                        this._triggerAssetUpdate(true);
+                    }}
+                />
+                <FileButtonLine
+                    label="Upload Custom Image"
+                    onClick={(file: File) => {
+                        Tools.ReadFile(
+                            file,
+                            (data) => {
+                                const blob = new Blob([data], { type: "octet/stream" });
+                                const reader = new FileReader();
+                                reader.readAsDataURL(blob);
+                                reader.onloadend = () => {
+                                    const base64data = reader.result as string;
+                                    let extension: Nullable<string> = null;
+                                    if (file.name.toLowerCase().indexOf(".dds") > 0) {
+                                        extension = ".dds";
+                                    } else if (file.name.toLowerCase().indexOf(".env") > 0) {
+                                        extension = ".env";
+                                    }
 
                                     editorData.url = base64data;
                                     editorData.forcedExtension = extension;
@@ -190,23 +182,18 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
     }
 
     private _triggerAssetUpdate(instant: boolean = false) {
-        const globalState = this.props.stateManager.data as GlobalState;
-        const reloadAssets = globalState.reloadAssets;
+        this.props.stateManager.onUpdateRequiredObservable.notifyObservers(this.props.inputBlock);
+        this.forceUpdate();
 
         const update = () => {
             const globalState = this.props.stateManager.data as GlobalState;
             globalState.reloadAssets();
         };
 
-            const update = () => {
-                reloadAssets(globalState.smartFilter);
-            };
-
-            if (instant) {
-                update();
-            } else {
-                debounce(update, 1000)();
-            }
+        if (instant) {
+            update();
+        } else {
+            debounce(update, 1000)();
         }
     }
 
