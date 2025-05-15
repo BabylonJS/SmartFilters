@@ -21,7 +21,7 @@ export type LoadResult = {
 export async function loadTextureInputBlockAsset(
     inputBlock: InputBlock<ConnectionPointType.Texture>,
     engine: ThinEngine,
-    beforeRenderObservable: Observable<void>
+    beforeRenderObservable: Nullable<Observable<void>>
 ): Promise<Nullable<LoadResult>> {
     const editorData = inputBlock.editorData;
 
@@ -34,7 +34,7 @@ export async function loadTextureInputBlockAsset(
                         engine,
                         editorData.url
                     );
-                    const observer = beforeRenderObservable.add(() => {
+                    const observer = beforeRenderObservable?.add(() => {
                         update();
                     });
 
@@ -47,7 +47,9 @@ export async function loadTextureInputBlockAsset(
                     return {
                         texture: videoTexture,
                         dispose: () => {
-                            beforeRenderObservable.remove(observer);
+                            if (beforeRenderObservable && observer) {
+                                beforeRenderObservable.remove(observer);
+                            }
                             disposeVideoElementAndTextures();
                         },
                     };

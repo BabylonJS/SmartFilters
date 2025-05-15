@@ -49,7 +49,7 @@ export class GlobalState {
 
     smartFilter: SmartFilter;
 
-    blockEditorRegistration: BlockEditorRegistration;
+    blockEditorRegistration: Nullable<BlockEditorRegistration>;
 
     hostElement: HTMLElement;
 
@@ -59,7 +59,7 @@ export class GlobalState {
 
     stateManager: StateManager;
 
-    beforeRenderObservable: Observable<void>;
+    beforeRenderObservable: Nullable<Observable<void>>;
 
     lockObject = new LockObject();
 
@@ -91,9 +91,9 @@ export class GlobalState {
 
     saveToSnippetServer?: (() => void) | undefined;
 
-    rebuildRuntime: () => void;
+    rebuildRuntime: Nullable<() => void>;
 
-    reloadAssets: () => void;
+    reloadAssets: Nullable<() => void>;
 
     addCustomBlock?: (serializedData: string) => void;
 
@@ -114,15 +114,15 @@ export class GlobalState {
         onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
         optimizerEnabled: Nullable<ObservableProperty<boolean>>,
         smartFilter: Nullable<SmartFilter>,
-        blockEditorRegistration: BlockEditorRegistration,
+        blockEditorRegistration: Nullable<BlockEditorRegistration>,
         hostElement: HTMLElement,
-        beforeRenderObservable: Observable<void>,
-        rebuildRuntime: () => void,
-        reloadAssets: () => void,
+        beforeRenderObservable: Nullable<Observable<void>>,
+        rebuildRuntime: Nullable<() => void>,
+        reloadAssets: Nullable<() => void>,
+        texturePresets: Nullable<TexturePreset[]>,
         downloadSmartFilter?: () => void,
         loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
-        texturePresets: TexturePreset[] = [],
         addCustomBlock?: (serializedData: string) => void,
         deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void,
         onLogRequiredObservable?: Observable<LogEntry>,
@@ -152,7 +152,7 @@ export class GlobalState {
         this.downloadSmartFilter = downloadSmartFilter;
         this.loadSmartFilter = loadSmartFilter;
         this.saveToSnippetServer = saveToSnippetServer;
-        this.texturePresets = texturePresets;
+        this.texturePresets = texturePresets || [];
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
         this.reloadAssets = reloadAssets;

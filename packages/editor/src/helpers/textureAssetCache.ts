@@ -3,6 +3,7 @@ import type { ThinTexture } from "@babylonjs/core/Materials/Textures/thinTexture
 import type { ConnectionPointType, InputBlock, InputBlockEditorData } from "@babylonjs/smart-filters";
 import type { Observable } from "@babylonjs/core/Misc/observable";
 import { loadTextureInputBlockAsset } from "./editorTextureLoaders.js";
+import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
  * An entry in the texture asset cache.
@@ -37,14 +38,14 @@ type CacheEntry = {
 export class TextureAssetCache {
     private _cache: CacheEntry[] = [];
     private readonly _engine: ThinEngine;
-    private readonly _beforeRenderObservable: Observable<void>;
+    private readonly _beforeRenderObservable: Nullable<Observable<void>>;
 
     /**
      * Creates a new texture asset cache.
      * @param engine - The engine to use to load the assets.
      * @param beforeRenderObservable - The observable to use to notify when the engine is about to render a frame.
      */
-    constructor(engine: ThinEngine, beforeRenderObservable: Observable<void>) {
+    constructor(engine: ThinEngine, beforeRenderObservable: Nullable<Observable<void>>) {
         this._engine = engine;
         this._beforeRenderObservable = beforeRenderObservable;
     }

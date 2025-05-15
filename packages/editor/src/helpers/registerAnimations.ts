@@ -2,6 +2,7 @@ import { ConnectionPointType, type SmartFilter, type InputBlock } from "@babylon
 import { WebCamInputBlock } from "../configuration/editorBlocks/webCamInputBlock/webCamInputBlock.js";
 import type { Observable } from "@babylonjs/core/Misc/observable.js";
 import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
+import type { Nullable } from "@babylonjs/core/types.js";
 
 /**
  * Registers animations for the Smart Filter Editor specific to the editor blocks, such as the time and webcam blocks.
@@ -13,7 +14,7 @@ import type { ThinEngine } from "@babylonjs/core/Engines/thinEngine.js";
 export function registerAnimations(
     smartFilter: SmartFilter,
     engine: ThinEngine,
-    beforeRenderObservable: Observable<void>
+    beforeRenderObservable: Nullable<Observable<void>>
 ): () => void {
     const disposeWork: (() => void)[] = [];
 
@@ -25,7 +26,7 @@ export function registerAnimations(
                 let currentTime = performance.now();
                 let lastTime = performance.now();
 
-                const observer = beforeRenderObservable.add(() => {
+                const observer = beforeRenderObservable?.add(() => {
                     currentTime = performance.now();
                     deltaPerMs = inputBlock.editorData?.valueDeltaPerMs ?? 0.001;
                     inputBlock.runtimeValue.value += (currentTime - lastTime) * deltaPerMs;
@@ -33,7 +34,9 @@ export function registerAnimations(
                 });
 
                 disposeWork.push(() => {
-                    beforeRenderObservable.remove(observer);
+                    if (beforeRenderObservable && observer) {
+                        beforeRenderObservable.remove(observer);
+                    }
                 });
             }
         } else if (block instanceof WebCamInputBlock) {

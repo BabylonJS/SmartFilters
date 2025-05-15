@@ -22,7 +22,7 @@
     "readme": "README.md",
     "scripts": {
         "clean": "npm run clean --workspaces",
-        "build": "npm run clean && npm run build -w @babylonjs/smart-filters && npm run build -w @babylonjs/smart-filters-blocks &&  npm run build -w @babylonjs/smart-filters-editor-control && npm run build -w @babylonjs/smart-filters-demo && npm run build -w @babylonjs/smart-filters-editor",
+        "build": "npm run clean && npm run build -w @babylonjs/smart-filters && npm run build -w @babylonjs/smart-filters-blocks &&  npm run build -w @babylonjs/smart-filters-editor-control && npm run build -w @babylonjs/smart-filters-demo && npm run build -w @babylonjs/smart-filters-editor && npm run build -w @babylonjs/smart-filters-browser-extension",
         "build:dev": "npm run build -w @babylonjs/smart-filters && npm run build -w @babylonjs/smart-filters-blocks && npm run build -w @babylonjs/smart-filters-editor-control",
         "watch": "tsc -b -v -w",
         "start": "npm run build:dev && concurrently \"npm run watch\" \"npm run start -w @babylonjs/smart-filters-demo\"",

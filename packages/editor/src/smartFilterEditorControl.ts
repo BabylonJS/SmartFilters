@@ -48,8 +48,9 @@ export type SmartFilterEditorOptions = {
      * required for the Editor to be able to display and work with the Smart Filter
      * blocks the application uses. Note that each application may have its own set
      * of blocks, so this information must be passed in and not baked into the editor.
+     * If not supplied, the editor will not allow the user to add blocks.
      */
-    blockEditorRegistration: BlockEditorRegistration;
+    blockEditorRegistration?: BlockEditorRegistration;
 
     /**
      * The Smart Filter to edit
@@ -88,18 +89,20 @@ export type SmartFilterEditorOptions = {
 
     /**
      * An observable that is called before rendering the filter every frame.
+     * Required if the editor is going to load video textures or animate time blocks.
      */
-    beforeRenderObservable: Observable<void>;
+    beforeRenderObservable?: Observable<void>;
 
     /**
      * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
+     * If not supplied, the editor will not be able to rebuild the runtime.
      */
-    rebuildRuntime: () => void;
+    rebuildRuntime?: () => void;
 
     /**
-     * Called when the editor determines that the assets (images or videos) need to be reloaded
+     * Called when the editor determines that the assets (images or videos) need to be reloaded.
      */
-    reloadAssets: () => void;
+    reloadAssets?: () => void;
 
     /**
      * If supplied, the editor will call this function when the user tries to add a custom block
@@ -159,15 +162,15 @@ export class SmartFilterEditorControl {
             options.onSmartFilterLoadedObservable ?? null,
             options.optimizerEnabled ?? null,
             options.filter ?? null,
-            options.blockEditorRegistration,
+            options.blockEditorRegistration ?? null,
             hostElement,
-            options.beforeRenderObservable,
-            options.rebuildRuntime,
-            options.reloadAssets,
+            options.beforeRenderObservable ?? null,
+            options.rebuildRuntime ?? null,
+            options.reloadAssets ?? null,
+            options.texturePresets ?? null,
             options.downloadSmartFilter,
             options.loadSmartFilter,
             options.saveToSnippetServer,
-            options.texturePresets,
             options.addCustomBlock,
             options.deleteCustomBlock,
             options.onLogRequiredObservable,

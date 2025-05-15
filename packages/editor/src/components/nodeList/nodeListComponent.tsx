@@ -84,7 +84,9 @@ export class NodeListComponent extends react.Component<
     override render() {
         // Create node menu
         const blockMenu = [];
-        const allBlocks = this.props.globalState.blockEditorRegistration.allBlocks;
+        const allBlocks = this.props.globalState.blockEditorRegistration
+            ? this.props.globalState.blockEditorRegistration.allBlocks
+            : {};
 
         for (const key in allBlocks) {
             const blockList = allBlocks[key]!.filter(

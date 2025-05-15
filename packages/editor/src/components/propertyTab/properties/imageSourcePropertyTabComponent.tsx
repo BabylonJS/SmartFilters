@@ -187,7 +187,7 @@ export class ImageSourcePropertyTabComponent extends react.Component<ImageSource
 
         const update = () => {
             const globalState = this.props.stateManager.data as GlobalState;
-            globalState.reloadAssets();
+            globalState.reloadAssets?.();
         };
 
         if (instant) {
