@@ -2,3 +2,4 @@
 **/*.config.*
 build/**/*.*
 packages/demo/src/configuration/smartFilters/serialized/*.json
+packages/browserExtension/src/assets/manifest.json
