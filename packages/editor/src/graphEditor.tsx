@@ -17,7 +17,7 @@ import { createDefaultInput } from "./graphSystem/registerDefaultInput.js";
 import type { INodeData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeData";
 import type { IEditorData } from "@babylonjs/shared-ui-components/nodeGraphSystem/interfaces/nodeLocationInfo";
 import type { Nullable } from "@babylonjs/core/types";
-import { BaseBlock, type SmartFilter } from "@babylonjs/smart-filters";
+import type { BaseBlock, SmartFilter } from "@babylonjs/smart-filters";
 import { inputsNamespace } from "@babylonjs/smart-filters-blocks";
 import { setEditorData } from "./helpers/serializationTools.js";
 import { SplitContainer } from "@babylonjs/shared-ui-components/split/splitContainer.js";
@@ -69,9 +69,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
 
     appendBlock(dataToAppend: BaseBlock | INodeData, recursion = true) {
         return this._graphCanvas.createNodeFromObject(
-            dataToAppend instanceof BaseBlock
-                ? TypeLedger.NodeDataBuilder(dataToAppend, this._graphCanvas)
-                : dataToAppend,
+            TypeLedger.NodeDataBuilder(dataToAppend, this._graphCanvas),
             (block: BaseBlock) => {
                 if (this.props.globalState.smartFilter!.attachedBlocks.indexOf(block) === -1) {
                     // TODO manage add but should not be possible to arrive here.
@@ -203,7 +201,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         );
 
         this.props.globalState.stateManager.onRebuildRequiredObservable.add(async () => {
-            this.props.globalState.rebuildRuntime();
+            this.props.globalState.rebuildRuntime?.();
         });
 
         this.props.globalState.onSaveEditorDataRequiredObservable.add(() => {
@@ -364,7 +362,7 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         let block: Nullable<BaseBlock> = null;
 
         // First try the block registrations provided to the editor
-        if (this.props.globalState.engine) {
+        if (this.props.globalState.engine && this.props.globalState.blockEditorRegistration) {
             block = await this.props.globalState.blockEditorRegistration.getBlock(
                 blockType,
                 namespace,
@@ -387,7 +385,10 @@ export class GraphEditor extends react.Component<IGraphEditorProps, IGraphEditor
         }
 
         // Enforce uniqueness if applicable
-        if (this.props.globalState.blockEditorRegistration.getIsUniqueBlock(block)) {
+        if (
+            this.props.globalState.blockEditorRegistration &&
+            this.props.globalState.blockEditorRegistration.getIsUniqueBlock(block)
+        ) {
             const className = block.getClassName();
             for (const other of this._graphCanvas.getCachedData()) {
                 if (other !== block && other.getClassName() === className) {

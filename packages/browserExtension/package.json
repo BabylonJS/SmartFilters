@@ -1,0 +1,61 @@
+{
+    "name": "@babylonjs/smart-filters-browser-extension",
+    "private": true,
+    "version": "0.1.0",
+    "description": "A browser extension to allow for debugging Babylon.js Smart Filters in websites",
+    "keywords": [
+        "video",
+        "composition",
+        "3D",
+        "2D",
+        "javascript",
+        "html5",
+        "webgl",
+        "webgl2",
+        "webgpu",
+        "babylon"
+    ],
+    "license": "MIT",
+    "readme": "README.md",
+    "sideEffects": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BabylonJS/SmartFilters.git"
+    },
+    "files": [
+        "dist",
+        "src",
+        "license.md",
+        "readme.md"
+    ],
+    "scripts": {
+        "clean": "rimraf dist && rimraf unpackedExtension && rimraf tsconfig.build.tsbuildinfo",
+        "versionUp": "node tools/versionUp.js",
+        "build": "webpack --env=prod",
+        "watch": "webpack --env=dev --watch",
+        "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
+    },
+    "devDependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.1.0",
+        "@fortawesome/free-solid-svg-icons": "^6.1.0",
+        "@fortawesome/react-fontawesome": "^0.1.18",
+        "@types/chrome": "^0.0.268",
+        "@types/react": "^17.0.30",
+        "@types/react-dom": "^17.0.10",
+        "copy-webpack-plugin": "^13.0.0",
+        "css-loader": "^7.1.0",
+        "file-loader": "^6.2.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "sass": "^1.85.1",
+        "sass-loader": "^16.0.5",
+        "source-map-loader": "^3.0.0",
+        "style-loader": "^3.3.0",
+        "ts-loader": "^9.4.1",
+        "url-loader": "^4.1.1",
+        "webpack": "^5.94.0",
+        "webpack-bundle-analyzer": "^4.7.0",
+        "webpack-cli": "^4.10.0",
+        "webpack-dev-server": "^4.9.2"
+    }
+}

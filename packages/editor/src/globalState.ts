@@ -49,7 +49,7 @@ export class GlobalState {
 
     smartFilter: SmartFilter;
 
-    blockEditorRegistration: BlockEditorRegistration;
+    blockEditorRegistration: Nullable<BlockEditorRegistration>;
 
     hostElement: HTMLElement;
 
@@ -59,9 +59,9 @@ export class GlobalState {
 
     stateManager: StateManager;
 
-    beforeRenderObservable: Observable<void>;
+    beforeRenderObservable: Nullable<Observable<void>>;
 
-    lockObject = new LockObject();
+    lockObject: any;
 
     pointerOverCanvas: boolean = false;
 
@@ -91,9 +91,9 @@ export class GlobalState {
 
     saveToSnippetServer?: (() => void) | undefined;
 
-    rebuildRuntime: () => void;
+    rebuildRuntime: Nullable<() => void>;
 
-    reloadAssets: () => void;
+    reloadAssets: Nullable<() => void>;
 
     addCustomBlock?: (serializedData: string) => void;
 
@@ -114,20 +114,27 @@ export class GlobalState {
         onSmartFilterLoadedObservable: Nullable<Observable<SmartFilter>>,
         optimizerEnabled: Nullable<ObservableProperty<boolean>>,
         smartFilter: Nullable<SmartFilter>,
-        blockEditorRegistration: BlockEditorRegistration,
+        blockEditorRegistration: Nullable<BlockEditorRegistration>,
         hostElement: HTMLElement,
-        beforeRenderObservable: Observable<void>,
-        rebuildRuntime: () => void,
-        reloadAssets: () => void,
+        beforeRenderObservable: Nullable<Observable<void>>,
+        rebuildRuntime: Nullable<() => void>,
+        reloadAssets: Nullable<() => void>,
+        texturePresets: Nullable<TexturePreset[]>,
         downloadSmartFilter?: () => void,
         loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
-        texturePresets: TexturePreset[] = [],
         addCustomBlock?: (serializedData: string) => void,
         deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void,
         onLogRequiredObservable?: Observable<LogEntry>,
         onSaveEditorDataRequiredObservable?: Observable<void>
     ) {
+        const allowEdits = !!rebuildRuntime;
+        if (allowEdits) {
+            this.lockObject = new LockObject();
+        } else {
+            this.lockObject = new ReadOnlyLock();
+        }
+
         this.stateManager = new StateManager();
         this.stateManager.data = this;
         this.stateManager.lockObject = this.lockObject;
@@ -152,7 +159,7 @@ export class GlobalState {
         this.downloadSmartFilter = downloadSmartFilter;
         this.loadSmartFilter = loadSmartFilter;
         this.saveToSnippetServer = saveToSnippetServer;
-        this.texturePresets = texturePresets;
+        this.texturePresets = texturePresets || [];
         this.beforeRenderObservable = beforeRenderObservable;
         this.rebuildRuntime = rebuildRuntime;
         this.reloadAssets = reloadAssets;
@@ -163,5 +170,16 @@ export class GlobalState {
         this.onSaveEditorDataRequiredObservable = onSaveEditorDataRequiredObservable ?? new Observable<void>();
 
         this._previewBackground = localStorage.getItem(PreviewBackgroundStorageKey) ?? "grid";
+    }
+}
+
+// TODO: remove once GraphCanvas supports readonly mode
+class ReadOnlyLock {
+    public get lock(): boolean {
+        return true;
+    }
+
+    public set lock(_value: boolean) {
+        // Ignore
     }
 }
