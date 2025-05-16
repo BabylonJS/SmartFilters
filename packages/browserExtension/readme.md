@@ -28,9 +28,9 @@ This browser extension is intended to aid in the development of web applications
 
 To work on the browser extension:
 
-1. Run `npm run watch:browserExtension`
+1. Run `npm run watch:browserExtension` in the root of the repo
 1. If you haven't done the installation steps above, do them now (only needs to be done once)
 1. To make changes
     1. Make your change in the code, and confirm your incremental build is green in the terminal
-    1. Reload your web application, click the Smart Filter Debugger again, and you should see your changes
+    1. Reload your web application, click the Smart Filter Debugger extension button again, and you should see your changes
 1. To debug, open the browser Dev Tools in the web application and you will be able to find the browser extension code in the Sources tab and debug it
