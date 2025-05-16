@@ -95,7 +95,8 @@ export type SmartFilterEditorOptions = {
 
     /**
      * Called when the editor determines that the graph has changed and the runtime needs to be rebuilt.
-     * If not supplied, the editor will not be able to rebuild the runtime.
+     * If not supplied, the editor will not be able to rebuild the runtime, and will not allow changes to the
+     * structure of the smart filter.
      */
     rebuildRuntime?: () => void;
 
