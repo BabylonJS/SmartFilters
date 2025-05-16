@@ -39,4 +39,4 @@ dist
 **/*.block.ts
 
 # browser extension output
-packages/browserExtension/www
+packages/browserExtension/unpackedExtension
