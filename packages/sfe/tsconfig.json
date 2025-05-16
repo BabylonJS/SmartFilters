@@ -16,5 +16,5 @@
         "../editor/**/*.tsx",
         "../blocks/**/*.ts"
     ],
-    "exclude": ["**/node_modules", "**/.temp"]
+    "exclude": ["**/node_modules", "**/.temp", "../browserExtension/**"]
 }

@@ -3,9 +3,6 @@
     "private": true,
     "version": "0.1.0",
     "description": "A browser extension to allow for debugging Babylon.js Smart Filters in websites",
-    "author": {
-        "name": "Sebastien VANDENBERGHE"
-    },
     "keywords": [
         "video",
         "composition",
@@ -32,7 +29,7 @@
         "readme.md"
     ],
     "scripts": {
-        "clean": "rimraf dist && rimraf tsconfig.build.tsbuildinfo",
+        "clean": "rimraf dist && rimraf unpackedExtension && rimraf tsconfig.build.tsbuildinfo",
         "versionUp": "node tools/versionUp.js",
         "build": "webpack --env=prod",
         "watch": "webpack --env=dev --watch",
