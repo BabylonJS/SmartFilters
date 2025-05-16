@@ -1,5 +1,13 @@
 # Babylon.js Smart Filters
 
+# PREVIEW WARNING
+
+This package is currently in preview form. There are known issues which will be addressed before leaving preview.
+
+## Known issues
+
+1. Dragging from a connection point creates a new connection, but it should be in read only mode.
+
 ## Browser Extension
 
 This browser extension is intended to aid in the development of web applications that make use of Smart Filters.
