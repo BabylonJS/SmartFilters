@@ -2,7 +2,7 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
 var SRC_DIR = path.resolve(__dirname, "./src");
-var OUTPUT_DIR = path.resolve(__dirname, "./www");
+var OUTPUT_DIR = path.resolve(__dirname, "./unpackedExtension");
 
 var buildConfig = function (env) {
     var isProd = env.prod;
@@ -41,6 +41,7 @@ var buildConfig = function (env) {
             new CopyPlugin({
               patterns: [
                 { from: "./src/assets/manifest.json", to: "./manifest.json" },
+                { from: "./src/assets/icons", to: "./icons" },
               ],
             }),
           ],
