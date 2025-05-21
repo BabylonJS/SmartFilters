@@ -25,6 +25,7 @@ import { saveToSnippetServer } from "./smartFilterLoadSave/saveToSnipperServer.j
 import { removeCustomBlockFromBlockEditorRegistration } from "./blockRegistration/removeCustomBlockFromBlockEditorRegistration.js";
 import { addCustomBlockToBlockEditorRegistration } from "./blockRegistration/addCustomBlockToBlockEditorRegistration.js";
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
+import { copySmartFilter } from "./smartFilterLoadSave/copySmartFilter.js";
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
 import { texturePresets } from "./texturePresets.js";
 import { serializeSmartFilter } from "./smartFilterLoadSave/serializeSmartFilter.js";
@@ -206,6 +207,20 @@ async function main(): Promise<void> {
                 }
             } catch (err: unknown) {
                 onLogRequiredObservable.notifyObservers(new LogEntry(`Could not load Smart Filter:\n${err}`, true));
+            }
+            return null;
+        },
+        copySmartFilter: () => {
+            if (currentSmartFilter) {
+                try {
+                    copySmartFilter(currentSmartFilter);
+                    onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter JSON copied to clipboard", false));
+            
+                } catch (err: unknown) {
+                    onLogRequiredObservable.notifyObservers(
+                        new LogEntry(`Could not copy Smart Filter to clipboard:\n${err}`, true)
+                    );
+                }
             }
             return null;
         },

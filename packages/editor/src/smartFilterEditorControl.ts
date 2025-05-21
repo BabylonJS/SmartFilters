@@ -77,6 +77,12 @@ export type SmartFilterEditorOptions = {
     loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
     /**
+     * A callback that is responsible for copying a serialized version of the Smart Filter to
+     * the clipboard. If not supplied, the copy button will not appear in the editor.
+     */
+    copySmartFilter?: () => void;
+
+    /**
      * An optional callback to save the current Smart Filter to the snippet server.
      * If not supplied, the button will not appear in the editor.
      */
@@ -171,6 +177,7 @@ export class SmartFilterEditorControl {
             options.texturePresets ?? null,
             options.downloadSmartFilter,
             options.loadSmartFilter,
+            options.copySmartFilter,
             options.saveToSnippetServer,
             options.addCustomBlock,
             options.deleteCustomBlock,
