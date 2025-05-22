@@ -374,7 +374,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 }}
                             />
                         )}
-                    </LineContainerComponent>{" "}
+                    </LineContainerComponent>
                     {(this.props.globalState.loadSmartFilter ||
                         this.props.globalState.downloadSmartFilter ||
                         this.props.globalState.copySmartFilter ||
