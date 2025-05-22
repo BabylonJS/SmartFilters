@@ -394,7 +394,8 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                         this.downloadSmartFilter();
                                     }}
                                 />
-                            )}                            {this.props.globalState.copySmartFilter && (
+                            )}
+                            {this.props.globalState.copySmartFilter && (
                                 <ButtonLineComponent
                                     label="Copy to Clipboard"
                                     onClick={() => {
