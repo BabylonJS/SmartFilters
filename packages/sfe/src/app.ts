@@ -234,7 +234,7 @@ async function main(): Promise<void> {
                         currentSmartFilter = smartFilter;
                         onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
                         onLogRequiredObservable.notifyObservers(
-                            new LogEntry("Smart filter pasted from clipboard", false)
+                            new LogEntry("Smart Filter pasted from clipboard", false)
                         );
                         startRendering();
                         return currentSmartFilter;
