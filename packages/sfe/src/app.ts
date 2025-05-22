@@ -27,6 +27,7 @@ import { addCustomBlockToBlockEditorRegistration } from "./blockRegistration/add
 import { downloadSmartFilter } from "./smartFilterLoadSave/downloadSmartFilter.js";
 import { copySmartFilter } from "./smartFilterLoadSave/copySmartFilter.js";
 import { loadSmartFilterFromFile } from "./smartFilterLoadSave/loadSmartFilterFromFile.js";
+import { pasteSmartFilter } from "./smartFilterLoadSave/pasteSmartFilter.js";
 import { texturePresets } from "./texturePresets.js";
 import { serializeSmartFilter } from "./smartFilterLoadSave/serializeSmartFilter.js";
 
@@ -214,11 +215,29 @@ async function main(): Promise<void> {
             if (currentSmartFilter) {
                 try {
                     copySmartFilter(currentSmartFilter);
-                    onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter JSON copied to clipboard", false));
-            
+                    onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter JSON pasted from clipboard", false));
                 } catch (err: unknown) {
                     onLogRequiredObservable.notifyObservers(
                         new LogEntry(`Could not copy Smart Filter to clipboard:\n${err}`, true)
+                    );
+                }
+            }
+            return null;
+        },
+        pasteSmartFilter: async () => {
+            if (renderer && engine) {
+                try {
+                    const smartFilter = await pasteSmartFilter(smartFilterDeserializer, engine);
+                    if (smartFilter) {
+                        currentSmartFilter = smartFilter;
+                        onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
+                        onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter pasted from clipboard", false));
+                        startRendering();
+                        return currentSmartFilter;
+                    }
+                } catch (err: unknown) {
+                    onLogRequiredObservable.notifyObservers(
+                        new LogEntry(`Could not paste Smart Filter from clipboard:\n${err}`, true)
                     );
                 }
             }

@@ -89,7 +89,10 @@ export class GlobalState {
 
     loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>;
 
+    
     copySmartFilter?: () => void;
+
+    pasteSmartFilter?: () => Promise<Nullable<SmartFilter>>;
 
     saveToSnippetServer?: (() => void) | undefined;
 
@@ -125,6 +128,7 @@ export class GlobalState {
         downloadSmartFilter?: () => void,
         loadSmartFilter?: (file: File, engine: ThinEngine) => Promise<Nullable<SmartFilter>>,
         copySmartFilter?: () => void,
+        pasteSmartFilter?: () => Promise<Nullable<SmartFilter>>,
         saveToSnippetServer?: () => void,
         addCustomBlock?: (serializedData: string) => void,
         deleteCustomBlock?: (blockRegistration: IBlockRegistration) => void,
@@ -158,10 +162,10 @@ export class GlobalState {
         this.hostElement = hostElement;
         this.hostDocument = hostElement.ownerDocument!;
         this.hostWindow = hostElement.ownerDocument!.defaultView!;
-        this.stateManager.hostDocument = this.hostDocument;
-        this.downloadSmartFilter = downloadSmartFilter;
+        this.stateManager.hostDocument = this.hostDocument;        this.downloadSmartFilter = downloadSmartFilter;
         this.loadSmartFilter = loadSmartFilter;
         this.copySmartFilter = copySmartFilter;
+        this.pasteSmartFilter = pasteSmartFilter;
         this.saveToSnippetServer = saveToSnippetServer;
         this.texturePresets = texturePresets || [];
         this.beforeRenderObservable = beforeRenderObservable;
