@@ -406,7 +406,9 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 <ButtonLineComponent
                                     label="Paste from Clipboard"
                                     onClick={() => {
-                                        this.pasteSmartFilter();
+                                        if (window.confirm("Any unsaved changes will be lost. Do you want to continue?")) {
+                                            this.pasteSmartFilter();
+                                        }
                                     }}
                                 />
                             )}
