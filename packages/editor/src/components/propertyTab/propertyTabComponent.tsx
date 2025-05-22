@@ -167,7 +167,7 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
             this.props.globalState.downloadSmartFilter();
         }
     }
-    
+
     copySmartFilter() {
         if (this.props.globalState.copySmartFilter) {
             this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
@@ -374,7 +374,8 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 }}
                             />
                         )}
-                    </LineContainerComponent>                {(this.props.globalState.loadSmartFilter ||
+                    </LineContainerComponent>{" "}
+                    {(this.props.globalState.loadSmartFilter ||
                         this.props.globalState.downloadSmartFilter ||
                         this.props.globalState.copySmartFilter ||
                         this.props.globalState.pasteSmartFilter ||
@@ -407,7 +408,9 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                 <ButtonLineComponent
                                     label="Paste from Clipboard"
                                     onClick={() => {
-                                        if (window.confirm("Any unsaved changes will be lost. Do you want to continue?")) {
+                                        if (
+                                            window.confirm("Any unsaved changes will be lost. Do you want to continue?")
+                                        ) {
                                             this.pasteSmartFilter();
                                         }
                                     }}

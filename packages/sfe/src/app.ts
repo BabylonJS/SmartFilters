@@ -215,7 +215,9 @@ async function main(): Promise<void> {
             if (currentSmartFilter) {
                 try {
                     copySmartFilter(currentSmartFilter);
-                    onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter JSON pasted from clipboard", false));
+                    onLogRequiredObservable.notifyObservers(
+                        new LogEntry("Smart filter JSON pasted from clipboard", false)
+                    );
                 } catch (err: unknown) {
                     onLogRequiredObservable.notifyObservers(
                         new LogEntry(`Could not copy Smart Filter to clipboard:\n${err}`, true)
@@ -231,7 +233,9 @@ async function main(): Promise<void> {
                     if (smartFilter) {
                         currentSmartFilter = smartFilter;
                         onSmartFilterLoadedObservable.notifyObservers(currentSmartFilter);
-                        onLogRequiredObservable.notifyObservers(new LogEntry("Smart filter pasted from clipboard", false));
+                        onLogRequiredObservable.notifyObservers(
+                            new LogEntry("Smart filter pasted from clipboard", false)
+                        );
                         startRendering();
                         return currentSmartFilter;
                     }
