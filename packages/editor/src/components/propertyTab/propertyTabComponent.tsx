@@ -168,6 +168,20 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
         }
     }
 
+    copySmartFilter() {
+        if (this.props.globalState.copySmartFilter) {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            this.props.globalState.copySmartFilter();
+        }
+    }
+
+    async pasteSmartFilter() {
+        if (this.props.globalState.pasteSmartFilter) {
+            this.props.globalState.onSaveEditorDataRequiredObservable.notifyObservers();
+            await this.props.globalState.pasteSmartFilter();
+        }
+    }
+
     async saveToSnippetServer() {
         this.setState({ uploadInProgress: true });
         try {
@@ -363,6 +377,8 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                     </LineContainerComponent>
                     {(this.props.globalState.loadSmartFilter ||
                         this.props.globalState.downloadSmartFilter ||
+                        this.props.globalState.copySmartFilter ||
+                        this.props.globalState.pasteSmartFilter ||
                         this.props.globalState.saveToSnippetServer) && (
                         <LineContainerComponent title="FILE">
                             {this.props.globalState.loadSmartFilter && (
@@ -377,6 +393,26 @@ export class PropertyTabComponent extends react.Component<IPropertyTabComponentP
                                     label="Save"
                                     onClick={() => {
                                         this.downloadSmartFilter();
+                                    }}
+                                />
+                            )}
+                            {this.props.globalState.copySmartFilter && (
+                                <ButtonLineComponent
+                                    label="Copy to Clipboard"
+                                    onClick={() => {
+                                        this.copySmartFilter();
+                                    }}
+                                />
+                            )}
+                            {this.props.globalState.pasteSmartFilter && (
+                                <ButtonLineComponent
+                                    label="Paste from Clipboard"
+                                    onClick={() => {
+                                        if (
+                                            window.confirm("Any unsaved changes will be lost. Do you want to continue?")
+                                        ) {
+                                            this.pasteSmartFilter();
+                                        }
                                     }}
                                 />
                             )}
