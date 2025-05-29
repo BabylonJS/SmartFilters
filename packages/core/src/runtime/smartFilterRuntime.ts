@@ -86,7 +86,15 @@ export class InternalSmartFilterRuntime implements SmartFilterRuntime {
      */
     public render(): void {
         try {
+            const depthTest = this.engine.depthCullingState.depthTest;
+            const stencilTest = this.engine.stencilState.stencilTest;
+
             this.commandBuffer.execute();
+
+            // EffectRenderer.applyEffectWrapper(), which is called by ShaderRuntime._draw(),
+            // sets the depth/stencil state, so we need to restore it.
+            this.engine.depthCullingState.depthTest = depthTest;
+            this.engine.stencilState.stencilTest = stencilTest;
         } catch (e) {
             // eslint-disable-next-line no-debugger
             debugger;
