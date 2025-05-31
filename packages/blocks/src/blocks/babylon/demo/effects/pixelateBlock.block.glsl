@@ -22,7 +22,8 @@ vec4 pixelate(vec2 vUV) { // main
     if (!disabled) {
         float pixelateStrength = mix(videoPixelateMin, videoPixelateMax, pow(1. - intensity, videoPixelatePower));
         vec2 pixelate = vec2(pixelateStrength * aspect, pixelateStrength);
-        vUV = floor(pixelate * vUV) / pixelate;
+        vec2 pixelSize = vec2(1. / pixelate);
+        vUV = floor(pixelate * vUV) / pixelate + pixelSize * 0.5;
     }
     return texture2D(input, vUV);
 }
