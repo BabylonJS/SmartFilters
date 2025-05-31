@@ -26,9 +26,15 @@ class CustomShaderBlockBinding extends ShaderBinding {
         for (const input of inputsWithRuntimeData) {
             switch (input.type) {
                 case ConnectionPointType.Float:
-                    this._bindSteps.push((effect) => {
-                        effect.setFloat(this.getRemappedName(input.name), input.runtimeData.value);
-                    });
+                    if (input.autoBind === "outputAspectRatio") {
+                        this._bindSteps.push((effect, width, height) => {
+                            effect.setFloat(this.getRemappedName(input.name), width / height);
+                        });
+                    } else {
+                        this._bindSteps.push((effect) => {
+                            effect.setFloat(this.getRemappedName(input.name), input.runtimeData.value);
+                        });
+                    }
                     break;
                 case ConnectionPointType.Texture:
                     this._bindSteps.push((effect) => {
@@ -222,8 +228,17 @@ export class CustomShaderBlock extends ShaderBlock {
                 ) {
                     inputsToBind.push({
                         name: autoBoundInput.name,
-                        type: autoBoundInput.type,
-                        autoBind: autoBoundInput.autoBind,
+                        type: ConnectionPointType.Vector2,
+                        autoBind: "outputResolution",
+                    });
+                } else if (
+                    autoBoundInput.autoBind === "outputAspectRatio" &&
+                    autoBoundInput.type == ConnectionPointType.Float
+                ) {
+                    inputsToBind.push({
+                        name: autoBoundInput.name,
+                        type: ConnectionPointType.Float,
+                        autoBind: "outputAspectRatio",
                     });
                 } else {
                     throw new Error(
@@ -283,6 +298,26 @@ type AutoBindOutputResolution = {
 };
 
 /**
+ * Represents an input which is auto-bound to the output's aspect ratio instead of an input connection point
+ */
+type AutoBindOutputAspectRatio = {
+    /**
+     * The name of the input
+     */
+    name: string;
+
+    /**
+     * The type of the input
+     */
+    type: ConnectionPointType.Float;
+
+    /**
+     * The auto bind value for the input connection point
+     */
+    autoBind: "outputAspectRatio";
+};
+
+/**
  * All possible input types with runtime data.
  */
 type AnyInputWithRuntimeData =
@@ -292,4 +327,5 @@ type AnyInputWithRuntimeData =
     | InputWithRuntimeData<ConnectionPointType.Float>
     | InputWithRuntimeData<ConnectionPointType.Texture>
     | InputWithRuntimeData<ConnectionPointType.Vector2>
-    | AutoBindOutputResolution;
+    | AutoBindOutputResolution
+    | AutoBindOutputAspectRatio;
