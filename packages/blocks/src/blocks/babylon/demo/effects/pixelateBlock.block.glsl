@@ -27,4 +27,3 @@ vec4 pixelate(vec2 vUV) { // main
     }
     return texture2D(input, vUV);
 }
-bind
