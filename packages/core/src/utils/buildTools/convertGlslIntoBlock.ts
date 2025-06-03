@@ -25,6 +25,7 @@ const BLOCK_GET_SHADER_BINDING_VARS = "@BLOCK_SHADER_BINDING_BIND_VARS@";
 const BLOCK_GET_SHADER_PARAM_LIST = "@BLOCK_GET_SHADER_PARAM_LIST@";
 const EFFECT_SETTER = "@EFFECT_SETTER@";
 const EFFECT_VALUE = "@EFFECT_VALUE@";
+const EXTRA_BIND_DOCSTRING = "@EXTRA_BIND_DOCSTRING@";
 const EXTRA_BIND_PARAMS = "@EXTRA_BIND_PARAMS@";
 
 const ShaderBindingPrivateVariablesTemplate = `    private readonly _${CAMEL_CASE_UNIFORM}: RuntimeData<ConnectionPointType.${CONNECTION_POINT_TYPE}>;`;
@@ -90,9 +91,7 @@ ${SHADER_BINDING_CTOR}
 
     /**
      * Binds all the required data to the shader when rendering.
-     * @param effect - defines the effect to bind the data to
-     * @param width - defines the width of the output
-     * @param height - defines the height of the output
+     * @param effect - defines the effect to bind the data to${EXTRA_BIND_DOCSTRING}
      */
     public override bind(effect: Effect${EXTRA_BIND_PARAMS}): void {
 ${SHADER_BINDING_BIND}
@@ -234,7 +233,11 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
 
     // Add extra params to the bind method if needed
     let extraBindParams = "";
+    let extraBindDocstring = "";
     if (needWidthHeightParams) {
+        extraBindDocstring = `
+     * @param width - defines the width of the output
+     * @param height - defines the height of the output`;
         extraBindParams = `, width: number, height: number`;
     }
 
@@ -323,6 +326,7 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
         .replace(SHADER_BINDING_CTOR, shaderBindingCtor.join("\n"))
         .replace(SHADER_BINDING_SUPER_PARAMS, shaderBindingSuperParams)
         .replace(SHADER_BINDING_BIND, shaderBindingBind.join("\n"))
+        .replace(EXTRA_BIND_DOCSTRING, extraBindDocstring)
         .replace(EXTRA_BIND_PARAMS, extraBindParams)
         .replace(new RegExp(SHADER_BLOCK_EXTENDS, "g"), shaderBlockExtends)
         .replace(BLOCK_INPUT_PROPERTIES, blockInputProperties.join("\n"))
