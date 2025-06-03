@@ -162,54 +162,65 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
     }
 
     // Generate shader binding private variables
-    const shaderBindingPrivateVariables = fragmentShaderInfo.uniforms.map((uniform) => {
-        return uniform.properties?.autoBind
-            ? null
-            : ShaderBindingPrivateVariablesTemplate.replace(CAMEL_CASE_UNIFORM, uniform.name).replace(
-                  CONNECTION_POINT_TYPE,
-                  getConnectionPointTypeString(uniform.type)
-              );
-    });
+    const shaderBindingPrivateVariables = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            return uniform.properties?.autoBind
+                ? null
+                : ShaderBindingPrivateVariablesTemplate.replace(CAMEL_CASE_UNIFORM, uniform.name).replace(
+                      CONNECTION_POINT_TYPE,
+                      getConnectionPointTypeString(uniform.type)
+                  );
+        })
+        .filter((line) => line !== null);
 
     // Generate the shader binding constructor docstring params
-    const shaderBindingCtorDocstringParams = fragmentShaderInfo.uniforms.map((uniform) => {
-        return uniform.properties?.autoBind
-            ? null
-            : ShaderBindingCtorDocstringParams.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
-    });
+    const shaderBindingCtorDocstringParams = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            return uniform.properties?.autoBind
+                ? null
+                : ShaderBindingCtorDocstringParams.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
+        })
+        .filter((param) => param !== null);
 
     // Generate the shader binding constructor params
-    const shaderBindingCtorParams = fragmentShaderInfo.uniforms.map((uniform) => {
-        return uniform.properties?.autoBind
-            ? null
-            : ShaderBindingCtorParams.replace(CAMEL_CASE_UNIFORM, uniform.name).replace(
-                  CONNECTION_POINT_TYPE,
-                  getConnectionPointTypeString(uniform.type)
-              );
-    });
+    const shaderBindingCtorParams = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            return uniform.properties?.autoBind
+                ? null
+                : ShaderBindingCtorParams.replace(CAMEL_CASE_UNIFORM, uniform.name).replace(
+                      CONNECTION_POINT_TYPE,
+                      getConnectionPointTypeString(uniform.type)
+                  );
+        })
+        .filter((param) => param !== null);
 
     // Generate the shader binding constructor
-    const shaderBindingCtor = fragmentShaderInfo.uniforms.map((uniform) => {
-        return uniform.properties?.autoBind
-            ? null
-            : ShaderBindingCtor.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
-    });
+    const shaderBindingCtor = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            return uniform.properties?.autoBind
+                ? null
+                : ShaderBindingCtor.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
+        })
+        .filter((line) => line !== null);
 
     // Generate the shader binding bind
     let needWidthHeightParams = false;
     const shaderBindingBind = fragmentShaderInfo.uniforms.map((uniform) => {
         let effectValue: string;
+        let effectSetter = getEffectSetter(uniform.type);
 
         switch (uniform.properties?.autoBind) {
             case "outputResolution":
                 {
                     effectValue = "width, height";
+                    effectSetter = "setFloat2";
                     needWidthHeightParams = true;
                 }
                 break;
             case "outputAspectRatio":
                 {
-                    effectValue = "width / height";
+                    effectValue = "width / height, height / width";
+                    effectSetter = "setFloat2";
                     needWidthHeightParams = true;
                 }
                 break;
@@ -218,7 +229,7 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
         }
         return ShaderBindingBind.replace(EFFECT_VALUE, effectValue)
             .replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name)
-            .replace(EFFECT_SETTER, getEffectSetter(uniform.type));
+            .replace(EFFECT_SETTER, effectSetter);
     });
 
     // Add extra params to the bind method if needed
@@ -228,38 +239,44 @@ export function convertGlslIntoBlock(fragmentShaderPath: string, importPath: str
     }
 
     // Generate the block input properties
-    const blockInputProperties = fragmentShaderInfo.uniforms.map((uniform) => {
-        if (uniform.properties?.autoBind) {
-            return null;
-        } else if (uniform.properties?.default !== undefined) {
-            if (extraImports.indexOf("    createStrongRef") === -1) {
-                extraImports.push("    createStrongRef");
+    const blockInputProperties = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            if (uniform.properties?.autoBind) {
+                return null;
+            } else if (uniform.properties?.default !== undefined) {
+                if (extraImports.indexOf("    createStrongRef") === -1) {
+                    extraImports.push("    createStrongRef");
+                }
+                return BlockInputOptionalProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name)
+                    .replace(CONNECTION_POINT_TYPE, getConnectionPointTypeString(uniform.type))
+                    .replace(CONNECTION_POINT_DEFAULT_VALUE, uniform.properties.default);
+            } else {
+                return BlockInputProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
+                    CONNECTION_POINT_TYPE,
+                    getConnectionPointTypeString(uniform.type)
+                );
             }
-            return BlockInputOptionalProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name)
-                .replace(CONNECTION_POINT_TYPE, getConnectionPointTypeString(uniform.type))
-                .replace(CONNECTION_POINT_DEFAULT_VALUE, uniform.properties.default);
-        } else {
-            return BlockInputProperty.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name).replace(
-                CONNECTION_POINT_TYPE,
-                getConnectionPointTypeString(uniform.type)
-            );
-        }
-    });
+        })
+        .filter((property) => property !== null);
 
     // Generate the block get shader binding vars
-    const blockGetShaderBindingVars = fragmentShaderInfo.uniforms.map((uniform) => {
-        return uniform.properties?.autoBind
-            ? null
-            : BlockGetShaderBindingVars.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
-    });
+    const blockGetShaderBindingVars = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            return uniform.properties?.autoBind
+                ? null
+                : BlockGetShaderBindingVars.replace(new RegExp(CAMEL_CASE_UNIFORM, "g"), uniform.name);
+        })
+        .filter((line) => line !== null);
 
     // Handle the disable optimization flag
     const disableOptimization = fragmentShaderInfo.disableOptimization === true ? "true" : "false";
 
     // Generate the block get shader param list
-    const blockGetShaderParamList = fragmentShaderInfo.uniforms.map((uniform) => {
-        return uniform.properties?.autoBind ? null : uniform.name;
-    });
+    const blockGetShaderParamList = fragmentShaderInfo.uniforms
+        .map((uniform) => {
+            return uniform.properties?.autoBind ? null : uniform.name;
+        })
+        .filter((param) => param !== null);
 
     // Decide if this is a disableable block or not
     let shaderBlockExtends = "ShaderBlock";
