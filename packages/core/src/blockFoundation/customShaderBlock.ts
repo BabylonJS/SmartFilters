@@ -51,14 +51,21 @@ class CustomShaderBlockBinding extends ShaderBinding {
                     });
                     break;
                 case ConnectionPointType.Vector2:
-                    if (input.autoBind === "outputResolution") {
-                        this._bindSteps.push((effect, width, height) => {
-                            effect.setFloat2(this.getRemappedName(input.name), width, height);
-                        });
-                    } else {
-                        this._bindSteps.push((effect) => {
-                            effect.setVector2(this.getRemappedName(input.name), input.runtimeData.value);
-                        });
+                    switch (input.autoBind) {
+                        case "outputResolution":
+                            this._bindSteps.push((effect, width, height) => {
+                                effect.setFloat2(this.getRemappedName(input.name), width, height);
+                            });
+                            break;
+                        case "outputAspectRatio":
+                            this._bindSteps.push((effect, width, height) => {
+                                effect.setFloat2(this.getRemappedName(input.name), width / height, height / width);
+                            });
+                            break;
+                        default:
+                            this._bindSteps.push((effect) => {
+                                effect.setVector2(this.getRemappedName(input.name), input.runtimeData.value);
+                            });
                     }
                     break;
             }
@@ -217,8 +224,10 @@ export class CustomShaderBlock extends ShaderBlock {
         if (this._autoBoundInputs) {
             for (const autoBoundInput of this._autoBoundInputs) {
                 if (
-                    autoBoundInput.autoBind === "outputResolution" &&
-                    autoBoundInput.type == ConnectionPointType.Vector2
+                    (autoBoundInput.autoBind === "outputResolution" &&
+                        autoBoundInput.type == ConnectionPointType.Vector2) ||
+                    (autoBoundInput.autoBind === "outputAspectRatio" &&
+                        autoBoundInput.type == ConnectionPointType.Vector2)
                 ) {
                     inputsToBind.push({
                         name: autoBoundInput.name,
@@ -283,6 +292,27 @@ type AutoBindOutputResolution = {
 };
 
 /**
+ * Represents an input which is auto-bound to the output's aspect ratio instead of an input connection point.
+ * The x value is the aspect ratio (width / height) and the y value is the inverse aspect ratio (height / width).
+ */
+type AutoBindOutputAspectRatio = {
+    /**
+     * The name of the input
+     */
+    name: string;
+
+    /**
+     * The type of the input
+     */
+    type: ConnectionPointType.Vector2;
+
+    /**
+     * The auto bind value for the input connection point
+     */
+    autoBind: "outputAspectRatio";
+};
+
+/**
  * All possible input types with runtime data.
  */
 type AnyInputWithRuntimeData =
@@ -292,4 +322,5 @@ type AnyInputWithRuntimeData =
     | InputWithRuntimeData<ConnectionPointType.Float>
     | InputWithRuntimeData<ConnectionPointType.Texture>
     | InputWithRuntimeData<ConnectionPointType.Vector2>
-    | AutoBindOutputResolution;
+    | AutoBindOutputResolution
+    | AutoBindOutputAspectRatio;

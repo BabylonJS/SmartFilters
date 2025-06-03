@@ -57,7 +57,7 @@ export type SerializedShaderBlockDefinitionV1 = {
 /**
  * Possible V1 auto bind values for input connection points.
  */
-export type InputAutoBindV1 = "outputResolution";
+export type InputAutoBindV1 = "outputResolution" | "outputAspectRatio";
 
 /**
  * A V1 input connection point of a serialized block definition.
