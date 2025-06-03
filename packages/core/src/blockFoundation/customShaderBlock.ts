@@ -224,22 +224,15 @@ export class CustomShaderBlock extends ShaderBlock {
         if (this._autoBoundInputs) {
             for (const autoBoundInput of this._autoBoundInputs) {
                 if (
-                    autoBoundInput.autoBind === "outputResolution" &&
-                    autoBoundInput.type == ConnectionPointType.Vector2
+                    (autoBoundInput.autoBind === "outputResolution" &&
+                        autoBoundInput.type == ConnectionPointType.Vector2) ||
+                    (autoBoundInput.autoBind === "outputAspectRatio" &&
+                        autoBoundInput.type == ConnectionPointType.Vector2)
                 ) {
                     inputsToBind.push({
                         name: autoBoundInput.name,
-                        type: ConnectionPointType.Vector2,
-                        autoBind: "outputResolution",
-                    });
-                } else if (
-                    autoBoundInput.autoBind === "outputAspectRatio" &&
-                    autoBoundInput.type == ConnectionPointType.Vector2
-                ) {
-                    inputsToBind.push({
-                        name: autoBoundInput.name,
-                        type: ConnectionPointType.Vector2,
-                        autoBind: "outputAspectRatio",
+                        type: autoBoundInput.type,
+                        autoBind: autoBoundInput.autoBind,
                     });
                 } else {
                     throw new Error(
