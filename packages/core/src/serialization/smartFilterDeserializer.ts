@@ -206,7 +206,7 @@ export class SmartFilterDeserializer {
 
         // Deserializers are also not responsible for deserializing the outputTextureOptions of ShaderBlocks.
         if (serializedBlock.outputTextureOptions && newBlock instanceof ShaderBlock) {
-            (newBlock as ShaderBlock).outputTextureOptions = serializedBlock.outputTextureOptions;
+            newBlock.outputTextureOptions = serializedBlock.outputTextureOptions;
         }
 
         // We need to ensure any uniqueIds generated in the future (e.g. a new block is added to the SmartFilter)
