@@ -42,6 +42,6 @@
         "test": "echo \"Error: run test from the root of the monorepo\" && exit 1"
     },
     "peerDependencies": {
-        "@babylonjs/core": "^8.0.1"
+        "@babylonjs/core": "^7.47.3 || ^8.0.1"
     }
 }
